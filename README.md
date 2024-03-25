@@ -3,7 +3,7 @@ Recruitment platform for Monash University student teams
 
 
 Members:
-Antony Razzell
+Antony Razzell <br />
 Daniel Hong
 Umair Bin Mohammad
 Tavishi Saxena
