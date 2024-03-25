@@ -1,12 +1,14 @@
 # Onboarder
+
 Recruitment platform for Monash University student teams
 
-
-Members: <br />
-Antony Razzell <br />
-Daniel Hong <br />
-Umair Bin Mohammad <br />
-Tavishi Saxena <br />
-Shubh Bajpai <br />
+Members: /
+Antony Razzell /
+Daniel Hong /
+Umair Bin Mohammad /
+Tavishi Saxena /
+Shubh Bajpai /
 Ahmad Hafiz
-Tran Ngoc Duy Ngo <br />
+Tran Ngoc Duy Ngo /
+Fahad Saeed Assadi /
+Hanif Mohammad Asif
