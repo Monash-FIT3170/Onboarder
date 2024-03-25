@@ -2,8 +2,10 @@
 Recruitment platform for Monash University student teams
 
 
-Members:
-Antony Razzell
-Daniel Hong
-Umair Bin Mohammad
+Members: <br />
+Antony Razzell <br />
+Daniel Hong <br />
+Umair Bin Mohammad <br />
+Tavishi Saxena <br />
+Shubh Bajpai <br />
 Ahmad Hafiz
