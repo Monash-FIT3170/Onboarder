@@ -3,5 +3,4 @@ Recruitment platform for Monash University student teams
 
 
 Members:
-Antony Razzell
-Daniel Hong
+Antony Razzell\nDaniel Hong
