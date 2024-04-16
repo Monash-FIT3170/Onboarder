@@ -25,4 +25,5 @@ artifacts:
   files:
     - function.zip
     - packaged.yml
+    - appspec.yml
   base-directory: dist
