@@ -1,12 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: API Gateway connected to a Lambda function
-
 Resources:
   RouterLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: backend/lambda/
+      CodeUri: s3://onboarder-test-upload-bucket/ca2cfd09cf2592aad1c8a939b8f296c2
       Handler: app.lambda_handler
       Runtime: python3.12
       Timeout: 30
@@ -18,7 +17,8 @@ Resources:
               Ref: FEApi
             Path: /hello
             Method: get
-
+    Metadata:
+      SamResourceId: RouterLambda
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -35,9 +35,12 @@ Resources:
                 httpMethod: POST
                 payloadFormatVersion: 2.0
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
-
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+    Metadata:
+      SamResourceId: FEApi
 Outputs:
   ApiUrl:
     Description: API endpoint URL for Prod environment
-    Value: !Sub 'https://${FEApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Value:
+      Fn::Sub: https://${FEApi}.execute-api.${AWS::Region}.amazonaws.com/prod
