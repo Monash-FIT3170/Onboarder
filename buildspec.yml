@@ -18,8 +18,8 @@ phases:
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
-      - aws cloudformation package --template-file sam.yml --s3-bucket my-codebuild-bucket --output-template-file dist/packaged.yml
-      - aws cloudformation deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM
+      - sam package --template-file sam.yml --s3-bucket onboarder-test-bucket --output-template-file dist/packaged.yml
+      - sam deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM
 
 artifacts:
   files:

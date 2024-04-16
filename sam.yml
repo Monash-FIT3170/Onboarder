@@ -6,7 +6,7 @@ Resources:
   RouterLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./backend/lambda/
+      CodeUri: backend/lambda/
       Handler: app.lambda_handler
       Runtime: python3.12
       Timeout: 30
