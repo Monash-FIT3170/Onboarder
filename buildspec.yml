@@ -14,7 +14,7 @@ phases:
       - mkdir -p dist
       - cd backend/lambda
       - zip -r ../../dist/function.zip .
-      - cd ..
+      - cd ../..
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
