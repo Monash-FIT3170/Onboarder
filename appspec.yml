@@ -1,6 +1,0 @@
-version: 0.0
-Resources:
-  - TargetService:
-      Type: AWS::Serverless::Function
-      Properties:
-        FunctionName: my-lambda-stack-RouterLambda-TXLpNH5o2X8S

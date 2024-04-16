@@ -15,6 +15,14 @@ phases:
       - cd backend/lambda
       - zip -r ../../dist/function.zip .
       - cd ../..
+      - cat > dist/appspec.yml << EOF
+        version: 0.0
+        Resources:
+          - TargetService:
+              Type: AWS::Serverless::Function
+              Properties:
+                FunctionName: my-lambda-stack-RouterLambda-TXLpNH5o2X8S
+        EOF
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
