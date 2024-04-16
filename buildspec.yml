@@ -18,8 +18,11 @@ phases:
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
-      - aws lambda update-function-code --function-name RouterLambda --zip-file fileb://dist/function.zip
+      - aws cloudformation package --template-file sam.yml --s3-bucket my-codebuild-bucket --output-template-file dist/packaged.yml
+      - aws cloudformation deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM
+
 artifacts:
   files:
-    - 'function.zip'
+    - function.zip
+    - packaged.yml
   base-directory: dist
