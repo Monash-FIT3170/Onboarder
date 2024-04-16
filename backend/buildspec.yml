@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - echo "Building the Lambda function..."
+      - mkdir -p dist
+      - cp -r lambda/ dist/
+  post_build:
+    commands:
+      - echo "Deploying the Lambda function..."
+      - aws lambda update-function-code --function-name MyLambdaFunction --zip-file fileb://dist.zip
+artifacts:
+  files:
+    - '**/*'
+  base-directory: dist
