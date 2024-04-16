@@ -12,12 +12,13 @@ phases:
     commands:
       - echo "Building the Lambda function..."
       - mkdir -p dist
-      - cp -r lambda/ dist/
+      - cd lambda
+      - zip -r ../dist/function.zip .
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
-      - aws lambda update-function-code --function-name MyLambdaFunction --zip-file fileb://dist.zip
+      - aws lambda update-function-code --function-name RouterLambda --zip-file fileb://dist/function.zip
 artifacts:
   files:
-    - '**/*'
+    - 'function.zip'
   base-directory: dist
