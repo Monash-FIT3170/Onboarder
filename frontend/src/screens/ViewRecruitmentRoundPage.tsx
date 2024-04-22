@@ -1,16 +1,24 @@
-import React from "react";
+import React from 'react';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const styles = {
   recruitmentRoundPage: {
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f5f5f5',
   },
   header: {
-    backgroundColor: '#333',
+    backgroundColor: '#1976d2',
     color: '#fff',
     padding: '1rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    textAlign: 'center',
   },
   main: {
     padding: '2rem',
@@ -18,35 +26,17 @@ const styles = {
   section: {
     marginBottom: '2rem',
   },
-  activeRound: {
-    border: '1px solid #ccc',
-    padding: '1rem',
-  },
-  inactiveRounds: {
-    border: '1px solid #ccc',
-    padding: '1rem',
-  },
-  searchInput: {
-    padding: '0.5rem',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
+  addRoundButton: {
+    marginBottom: '1rem',
   },
   table: {
-    width: '100%',
-    borderCollapse: 'collapse',
+    minWidth: 650,
   },
   tableHeader: {
     backgroundColor: '#f2f2f2',
-    padding: '0.5rem',
-  },
-  tableRow: {
-    borderBottom: '1px solid #ccc',
-  },
-  tableCell: {
-    padding: '0.5rem',
   },
   viewButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#1976d2',
     color: 'white',
     padding: '0.5rem 1rem',
     border: 'none',
@@ -59,84 +49,66 @@ const ViewRecruitmentRoundPage = () => {
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
-        <h1>Onboarding: Recruitment Platform</h1>
-        <input style={styles.searchInput} type="text" placeholder="Search..." />
-      </header>
-
-      <main style={styles.main}>
         <h2>Recruitment Rounds</h2>
+      </header>
+      <main style={styles.main}>
+        <h3>Monash Nova</h3>
         <section style={styles.section}>
-          <h3>Monash Nova</h3>
-          <div style={styles.activeRound}>
-            <h4>Active Recruitment Round</h4>
-            {/* <input style={styles.searchInput} type="text" placeholder="Round Name, Deadline, etc..." /> */}
-            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-
-            <table style={styles.table}>
-              <thead>
-                <tr style={styles.tableHeader}>
-                  <th style={styles.tableCell}>Round Name</th>
-                  <th style={styles.tableCell}>Deadline</th>
-                  <th style={styles.tableCell}>Status</th>
-                  <th style={styles.tableCell}>Semester</th>
-                  <th style={styles.tableCell}>Openings</th>
-                  <th style={styles.tableCell}></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={styles.tableRow}>
-                  <td style={styles.tableCell}>Monash Nova Rover Recruitment 12</td>
-                  <td style={styles.tableCell}>20/04/2024</td>
-                  <td style={styles.tableCell}>
-                    <span style={{ color: 'green' }}>Active</span>
-                  </td>
-                  <td style={styles.tableCell}>Semester 1</td>
-                  <td style={styles.tableCell}>5</td>
-                  <td style={styles.tableCell}>
-                    <button style={styles.viewButton}>VIEW</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div style={styles.inactiveRounds}>
-            <h4>Inactive Recruitment Rounds</h4>
-            <input style={styles.searchInput} type="text" placeholder="Round Name, Deadline, etc..." />
-            <table style={styles.table}>
-              <thead>
-                <tr style={styles.tableHeader}>
-                  <th style={styles.tableCell}>Round Name</th>
-                  <th style={styles.tableCell}>Deadline</th>
-                  <th style={styles.tableCell}>Status</th>
-                  <th style={styles.tableCell}>Semester</th>
-                  <th style={styles.tableCell}>Openings</th>
-                  <th style={styles.tableCell}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Add your inactive round rows here */}
-              </tbody>
-            </table>
-          </div>
+          <h4>Active Recruitment Rounds</h4>
+          <TextField
+            style={{ marginBottom: '1rem' }}
+            variant="outlined"
+            placeholder="Round Name, Deadline, etc..."
+            size="small"
+            fullWidth
+          />
+          <Button variant="contained" style={styles.addRoundButton}>
+            ADD ROUND
+          </Button>
+          <TableContainer component={Paper}>
+            <Table style={styles.table}>
+              <TableHead style={styles.tableHeader}>
+                <TableRow>
+                  <TableCell>Round Name</TableCell>
+                  <TableCell>Deadline</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Semester</TableCell>
+                  <TableCell>Openings</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/* Add active recruitment rounds rows */}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
         <section style={styles.section}>
-          <h3>Archived Recruitment Rounds</h3>
-          <input style={styles.searchInput} type="text" placeholder="Round Name, Deadline, etc..." />
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.tableHeader}>
-                <th style={styles.tableCell}>Round Name</th>
-                <th style={styles.tableCell}>Deadline</th>
-                <th style={styles.tableCell}>Status</th>
-                <th style={styles.tableCell}>Semester</th>
-                <th style={styles.tableCell}>Openings</th>
-                <th style={styles.tableCell}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Add your archived round rows here */}
-            </tbody>
-          </table>
+          <h4>Archived Recruitment Rounds</h4>
+          <TextField
+            style={{ marginBottom: '1rem' }}
+            variant="outlined"
+            placeholder="Round Name, Deadline, etc..."
+            size="small"
+            fullWidth
+          />
+          <TableContainer component={Paper}>
+            <Table style={styles.table}>
+              <TableHead style={styles.tableHeader}>
+                <TableRow>
+                  <TableCell>Round Name</TableCell>
+                  <TableCell>Deadline</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Semester</TableCell>
+                  <TableCell>Openings</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/* Add archived recruitment rounds rows */}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
       </main>
     </div>
