@@ -29,7 +29,7 @@ Resources:
           title: Frontend API
           version: 1.0.0
         paths:
-          /hello:
+          /openings:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
