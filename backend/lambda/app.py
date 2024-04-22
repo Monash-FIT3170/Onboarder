@@ -1,7 +1,7 @@
 import json
 
 def lambda_handler(event, context):
-    body: {
+    body = {
         'opening_id': 345678,
         'recruitment_round_id': 45678,
         'title': 'OpeningTitle',
