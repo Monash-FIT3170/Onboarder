@@ -16,7 +16,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: FEApi
-            Path: /hello
+            Path: /openings
             Method: get
 
   FEApi:
