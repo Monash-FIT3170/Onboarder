@@ -8,6 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 
 const styles = {
   recruitmentRoundPage: {
@@ -18,7 +19,7 @@ const styles = {
     backgroundColor: '#1976d2',
     color: '#fff',
     padding: '1rem',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   main: {
     padding: '2rem',
@@ -49,10 +50,13 @@ const ViewRecruitmentRoundPage = () => {
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
-        <h2>Recruitment Rounds</h2>
+        <h2>Onboarding: Recruitment Platform</h2>
       </header>
       <main style={styles.main}>
-        <h3>Monash Nova</h3>
+        <h3>Monash Nova Rover Recruitment</h3>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" style={{ color: 'black', borderColor:'black'}}>ARCHIVED ROUND AND SEND RESULTS</Button>
+        </Stack>
         <section style={styles.section}>
           <h4>Active Recruitment Rounds</h4>
           <TextField
@@ -69,11 +73,10 @@ const ViewRecruitmentRoundPage = () => {
             <Table style={styles.table}>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
-                  <TableCell>Round Name</TableCell>
                   <TableCell>Deadline</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
+                  <TableCell>Applications Received</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
