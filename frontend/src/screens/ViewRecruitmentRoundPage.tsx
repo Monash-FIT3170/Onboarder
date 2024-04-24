@@ -9,6 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 
 const styles = {
   recruitmentRoundPage: {
@@ -53,10 +54,16 @@ const ViewRecruitmentRoundPage = () => {
         <h2>Onboarding: Recruitment Platform</h2>
       </header>
       <main style={styles.main}>
-        <h3>Monash Nova Rover Recruitment</h3>
-        <Stack direction="row" spacing={2}>
-          <Button variant="outlined" style={{ color: 'black', borderColor:'black'}}>ARCHIVED ROUND AND SEND RESULTS</Button>
-        </Stack>
+        <Grid container alignItems="center">
+          <Grid item xs={6}>
+            <h3>Monash Nova Rover Recruitment</h3>
+          </Grid>
+          <Grid item xs={6} style={{ textAlign: 'right' }}>
+            <Button variant="outlined" style={{ color: 'black', borderColor: 'black' }}>
+              ARCHIVED ROUND AND SEND RESULTS
+            </Button>
+          </Grid>
+        </Grid>
         <section style={styles.section}>
           <h4>Active Recruitment Rounds</h4>
           <TextField
