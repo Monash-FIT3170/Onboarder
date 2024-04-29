@@ -10,6 +10,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import Typography from '@mui/material/Typography';
 
 const styles = {
   recruitmentRoundPage: {
@@ -68,18 +70,20 @@ const ViewRecruitmentRoundPage = () => {
             size="small"
             fullWidth
           />
+        <Grid item xs={6} style={{ textAlign: 'right' }}>
           <Button variant="contained" style={styles.addRoundButton}>
             ADD ROUND
           </Button>
+        </Grid>
           <TableContainer component={Paper}>
             <Table style={styles.table}>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
-                  <TableCell>Deadline</TableCell>
+                  <TableCell>Round Name</TableCell>
+                  <TableCell>Deadline<ArrowDownwardIcon/></TableCell>
                   <TableCell>Status</TableCell>
+                  <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
-                  <TableCell>Applications Received</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
