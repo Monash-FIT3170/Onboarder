@@ -56,12 +56,7 @@ const ViewRecruitmentRoundPage = () => {
       <main style={styles.main}>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            <h3>Monash Nova Rover Recruitment</h3>
-          </Grid>
-          <Grid item xs={6} style={{ textAlign: 'right' }}>
-            <Button variant="outlined" style={{ color: 'black', borderColor: 'black' }}>
-              ARCHIVED ROUND AND SEND RESULTS
-            </Button>
+            <h3>Recruitment Rounds</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
