@@ -1,4 +1,5 @@
 import { OpeningsTable, OpeningsTableProps } from "../components/OpeningsTable";
+import CustomTable from "../components/Table";
 
 const mockData: OpeningsTableProps = {
   results: [
@@ -15,10 +16,31 @@ const mockData: OpeningsTableProps = {
   ],
 };
 
+const tableData = [
+  {
+    deadline: '2024-05-10',
+    status: 'Open',
+    openings: 3,
+    applicationsReceived: 45
+  },
+  {
+    deadline: '2024-06-01',
+    status: 'Closed',
+    openings: 2,
+    applicationsReceived: 30
+  }
+];
+
 function RecruitmentRoundDetailsPage() {
   return (
     <>
-      <OpeningsTable {...mockData}></OpeningsTable>
+      <div style={{ marginTop: '10px' }}>
+        <CustomTable entries={tableData} />
+      </div>
+      <div style={{ marginTop: '100px' }}>
+        <OpeningsTable  {...mockData}></OpeningsTable>
+      </div>
+
     </>
   );
 }

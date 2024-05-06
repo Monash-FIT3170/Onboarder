@@ -11,7 +11,7 @@ function App() {
     <>
       <AppBarOnBoarder />
       <Routes>
-        <Route path="/" element={<RecruitmentPage />} />
+        <Route path="/" element={<RecruitmentRoundDetailsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
