@@ -1,4 +1,14 @@
-import { Typography } from "@mui/material";
+import {
+  TableContainer,
+  TableHead,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Button,
+  Paper,
+  Typography,
+} from "@mui/material";
 
 // Endpoint to be used:
 //      GET /recruitmentRounds/{roundId}/openings-
@@ -9,15 +19,65 @@ import { Typography } from "@mui/material";
 //     "current_page": {},
 //     "results": {
 //         [
-//             "opening_name": {},
+//             1: {
 //             "applications_received": {},
 //             "opening_status": {},
+//             "opening_name": {},
+//              },
+//             2: {
+//             "applications_received": {},
+//             "opening_status": {},
+//             "opening_name": {},
+//              },
 //         ]
 //     }
 // }
 
-function OpeningsTable() {
-  return <Typography variant="h5"> Openings Table </Typography>;
+interface openingsResultProps {
+  opening_name: string;
+  applications_received: number;
+  opening_status: string;
 }
 
-export default OpeningsTable;
+export interface OpeningsTableProps {
+  results: openingsResultProps[];
+}
+
+const generateRowFunction = (results: openingsResultProps[]) => {
+  return results.map((result) => {
+    return (
+      <TableRow
+        key={result.opening_name}
+        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+      >
+        <TableCell component="th" scope="row">
+          {result.opening_name}
+        </TableCell>
+        <TableCell>{result.applications_received}</TableCell>
+        <TableCell>{result.opening_status}</TableCell>
+        <TableCell>
+          <Button variant="contained"> View </Button>
+        </TableCell>
+      </TableRow>
+    );
+  });
+};
+
+export function OpeningsTable(props: OpeningsTableProps) {
+  return (
+    <>
+      <Typography variant="h5">Recruitment Round Openings</Typography>
+      <TableContainer component={Paper}>
+        <Table aria-label="openings_table">
+          <TableHead>
+            <TableCell> Opening Name </TableCell>
+            <TableCell> Applications Received </TableCell>
+            <TableCell> Status of Applications </TableCell>
+            <Button variant="contained"> Add Opening </Button>
+          </TableHead>
+          <TableBody>{generateRowFunction(props.results)}</TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
+}
