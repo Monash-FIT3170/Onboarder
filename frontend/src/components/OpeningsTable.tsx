@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import styled from "styled-components";
 
 // Endpoint to be used:
 //      GET /recruitmentRounds/{roundId}/openings-
@@ -32,6 +33,11 @@ import {
 //         ]
 //     }
 // }
+
+const HeadWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
 interface openingsResultProps {
   opening_name: string;
@@ -66,14 +72,16 @@ const generateRowFunction = (results: openingsResultProps[]) => {
 export function OpeningsTable(props: OpeningsTableProps) {
   return (
     <>
-      <Typography variant="h5">Recruitment Round Openings</Typography>
+      <HeadWrapper>
+        <Typography variant="h5">Recruitment Round Openings</Typography>
+        <Button variant="contained"> Add Opening </Button>
+      </HeadWrapper>
       <TableContainer component={Paper}>
         <Table aria-label="openings_table">
           <TableHead>
             <TableCell> Opening Name </TableCell>
             <TableCell> Applications Received </TableCell>
             <TableCell> Status of Applications </TableCell>
-            <Button variant="contained"> Add Opening </Button>
           </TableHead>
           <TableBody>{generateRowFunction(props.results)}</TableBody>
         </Table>
