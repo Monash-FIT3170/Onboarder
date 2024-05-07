@@ -1,4 +1,7 @@
+
+import Grid from '@mui/material/Grid';
 import React from 'react';
+import TextField from '@mui/material/TextField';
 
 const styles = {
     recruitmentRoundPage: {
@@ -43,7 +46,32 @@ const AddRecruitmentRoundPage = () => {
       <header style={styles.header}>
         <h2>Onboarding: Recruitment Platform</h2>
       </header>
-      
+
+      <main style={styles.main}>
+            <h3>
+                Create Recruitment Round
+            </h3>
+      </main>
+        <section style={styles.section}>
+            <h4 style={{ display: 'flex', alignItems: 'center', paddingLeft: '2rem'  }}>
+                Round Name:
+                <TextField
+                    style={{ marginLeft: '0.5rem' }}
+                    variant="outlined"
+                    placeholder="Enter round name"
+                    size="small"
+                />
+                <div style={{ flex: 1}} /> {/* This creates a flexible space */}
+                Deadline:
+                <TextField
+                    style={{ marginLeft: '0.5rem', paddingRight: '2rem' }}
+                    variant="outlined"
+                    placeholder="Enter deadline"
+                    size="small"
+                />
+            </h4>
+         
+        </section>
     
 
     
