@@ -1,12 +1,18 @@
 import Grid from "@mui/material/Grid"
 import React from "react"
-import TextField from "@mui/material/TextField"
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material"
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  TextField,
+} from "@mui/material"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon"
 import { DateTime } from "luxon"
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
-import Stack from "@mui/material/Stack"
+import { Label } from "@mui/icons-material"
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
@@ -51,46 +57,18 @@ const AddRecruitmentRoundPage = () => {
       </header>
 
       <main style={styles.main}>
-        <h2 style={{ textAlign: "center" }}>Create Recruitment Round</h2>
+        <h1 style={{ textAlign: "center" }}>Create Recruitment Round</h1>
       </main>
-      <Grid container spacing={6} justifyContent="center" alignItems="center">
-        <Grid item xs={3} sm={3}>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="flex-end"
-          >
-            <Grid item>
-              <h3>Round Name</h3>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={3} sm={3}>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="flex-start"
-          >
-            <Grid item>
-              <TextField placeholder="Enter round name" />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={3} sm={3}>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="flex-end"
-          >
-            <Grid item>
-              <h3>Deadline</h3>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={3} sm={3}>
+      <Grid
+        container
+        columnSpacing={1}
+        rowSpacing={6}
+        justifyContent="center"
+        alignItems="center"
+        //minHeight={'100vh'}
+      >
+        <Grid item xs={1} sm={1}></Grid>
+        <Grid item xs={2} sm={2}>
           <Grid
             container
             spacing={1}
@@ -98,33 +76,59 @@ const AddRecruitmentRoundPage = () => {
             justifyContent="flex-start"
           >
             <Grid item>
+              <h1 style={{ fontWeight: "normal" }}>Round Name</h1>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={2} sm={2}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="flex-start"
+          >
+            <Grid item xs={12}>
+              <TextField placeholder="Enter round name" fullWidth />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={1} sm={1}></Grid>
+        <Grid item xs={2} sm={2}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="flex-start"
+          >
+            <Grid item>
+              <h1 style={{ fontWeight: "normal" }}>Deadline</h1>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={2} sm={2}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="flex-start"
+          >
+            <Grid item xs={12}>
               <LocalizationProvider
                 dateAdapter={AdapterLuxon}
                 adapterLocale={"en-us"}
               >
-                <Stack spacing={3} sx={{ width: 300 }}>
-                  <DateTimePicker
-                    label="Date Picker"
-                    defaultValue={DateTime.fromISO("2022-04-17T18:30")}
-                  />
-                </Stack>
+                <DateTimePicker
+                  label="Date Picker"
+                  defaultValue={DateTime.fromISO("2022-04-17T18:30")}
+                  slotProps={{ textField: { fullWidth: true } }}
+                />
               </LocalizationProvider>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={3} sm={3}>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="flex-end"
-          >
-            <Grid item>
-              <h3>Semester</h3>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={3} sm={3}>
+        <Grid item xs={2} sm={2}></Grid>
+        <Grid item xs={1} sm={1}></Grid>
+        <Grid item xs={2} sm={2}>
           <Grid
             container
             spacing={1}
@@ -132,7 +136,19 @@ const AddRecruitmentRoundPage = () => {
             justifyContent="flex-start"
           >
             <Grid item>
-              <Select value={"Sem1"}>
+              <h1 style={{ fontWeight: "normal" }}>Semester</h1>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={2} sm={2}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="flex-start"
+          >
+            <Grid item xs={12}>
+              <Select value={"Sem1"} fullWidth>
                 <MenuItem value={"Sem1"}>Semester 1</MenuItem>
                 <MenuItem value={"Sem2"}>Semester 2</MenuItem>
                 <MenuItem value={"Summer"}>Summer Semester</MenuItem>
@@ -142,7 +158,38 @@ const AddRecruitmentRoundPage = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6} sm={6}></Grid>
+        <Grid item xs={7} sm={7}></Grid>
+        <Grid item xs={12} sm={12}>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="flex-end"
+            minHeight={'calc(100vh - 560px)'}
+          >
+            <Grid item xs={5} sm={5}></Grid>
+            <Grid item xs={1} sm={1}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                style={styles.addRoundButton}
+              >
+                Submit
+              </Button>
+            </Grid>
+            <Grid item xs={1} sm={1}>
+              <Button
+                variant="contained"
+                color="error"
+                size="large"
+                style={styles.addRoundButton}
+              >
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item xs={5} sm={5}></Grid>
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   )
