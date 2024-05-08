@@ -54,7 +54,7 @@ const ViewRecruitmentRoundPage = () => {
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
-        <h2>Onboarding: Recruitment Platform</h2>
+        <h4>Onboarding: Recruitment Platform</h4>
       </header>
       <main style={styles.main}>
         <Grid container alignItems="center">

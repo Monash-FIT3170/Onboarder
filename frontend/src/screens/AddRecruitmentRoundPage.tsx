@@ -11,7 +11,7 @@ const styles = {
     header: {
       backgroundColor: '#1976d2',
       color: '#fff',
-      padding: '1rem',
+      padding: '0.25rem',
       textAlign: 'left',
     },
     main: {
@@ -44,13 +44,13 @@ const AddRecruitmentRoundPage = () => {
     <div style={styles.recruitmentRoundPage}>
 
       <header style={styles.header}>
-        <h2>Onboarding: Recruitment Platform</h2>
+        <h4>Onboarding: Recruitment Platform</h4>
       </header>
 
       <main style={styles.main}>
-            <h3>
+            <h2 style={{textAlign: 'center'}}>
                 Create Recruitment Round
-            </h3>
+            </h2>
       </main>
         <section style={styles.section}>
             <h4 style={{ display: 'flex', alignItems: 'center', paddingLeft: '2rem'  }}>
