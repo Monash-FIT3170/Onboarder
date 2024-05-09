@@ -1,6 +1,6 @@
-function CreateOpening() {
+function CreateOpeningPage() {
 
     return <div>Create User Openings</div>;
   }
   
-  export default CreateOpening;
+  export default CreateOpeningPage;
