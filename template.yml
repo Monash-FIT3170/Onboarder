@@ -16,8 +16,8 @@ Resources:
           Properties:
             RestApiId:
               Ref: FEApi
-            Path: /openings
-            Method: get
+            Path: /{proxy+}
+            Method: ANY
 
   FEApi:
     Type: AWS::Serverless::Api
