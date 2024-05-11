@@ -5,7 +5,7 @@ Resources:
   RouterLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://onboarder-test-upload-bucket/ca2cfd09cf2592aad1c8a939b8f296c2
+      CodeUri: s3://onboarder-test-upload-bucket/8c782ec9f5b6f35b92a31aee353b288f
       Handler: app.lambda_handler
       Runtime: python3.12
       Timeout: 30
@@ -15,8 +15,8 @@ Resources:
           Properties:
             RestApiId:
               Ref: FEApi
-            Path: /hello
-            Method: get
+            Path: /{proxy+}
+            Method: ANY
     Metadata:
       SamResourceId: RouterLambda
   FEApi:
@@ -29,11 +29,96 @@ Resources:
           title: Frontend API
           version: 1.0.0
         paths:
-          /hello:
+          /recruitmentRounds:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
-                payloadFormatVersion: 2.0
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /recruitmentRounds/{roundId}:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /openings:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /recruitmentRounds/{roundId}/openings:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /recruitmentRounds/{roundId}/openings/{openingId}:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /openings/{openingId}/applications:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /applications/{applicationId}:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /applications/{applicationId}/accept:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
+          /applications/{applicationId}/reject:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: '2.0'
                 type: aws_proxy
                 uri:
                   Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations
