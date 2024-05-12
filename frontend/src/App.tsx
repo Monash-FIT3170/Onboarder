@@ -9,7 +9,6 @@ import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 function App() {
   return (
     <>
-      <h1>Onboarder</h1>
       <Routes>
         <Route path="/" element={<RecruitmentPage />} />
         <Route path="/login" element={<LoginPage />} />
