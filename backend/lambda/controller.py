@@ -1,24 +1,19 @@
+from supabase import create_client, Client
+import os
 
+# Set an environment variable
+os.environ["SUPABASE_URL"] = "https://bcnxifsqkyzzpgshacts.supabase.co"
+os.environ["SUPABASE_KEY"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjbnhpZnNxa3l6enBnc2hhY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU1NjM5NjQsImV4cCI6MjAzMTEzOTk2NH0.XT_aSkBLaaaX-66BqDF7Z1oP5qlgJLGNXSovibjatdU"
+
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 
 def get_all_rec_rounds():
-    records = [
-        {
-            'recruitment_round_id': 45678,
-            'year': 2024,
-            'semester': '1',
-            'student_team_ID': 12354,
-            'status': 'A'
-        },
-        {
-            'recruitment_round_id': 45677,
-            'year': 2023,
-            'semester': '2',
-            'student_team_ID': 12354,
-            'status': 'R'
-        }
-    ]
-    return records
+    response = supabase.table('RECRUITMENT_ROUND').select("*").execute()
+    return response
 
 
 def get_specific_rec_round(round_id):
@@ -64,7 +59,7 @@ def get_specific_open_for_round(round_id, opening_id):
             'app_role': 'Some text',
             'status': 'Accepting',
             'required_skills': [],
-            'desired_skills': []            
+            'desired_skills': []
         }
     ]
     return records
@@ -90,7 +85,7 @@ def get_all_opens_for_round(round_id):
             'app_role': 'Some text',
             'status': 'Accepting',
             'required_skills': [],
-            'desired_skills': []            
+            'desired_skills': []
         }
     ]
     return records
@@ -117,7 +112,7 @@ def get_all_applications_for_opening(opening_id):
             'course_enrolled': "Computer Science",
             'major_enrolled': "Subject",
             'cover_letter': "Lorem Ipsum Etc",
-            'skills': []   
+            'skills': []
         }
     ]
     return records
@@ -136,7 +131,7 @@ def get_application(application_id):
             'course_enrolled': "Computer Science",
             'major_enrolled': "Subject",
             'cover_letter': "Lorem Ipsum Etc",
-            'skills': []   
+            'skills': []
         }
     ]
     return records

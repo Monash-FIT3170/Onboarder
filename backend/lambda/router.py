@@ -6,10 +6,11 @@ import controller
 
 routes = dict()
 
-### maybe just use fastapi
+# maybe just use fastapi
+
 
 def dispatch(event: dict):
-    
+
     # intercept cognito here
 
     resource = event.get('resource')
@@ -23,7 +24,7 @@ def dispatch(event: dict):
     # possible validation here
 
     result = func(path_params, querystring_params, body)
-    
+
     return result
 
 
@@ -37,17 +38,17 @@ def route(path: str, methods: list[str]) -> Callable:
 
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
-        
+
         return wrapper
-    
+
     return inner
 
 
-### RECRUITMENT ROUNDS
+# RECRUITMENT ROUNDS
 
 @route('/recruitmentRounds', ['GET'])
 @route('/recruitmentRounds/{roundId}', ['GET'])
-def fetch_recruitment_rounds(path_params = {}, _ = {}, __ = {}):
+def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     round_id = None
     # parameter validation
     if path_params:
@@ -55,7 +56,10 @@ def fetch_recruitment_rounds(path_params = {}, _ = {}, __ = {}):
     if round_id:
         records = controller.get_specific_rec_round(round_id)
     else:
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         records = controller.get_all_rec_rounds()
+        if records is None:
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
     response = {
         'statusCode': 200,
@@ -65,7 +69,7 @@ def fetch_recruitment_rounds(path_params = {}, _ = {}, __ = {}):
 
 
 @route('/recruitmentRounds', ['POST'])
-def create_recruitment_round(_ = {}, __ = {}, ___ = {}):
+def create_recruitment_round(_={}, __={}, ___={}):
     controller.create_rec_round()
     response = {
         'statusCode': 201,
@@ -73,12 +77,12 @@ def create_recruitment_round(_ = {}, __ = {}, ___ = {}):
     return response
 
 
-### OPENINGS 
+# OPENINGS
 
 
 @route('/openings', ['GET'])
-def get_all_openings(_ = {}, __ = {}, ___ = {}):
-    
+def get_all_openings(_={}, __={}, ___={}):
+
     records = controller.get_all_openings()
 
     response = {
@@ -87,9 +91,10 @@ def get_all_openings(_ = {}, __ = {}, ___ = {}):
     }
     return response
 
+
 @route('/recruitmentRounds/{roundId}/openings', ['GET'])
 @route('/recruitmentRounds/{roundId}/openings/{openingId}', ['GET'])
-def get_openings_for_round(path_params = {}, _ = {}, __ = {}):
+def get_openings_for_round(path_params={}, _={}, __={}):
     # parameter validation
     round_id = path_params.get('roundId')
     opening_id = path_params.get('openingId')
@@ -104,9 +109,10 @@ def get_openings_for_round(path_params = {}, _ = {}, __ = {}):
     }
     return response
 
+
 @route('/recruitmentRounds/{roundId}/openings', ['POST'])
-def create_opening(_ = {}, __ = {}, ___ = {}):
-    
+def create_opening(_={}, __={}, ___={}):
+
     controller.create_opening()
 
     response = {
@@ -115,11 +121,11 @@ def create_opening(_ = {}, __ = {}, ___ = {}):
     return response
 
 
-### APPLICATIONS
+# APPLICATIONS
 
 @route('/openings/{openingId}/applications', ['POST'])
-def create_application(_ = {}, __ = {}, ___ = {}):
-    
+def create_application(_={}, __={}, ___={}):
+
     controller.create_application()
 
     response = {
@@ -129,7 +135,7 @@ def create_application(_ = {}, __ = {}, ___ = {}):
 
 
 @route('/openings/{openingId}/applications', ['GET'])
-def get_applications_for_opening(path_params = {}, _ = {}, __ = {}):
+def get_applications_for_opening(path_params={}, _={}, __={}):
     # parameter validation
     opening_id = path_params.get('openingId')
     records = controller.get_all_applications_for_opening(opening_id)
@@ -138,11 +144,14 @@ def get_applications_for_opening(path_params = {}, _ = {}, __ = {}):
         'statusCode': 200,
         'body': json.dumps(records)
     }
+
+    print("hi")
+
     return response
 
 
 @route('/applications/{applicationId}', ['GET'])
-def get_application(path_params = {}, _ = {}, __ = {}):
+def get_application(path_params={}, _={}, __={}):
     # parameter validation
     application_id = path_params.get('applicationId')
     records = controller.get_application(application_id)
@@ -156,9 +165,9 @@ def get_application(path_params = {}, _ = {}, __ = {}):
 
 @route('/applications/{applicationId}/accept', ['POST'])
 @route('/applications/{applicationId}/reject', ['POST'])
-def create_application(_ = {}, __ = {}, ___ = {}):
-    
-    if True: # path = accept
+def create_application(_={}, __={}, ___={}):
+
+    if True:  # path = accept
         controller.accept_application()
     else:
         controller.reject_application()
