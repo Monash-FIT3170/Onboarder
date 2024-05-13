@@ -34,8 +34,8 @@ const generateTableRows = (entries: TableEntryProps[]) => {
     <TableRow key={index}>
       <TableCell>{entry.deadline}</TableCell>
       <TableCell>{entry.status}</TableCell>
-      <TableCell>{entry.openings}</TableCell>
-      <TableCell>{entry.applicationsReceived}</TableCell>
+      <TableCell align="center">{entry.openings}</TableCell>
+      <TableCell align="center">{entry.applicationsReceived}</TableCell>
     </TableRow>
   ));
 };
@@ -64,8 +64,8 @@ const CustomTable: React.FC<TableProps> = ({ entries }) => {
             <TableRow>
               <TableCell>Deadline</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Openings</TableCell>
-              <TableCell>Applications Received</TableCell>
+              <TableCell align="center">Openings</TableCell>
+              <TableCell align="center">Applications Received</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{generateTableRows(entries)}</TableBody>

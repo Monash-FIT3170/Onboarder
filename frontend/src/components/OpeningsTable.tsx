@@ -64,12 +64,12 @@ const generateRowFunction = (results: openingsResultProps[]) => {
         key={result.opening_name}
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
-        <TableCell component="th" scope="row" align="center">
+        <TableCell component="th" scope="row" >
           {result.opening_name}
         </TableCell>
-        <TableCell align="center">{result.applications_received}</TableCell>
-        <TableCell align="center">{result.opening_status}</TableCell>
-        <TableCell align="center">
+        <TableCell>{result.applications_received}</TableCell>
+        <TableCell >{result.opening_status}</TableCell>
+        <TableCell >
           <Button variant="contained"> View </Button>
         </TableCell>
       </TableRow>
@@ -89,9 +89,9 @@ export function OpeningsTable(props: OpeningsTableProps) {
       <TableContainer component={Paper}>
         <Table aria-label="openings_table">
           <TableHead>
-            <TableCell align="center"> Opening Name </TableCell>
-            <TableCell align="center"> Applications Received </TableCell>
-            <TableCell align="center"> Status of Applications </TableCell>
+            <TableCell> Opening Name </TableCell>
+            <TableCell> Applications Received </TableCell>
+            <TableCell> Status of Applications </TableCell>
           </TableHead>
           <TableBody>{generateRowFunction(props.results)}</TableBody>
         </Table>
