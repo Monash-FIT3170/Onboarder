@@ -11,7 +11,7 @@ function AppBarOnBoarder() {
         <AppBar position="static" sx={{ margin: 0 }}>
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Onboarder
+              Onboarding: Recruitment Platform
             </Typography>
           </Toolbar>
         </AppBar>

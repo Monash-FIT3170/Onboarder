@@ -4,12 +4,12 @@ import CustomTable from "../components/Table";
 const mockData: OpeningsTableProps = {
   results: [
     {
-      opening_name: "Bruh",
+      opening_name: "Events Officer",
       applications_received: 10,
       opening_status: "All Reviewed",
     },
     {
-      opening_name: "Bruh 2",
+      opening_name: "Social Media Manager",
       applications_received: 5,
       opening_status: "5 Pending Review",
     },

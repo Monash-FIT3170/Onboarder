@@ -37,6 +37,14 @@ import styled from "styled-components";
 const HeadWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+  position: relative;
+  top: 10px;
+`;
+
+const ButtonWrapper = styled.div`
+  position: relative;
+  left: -20px;
 `;
 
 interface openingsResultProps {
@@ -74,7 +82,9 @@ export function OpeningsTable(props: OpeningsTableProps) {
     <>
       <HeadWrapper>
         <Typography variant="h5">Recruitment Round Openings</Typography>
-        <Button variant="contained"> Add Opening </Button>
+        <ButtonWrapper>
+          <Button variant="contained"> Add Opening </Button>
+        </ButtonWrapper>
       </HeadWrapper>
       <TableContainer component={Paper}>
         <Table aria-label="openings_table">
