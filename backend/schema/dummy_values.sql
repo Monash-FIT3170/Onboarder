@@ -5,18 +5,14 @@ VALUES
     ('Team C'),
     ('Team D'),
     ('Team E');
-  
-INSERT INTO public."USER" (email, role, student_team_id, name)
-VALUES
-    ('user1@example.com', 'admin', 1, 'John Doe');
 
 INSERT INTO public."RECRUITMENT_ROUND" (semester, year, student_team_id, status)
 VALUES
-    ('Spring', '2024-01-01', 1, 'open'),
-    ('Fall', '2023-09-01', 2, 'closed'),
-    ('Spring', '2023-01-01', 3, 'open'),
-    ('Fall', '2022-09-01', 4, 'closed'),
-    ('Spring', '2022-01-01', 5, 'open');
+    ('1', 2024, 1, 'active'),
+    ('2', 2024, 2, 'active'),
+    ('1', 2024, 3, 'archived'),
+    ('2', 2024, 4, 'active'),
+    ('2', 2024, 5, 'inactive');
 
 INSERT INTO public."OPENING" ("recruitment_round_ID", title, description, app_role, status, required_skills, desired_skills)
 VALUES
