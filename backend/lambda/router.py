@@ -70,12 +70,64 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
 
 
 @route('/recruitmentRounds', ['POST'])
-def create_recruitment_round(_={}, __={}, ___={}):
-    controller.create_rec_round()
-    response = {
-        'statusCode': 201,
-    }
-    return response
+def create_recruitment_round(_={}, __={}, body={}):
+
+    # Get the request body
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'})
+        }
+        return response
+
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'})
+        }
+        return response
+
+    # Validate the request body structure and ensure all required fields are present
+    required_fields = ['semester', 'year', 'student_team_id', 'status']
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+        }
+        return response
+
+    try:
+        semester = int(data['semester'])
+        year = data["year"]
+        student_team_id = int(data['student_team_id'])
+        status = str(data['status'])
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'})
+        }
+
+    # Create recruitment round
+    try:
+        response = controller.create_rec_round(
+            semester, year, student_team_id, status)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'success': True,
+                'data': response
+            })
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)})
+        }
 
 
 # OPENINGS

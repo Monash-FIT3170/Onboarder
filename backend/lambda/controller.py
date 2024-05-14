@@ -25,8 +25,19 @@ def get_specific_rec_round(round_id):
     return data
 
 
-def create_rec_round():
-    return 1
+def create_rec_round(semester, year, student_team_id, status):
+    data = {
+        "semester": semester,
+        "year": year,
+        "student_team_id": student_team_id,
+        "status": status
+    }
+
+    response = supabase.table('RECRUITMENT_ROUND').insert(data).execute()
+
+    # data is the newly created recruitment round
+    data = response.data
+    return data
 
 
 def get_all_openings():
