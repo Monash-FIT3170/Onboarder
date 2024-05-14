@@ -88,7 +88,10 @@ def get_all_openings(_={}, __={}, ___={}):
 
     response = {
         'statusCode': 200,
-        'body': json.dumps(records)
+        'body': records,
+        'headers': {
+            "Content-Type": "application/json"
+        }
     }
     return response
 
@@ -106,8 +109,12 @@ def get_openings_for_round(path_params={}, _={}, __={}):
 
     response = {
         'statusCode': 200,
-        'body': json.dumps(records)
+        'body': records,
+        'headers': {
+            "Content-Type": "application/json"
+        }
     }
+
     return response
 
 
@@ -143,11 +150,11 @@ def get_applications_for_opening(path_params={}, _={}, __={}):
 
     response = {
         'statusCode': 200,
-        'body': json.dumps(records)
+        'body': records,
+        'headers': {
+            "Content-Type": "application/json"
+        }
     }
-
-    print("hi")
-
     return response
 
 
@@ -159,7 +166,10 @@ def get_application(path_params={}, _={}, __={}):
 
     response = {
         'statusCode': 200,
-        'body': json.dumps(records)
+        'body': records,
+        'headers': {
+            "Content-Type": "application/json"
+        }
     }
     return response
 
