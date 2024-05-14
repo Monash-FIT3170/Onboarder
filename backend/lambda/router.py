@@ -171,14 +171,66 @@ def get_openings_for_round(path_params={}, _={}, __={}):
 
 
 @route('/recruitmentRounds/{roundId}/openings', ['POST'])
-def create_opening(_={}, __={}, ___={}):
+def create_opening(path_params={}, __={}, body={}):
+    # Get the request body
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'})
+        }
+        return response
 
-    controller.create_opening()
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'})
+        }
+        return response
 
-    response = {
-        'statusCode': 201
-    }
-    return response
+    # Validate the request body structure and ensure all required fields are present
+    required_fields = ['title', 'description',
+                       'app_role', 'status', 'required_skills', 'desired_skills']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+        }
+        return response
+
+    try:
+        title = str(data['title'])
+        description = str(data['description'])
+        app_role = str(data['app_role'])
+        status = str(data['status'])
+        required_skills = data['required_skills']
+        desired_skills = data['desired_skills']
+        round_id = path_params.get('roundId')
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'})
+        }
+
+    # Create opening
+    try:
+        response = controller.create_opening(
+            round_id, title, description, app_role, status, required_skills, desired_skills)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'success': True,
+                'data': response
+            })
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)})
+        }
 
 
 # APPLICATIONS

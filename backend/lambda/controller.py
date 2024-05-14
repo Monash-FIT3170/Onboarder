@@ -62,8 +62,20 @@ def get_all_opens_for_round(round_id):
     return data
 
 
-def create_opening():
-    return 1
+def create_opening(recruitment_round_ID, title, description, app_role, status, required_skills, desired_skills):
+    data = {
+        "recruitment_round_ID": recruitment_round_ID,
+        "title": title,
+        "description": description,
+        "app_role": app_role,
+        "status": status,
+        "required_skills": required_skills,
+        "desired_skills": desired_skills
+    }
+    response = supabase.table('OPENING').insert(data).execute()
+
+    data = response.data
+    return data
 
 
 def create_application():
