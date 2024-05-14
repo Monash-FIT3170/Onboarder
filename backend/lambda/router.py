@@ -236,14 +236,70 @@ def create_opening(path_params={}, __={}, body={}):
 # APPLICATIONS
 
 @route('/openings/{openingId}/applications', ['POST'])
-def create_application(_={}, __={}, ___={}):
+def create_application(path_params={}, __={}, body={}):
+    # Get the request body
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'})
+        }
+        return response
 
-    controller.create_application()
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'})
+        }
+        return response
 
-    response = {
-        'statusCode': 201
-    }
-    return response
+    # Validate the request body structure and ensure all required fields are present
+    required_fields = ['email', 'name', 'phone', 'semesters_until_completion',
+                       'current_semester', 'course_enrolled', 'major_enrolled', 'cover_letter', 'skills']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+        }
+        return response
+
+    try:
+        email = str(data['email'])
+        name = str(data['name'])
+        phone = str(data['phone'])
+        semesters_until_completion = int(data['semesters_until_completion'])
+        current_semester = int(data['current_semester'])
+        course_enrolled = str(data['course_enrolled'])
+        major_enrolled = str(data['major_enrolled'])
+        cover_letter = str(data['cover_letter'])
+        skills = data['skills']
+        openingId = path_params.get('openingId')
+
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'})
+        }
+
+    # Create application
+    try:
+        response = controller.create_application(
+            openingId, email, name, phone, semesters_until_completion, current_semester, course_enrolled, major_enrolled, cover_letter, skills)
+        return {
+            'statusCode': 201,
+            'body': json.dumps({
+                'success': True,
+                'data': response
+            })
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)})
+        }
 
 
 @route('/openings/{openingId}/applications', ['GET'])

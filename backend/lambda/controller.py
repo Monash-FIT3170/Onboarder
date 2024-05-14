@@ -78,8 +78,25 @@ def create_opening(recruitment_round_ID, title, description, app_role, status, r
     return data
 
 
-def create_application():
-    return 1
+def create_application(
+    openingId, email, name, phone, semesters_until_completion, current_semester, course_enrolled, major_enrolled, cover_letter, skills
+):
+    data = {
+        "opening_id": int(openingId),
+        "email": email,
+        "name": name,
+        "phone": phone,
+        "semesters_until_completion": semesters_until_completion,
+        "current_semester": current_semester,
+        "course_enrolled": course_enrolled,
+        "major_enrolled": major_enrolled if major_enrolled else None,
+        "cover_letter": cover_letter if cover_letter else None,
+        "skills": skills
+    }
+    response = supabase.table('APPLICATION').insert(data).execute()
+
+    data = response.data
+    return data
 
 
 def get_all_applications_for_opening(opening_id):
