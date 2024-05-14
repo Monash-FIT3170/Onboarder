@@ -13,20 +13,16 @@ supabase: Client = create_client(url, key)
 
 def get_all_rec_rounds():
     response = supabase.table('RECRUITMENT_ROUND').select("*").execute()
-    return response
+    data = response.data
+    return data
 
 
 def get_specific_rec_round(round_id):
-    records = [
-        {
-            'recruitment_round_id': int(round_id),
-            'year': 2024,
-            'semester': '1',
-            'student_team_ID': 12354,
-            'status': 'A'
-        }
-    ]
-    return records
+    response = supabase.table('RECRUITMENT_ROUND').select(
+        "*").eq("id", round_id).execute()
+
+    data = response.data
+    return data
 
 
 def create_rec_round():

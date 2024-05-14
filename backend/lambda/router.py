@@ -18,7 +18,7 @@ def dispatch(event: dict):
     func = routes.get(resource, {}).get(method)
 
     path_params = event.get('pathParameters', {})
-    print(event)
+    # print(event)
     querystring_params = event.get('queryStringParameters', {})
     body = event.get('body', {})
     # possible validation here
@@ -54,17 +54,18 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     if path_params:
         round_id = path_params.get('roundId')
     if round_id:
-        records = controller.get_specific_rec_round(round_id)
+        data = controller.get_specific_rec_round(round_id)
     else:
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        records = controller.get_all_rec_rounds()
-        if records is None:
-            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        data = controller.get_all_rec_rounds()
 
     response = {
         'statusCode': 200,
-        'body': json.dumps(records)
+        'body': data,
+        'headers': {
+            "Content-Type": "application/json"
+        }
     }
+
     return response
 
 
