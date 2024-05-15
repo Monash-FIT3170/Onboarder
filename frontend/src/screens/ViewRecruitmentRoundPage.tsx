@@ -8,7 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Typography from '@mui/material/Typography';
@@ -26,6 +25,10 @@ const styles = {
   },
   main: {
     padding: '2rem',
+  },
+  monashNova: {
+    color: 'gray',
+    marginBottom: '1rem',
   },
   section: {
     marginBottom: '2rem',
@@ -56,13 +59,25 @@ const ViewRecruitmentRoundPage = () => {
         <h2>Onboarding: Recruitment Platform</h2>
       </header>
       <main style={styles.main}>
+        <Typography variant="h4" style={styles.monashNova}>
+          Monash Nova
+        </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <h3>Recruitment Rounds</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
-          <h4>Active Recruitment Rounds</h4>
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item>
+              <h4>Active Recruitment Rounds</h4>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" style={styles.addRoundButton}>
+                ADD ROUND
+              </Button>
+            </Grid>
+          </Grid>
           <TextField
             style={{ marginBottom: '1rem' }}
             variant="outlined"
@@ -70,20 +85,24 @@ const ViewRecruitmentRoundPage = () => {
             size="small"
             fullWidth
           />
-        <Grid item xs={6} style={{ textAlign: 'right' }}>
-          <Button variant="contained" style={styles.addRoundButton}>
-            ADD ROUND
-          </Button>
-        </Grid>
           <TableContainer component={Paper}>
             <Table style={styles.table}>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>Deadline<ArrowDownwardIcon/></TableCell>
+                  <TableCell>
+                    <Grid container alignItems="center">
+                      <Grid item>Deadline</Grid>
+                      <Grid item>
+                        <ArrowDownwardIcon fontSize="small" />
+                      </Grid>
+                    </Grid>
+                  </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
+                  <TableCell>Applications Received</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -94,13 +113,6 @@ const ViewRecruitmentRoundPage = () => {
         </section>
         <section style={styles.section}>
           <h4>Archived Recruitment Rounds</h4>
-          <TextField
-            style={{ marginBottom: '1rem' }}
-            variant="outlined"
-            placeholder="Round Name, Deadline, etc..."
-            size="small"
-            fullWidth
-          />
           <TableContainer component={Paper}>
             <Table style={styles.table}>
               <TableHead style={styles.tableHeader}>
