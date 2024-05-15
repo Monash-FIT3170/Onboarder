@@ -1,17 +1,17 @@
-import React from 'react';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from "react"
+import TextField from "@mui/material/TextField"
+import Button from "@mui/material/Button"
+import Table from "@mui/material/Table"
+import TableBody from "@mui/material/TableBody"
+import TableCell from "@mui/material/TableCell"
+import TableContainer from "@mui/material/TableContainer"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
+import Paper from "@mui/material/Paper"
+import Grid from "@mui/material/Grid"
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
+import Typography from "@mui/material/Typography"
+import axios from "axios"
 
 const styles = {
   recruitmentRoundPage: {
@@ -28,8 +28,8 @@ const styles = {
     padding: "2rem",
   },
   monashNova: {
-    color: 'gray',
-    marginBottom: '1rem',
+    color: "gray",
+    marginBottom: "1rem",
   },
   section: {
     marginBottom: "2rem",
@@ -54,6 +54,35 @@ const styles = {
 }
 
 const ViewRecruitmentRoundPage = () => {
+  const [data, setData] = useState([])
+  const [sum, setSum] = useState(0)
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:3000/recruitmentRounds")
+      .then((response) => {
+        setData(response.data)
+        Promise.all(
+          response.data.map((item: any) =>
+            axios.get(`http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`)
+          )
+        )
+          .then((responses) => {
+            // Calculate the sum of the results from the second API call
+            const sum = responses.reduce(
+              (total, response) => total + response.data,
+              0
+            )
+            setSum(sum)
+          })
+          .catch((error) => {
+            console.error("There was an error!", error)
+          })
+      })
+      .catch((error) => {
+        console.error("There was an error!", error)
+      })
+  }, [])
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
@@ -86,17 +115,17 @@ const ViewRecruitmentRoundPage = () => {
             size="small"
             fullWidth
           />
-        <Grid item xs={6} style={{ textAlign: 'right' }}>
-          <Button variant="contained" style={styles.addRoundButton}>
-            ADD ROUND
-          </Button>
-        </Grid>
+          {/* <Grid item xs={6} style={{ textAlign: "right" }}>
+          </Grid> */}
           <TableContainer component={Paper}>
             <Table style={styles.table}>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>Deadline<ArrowDownwardIcon/></TableCell>
+                  <TableCell>
+                    Deadline
+                    <ArrowDownwardIcon />
+                  </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
@@ -104,14 +133,27 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{/* Add active recruitment rounds rows */}</TableBody>
+              <TableBody>
+                {/* Add active recruitment rounds rows */}
+                {data &&
+                  data.map((item: any) => (
+                    <TableRow key={item.recruitment_round_id}>
+                      <TableCell>{item.recruitment_round_id}</TableCell>
+                      <TableCell>{"TODO"}</TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>{item.semester}</TableCell>
+                      <TableCell>{"TODO"}</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
             </Table>
           </TableContainer>
         </section>
         <section style={styles.section}>
           <h4>Archived Recruitment Rounds</h4>
           <TextField
-            style={{ marginBottom: '1rem' }}
+            style={{ marginBottom: "1rem" }}
             variant="outlined"
             placeholder="Round Name, Deadline, etc..."
             size="small"
