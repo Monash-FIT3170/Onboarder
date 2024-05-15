@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r backend/requirements.txt
+  build:
+    commands:
+      - echo "Building the Lambda function..."
+      - mkdir -p dist
+      - cd backend/lambda
+      - zip -r ../../dist/function.zip .
+      - cd ../..
+  post_build:
+    commands:
+      - echo "Deploying the Lambda function..."
+      - sam package --template-file sam.yml --s3-bucket onboarder-test-upload-bucket --output-template-file dist/packaged.yml
+      - sam deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM
+
+artifacts:
+  files:
+    - function.zip
+    - packaged.yml
+    - appspec.yml
+  base-directory: dist
