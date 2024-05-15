@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import Typography from "@mui/material/Typography"
 import axios from "axios"
+import { Link } from 'react-router-dom';
 
 const styles = {
   recruitmentRoundPage: {
@@ -64,7 +65,9 @@ const ViewRecruitmentRoundPage = () => {
         setData(response.data)
         Promise.all(
           response.data.map((item: any) =>
-            axios.get(`http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`)
+            axios.get(
+              `http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`
+            )
           )
         )
           .then((responses) => {
@@ -103,9 +106,14 @@ const ViewRecruitmentRoundPage = () => {
               <h4>Active Recruitment Rounds</h4>
             </Grid>
             <Grid item>
-              <Button variant="contained" style={styles.addRoundButton}>
-                ADD ROUND
-              </Button>
+              <Link
+                to="/addrecruitmentround"
+                style={{ textDecoration: "none" }}
+              >
+                <Button variant="contained" style={styles.addRoundButton}>
+                  ADD ROUND
+                </Button>
+              </Link>
             </Grid>
           </Grid>
           <TextField
