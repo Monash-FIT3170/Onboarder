@@ -28,7 +28,7 @@ CREATE TABLE public."RECRUITMENT_ROUND" (
     semester VARCHAR NOT NULL,
     year BIGINT NOT NULL,
     student_team_id BIGINT NOT NULL,
-    status VARCHAR NOT NULL CHECK (status IN ('A', 'I')),
+    status VARCHAR NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I')),
     CONSTRAINT RECRUITMENT_ROUND_pkey PRIMARY KEY (id),
     CONSTRAINT RECRUITMENT_ROUND_unique UNIQUE (semester, year, student_team_id),
     CONSTRAINT RECRUITMENT_ROUND_student_team_id_fkey FOREIGN KEY (student_team_id) REFERENCES "STUDENT_TEAM" (id)
@@ -40,7 +40,7 @@ CREATE TABLE public."OPENING" (
     title VARCHAR NOT NULL,
     description VARCHAR NULL,
     app_role VARCHAR NOT NULL,
-    status VARCHAR NOT NULL CHECK (status IN ('A', 'I')),
+    status VARCHAR NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I')),
     required_skills VARCHAR[] NOT NULL,
     desired_skills VARCHAR[] NULL,
     CONSTRAINT OPENING_pkey PRIMARY KEY (id),
