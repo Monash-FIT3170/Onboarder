@@ -1,7 +1,7 @@
 import { OpeningsTable, OpeningsTableProps } from "../components/OpeningsTable";
 import CustomTable from "../components/Table";
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const mockData: OpeningsTableProps = {
   results: [
@@ -20,17 +20,17 @@ const mockData: OpeningsTableProps = {
 
 const tableData = [
   {
-    deadline: '2024-05-10',
-    status: 'Open',
+    deadline: "2024-05-10",
+    status: "Open",
     openings: 3,
-    applicationsReceived: 45
+    applicationsReceived: 45,
   },
   {
-    deadline: '2024-06-01',
-    status: 'Closed',
+    deadline: "2024-06-01",
+    status: "Closed",
     openings: 2,
-    applicationsReceived: 30
-  }
+    applicationsReceived: 30,
+  },
 ];
 
 function RecruitmentRoundDetailsPage() {
@@ -39,43 +39,42 @@ function RecruitmentRoundDetailsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const roundsResponse = await axios.get('/api/recruitment-rounds');
-        const openingsResponse = await axios.get('/api/openings');
-  
+        const roundsResponse = await axios.get(
+          "http://127.0.0.1:3000/recruitmentRounds/2"
+        );
+        const openingsResponse = await axios.get(
+          "http://127.0.0.1:3000/recruitmentRounds/2/openings"
+        );
+
         setRounds(roundsResponse.data);
         setOpening({ results: openingsResponse.data });
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, 
-  []);
+  }, []);
   const archiveRound = async (id) => {
     try {
       await axios.post(`/api/recruitment-rounds/${id}/archive`);
       // Update the state to remove the archived round
       setRounds((prevRounds) => prevRounds.filter((round) => round.id !== id));
     } catch (error) {
-      console.error('Error archiving round:', error);
+      console.error("Error archiving round:", error);
     }
   };
-  
+
   return (
     <>
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ marginTop: "10px" }}>
         <CustomTable entries={tableData} />
       </div>
-      <div style={{ marginTop: '100px' }}>
-        <OpeningsTable  {...mockData}></OpeningsTable>
+      <div style={{ marginTop: "100px" }}>
+        <OpeningsTable {...mockData}></OpeningsTable>
       </div>
-
     </>
   );
-  
 }
-
-
 
 export default RecruitmentRoundDetailsPage;
