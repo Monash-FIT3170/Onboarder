@@ -9,7 +9,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-
+import React from 'react';
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
 
@@ -19,6 +19,7 @@ const HeadWrapper = styled.div`
 `;
 
 interface TableEntryProps {
+  id: number;
   deadline: string; // assuming deadline is a date in string format
   status: string;
   openings: number;
@@ -27,6 +28,7 @@ interface TableEntryProps {
 
 interface TableProps {
   entries: TableEntryProps[];
+  onArchive: (id: number) => void;
 }
 
 const generateTableRows = (entries: TableEntryProps[]) => {

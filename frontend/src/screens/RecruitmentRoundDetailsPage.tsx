@@ -1,5 +1,7 @@
 import { OpeningsTable, OpeningsTableProps } from "../components/OpeningsTable";
 import CustomTable from "../components/Table";
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 
 const mockData: OpeningsTableProps = {
   results: [
@@ -32,6 +34,34 @@ const tableData = [
 ];
 
 function RecruitmentRoundDetailsPage() {
+  const [rounds, setRounds] = useState([]);
+  const [openings, setOpening] = useState<OpeningsTableProps>({ results: [] });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const roundsResponse = await axios.get('/api/recruitment-rounds');
+        const openingsResponse = await axios.get('/api/openings');
+  
+        setRounds(roundsResponse.data);
+        setOpening({ results: openingsResponse.data });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, 
+  []);
+  const archiveRound = async (id) => {
+    try {
+      await axios.post(`/api/recruitment-rounds/${id}/archive`);
+      // Update the state to remove the archived round
+      setRounds((prevRounds) => prevRounds.filter((round) => round.id !== id));
+    } catch (error) {
+      console.error('Error archiving round:', error);
+    }
+  };
+  
   return (
     <>
       <div style={{ marginTop: '10px' }}>
@@ -43,6 +73,9 @@ function RecruitmentRoundDetailsPage() {
 
     </>
   );
+  
 }
+
+
 
 export default RecruitmentRoundDetailsPage;
