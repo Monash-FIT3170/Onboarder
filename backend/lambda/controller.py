@@ -112,8 +112,7 @@ def get_specific_student_team(student_team_id):
 # RECRUITMENT ROUND GETTERS
 
 def get_all_rec_rounds():
-    response = supabase.table('RECRUITMENT_ROUND').select("*").execute()
-
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
     return response.data
 
 def get_specific_rec_round(round_id):
