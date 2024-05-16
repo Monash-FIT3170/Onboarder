@@ -6,8 +6,12 @@ import controller
 
 routes = dict()
 
-# maybe just use fastapi
-
+HEADERS = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*"
+}
 
 def dispatch(event: dict):
 
@@ -61,9 +65,7 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     response = {
         'statusCode': 200,
         'body': data,
-        'headers': {
-            "Content-Type": "application/json"
-        }
+        'headers': HEADERS
     }
 
     return response
@@ -76,7 +78,8 @@ def create_recruitment_round(_={}, __={}, body={}):
     if not body:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'})
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
         }
         return response
 
@@ -86,7 +89,8 @@ def create_recruitment_round(_={}, __={}, body={}):
     except ValueError:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'})
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
         }
         return response
 
@@ -97,7 +101,8 @@ def create_recruitment_round(_={}, __={}, body={}):
     if missing_fields:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
         }
         return response
 
@@ -109,7 +114,8 @@ def create_recruitment_round(_={}, __={}, body={}):
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'})
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
         }
 
     # Create recruitment round
@@ -121,12 +127,14 @@ def create_recruitment_round(_={}, __={}, body={}):
             'body': json.dumps({
                 'success': True,
                 'data': response
-            })
+            }),
+            'headers': HEADERS
         }
     except Exception as e:
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
         }
 
 
@@ -141,9 +149,7 @@ def get_all_openings(_={}, __={}, ___={}):
     response = {
         'statusCode': 200,
         'body': records,
-        'headers': {
-            "Content-Type": "application/json"
-        }
+        'headers': HEADERS
     }
     return response
 
@@ -162,9 +168,7 @@ def get_openings_for_round(path_params={}, _={}, __={}):
     response = {
         'statusCode': 200,
         'body': records,
-        'headers': {
-            "Content-Type": "application/json"
-        }
+        'headers': HEADERS
     }
 
     return response
@@ -176,7 +180,8 @@ def create_opening(path_params={}, __={}, body={}):
     if not body:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'})
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
         }
         return response
 
@@ -186,7 +191,8 @@ def create_opening(path_params={}, __={}, body={}):
     except ValueError:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'})
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
         }
         return response
 
@@ -197,7 +203,8 @@ def create_opening(path_params={}, __={}, body={}):
     if missing_fields:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
         }
         return response
 
@@ -212,7 +219,8 @@ def create_opening(path_params={}, __={}, body={}):
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'})
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
         }
 
     # Create opening
@@ -224,12 +232,14 @@ def create_opening(path_params={}, __={}, body={}):
             'body': json.dumps({
                 'success': True,
                 'data': response
-            })
+            }),
+            'headers': HEADERS
         }
     except Exception as e:
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
         }
 
 
@@ -241,7 +251,8 @@ def create_application(path_params={}, __={}, body={}):
     if not body:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'})
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
         }
         return response
 
@@ -251,7 +262,8 @@ def create_application(path_params={}, __={}, body={}):
     except ValueError:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'})
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
         }
         return response
 
@@ -262,7 +274,8 @@ def create_application(path_params={}, __={}, body={}):
     if missing_fields:
         response = {
             'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'})
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
         }
         return response
 
@@ -281,7 +294,8 @@ def create_application(path_params={}, __={}, body={}):
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'})
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
         }
 
     # Create application
@@ -293,12 +307,14 @@ def create_application(path_params={}, __={}, body={}):
             'body': json.dumps({
                 'success': True,
                 'data': response
-            })
+            }),
+            'headers': HEADERS
         }
     except Exception as e:
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
         }
 
 
@@ -311,9 +327,7 @@ def get_applications_for_opening(path_params={}, _={}, __={}):
     response = {
         'statusCode': 200,
         'body': records,
-        'headers': {
-            "Content-Type": "application/json"
-        }
+        'headers': HEADERS
     }
     return response
 
@@ -327,9 +341,7 @@ def get_application(path_params={}, _={}, __={}):
     response = {
         'statusCode': 200,
         'body': records,
-        'headers': {
-            "Content-Type": "application/json"
-        }
+        'headers': HEADERS
     }
     return response
 
@@ -344,6 +356,7 @@ def create_application(_={}, __={}, ___={}):
         controller.reject_application()
 
     response = {
-        'statusCode': 201
+        'statusCode': 201,
+        'headers': HEADERS
     }
     return response
