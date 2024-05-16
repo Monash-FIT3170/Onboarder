@@ -97,30 +97,42 @@ def create_application(
 
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
+# STUDENT TEAM GETTERS
+
+def get_all_student_teams():
+    response = supabase.table('STUDENT_TEAM').select("*").execute()
+    return response.data
+
+def get_specific_student_team(student_team_id):
+    response = supabase.table('STUDENT_TEAM').select(
+        "*").eq("id", student_team_id).execute()
+    
+    return response.data
+
 # RECRUITMENT ROUND GETTERS
 
 def get_all_rec_rounds():
     response = supabase.table('RECRUITMENT_ROUND').select("*").execute()
-    data = response.data
-    return data
+
+    return response.data
 
 def get_specific_rec_round(round_id):
     response = supabase.table('RECRUITMENT_ROUND').select(
         "*").eq("id", round_id).execute()
 
-    data = response.data
-    return data
+    return response.data
+
+def get_rec_round_student_team_id(round_id):
+    response = supabase.table('RECRUITMENT_ROUND').select(
+        "student_team_id").eq("id", round_id).execute()
+    
+    return response.data
 
 def get_rec_round_academic_period(round_id):
     response = supabase.table('RECRUITMENT_ROUND').select(
-        "*").eq("id", round_id).execute()
-    
-    rec_round_data = response.data[0]
+        "semester, year").eq("id", round_id).execute()
 
-    semester = rec_round_data['semester']
-    year = rec_round_data['year']
-
-    return semester, year
+    return response.data
 
 # OPENINGS GETTERS
 
@@ -128,6 +140,12 @@ def get_all_openings():
     response = supabase.table('OPENING').select("*").execute()
 
     return response.data
+
+def get_count_openings_for_rec_round(round_id):
+    response = supabase.table('OPENING').select(
+        "*").eq("recruitment_round_ID", round_id).execute()
+    
+    return response.count
 
 def get_all_opens_for_round(round_id):
     response = supabase.table('OPENING').select(
@@ -156,26 +174,19 @@ def get_application(application_id):
     return response.data
 
 def accept_application(application_id):
-    '''
-    Error codes:
-    -1 -> applicantion with application_id doesnt exist
-    -2 -> applicant was already rejected
-    -3 -> applicant was already accepted
-    '''
-
     response = supabase.table('APPLICATION').select(
         "*").eq("id", application_id).execute()
     
     if not response.data:
-        return -1
+        raise f"applicantion with {application_id} doesnt exist"
 
     app_data = response.data[0]
 
-    if app_data['accepted'] == 'R':
-        return -2
+    if app_data['accepted'] == 'A':
+        raise f"applicantion with {application_id} was already accepted"
     
-    elif app_data['accepted'] == 'A':
-        return -3
+    elif app_data['accepted'] == 'R':
+        raise f"applicantion with {application_id} was already rejected"
 
     else: 
         response = supabase.table('APPLICATION').update({
@@ -185,26 +196,19 @@ def accept_application(application_id):
         return response.data
 
 def reject_application(application_id):
-    '''
-    Error codes:
-    -1 -> applicantion with application_id doesnt exist
-    -2 -> applicant was already accepted
-    -3 -> applicant was already rejected
-    '''
-
     response = supabase.table('APPLICATION').select(
         "*").eq("id", application_id).execute()
 
     if not response.data:
-        return -1
+        raise f"applicantion with {application_id} doesnt exist"
 
     app_data = response.data[0]
 
     if app_data['accepted'] == 'A':
-        return -2
+        raise f"applicantion with {application_id} was already accepted"
     
     elif app_data['accepted'] == 'R':
-        return -3
+        raise f"applicantion with {application_id} was already rejected"
 
     else: 
         response = supabase.table('APPLICATION').update({
