@@ -121,18 +121,6 @@ def get_specific_rec_round(round_id):
 
     return response.data
 
-def get_rec_round_student_team_id(round_id):
-    response = supabase.table('RECRUITMENT_ROUND').select(
-        "student_team_id").eq("id", round_id).execute()
-    
-    return response.data
-
-def get_rec_round_academic_period(round_id):
-    response = supabase.table('RECRUITMENT_ROUND').select(
-        "semester, year").eq("id", round_id).execute()
-
-    return response.data
-
 # OPENINGS GETTERS
 
 def get_all_openings():
