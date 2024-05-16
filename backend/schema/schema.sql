@@ -39,12 +39,11 @@ CREATE TABLE public."OPENING" (
     recruitment_round_ID BIGINT NOT NULL,
     title VARCHAR NOT NULL,
     description VARCHAR NULL,
-    app_role VARCHAR NOT NULL,
     status VARCHAR NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I')),
     required_skills VARCHAR[] NOT NULL,
     desired_skills VARCHAR[] NULL,
     CONSTRAINT OPENING_pkey PRIMARY KEY (id),
-    CONSTRAINT OPENING_unique UNIQUE (recruitment_round_ID, app_role),
+    CONSTRAINT OPENING_unique UNIQUE (recruitment_round_ID, title),
     CONSTRAINT OPENING_recruitment_round_ID_fkey FOREIGN KEY (recruitment_round_ID) REFERENCES "RECRUITMENT_ROUND" (id)
 ) TABLESPACE pg_default;
 
