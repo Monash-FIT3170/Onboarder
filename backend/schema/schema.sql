@@ -28,7 +28,7 @@ CREATE TABLE public."RECRUITMENT_ROUND" (
     semester VARCHAR NOT NULL,
     year BIGINT NOT NULL,
     student_team_id BIGINT NOT NULL,
-    status VARCHAR NOT NULL (status IN ('A', 'I')),
+    status VARCHAR NOT NULL CHECK (status IN ('A', 'I')),
     CONSTRAINT RECRUITMENT_ROUND_pkey PRIMARY KEY (id),
     CONSTRAINT RECRUITMENT_ROUND_unique UNIQUE (semester, year, student_team_id),
     CONSTRAINT RECRUITMENT_ROUND_student_team_id_fkey FOREIGN KEY (student_team_id) REFERENCES "STUDENT_TEAM" (id)
@@ -65,3 +65,38 @@ CREATE TABLE public."APPLICATION" (
     CONSTRAINT APPLICATION_unique UNIQUE (opening_id, email),
     CONSTRAINT APPLICATION_opening_id_fkey FOREIGN KEY (opening_id) REFERENCES "OPENING" (id)
 ) TABLESPACE pg_default;
+
+-- +++++++++ POSTGRES FUNCTIONS +++++++++
+
+CREATE OR REPLACE FUNCTION get_all_rec_rounds_with_openings_count()
+RETURNS TABLE (
+    id BIGINT,
+    deadline TIMESTAMP WITH TIME ZONE,
+    semester VARCHAR,
+    year BIGINT,
+    student_team_id BIGINT,
+    status VARCHAR,
+    openings_count BIGINT
+)
+AS $$
+SELECT
+    rr.id,
+    rr.deadline,
+    rr.semester,
+    rr.year,
+    rr.student_team_id,
+    rr.status,
+    COALESCE(oc.openings_count, 0) AS openings_count
+FROM
+    public."RECRUITMENT_ROUND" rr
+LEFT JOIN
+    (
+        SELECT
+            recruitment_round_ID,
+            COUNT(*) AS openings_count
+        FROM
+            public."OPENING"
+        GROUP BY
+            recruitment_round_ID
+    ) oc ON rr.id = oc.recruitment_round_ID;
+$$ LANGUAGE SQL;
