@@ -8,10 +8,11 @@ routes = dict()
 
 HEADERS = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "*"
 }
+
 
 def dispatch(event: dict):
 
@@ -62,6 +63,8 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     else:
         data = controller.get_all_rec_rounds()
 
+    data = json.dumps(data)
+
     response = {
         'statusCode': 200,
         'body': data,
@@ -95,7 +98,8 @@ def create_recruitment_round(_={}, __={}, body={}):
         return response
 
     # Validate the request body structure and ensure all required fields are present
-    required_fields = ['semester', 'year', 'student_team_id', 'status']
+    required_fields = ['deadline', 'semester',
+                       'year', 'status']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -107,9 +111,9 @@ def create_recruitment_round(_={}, __={}, body={}):
         return response
 
     try:
+        deadline = data['deadline']
         semester = int(data['semester'])
         year = data["year"]
-        student_team_id = int(data['student_team_id'])
         status = str(data['status'])
     except (ValueError, KeyError):
         return {
@@ -121,7 +125,7 @@ def create_recruitment_round(_={}, __={}, body={}):
     # Create recruitment round
     try:
         response = controller.create_rec_round(
-            semester, year, student_team_id, status)
+            deadline, semester, year, 4, status)
         return {
             'statusCode': 201,
             'body': json.dumps({
@@ -146,6 +150,8 @@ def get_all_openings(_={}, __={}, ___={}):
 
     records = controller.get_all_openings()
 
+    records = json.dumps(records)
+
     response = {
         'statusCode': 200,
         'body': records,
@@ -164,6 +170,8 @@ def get_openings_for_round(path_params={}, _={}, __={}):
         records = controller.get_specific_open_for_round(round_id, opening_id)
     else:
         records = controller.get_all_opens_for_round(round_id)
+
+    records = json.dumps(records)
 
     response = {
         'statusCode': 200,
@@ -198,8 +206,9 @@ def create_opening(path_params={}, __={}, body={}):
 
     # Validate the request body structure and ensure all required fields are present
     required_fields = ['title', 'description',
-                       'app_role', 'status', 'required_skills', 'desired_skills']
+                       'status', 'required_skills', 'desired_skills']
     missing_fields = [field for field in required_fields if field not in data]
+
     if missing_fields:
         response = {
             'statusCode': 400,
@@ -209,13 +218,12 @@ def create_opening(path_params={}, __={}, body={}):
         return response
 
     try:
+        round_id = path_params.get('roundId')
         title = str(data['title'])
         description = str(data['description'])
-        app_role = str(data['app_role'])
         status = str(data['status'])
         required_skills = data['required_skills']
         desired_skills = data['desired_skills']
-        round_id = path_params.get('roundId')
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -226,12 +234,70 @@ def create_opening(path_params={}, __={}, body={}):
     # Create opening
     try:
         response = controller.create_opening(
-            round_id, title, description, app_role, status, required_skills, desired_skills)
+            round_id, title, description, status, required_skills, desired_skills)
         return {
             'statusCode': 201,
             'body': json.dumps({
                 'success': True,
                 'data': response
+            }),
+            'headers': HEADERS
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
+        }
+
+
+@route('/recruitmentRounds/{roundId}/status', ['PATCH'])
+def update_recruitment_round_status(path_params={}, _={}, body={}):
+    # Get the roundId from the path parameters
+    print("hi")
+    round_id = path_params.get('roundId')
+
+    if not round_id:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Round ID is missing'}),
+            'headers': HEADERS
+        }
+
+    # Get the request body and parse it
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    # Validate new status is provided
+    new_status = data.get('status')
+    if not new_status:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'New status is required'}),
+            'headers': HEADERS
+        }
+
+    # Call the controller to update the status
+    try:
+        controller.update_recruitment_round_status(round_id, new_status)
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'msg': f'Status of recruitment round {round_id} updated to {new_status}'
             }),
             'headers': HEADERS
         }
@@ -324,6 +390,8 @@ def get_applications_for_opening(path_params={}, _={}, __={}):
     opening_id = path_params.get('openingId')
     records = controller.get_all_applications_for_opening(opening_id)
 
+    records = json.dumps(records)
+
     response = {
         'statusCode': 200,
         'body': records,
@@ -338,6 +406,8 @@ def get_application(path_params={}, _={}, __={}):
     application_id = path_params.get('applicationId')
     records = controller.get_application(application_id)
 
+    records = json.dumps(records)
+
     response = {
         'statusCode': 200,
         'body': records,
@@ -347,16 +417,36 @@ def get_application(path_params={}, _={}, __={}):
 
 
 @route('/applications/{applicationId}/accept', ['POST'])
-@route('/applications/{applicationId}/reject', ['POST'])
-def create_application(_={}, __={}, ___={}):
+def acceptApplication(path_params={}, __={}, ___={}):
+    application_id = path_params.get('applicationId')
 
-    if True:  # path = accept
-        controller.accept_application()
-    else:
-        controller.reject_application()
+    data = controller.accept_application(application_id)
+    data = json.dumps(data)
 
     response = {
         'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'msg': f"Application {application_id} accepted"
+        }),
+        'headers': HEADERS
+    }
+    return response
+
+
+@route('/applications/{applicationId}/reject', ['POST'])
+def rejectApplication(path_params={}, __={}, ___={}):
+    application_id = path_params.get('applicationId')
+
+    data = controller.reject_application(application_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'msg': f"Application {application_id} rejected"
+        }),
         'headers': HEADERS
     }
     return response
