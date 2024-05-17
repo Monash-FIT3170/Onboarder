@@ -94,7 +94,7 @@ def create_recruitment_round(_={}, __={}, body={}):
 
     # Validate the request body structure and ensure all required fields are present
     required_fields = ['deadline', 'semester',
-                       'year', 'student_team_id', 'status']
+                       'year', 'status']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -108,7 +108,6 @@ def create_recruitment_round(_={}, __={}, body={}):
         deadline = data['deadline']
         semester = int(data['semester'])
         year = data["year"]
-        student_team_id = int(data['student_team_id'])
         status = str(data['status'])
     except (ValueError, KeyError):
         return {
@@ -119,7 +118,7 @@ def create_recruitment_round(_={}, __={}, body={}):
     # Create recruitment round
     try:
         response = controller.create_rec_round(
-            deadline, semester, year, student_team_id, status)
+            deadline, semester, year, 2, status)
         return {
             'statusCode': 201,
             'body': json.dumps({
@@ -347,15 +346,34 @@ def get_application(path_params={}, _={}, __={}):
 
 
 @route('/applications/{applicationId}/accept', ['POST'])
-@route('/applications/{applicationId}/reject', ['POST'])
-def create_application(_={}, __={}, ___={}):
+def acceptApplication(path_params={}, __={}, ___={}):
+    application_id = path_params.get('applicationId')
 
-    if True:  # path = accept
-        controller.accept_application()
-    else:
-        controller.reject_application()
+    data = controller.accept_application(application_id)
+    data = json.dumps(data)
 
     response = {
-        'statusCode': 201
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'msg': f"Application {application_id} accepted"
+        })
+    }
+    return response
+
+
+@route('/applications/{applicationId}/reject', ['POST'])
+def rejectApplication(path_params={}, __={}, ___={}):
+    application_id = path_params.get('applicationId')
+
+    data = controller.reject_application(application_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'msg': f"Application {application_id} rejected"
+        })
     }
     return response

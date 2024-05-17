@@ -171,22 +171,15 @@ def accept_application(application_id):
         "*").eq("id", application_id).execute()
 
     if not response.data:
-        raise f"applicantion with {application_id} doesnt exist"
+        raise Exception(f"Application {application_id} does not exist.")
 
     app_data = response.data[0]
 
-    if app_data['accepted'] == 'A':
-        raise f"applicantion with {application_id} was already accepted"
+    response = supabase.table('APPLICATION').update({
+        'accepted': 'A'
+    }).eq('id', application_id).execute()
 
-    elif app_data['accepted'] == 'R':
-        raise f"applicantion with {application_id} was already rejected"
-
-    else:
-        response = supabase.table('APPLICATION').update({
-            'accepted': 'A'
-        }).eq('id', application_id).execute()
-
-        return response.data
+    return response.data
 
 
 def reject_application(application_id):
@@ -194,19 +187,12 @@ def reject_application(application_id):
         "*").eq("id", application_id).execute()
 
     if not response.data:
-        raise f"applicantion with {application_id} doesnt exist"
+        raise Exception(f"Application {application_id} does not exist.")
 
     app_data = response.data[0]
 
-    if app_data['accepted'] == 'A':
-        raise f"applicantion with {application_id} was already accepted"
+    response = supabase.table('APPLICATION').update({
+        'accepted': 'R'
+    }).eq('id', application_id).execute()
 
-    elif app_data['accepted'] == 'R':
-        raise f"applicantion with {application_id} was already rejected"
-
-    else:
-        response = supabase.table('APPLICATION').update({
-            'accepted': 'A'
-        }).eq('id', application_id).execute()
-
-        return response.data
+    return response.data
