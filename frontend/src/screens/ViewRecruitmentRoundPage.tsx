@@ -9,10 +9,12 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid"
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
+
 import Typography from "@mui/material/Typography"
 import axios from "axios"
 import { Link } from 'react-router-dom';
+import { TableSortLabel } from "@mui/material"
+import { visuallyHidden } from '@mui/system';
 
 const styles = {
   recruitmentRoundPage: {
@@ -132,12 +134,12 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell>Round Name</TableCell>
                   <TableCell>
                     Deadline
-                    <ArrowDownwardIcon />
+                    <TableSortLabel>
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
-                  <TableCell>Applications Received</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -176,7 +178,6 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Openings</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
