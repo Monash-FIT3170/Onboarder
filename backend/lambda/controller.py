@@ -47,17 +47,15 @@ def create_opening(
     recruitment_round_ID, 
     title, 
     description, 
-    app_role, 
     status, 
     required_skills, 
     desired_skills
 ):
     # status can only be (A)ctive or (I)nactive
     data = {
-        "recruitment_round_ID": recruitment_round_ID,
+        "recruitment_round_id": recruitment_round_ID,
         "title": title,
         "description": description,
-        "app_role": app_role,
         "status": status,
         "required_skills": required_skills,
         "desired_skills": desired_skills
@@ -128,31 +126,25 @@ def get_all_openings():
 
     return response.data
 
-def get_count_openings_for_rec_round(round_id):
-    response = supabase.table('OPENING').select(
-        "*").eq("recruitment_round_ID", round_id).execute()
-    
-    return response.count
-
 def get_all_opens_for_round(round_id):
     response = supabase.table('OPENING').select(
-        "*").eq("recruitment_round_ID", round_id).execute()
+        "*").eq("recruitment_round_id", round_id).execute()
 
     return response.data
 
 def get_specific_open_for_round(round_id, opening_id):
     response = supabase.table('OPENING').select(
-        "*").eq("id", opening_id).eq("recruitment_round_ID", round_id).execute()
+        "*").eq("id", opening_id).eq("recruitment_round_id", round_id).execute()
 
     return response.data
+
+# APPLICATION GETTERS
 
 def get_all_applications_for_opening(opening_id):
     response = supabase.table('APPLICATION').select(
         "*").eq("opening_id", opening_id).execute()
 
     return response.data
-
-# APPLICATION GETTERS
 
 def get_application(application_id):
     response = supabase.table('APPLICATION').select(
