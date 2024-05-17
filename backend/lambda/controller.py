@@ -12,6 +12,7 @@ supabase: Client = create_client(url, key)
 
 # ---------------- ALL SETTER FUNCTIONS ----------------
 
+
 def create_student_team(
     name
 ):
@@ -23,11 +24,12 @@ def create_student_team(
 
     return response.data
 
+
 def create_rec_round(
-    deadline, 
-    semester, 
-    year, 
-    student_team_id, 
+    deadline,
+    semester,
+    year,
+    student_team_id,
     status
 ):
     # status can only be (A)ctive or (I)nactive
@@ -43,12 +45,13 @@ def create_rec_round(
 
     return response.data
 
+
 def create_opening(
-    recruitment_round_ID, 
-    title, 
-    description, 
-    status, 
-    required_skills, 
+    recruitment_round_ID,
+    title,
+    description,
+    status,
+    required_skills,
     desired_skills
 ):
     # status can only be (A)ctive or (I)nactive
@@ -66,15 +69,15 @@ def create_opening(
 
 
 def create_application(
-    openingId, 
-    email, 
-    name, 
-    phone, 
-    semesters_until_completion, 
-    current_semester, 
-    course_enrolled, 
-    major_enrolled, 
-    cover_letter, 
+    openingId,
+    email,
+    name,
+    phone,
+    semesters_until_completion,
+    current_semester,
+    course_enrolled,
+    major_enrolled,
+    cover_letter,
     skills,
 ):
     data = {
@@ -97,48 +100,57 @@ def create_application(
 
 # STUDENT TEAM GETTERS
 
+
 def get_all_student_teams():
     response = supabase.table('STUDENT_TEAM').select("*").execute()
     return response.data
 
+
 def get_specific_student_team(student_team_id):
     response = supabase.table('STUDENT_TEAM').select(
         "*").eq("id", student_team_id).execute()
-    
+
     return response.data
 
 # RECRUITMENT ROUND GETTERS
+
 
 def get_all_rec_rounds():
     response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
     return response.data
 
+
 def get_specific_rec_round(round_id):
-    response = supabase.table('RECRUITMENT_ROUND').select(
-        "*").eq("id", round_id).execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
+        "id", round_id).execute()
 
     return response.data
 
 # OPENINGS GETTERS
 
+
 def get_all_openings():
-    response = supabase.table('OPENING').select("*").execute()
+    response = supabase.rpc(
+        'get_openings_with_application_count').select("*").execute()
 
     return response.data
 
+
 def get_all_opens_for_round(round_id):
-    response = supabase.table('OPENING').select(
+    response = supabase.rpc('get_openings_with_application_count').select(
         "*").eq("recruitment_round_id", round_id).execute()
 
     return response.data
 
+
 def get_specific_open_for_round(round_id, opening_id):
-    response = supabase.table('OPENING').select(
+    response = supabase.rpc('get_openings_with_application_count').select(
         "*").eq("id", opening_id).eq("recruitment_round_id", round_id).execute()
 
     return response.data
 
 # APPLICATION GETTERS
+
 
 def get_all_applications_for_opening(opening_id):
     response = supabase.table('APPLICATION').select(
@@ -146,16 +158,18 @@ def get_all_applications_for_opening(opening_id):
 
     return response.data
 
+
 def get_application(application_id):
     response = supabase.table('APPLICATION').select(
         "*").eq("id", application_id).execute()
 
     return response.data
 
+
 def accept_application(application_id):
     response = supabase.table('APPLICATION').select(
         "*").eq("id", application_id).execute()
-    
+
     if not response.data:
         raise f"applicantion with {application_id} doesnt exist"
 
@@ -163,16 +177,17 @@ def accept_application(application_id):
 
     if app_data['accepted'] == 'A':
         raise f"applicantion with {application_id} was already accepted"
-    
+
     elif app_data['accepted'] == 'R':
         raise f"applicantion with {application_id} was already rejected"
 
-    else: 
+    else:
         response = supabase.table('APPLICATION').update({
             'accepted': 'A'
         }).eq('id', application_id).execute()
 
         return response.data
+
 
 def reject_application(application_id):
     response = supabase.table('APPLICATION').select(
@@ -185,11 +200,11 @@ def reject_application(application_id):
 
     if app_data['accepted'] == 'A':
         raise f"applicantion with {application_id} was already accepted"
-    
+
     elif app_data['accepted'] == 'R':
         raise f"applicantion with {application_id} was already rejected"
 
-    else: 
+    else:
         response = supabase.table('APPLICATION').update({
             'accepted': 'A'
         }).eq('id', application_id).execute()
