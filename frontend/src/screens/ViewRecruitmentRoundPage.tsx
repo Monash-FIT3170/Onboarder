@@ -9,12 +9,10 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid"
-
 import Typography from "@mui/material/Typography"
 import axios from "axios"
 import { Link } from 'react-router-dom';
-import { TableSortLabel } from "@mui/material"
-import { visuallyHidden } from '@mui/system';
+import { TableSortLabel } from "@mui/material";
 
 const styles = {
   recruitmentRoundPage: {
@@ -95,11 +93,12 @@ const ViewRecruitmentRoundPage = () => {
       </header>
       <main style={styles.main}>
         <Typography variant="h4" style={styles.monashNova}>
-          Monash Nova
+          Recruitment Rounds
         </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            <h3>Recruitment Rounds</h3>
+            {data && data.map((item: any) => ((item.student_team.length > 0) ? (<h3>item.student_team</h3>) : <h3>'Student Team: Name Not Found'</h3>)
+            ).at(0)}
           </Grid>
         </Grid>
         <section style={styles.section}>
@@ -149,12 +148,12 @@ const ViewRecruitmentRoundPage = () => {
                 {data &&
                   data.map((item: any) => (
                     <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell>
-                      <TableCell>{"TODO DEADLINES"}</TableCell>
-                      <TableCell>{item.status}</TableCell>
+                      <TableCell>{item.recruitment_round_id}</TableCell> // item.round_name
+                      <TableCell>{"TODO DEADLINES"}</TableCell> // item.deadline
+                      <TableCell>{item.status}</TableCell> // enum???
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell>
+                      <TableCell>{"TODO OPENINGS"}</TableCell> // item.openings
                       <TableCell></TableCell>
                     </TableRow>
                   ))}
@@ -184,17 +183,17 @@ const ViewRecruitmentRoundPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {data &&
+                {data &&
                   data.map((item: any) => (
                     <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell>
-                      <TableCell>{"TODO DEADLINE"}</TableCell>
-                      <TableCell>{item.status}</TableCell>
+                      <TableCell>{item.recruitment_round_id}</TableCell> // item.round_name
+                      <TableCell>{"TODO DEADLINES"}</TableCell> // item.deadline
+                      <TableCell>{item.status}</TableCell> // enum???
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell>
+                      <TableCell>{"TODO OPENINGS"}</TableCell> // item.openings
                     </TableRow>
-                  ))} 
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
