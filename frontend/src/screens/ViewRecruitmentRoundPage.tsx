@@ -64,28 +64,30 @@ const ViewRecruitmentRoundPage = () => {
   }
 
   useEffect(() => {
+    console.log("useEffect")
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
       .then((response) => {
-        setData(response.data)
-        Promise.all(
-          response.data.map((item: any) =>
-            axios.get(
-              `http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`
-            )
-          )
-        )
-          .then((responses) => {
-            // Calculate the sum of the results from the second API call
-            const sum = responses.reduce(
-              (total, response) => total + response.data,
-              0
-            )
-            setSum(sum)
-          })
-          .catch((error) => {
-            console.error("There was an error!", error)
-          })
+        console.log(response)
+        //setData(response.data)
+        // Promise.all(
+        //   response.data.map((item: any) =>
+        //     axios.get(
+        //       `http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`
+        //     )
+        //   )
+        // )
+        //   .then((responses) => {
+        //     // Calculate the sum of the results from the second API call
+        //     const sum = responses.reduce(
+        //       (total, response) => total + response.data,
+        //       0
+        //     )
+        //     setSum(sum)
+        //   })
+        //   .catch((error) => {
+        //     console.error("There was an error!", error)
+        //   })
       })
       .catch((error) => {
         console.error("There was an error!", error)
