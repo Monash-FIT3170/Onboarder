@@ -12,7 +12,7 @@ import { DateTime } from "luxon"
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import axios from "axios"
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
@@ -53,7 +53,7 @@ const AddRecruitmentRoundPage = () => {
   const [recruitment_round_name, setRoundName] = useState("")
   const [deadline, setDeadline] = useState(DateTime.now())
   const [semester, setSemester] = useState("")
-  const history = useHistory();
+  const history = useNavigate();
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (
