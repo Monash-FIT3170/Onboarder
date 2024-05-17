@@ -194,3 +194,18 @@ def reject_application(application_id):
     }).eq('id', application_id).execute()
 
     return response.data
+
+
+def update_recruitment_round_status(round_id, new_status):
+    # Check if the recruitment round exists
+    existing_round = supabase.table('RECRUITMENT_ROUND').select(
+        "*").eq("id", round_id).execute()
+    if not existing_round.data:
+        raise Exception(f"Recruitment round {round_id} does not exist.")
+
+    # Update the status of the recruitment round
+    response = supabase.table('RECRUITMENT_ROUND').update({
+        "status": new_status
+    }).eq("id", round_id).execute()
+
+    return response.data

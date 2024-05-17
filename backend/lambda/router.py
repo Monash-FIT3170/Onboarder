@@ -251,6 +251,64 @@ def create_opening(path_params={}, __={}, body={}):
         }
 
 
+@route('/recruitmentRounds/{roundId}/status', ['PATCH'])
+def update_recruitment_round_status(path_params={}, _={}, body={}):
+    # Get the roundId from the path parameters
+    print("hi")
+    round_id = path_params.get('roundId')
+
+    if not round_id:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Round ID is missing'}),
+            'headers': HEADERS
+        }
+
+    # Get the request body and parse it
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    # Validate new status is provided
+    new_status = data.get('status')
+    if not new_status:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'New status is required'}),
+            'headers': HEADERS
+        }
+
+    # Call the controller to update the status
+    try:
+        controller.update_recruitment_round_status(round_id, new_status)
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'msg': f'Status of recruitment round {round_id} updated to {new_status}'
+            }),
+            'headers': HEADERS
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
+        }
+
+
 # APPLICATIONS
 
 @route('/openings/{openingId}/applications', ['POST'])
