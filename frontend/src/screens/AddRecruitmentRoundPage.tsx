@@ -53,6 +53,7 @@ const AddRecruitmentRoundPage = () => {
   const [recruitment_round_name, setRoundName] = useState("")
   const [deadline, setDeadline] = useState(DateTime.now())
   const [semester, setSemester] = useState("")
+  const [year, setYear] = useState("")
   const history = useNavigate();
   const handleSubmit = (event: any) => {
     event.preventDefault()
@@ -60,7 +61,7 @@ const AddRecruitmentRoundPage = () => {
       !recruitment_round_name ||
       recruitment_round_name.length <= 0 ||
       !deadline ||
-      !semester
+      !semester || !year || year.length <= 0
     ) {
       alert("Please fill in all fields")
       return
@@ -70,11 +71,12 @@ const AddRecruitmentRoundPage = () => {
         recruitment_round_name: recruitment_round_name,
         deadline: deadline.toISO(),
         semester: semester,
+        year: year,
         // Add other form data here
       })
       .then((response) => {
         console.log(response)
-        history.push('/viewrecruitmentround');
+        history('/viewrecruitmentround');
       })
       .catch((error) => {
         console.error("There was an error!", error)
@@ -87,7 +89,7 @@ const AddRecruitmentRoundPage = () => {
       </header>
 
       <main style={styles.main}>
-        <h1 style={{ textAlign: "center" }}>Create Recruitment Round</h1>
+        <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>Create Recruitment Round</h1>
       </main>
       <form onSubmit={handleSubmit}>
         <Grid
@@ -107,7 +109,7 @@ const AddRecruitmentRoundPage = () => {
               justifyContent="flex-start"
             >
               <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Round Name</h1>
+                <h1 style={{ fontWeight: "normal" }}>Round Name:</h1>
               </Grid>
             </Grid>
           </Grid>
@@ -137,7 +139,7 @@ const AddRecruitmentRoundPage = () => {
               justifyContent="flex-start"
             >
               <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Deadline</h1>
+                <h1 style={{ fontWeight: "normal" }}>Deadline:</h1>
               </Grid>
             </Grid>
           </Grid>
@@ -178,7 +180,7 @@ const AddRecruitmentRoundPage = () => {
               justifyContent="flex-start"
             >
               <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Semester</h1>
+                <h1 style={{ fontWeight: "normal" }}>Semester:</h1>
               </Grid>
             </Grid>
           </Grid>
@@ -207,7 +209,37 @@ const AddRecruitmentRoundPage = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={7} sm={7}></Grid>
+          <Grid item xs={1} sm={1}></Grid>
+          <Grid item xs={2} sm={2}>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Grid item>
+                <h1 style={{ fontWeight: "normal" }}>Year:</h1>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2} sm={2}>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Grid item xs={12}>
+                <TextField
+                  placeholder="Enter year of round"
+                  fullWidth
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={12} sm={12}>
             <Grid
               container
