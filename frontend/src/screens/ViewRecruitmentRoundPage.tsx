@@ -97,7 +97,7 @@ const ViewRecruitmentRoundPage = () => {
         </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            {data && data.map((item: any) => ((item.student_team.length > 0) ? (<h3>item.student_team</h3>) : <h3>'Student Team: Name Not Found'</h3>)
+            {data && data.map((item: any) => ((item.student_team.length > 0) ? (<h3>item.student_team</h3>) : <h3>'Student Team 1'</h3>) // Code for if we need it, but defaults to dummy value
             ).at(0)}
           </Grid>
         </Grid>
