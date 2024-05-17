@@ -113,6 +113,8 @@ RETURNS TABLE (
     recruitment_round_ID BIGINT,
     recruitment_round_year BIGINT,
     recruitment_round_semester VARCHAR,
+    deadline TIMESTAMP WITH TIME ZONE,
+    student_team_id BIGINT,
     student_team_name VARCHAR,
     title VARCHAR,
     description VARCHAR,
@@ -123,11 +125,15 @@ RETURNS TABLE (
     applications_pending_review BIGINT
 )
 AS $$
+BEGIN
+RETURN QUERY
 SELECT
     o.id,
     o.recruitment_round_ID,
     rr.year AS recruitment_round_year,
     rr.semester AS recruitment_round_semester,
+    rr.deadline,
+    st.id AS student_team_id,
     st.name AS student_team_name,
     o.title,
     o.description,
@@ -161,5 +167,6 @@ LEFT JOIN
         GROUP BY
             opening_id
     ) pr ON o.id = pr.opening_id;
-$$ LANGUAGE SQL;
+END;
+$$ LANGUAGE plpgsql;
 

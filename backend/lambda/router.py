@@ -8,10 +8,11 @@ routes = dict()
 
 HEADERS = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "*"
 }
+
 
 def dispatch(event: dict):
 
@@ -124,7 +125,7 @@ def create_recruitment_round(_={}, __={}, body={}):
     # Create recruitment round
     try:
         response = controller.create_rec_round(
-            deadline, semester, year, 2, status)
+            deadline, semester, year, 4, status)
         return {
             'statusCode': 201,
             'body': json.dumps({

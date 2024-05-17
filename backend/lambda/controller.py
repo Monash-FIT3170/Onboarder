@@ -132,7 +132,8 @@ def get_specific_rec_round(round_id):
 
 def get_all_openings():
     response = supabase.rpc(
-        'get_openings_with_application_count').select("*").execute()
+        'get_openings_with_application_count').select("*").eq(
+        "student_team_id", 4).execute()
 
     return response.data
 
