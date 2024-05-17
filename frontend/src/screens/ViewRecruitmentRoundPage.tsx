@@ -139,6 +139,7 @@ const ViewRecruitmentRoundPage = () => {
                   </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
+                  <TableCell>Year</TableCell>
                   <TableCell>Openings</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -149,10 +150,11 @@ const ViewRecruitmentRoundPage = () => {
                   data.map((item: any) => (
                     <TableRow key={item.recruitment_round_id}>
                       <TableCell>{item.recruitment_round_id}</TableCell>
-                      <TableCell>{"TODO"}</TableCell>
+                      <TableCell>{"TODO DEADLINES"}</TableCell>
                       <TableCell>{item.status}</TableCell>
                       <TableCell>{item.semester}</TableCell>
-                      <TableCell>{"TODO"}</TableCell>
+                      <TableCell>{item.year}</TableCell>
+                      <TableCell>{"TODO OPENINGS"}</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   ))}
@@ -177,11 +179,22 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell>Deadline</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
+                  <TableCell>Year</TableCell>
                   <TableCell>Openings</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* Add archived recruitment rounds rows */}
+              {data &&
+                  data.map((item: any) => (
+                    <TableRow key={item.recruitment_round_id}>
+                      <TableCell>{item.recruitment_round_id}</TableCell>
+                      <TableCell>{"TODO DEADLINE"}</TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>{item.semester}</TableCell>
+                      <TableCell>{item.year}</TableCell>
+                      <TableCell>{"TODO OPENINGS"}</TableCell>
+                    </TableRow>
+                  ))} 
               </TableBody>
             </Table>
           </TableContainer>
