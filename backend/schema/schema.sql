@@ -60,12 +60,14 @@ CREATE TABLE public."APPLICATION" (
     cover_letter TEXT NULL,
     skills VARCHAR[] NOT NULL,
     accepted VARCHAR NOT NULL DEFAULT 'U' CHECK (accepted IN ('A', 'R', 'U')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT APPLICATION_pkey PRIMARY KEY (id),
     CONSTRAINT APPLICATION_unique UNIQUE (opening_id, email),
     CONSTRAINT APPLICATION_opening_id_fkey FOREIGN KEY (opening_id) REFERENCES "OPENING" (id)
 ) TABLESPACE pg_default;
 
 -- +++++++++ POSTGRES FUNCTIONS +++++++++
+DROP FUNCTION IF EXISTS get_all_rec_rounds_with_openings_count();
 
 CREATE OR REPLACE FUNCTION get_all_rec_rounds_with_openings_count()
 RETURNS TABLE (
@@ -74,6 +76,7 @@ RETURNS TABLE (
     semester VARCHAR,
     year BIGINT,
     student_team_id BIGINT,
+    student_team_name VARCHAR,
     status VARCHAR,
     openings_count BIGINT
 )
@@ -84,10 +87,12 @@ SELECT
     rr.semester,
     rr.year,
     rr.student_team_id,
+    st.name AS student_team_name,
     rr.status,
     COALESCE(oc.openings_count, 0) AS openings_count
 FROM
     public."RECRUITMENT_ROUND" rr
+LEFT JOIN public."STUDENT_TEAM" st on rr.student_team_id = st.id
 LEFT JOIN
     (
         SELECT
@@ -99,3 +104,62 @@ LEFT JOIN
             recruitment_round_ID
     ) oc ON rr.id = oc.recruitment_round_ID;
 $$ LANGUAGE SQL;
+
+DROP FUNCTION IF EXISTS get_openings_with_application_count();
+
+CREATE OR REPLACE FUNCTION get_openings_with_application_count()
+RETURNS TABLE (
+    id BIGINT,
+    recruitment_round_ID BIGINT,
+    recruitment_round_year BIGINT,
+    recruitment_round_semester VARCHAR,
+    student_team_name VARCHAR,
+    title VARCHAR,
+    description VARCHAR,
+    status VARCHAR,
+    required_skills VARCHAR[],
+    desired_skills VARCHAR[],
+    application_count BIGINT,
+    applications_pending_review BIGINT
+)
+AS $$
+SELECT
+    o.id,
+    o.recruitment_round_ID,
+    rr.year AS recruitment_round_year,
+    rr.semester AS recruitment_round_semester,
+    st.name AS student_team_name,
+    o.title,
+    o.description,
+    o.status,
+    o.required_skills,
+    o.desired_skills,
+    COALESCE(a.application_count, 0) AS application_count,
+    COALESCE(pr.pending_review_count, 0) AS applications_pending_review
+FROM
+    public."OPENING" o
+JOIN public."RECRUITMENT_ROUND" rr ON o.recruitment_round_ID = rr.id
+JOIN public."STUDENT_TEAM" st ON rr.student_team_id = st.id
+LEFT JOIN
+    (
+        SELECT
+            opening_id,
+            COUNT(*) AS application_count
+        FROM
+            public."APPLICATION"
+        GROUP BY
+            opening_id
+    ) a ON o.id = a.opening_id
+LEFT JOIN
+    (
+        SELECT
+            opening_id,
+            COUNT(*) AS pending_review_count
+        FROM
+            public."APPLICATION"
+        WHERE accepted = 'U'
+        GROUP BY
+            opening_id
+    ) pr ON o.id = pr.opening_id;
+$$ LANGUAGE SQL;
+
