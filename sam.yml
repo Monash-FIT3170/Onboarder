@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: API Gateway connected to a Lambda function
 
@@ -35,83 +35,90 @@ Resources:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /recruitmentRounds/{roundId}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /openings:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /recruitmentRounds/{roundId}/openings:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /recruitmentRounds/{roundId}/openings/{openingId}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+          /recruitmentRounds/{roundId}/status:
+            patch:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /openings/{openingId}/applications:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /applications/{applicationId}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /applications/{applicationId}/accept:
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /applications/{applicationId}/reject:
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
 
 Outputs:
   ApiUrl:
     Description: API endpoint URL for Prod environment
-    Value: !Sub 'https://${FEApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Value: !Sub "https://${FEApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
