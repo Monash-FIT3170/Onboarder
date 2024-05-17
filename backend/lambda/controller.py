@@ -116,7 +116,8 @@ def get_specific_student_team(student_team_id):
 
 
 def get_all_rec_rounds():
-    response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
+        "student_team_id", 4).execute()
     return response.data
 
 
@@ -173,8 +174,6 @@ def accept_application(application_id):
     if not response.data:
         raise Exception(f"Application {application_id} does not exist.")
 
-    app_data = response.data[0]
-
     response = supabase.table('APPLICATION').update({
         'accepted': 'A'
     }).eq('id', application_id).execute()
@@ -188,8 +187,6 @@ def reject_application(application_id):
 
     if not response.data:
         raise Exception(f"Application {application_id} does not exist.")
-
-    app_data = response.data[0]
 
     response = supabase.table('APPLICATION').update({
         'accepted': 'R'
