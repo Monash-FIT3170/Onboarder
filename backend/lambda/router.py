@@ -58,6 +58,8 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     else:
         data = controller.get_all_rec_rounds()
 
+    data = json.dumps(data)
+
     response = {
         'statusCode': 200,
         'body': data,
@@ -91,7 +93,8 @@ def create_recruitment_round(_={}, __={}, body={}):
         return response
 
     # Validate the request body structure and ensure all required fields are present
-    required_fields = ['deadline', 'semester', 'year', 'student_team_id', 'status']
+    required_fields = ['deadline', 'semester',
+                       'year', 'student_team_id', 'status']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -139,6 +142,8 @@ def get_all_openings(_={}, __={}, ___={}):
 
     records = controller.get_all_openings()
 
+    records = json.dumps(records)
+
     response = {
         'statusCode': 200,
         'body': records,
@@ -159,6 +164,8 @@ def get_openings_for_round(path_params={}, _={}, __={}):
         records = controller.get_specific_open_for_round(round_id, opening_id)
     else:
         records = controller.get_all_opens_for_round(round_id)
+
+    records = json.dumps(records)
 
     response = {
         'statusCode': 200,
@@ -192,7 +199,8 @@ def create_opening(path_params={}, __={}, body={}):
         return response
 
     # Validate the request body structure and ensure all required fields are present
-    required_fields = ['title', 'description', 'status', 'required_skills', 'desired_skills']
+    required_fields = ['title', 'description',
+                       'status', 'required_skills', 'desired_skills']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -308,6 +316,8 @@ def get_applications_for_opening(path_params={}, _={}, __={}):
     opening_id = path_params.get('openingId')
     records = controller.get_all_applications_for_opening(opening_id)
 
+    records = json.dumps(records)
+
     response = {
         'statusCode': 200,
         'body': records,
@@ -323,6 +333,8 @@ def get_application(path_params={}, _={}, __={}):
     # parameter validation
     application_id = path_params.get('applicationId')
     records = controller.get_application(application_id)
+
+    records = json.dumps(records)
 
     response = {
         'statusCode': 200,
