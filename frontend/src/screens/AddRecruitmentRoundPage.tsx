@@ -1,18 +1,13 @@
 import Grid from "@mui/material/Grid"
 import React, { useState } from "react"
-import {
-  Select,
-  MenuItem,
-  Button,
-  TextField,
-} from "@mui/material"
+import { Select, MenuItem, Button, TextField } from "@mui/material"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon"
 import { DateTime } from "luxon"
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import axios from "axios"
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
@@ -54,14 +49,16 @@ const AddRecruitmentRoundPage = () => {
   const [deadline, setDeadline] = useState(DateTime.now())
   const [semester, setSemester] = useState("")
   const [year, setYear] = useState("")
-  const history = useNavigate();
+  const history = useNavigate()
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (
       !recruitment_round_name ||
       recruitment_round_name.length <= 0 ||
       !deadline ||
-      !semester || !year || year.length <= 0
+      !semester ||
+      !year ||
+      year.length <= 0
     ) {
       alert("Please fill in all fields")
       return
@@ -76,7 +73,7 @@ const AddRecruitmentRoundPage = () => {
       })
       .then((response) => {
         console.log(response)
-        history('/viewrecruitmentround');
+        history("/viewrecruitmentround")
       })
       .catch((error) => {
         console.error("There was an error!", error)
@@ -89,7 +86,9 @@ const AddRecruitmentRoundPage = () => {
       </header>
 
       <main style={styles.main}>
-        <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>Create Recruitment Round</h1>
+        <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>
+          Create Recruitment Round
+        </h1>
       </main>
       <form onSubmit={handleSubmit}>
         <Grid
@@ -260,18 +259,18 @@ const AddRecruitmentRoundPage = () => {
                 </Button>
               </Grid>
               <Grid item xs={1} sm={1}>
-              <Link
-                to="/viewrecruitmentround"
-                style={{ textDecoration: "none" }}
-              >
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="large"
-                  style={styles.addRoundButton}
+                <Link
+                  to="/viewrecruitmentround"
+                  style={{ textDecoration: "none" }}
                 >
-                  Cancel
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    size="large"
+                    style={styles.addRoundButton}
+                  >
+                    Cancel
+                  </Button>
                 </Link>
               </Grid>
               <Grid item xs={5} sm={5}></Grid>

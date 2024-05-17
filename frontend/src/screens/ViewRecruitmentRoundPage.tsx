@@ -11,8 +11,8 @@ import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid"
 import Typography from "@mui/material/Typography"
 import axios from "axios"
-import { Link } from 'react-router-dom';
-import { TableSortLabel } from "@mui/material";
+import { Link } from "react-router-dom"
+import { TableSortLabel } from "@mui/material"
 
 const styles = {
   recruitmentRoundPage: {
@@ -57,6 +57,11 @@ const styles = {
 const ViewRecruitmentRoundPage = () => {
   const [data, setData] = useState([])
   const [sum, setSum] = useState(0)
+  enum Status {
+    A = "Active",
+    I = "Inactive",
+    R = "Archived",
+  }
 
   useEffect(() => {
     axios
@@ -97,8 +102,17 @@ const ViewRecruitmentRoundPage = () => {
         </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            {data && data.map((item: any) => ((item.student_team.length > 0) ? (<h3>item.student_team</h3>) : <h3>'Student Team 1'</h3>) // Code for if we need it, but defaults to dummy value
-            ).at(0)}
+            {data &&
+              data
+                .map(
+                  (item: any) =>
+                    item.student_team.length > 0 ? (
+                      <h3>item.student_team</h3>
+                    ) : (
+                      <h3>'Student Team 1'</h3>
+                    ) // Code for if we need it, but defaults to dummy value
+                )
+                .at(0)}
           </Grid>
         </Grid>
         <section style={styles.section}>
@@ -133,8 +147,7 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell>Round Name</TableCell>
                   <TableCell>
                     Deadline
-                    <TableSortLabel>
-                    </TableSortLabel>
+                    <TableSortLabel></TableSortLabel>
                   </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
@@ -148,12 +161,18 @@ const ViewRecruitmentRoundPage = () => {
                 {data &&
                   data.map((item: any) => (
                     <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell> // item.round_name
-                      <TableCell>{"TODO DEADLINES"}</TableCell> // item.deadline
-                      <TableCell>{item.status}</TableCell> // enum???
+                      <TableCell>{item.recruitment_round_id}</TableCell>{" "}
+                      {/*<TableCell>{item.round_name}</TableCell>*/}
+                      <TableCell>{"TODO DEADLINES"}</TableCell>{" "}
+                      {/*<TableCell>{item.deadline}</TableCell>*/}
+                      <TableCell>
+                        {Status[item.status as keyof typeof Status] ||
+                          "Unknown Status"}
+                      </TableCell>
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell> // item.openings
+                      <TableCell>{"TODO OPENINGS"}</TableCell>{" "}
+                      {/*<TableCell>{item.openings}</TableCell>*/}
                       <TableCell></TableCell>
                     </TableRow>
                   ))}
@@ -186,12 +205,18 @@ const ViewRecruitmentRoundPage = () => {
                 {data &&
                   data.map((item: any) => (
                     <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell> // item.round_name
-                      <TableCell>{"TODO DEADLINES"}</TableCell> // item.deadline
-                      <TableCell>{item.status}</TableCell> // enum???
+                      <TableCell>{item.recruitment_round_id}</TableCell>{" "}
+                      {/*<TableCell>{item.round_name}</TableCell>*/}
+                      <TableCell>{"TODO DEADLINES"}</TableCell>{" "}
+                      {/*<TableCell>{item.deadline}</TableCell>*/}
+                      <TableCell>
+                        {Status[item.status as keyof typeof Status] ||
+                          "Unknown Status"}
+                      </TableCell>
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell> // item.openings
+                      <TableCell>{"TODO OPENINGS"}</TableCell>{" "}
+                      {/*<TableCell>{item.openings}</TableCell>*/}
                     </TableRow>
                   ))}
               </TableBody>
