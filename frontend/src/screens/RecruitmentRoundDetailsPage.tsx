@@ -1,77 +1,122 @@
-import { OpeningsTable, OpeningsTableProps } from "../components/OpeningsTable";
-import CustomTable from "../components/Table";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Typography, Button } from "@mui/material";
+import styled from "styled-components";
+import BackIcon from "../assets/BackIcon";
+import LoadingSpinner from "../components/LoadSpinner";
+import {
+  OpeningsTable,
+  openingsResultProps,
+} from "../components/OpeningsTable";
 import axios from "axios";
+import {
+  SingleRoundTable,
+  SingleRoundResultProps,
+} from "../components/SingleRoundTable";
 
-const mockData: OpeningsTableProps = {
-  results: [
-    {
-      opening_name: "Events Officer",
-      applications_received: 10,
-      opening_status: "All Reviewed",
-    },
-    {
-      opening_name: "Social Media Manager",
-      applications_received: 5,
-      opening_status: "5 Pending Review",
-    },
-  ],
-};
+const HeadWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-const tableData = [
-  {
-    deadline: "2024-05-10",
-    status: "Open",
-    openings: 3,
-    applicationsReceived: 45,
-  },
-  {
-    deadline: "2024-06-01",
-    status: "Closed",
-    openings: 2,
-    applicationsReceived: 30,
-  },
-];
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const OpeningsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  top: 10px;
+`;
 
 function RecruitmentRoundDetailsPage() {
-  const [rounds, setRounds] = useState([]);
-  const [openings, setOpening] = useState<OpeningsTableProps>({ results: [] });
+  const [rounds, setRounds] = useState<SingleRoundResultProps[]>([]);
+  const [openings, setOpening] = useState<openingsResultProps[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const roundsResponse = await axios.get(
-          "http://127.0.0.1:3000/recruitmentRounds/2"
+          "http://127.0.0.1:3000/recruitmentRounds/1"
         );
         const openingsResponse = await axios.get(
-          "http://127.0.0.1:3000/recruitmentRounds/2/openings"
+          "http://127.0.0.1:3000/recruitmentRounds/1/openings"
         );
 
         setRounds(roundsResponse.data);
-        setOpening({ results: openingsResponse.data });
+        setOpening(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
-  const archiveRound = async (id) => {
-    try {
-      await axios.post(`/api/recruitment-rounds/${id}/archive`);
-      // Update the state to remove the archived round
-      setRounds((prevRounds) => prevRounds.filter((round) => round.id !== id));
-    } catch (error) {
-      console.error("Error archiving round:", error);
-    }
-  };
+
+  // const archiveRound = async (id) => {
+  //   try {
+  //     await axios.post(`/api/recruitment-rounds/${id}/archive`);
+  //     // Update the state to remove the archived round
+  //     setRound((prevRound) => prevRound.filter((round) => round.id !== id));
+  //   } catch (error) {
+  //     console.error("Error archiving round:", error);
+  //   }
+  // };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <>
-      <div style={{ marginTop: "10px" }}>
-        <CustomTable entries={tableData} />
+      {/* Single Recruitment Round Table */}
+      <HeadWrapper>
+        <TitleWrapper>
+          <BackIcon />
+          <Typography variant="h5">
+            Monash Nova Rover Recruitment {rounds[0]?.id}
+          </Typography>
+        </TitleWrapper>
+        {rounds[0]?.status === "R" ? (
+          <Button
+            variant="outlined"
+            style={{
+              color: "black",
+              backgroundColor: "white",
+              borderColor: "black",
+              borderWidth: "1px",
+            }}
+          >
+            Archive Round and Send Results
+          </Button>
+        ) : (
+          <Button variant="contained">Activate Round</Button>
+        )}
+      </HeadWrapper>
+      <div style={{ marginTop: "40px" }}>
+        <SingleRoundTable results={rounds} />
       </div>
-      <div style={{ marginTop: "100px" }}>
-        <OpeningsTable {...mockData}></OpeningsTable>
+
+      {/* Openings for Recruitment Round Table */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          rowGap: "20px",
+          marginTop: "100px",
+        }}
+      >
+        <OpeningsWrapper>
+          <Typography variant="h6">Recruitment Round Openings</Typography>
+          <Button variant="contained"> Add Opening </Button>
+        </OpeningsWrapper>
+        <OpeningsTable results={openings}></OpeningsTable>
       </div>
     </>
   );

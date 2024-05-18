@@ -34,26 +34,24 @@ import styled from "styled-components";
 //     }
 // }
 
-const HeadWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  position: relative;
-  top: 10px;
-`;
-
-const ButtonWrapper = styled.div`
-  position: relative;
-  left: -20px;
-`;
-
-interface openingsResultProps {
-  opening_name: string;
-  applications_received: number;
-  opening_status: string;
+export interface openingsResultProps {
+  id: number;
+  recruitment_round_id: number;
+  recruitment_round_year: number;
+  recruitment_round_semester: string;
+  deadline: string;
+  student_team_id: number;
+  student_team_name: string;
+  title: string;
+  description: string;
+  status: string;
+  required_skills: string[];
+  desired_skills: string[];
+  application_count: number;
+  applications_pending_review: number;
 }
 
-export interface OpeningsTableProps {
+interface OpeningsTableProps {
   results: openingsResultProps[];
 }
 
@@ -61,15 +59,17 @@ const generateRowFunction = (results: openingsResultProps[]) => {
   return results.map((result) => {
     return (
       <TableRow
-        key={result.opening_name}
+        key={result.title}
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
-        <TableCell component="th" scope="row" >
-          {result.opening_name}
+        <TableCell component="th" scope="row">
+          {result.title}
         </TableCell>
-        <TableCell>{result.applications_received}</TableCell>
-        <TableCell >{result.opening_status}</TableCell>
-        <TableCell >
+        <TableCell>{result.application_count}</TableCell>
+        <TableCell>
+          {result.applications_pending_review} Applications Pending Review
+        </TableCell>
+        <TableCell>
           <Button variant="contained"> View </Button>
         </TableCell>
       </TableRow>
@@ -80,12 +80,6 @@ const generateRowFunction = (results: openingsResultProps[]) => {
 export function OpeningsTable(props: OpeningsTableProps) {
   return (
     <>
-      <HeadWrapper>
-        <Typography variant="h5">Recruitment Round Openings</Typography>
-        <ButtonWrapper>
-          <Button variant="contained"> Add Opening </Button>
-        </ButtonWrapper>
-      </HeadWrapper>
       <TableContainer component={Paper}>
         <Table aria-label="openings_table">
           <TableHead>
