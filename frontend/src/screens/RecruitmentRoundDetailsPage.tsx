@@ -62,15 +62,21 @@ function RecruitmentRoundDetailsPage() {
     fetchData();
   }, []);
 
-  // const archiveRound = async (id) => {
-  //   try {
-  //     await axios.post(`/api/recruitment-rounds/${id}/archive`);
-  //     // Update the state to remove the archived round
-  //     setRound((prevRound) => prevRound.filter((round) => round.id !== id));
-  //   } catch (error) {
-  //     console.error("Error archiving round:", error);
-  //   }
-  // };
+  const updateStatus = async (statusChange: string) => {
+    const data = {
+      status: statusChange,
+    };
+    try {
+      await axios.patch(
+        `http://127.0.0.1:3000/recruitmentRounds/1/status`,
+        data
+      );
+      alert("Status updated successfully!");
+    } catch (error) {
+      console.error("Error archiving round:", error);
+      alert("Failed to update status.");
+    }
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -96,7 +102,7 @@ function RecruitmentRoundDetailsPage() {
             {`${rounds[0]?.student_team_name} ${rounds[0]?.id}`}
           </Typography>
         </TitleWrapper>
-        {rounds[0]?.status === "R" ? (
+        {rounds[0]?.status === "A" ? (
           <Button
             variant="outlined"
             style={{
@@ -105,11 +111,21 @@ function RecruitmentRoundDetailsPage() {
               borderColor: "black",
               borderWidth: "1px",
             }}
+            onClick={() => {
+              updateStatus("R");
+            }}
           >
             Archive Round and Send Results
           </Button>
         ) : (
-          <Button variant="contained">Activate Round</Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              updateStatus("A");
+            }}
+          >
+            Activate Round
+          </Button>
         )}
       </HeadWrapper>
       <div style={{ marginTop: "40px" }}>
