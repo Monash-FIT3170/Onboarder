@@ -53,8 +53,6 @@ const AddRecruitmentRoundPage = () => {
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (
-      !recruitment_round_name ||
-      recruitment_round_name.length <= 0 ||
       !deadline ||
       !semester ||
       !year ||
@@ -65,11 +63,9 @@ const AddRecruitmentRoundPage = () => {
     }
     axios
       .post("http://127.0.0.1:3000/recruitmentRounds", {
-        recruitment_round_name: recruitment_round_name,
         deadline: deadline.toISO(),
         semester: semester,
         year: year,
-        // Add other form data here
       })
       .then((response) => {
         console.log(response)
@@ -99,7 +95,7 @@ const AddRecruitmentRoundPage = () => {
           alignItems="center"
           //minHeight={'100vh'}
         >
-          <Grid item xs={1} sm={1}></Grid>
+          {/* <Grid item xs={1} sm={1}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
               container
@@ -128,7 +124,8 @@ const AddRecruitmentRoundPage = () => {
                 />
               </Grid>
             </Grid>
-          </Grid>
+          </Grid> */}
+          <Grid item xs={5} sm={5}></Grid>
           <Grid item xs={1} sm={1}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
@@ -246,7 +243,7 @@ const AddRecruitmentRoundPage = () => {
               alignItems="flex-end"
               minHeight={"calc(100vh - 560px)"}
             >
-              <Grid item xs={5} sm={5}></Grid>
+              <Grid item xs={4} sm={4}></Grid>
               <Grid item xs={1} sm={1}>
                 <Button
                   variant="contained"
@@ -258,6 +255,7 @@ const AddRecruitmentRoundPage = () => {
                   Submit
                 </Button>
               </Grid>
+              <Grid item xs={2} sm={2}></Grid>
               <Grid item xs={1} sm={1}>
                 <Link
                   to="/viewrecruitmentround"
@@ -273,7 +271,7 @@ const AddRecruitmentRoundPage = () => {
                   </Button>
                 </Link>
               </Grid>
-              <Grid item xs={5} sm={5}></Grid>
+              <Grid item xs={4} sm={4}></Grid>
             </Grid>
           </Grid>
         </Grid>

@@ -56,7 +56,7 @@ const styles = {
 
 const ViewRecruitmentRoundPage = () => {
   const [data, setData] = useState([])
-  const [sum, setSum] = useState(0)
+  //const [sum, setSum] = useState(0)
   enum Status {
     A = "Active",
     I = "Inactive",
@@ -64,35 +64,20 @@ const ViewRecruitmentRoundPage = () => {
   }
 
   useEffect(() => {
-    console.log("useEffect")
+    console.log("useEffect");
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
-      .then((response) => {
-        console.log(response)
-        //setData(response.data)
-        // Promise.all(
-        //   response.data.map((item: any) =>
-        //     axios.get(
-        //       `http://127.0.0.1:3000/recruitmentRounds/${item.recruitment_round_id}/openings`
-        //     )
-        //   )
-        // )
-        //   .then((responses) => {
-        //     // Calculate the sum of the results from the second API call
-        //     const sum = responses.reduce(
-        //       (total, response) => total + response.data,
-        //       0
-        //     )
-        //     setSum(sum)
-        //   })
-        //   .catch((error) => {
-        //     console.error("There was an error!", error)
-        //   })
+      .then(response => {
+        console.log("Response: ");
+        console.log(response);
+        setData(response.data); //.replaceAll("'", '"')
+        console.log("setData done. Data:");
+        console.log(data);
       })
       .catch((error) => {
         console.error("There was an error!", error)
       })
-  }, [])
+  }, []);
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
@@ -104,17 +89,20 @@ const ViewRecruitmentRoundPage = () => {
         </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            {data &&
+          <div>
+    </div>
+            {Array.isArray(data) &&
               data
                 .map(
                   (item: any) =>
-                    item.student_team.length > 0 ? (
-                      <h3>item.student_team</h3>
+                    item.student_team_name.length > 0 ? (
+                      <h3>{item.student_team_name}</h3>
                     ) : (
-                      <h3>'Student Team 1'</h3>
+                      <h3>Name Not Found</h3>
                     ) // Code for if we need it, but defaults to dummy value
                 )
                 .at(0)}
+                {/* <h3>'Student Team 1'</h3> */}
           </Grid>
         </Grid>
         <section style={styles.section}>
@@ -160,21 +148,18 @@ const ViewRecruitmentRoundPage = () => {
               </TableHead>
               <TableBody>
                 {/* Add active recruitment rounds rows */}
-                {data &&
+                {Array.isArray(data)  &&
                   data.map((item: any) => (
-                    <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell>{" "}
-                      {/*<TableCell>{item.round_name}</TableCell>*/}
-                      <TableCell>{"TODO DEADLINES"}</TableCell>{" "}
-                      {/*<TableCell>{item.deadline}</TableCell>*/}
+                    <TableRow key={item.id}>
+                      <TableCell>{item.student_team_name + " " + item.id}</TableCell>
+                      <TableCell>{item.deadline}</TableCell>
                       <TableCell>
                         {Status[item.status as keyof typeof Status] ||
                           "Unknown Status"}
                       </TableCell>
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell>{" "}
-                      {/*<TableCell>{item.openings}</TableCell>*/}
+                      <TableCell>{item.openings_count}</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   ))}
@@ -204,21 +189,18 @@ const ViewRecruitmentRoundPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data &&
+                {Array.isArray(data)  &&
                   data.map((item: any) => (
-                    <TableRow key={item.recruitment_round_id}>
-                      <TableCell>{item.recruitment_round_id}</TableCell>{" "}
-                      {/*<TableCell>{item.round_name}</TableCell>*/}
-                      <TableCell>{"TODO DEADLINES"}</TableCell>{" "}
-                      {/*<TableCell>{item.deadline}</TableCell>*/}
+                    <TableRow key={item.id}>
+                      <TableCell>{item.student_team_name + " " + item.id}</TableCell>
+                      <TableCell>{item.deadline}</TableCell>
                       <TableCell>
                         {Status[item.status as keyof typeof Status] ||
                           "Unknown Status"}
                       </TableCell>
                       <TableCell>{item.semester}</TableCell>
                       <TableCell>{item.year}</TableCell>
-                      <TableCell>{"TODO OPENINGS"}</TableCell>{" "}
-                      {/*<TableCell>{item.openings}</TableCell>*/}
+                      <TableCell>{item.openings_count}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
