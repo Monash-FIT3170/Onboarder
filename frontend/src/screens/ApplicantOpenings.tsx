@@ -16,24 +16,10 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const HeadWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-`;
-
-const OpeningsWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  top: 10px;
 `;
 
 function RecruitmentRoundDetailsPage() {
