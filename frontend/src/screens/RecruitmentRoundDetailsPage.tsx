@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Typography, Button } from "@mui/material";
+import { Typography, Button, CircularProgress } from "@mui/material";
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
 import LoadingSpinner from "../components/LoadSpinner";
@@ -38,6 +38,7 @@ function RecruitmentRoundDetailsPage() {
   const [rounds, setRounds] = useState<SingleRoundResultProps[]>([]);
   const [openings, setOpening] = useState<openingsResultProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +50,6 @@ function RecruitmentRoundDetailsPage() {
         const openingsResponse = await axios.get(
           "http://127.0.0.1:3000/recruitmentRounds/1/openings"
         );
-
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
       } catch (error) {
@@ -63,6 +63,7 @@ function RecruitmentRoundDetailsPage() {
   }, []);
 
   const updateStatus = async (statusChange: string) => {
+    setIsUpdating(true);
     const data = {
       status: statusChange,
     };
@@ -75,6 +76,8 @@ function RecruitmentRoundDetailsPage() {
     } catch (error) {
       console.error("Error archiving round:", error);
       alert("Failed to update status.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -111,11 +114,16 @@ function RecruitmentRoundDetailsPage() {
               borderColor: "black",
               borderWidth: "1px",
             }}
+            disabled={isUpdating}
             onClick={() => {
               updateStatus("R");
             }}
           >
-            Archive Round and Send Results
+            {isUpdating ? (
+              <CircularProgress size={24} />
+            ) : (
+              "Archive Round and Send Results"
+            )}
           </Button>
         ) : (
           <Button
@@ -124,7 +132,11 @@ function RecruitmentRoundDetailsPage() {
               updateStatus("A");
             }}
           >
-            Activate Round
+            {isUpdating ? (
+              <CircularProgress size={24} style={{ color: "white" }} />
+            ) : (
+              "Activate Round"
+            )}
           </Button>
         )}
       </HeadWrapper>
