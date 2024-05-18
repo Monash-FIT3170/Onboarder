@@ -107,6 +107,7 @@ function RecruitmentRoundDetailsPage() {
         <Grid item xs={3}>
           <TextField label="Search" variant="outlined" fullWidth />
         </Grid>
+        
         <Grid item xs={3}>
           <TextField label="Filter by opening name" variant="outlined" fullWidth />
         </Grid>

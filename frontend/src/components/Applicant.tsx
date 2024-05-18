@@ -34,7 +34,9 @@ import {
   //     }
   // }
   
+
   export interface openingsResultProps {
+    
     id: number;
     recruitment_round_id: number;
     recruitment_round_year: number;
