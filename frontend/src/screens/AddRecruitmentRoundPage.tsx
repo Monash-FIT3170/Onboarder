@@ -45,7 +45,6 @@ const styles = {
 }
 
 const AddRecruitmentRoundPage = () => {
-  const [recruitment_round_name, setRoundName] = useState("")
   const [deadline, setDeadline] = useState(DateTime.now())
   const [semester, setSemester] = useState("")
   const [year, setYear] = useState("")
@@ -63,7 +62,7 @@ const AddRecruitmentRoundPage = () => {
     }
     axios
       .post("http://127.0.0.1:3000/recruitmentRounds", {
-        deadline: deadline.toISO(),
+        deadline: deadline.toString(),
         semester: semester,
         year: year,
       })
@@ -125,7 +124,37 @@ const AddRecruitmentRoundPage = () => {
               </Grid>
             </Grid>
           </Grid> */}
-          <Grid item xs={5} sm={5}></Grid>
+          <Grid item xs={2} sm={2}></Grid>
+          <Grid item xs={2} sm={2}>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Grid item>
+                <h1 style={{ fontWeight: "normal" }}>Year:</h1>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2} sm={2}>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Grid item xs={12}>
+                <TextField
+                  placeholder="Enter year of round"
+                  fullWidth
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          
           <Grid item xs={1} sm={1}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
@@ -166,7 +195,6 @@ const AddRecruitmentRoundPage = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={1} sm={1}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
@@ -205,36 +233,8 @@ const AddRecruitmentRoundPage = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={1} sm={1}></Grid>
-          <Grid item xs={2} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Year:</h1>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={2} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Grid item xs={12}>
-                <TextField
-                  placeholder="Enter year of round"
-                  fullWidth
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
+          
+          <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={12} sm={12}>
             <Grid

@@ -64,20 +64,20 @@ const ViewRecruitmentRoundPage = () => {
   }
 
   useEffect(() => {
-    console.log("useEffect");
+    console.log("useEffect")
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
-      .then(response => {
-        console.log("Response: ");
-        console.log(response);
-        setData(response.data); //.replaceAll("'", '"')
-        console.log("setData done. Data:");
-        console.log(data);
+      .then((response) => {
+        console.log("Response: ")
+        console.log(response)
+        setData(response.data) //.replaceAll("'", '"')
+        console.log("setData done. Data:")
+        console.log(data)
       })
       .catch((error) => {
         console.error("There was an error!", error)
       })
-  }, []);
+  }, [])
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
@@ -89,8 +89,7 @@ const ViewRecruitmentRoundPage = () => {
         </Typography>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-          <div>
-    </div>
+            <div></div>
             {Array.isArray(data) &&
               data
                 .map(
@@ -102,13 +101,13 @@ const ViewRecruitmentRoundPage = () => {
                     ) // Code for if we need it, but defaults to dummy value
                 )
                 .at(0)}
-                {/* <h3>'Student Team 1'</h3> */}
+            {/* <h3>'Student Team 1'</h3> */}
           </Grid>
         </Grid>
         <section style={styles.section}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              <h4>Active Recruitment Rounds</h4>
+              <h4>Current Recruitment Rounds</h4>
             </Grid>
             <Grid item>
               <Link
@@ -122,7 +121,7 @@ const ViewRecruitmentRoundPage = () => {
             </Grid>
           </Grid>
           <TextField
-            style={{ marginBottom: "1rem" }}
+            style={{ marginBottom: "1rem", width: "25%" }}
             variant="outlined"
             placeholder="Round Name, Deadline, etc..."
             size="small"
@@ -148,29 +147,40 @@ const ViewRecruitmentRoundPage = () => {
               </TableHead>
               <TableBody>
                 {/* Add active recruitment rounds rows */}
-                {Array.isArray(data)  &&
-                  data.map((item: any) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.student_team_name + " " + item.id}</TableCell>
-                      <TableCell>{item.deadline}</TableCell>
-                      <TableCell>
-                        {Status[item.status as keyof typeof Status] ||
-                          "Unknown Status"}
-                      </TableCell>
-                      <TableCell>{item.semester}</TableCell>
-                      <TableCell>{item.year}</TableCell>
-                      <TableCell>{item.openings_count}</TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  ))}
+                {Array.isArray(data) &&
+                  data
+                    .filter((item: any) => item.status != "R")
+                    .map((item: any) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          {item.student_team_name + " " + item.id}
+                        </TableCell>
+                        <TableCell>{item.deadline}</TableCell>
+                        <TableCell>
+                          {Status[item.status as keyof typeof Status] ||
+                            "Unknown Status"}
+                        </TableCell>
+                        <TableCell>{item.semester}</TableCell>
+                        <TableCell>{item.year}</TableCell>
+                        <TableCell>{item.openings_count}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="contained"
+                            style={{padding: 0}}
+                          >
+                            VIEW
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </TableContainer>
         </section>
         <section style={styles.section}>
-          <h4>Archived Recruitment Rounds</h4>
+          <h4>Archived Recruitment Rounds: Showing 3</h4>
           <TextField
-            style={{ marginBottom: "1rem" }}
+            style={{ marginBottom: "1rem", width: "25%" }}
             variant="outlined"
             placeholder="Round Name, Deadline, etc..."
             size="small"
@@ -189,20 +199,25 @@ const ViewRecruitmentRoundPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(data)  &&
-                  data.map((item: any) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.student_team_name + " " + item.id}</TableCell>
-                      <TableCell>{item.deadline}</TableCell>
-                      <TableCell>
-                        {Status[item.status as keyof typeof Status] ||
-                          "Unknown Status"}
-                      </TableCell>
-                      <TableCell>{item.semester}</TableCell>
-                      <TableCell>{item.year}</TableCell>
-                      <TableCell>{item.openings_count}</TableCell>
-                    </TableRow>
-                  ))}
+                {Array.isArray(data) &&
+                  data
+                    .filter((item: any) => item.status == "R")
+                    .slice(0, 3)
+                    .map((item: any) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          {item.student_team_name + " " + item.id}
+                        </TableCell>
+                        <TableCell>{item.deadline}</TableCell>
+                        <TableCell>
+                          {Status[item.status as keyof typeof Status] ||
+                            "Unknown Status"}
+                        </TableCell>
+                        <TableCell>{item.semester}</TableCell>
+                        <TableCell>{item.year}</TableCell>
+                        <TableCell>{item.openings_count}</TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </TableContainer>

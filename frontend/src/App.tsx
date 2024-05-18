@@ -9,7 +9,7 @@ import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 function App() {
   return (
     <>
-      <h1>Onboarder</h1>
+      {/* <h1>Onboarder</h1> */}
       <Routes>
         <Route path="/" element={<RecruitmentPage />} />
         <Route path="/login" element={<LoginPage />} />
