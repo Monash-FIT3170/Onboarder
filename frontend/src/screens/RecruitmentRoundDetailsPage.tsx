@@ -12,6 +12,7 @@ import {
   SingleRoundTable,
   SingleRoundResultProps,
 } from "../components/SingleRoundTable";
+import { useNavigate } from "react-router-dom";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -37,6 +38,8 @@ function RecruitmentRoundDetailsPage() {
   const [rounds, setRounds] = useState<SingleRoundResultProps[]>([]);
   const [openings, setOpening] = useState<openingsResultProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,6 +76,15 @@ function RecruitmentRoundDetailsPage() {
     return <LoadingSpinner />;
   }
 
+  const handleAddOpening = () => {
+    navigate("/create-opening", {
+      state: {
+        deadline: rounds[0].deadline,
+        round: rounds[0]?.student_team_name + " " + rounds[0]?.id,
+      },
+    });
+  };
+
   return (
     <>
       {/* Single Recruitment Round Table */}
@@ -80,7 +92,7 @@ function RecruitmentRoundDetailsPage() {
         <TitleWrapper>
           <BackIcon />
           <Typography variant="h5">
-            Monash Nova Rover Recruitment {rounds[0]?.id}
+            {`${rounds[0]?.student_team_name} ${rounds[0]?.id}`}
           </Typography>
         </TitleWrapper>
         {rounds[0]?.status === "R" ? (
@@ -114,7 +126,10 @@ function RecruitmentRoundDetailsPage() {
       >
         <OpeningsWrapper>
           <Typography variant="h6">Recruitment Round Openings</Typography>
-          <Button variant="contained"> Add Opening </Button>
+          <Button variant="contained" onClick={handleAddOpening}>
+            {" "}
+            Add Opening{" "}
+          </Button>
         </OpeningsWrapper>
         <OpeningsTable results={openings}></OpeningsTable>
       </div>
