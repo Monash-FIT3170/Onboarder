@@ -56,6 +56,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/openings/{openingId}/applications', ['OPTIONS'])
 @route('/applications/{applicationId}/accept', ['OPTIONS'])
 @route('/applications/{applicationId}/reject', ['OPTIONS'])
+@route('/recruitmentRounds/{roundId}/status', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
