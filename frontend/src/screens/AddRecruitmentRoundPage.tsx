@@ -16,8 +16,11 @@ const styles = {
   header: {
     backgroundColor: "#1976d2",
     color: "#fff",
-    padding: "0.25rem",
+    padding: "1rem",
     textAlign: "left",
+    height: "50px",
+    display: "flex",
+    alignItems: 'center',
   },
   main: {
     padding: "2rem",
@@ -241,7 +244,7 @@ const AddRecruitmentRoundPage = () => {
               container
               justifyContent="center"
               alignItems="flex-end"
-              minHeight={"calc(100vh - 560px)"}
+              minHeight={"calc(100vh - 580px)"}
             >
               <Grid item xs={4} sm={4}></Grid>
               <Grid item xs={1} sm={1}>

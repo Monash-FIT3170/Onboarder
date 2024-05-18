@@ -24,11 +24,14 @@ const styles = {
     color: "#fff",
     padding: "1rem",
     textAlign: "left",
+    height: "50px",
+    display: "flex",
+    alignItems: 'center',
   },
   main: {
     padding: "2rem",
   },
-  monashNova: {
+  studentTeam: {
     color: "gray",
     marginBottom: "1rem",
   },
@@ -51,6 +54,11 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+  },
+  scrollableTableBody: {
+    height: "calc(100vh - 780px)",
+    overflowY: "auto",
+    display: "block",
   },
 }
 
@@ -84,7 +92,7 @@ const ViewRecruitmentRoundPage = () => {
         <h4>Onboarding: Recruitment Platform</h4>
       </header>
       <main style={styles.main}>
-        <Typography variant="h4" style={styles.monashNova}>
+        <Typography variant="h4" style={styles.studentTeam}>
           Recruitment Rounds
         </Typography>
         <Grid container alignItems="center">
@@ -129,8 +137,8 @@ const ViewRecruitmentRoundPage = () => {
           />
           {/* <Grid item xs={6} style={{ textAlign: "right" }}>
           </Grid> */}
-          <TableContainer component={Paper}>
-            <Table style={styles.table}>
+          <TableContainer component={Paper} style={styles.scrollableTableBody}>
+            <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
@@ -145,17 +153,20 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody >
                 {/* Add active recruitment rounds rows */}
                 {Array.isArray(data) &&
                   data
                     .filter((item: any) => item.status != "R")
-                    .map((item: any) => (
+                    .map((item: any) => {
+                      const deadline = new Date(item.deadline);
+                      const formattedDeadline = `${deadline.getDate().toString().padStart(2, '0')}/${(deadline.getMonth() + 1).toString().padStart(2, '0')}/${deadline.getFullYear()} ${deadline.getHours().toString().padStart(2, '0')}:${deadline.getMinutes().toString().padStart(2, '0')}`;
+                      return (
                       <TableRow key={item.id}>
                         <TableCell>
                           {item.student_team_name + " " + item.id}
                         </TableCell>
-                        <TableCell>{item.deadline}</TableCell>
+                        <TableCell>{formattedDeadline}</TableCell>
                         <TableCell>
                           {Status[item.status as keyof typeof Status] ||
                             "Unknown Status"}
@@ -172,7 +183,7 @@ const ViewRecruitmentRoundPage = () => {
                           </Button>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )})}
               </TableBody>
             </Table>
           </TableContainer>
@@ -187,7 +198,7 @@ const ViewRecruitmentRoundPage = () => {
             fullWidth
           />
           <TableContainer component={Paper}>
-            <Table style={styles.table}>
+            <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
@@ -203,12 +214,15 @@ const ViewRecruitmentRoundPage = () => {
                   data
                     .filter((item: any) => item.status == "R")
                     .slice(0, 3)
-                    .map((item: any) => (
+                    .map((item: any) => {
+                      const deadline = new Date(item.deadline);
+                      const formattedDeadline = `${deadline.getDate().toString().padStart(2, '0')}/${(deadline.getMonth() + 1).toString().padStart(2, '0')}/${deadline.getFullYear()} ${deadline.getHours().toString().padStart(2, '0')}:${deadline.getMinutes().toString().padStart(2, '0')}`;
+                      return (
                       <TableRow key={item.id}>
                         <TableCell>
                           {item.student_team_name + " " + item.id}
                         </TableCell>
-                        <TableCell>{item.deadline}</TableCell>
+                        <TableCell>{formattedDeadline}</TableCell>
                         <TableCell>
                           {Status[item.status as keyof typeof Status] ||
                             "Unknown Status"}
@@ -217,7 +231,7 @@ const ViewRecruitmentRoundPage = () => {
                         <TableCell>{item.year}</TableCell>
                         <TableCell>{item.openings_count}</TableCell>
                       </TableRow>
-                    ))}
+                    )})}
               </TableBody>
             </Table>
           </TableContainer>
