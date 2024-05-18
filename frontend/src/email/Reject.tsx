@@ -24,9 +24,9 @@ import {
           <Section style={paragraphContent}>
             <Hr style={hr} />
             <Text style={heading}>Confirmation of rejection</Text>
-            <Text style={paragraph}>Dear [NAME],</Text>
+            <Text style={paragraph}>Dear Tim,</Text>
             <Text style={paragraph}>
-                Thank you for your precious time to apply for a position at [ENG TEAM NAME].
+                Thank you for your precious time to apply for a position at Monash Nova Rover.
                 Unfortunately, your application has been unsuccessful.
             </Text>
           </Section>
@@ -35,13 +35,13 @@ import {
             <Text style={paragraph}>
               However we strongly encourage you to apply in our next round of recruitment. 
               Please stayed updated through our social media channels and our {" "}
-              <Link href="" style={link}>
+              <Link href="https://www.novarover.space" style={link}>
                 website
               </Link>{" "} for any information regarding future recruitment rounds.
               If you have any question regard to us. 
               Feel free to reach out {" "}
               <Link href="" style={link}>
-                example@gmail.com
+                novaroverteam@monash.edu
               </Link>{". "}
             </Text>
           </Section>
@@ -50,7 +50,7 @@ import {
             <Hr style={hr} />
             <Text style={paragraph}>Kind Regards,</Text>
             <Text style={{ ...paragraph, fontSize: "20px" }}>
-              Your Engineering team
+              Monash Nova Rover
             </Text>
           </Section>
 

@@ -41,12 +41,11 @@ import {
 
           <Section style={paragraphContent}>
             <Text style={paragraph}>
-              Please reply to this email no later than <b>DD/MM/YYY</b>{" "} to accept
+              Please reply to this email <Link href="" style={link}>
+                novaroverteam@monash.edu
+              </Link>{" "} no later than <b>20/05/2024</b>{" "} to accept
               the position. If you have any question regard the postion or us.
-              Feel free to reach out {" "}
-              <Link href="" style={link}>
-                example@gmail.com
-              </Link>{". "}
+              Feel free to reach out. {" "}
             </Text>
           </Section>
   
@@ -54,7 +53,7 @@ import {
             <Hr style={hr} />
             <Text style={paragraph}>Kind Regards,</Text>
             <Text style={{ ...paragraph, fontSize: "20px" }}>
-              Your Engineering team
+              Monash Nova Rover
             </Text>
           </Section>
 
