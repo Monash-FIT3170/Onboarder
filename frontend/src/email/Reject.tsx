@@ -38,8 +38,7 @@ import {
               <Link href="https://www.novarover.space" style={link}>
                 website
               </Link>{" "} for any information regarding future recruitment rounds.
-              If you have any question regard to us. 
-              Feel free to reach out {" "}
+              If you have any question regard to us, feel free to reach out {" "}
               <Link href="" style={link}>
                 novaroverteam@monash.edu
               </Link>{". "}
