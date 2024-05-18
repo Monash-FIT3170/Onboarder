@@ -6,7 +6,8 @@ function CreateOpeningPage() {
     const [roundName, setRoundName] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState('');
-    const [skills, setSkills] = useState([]);
+    const [requiredSkills, setRequiredSkills] = useState([]);
+    const [desiredSkills, setDesiredSkills] = useState([]);
 
     const handleSubmit = () => {
         alert('Opening has successfully been created!');
@@ -17,7 +18,7 @@ function CreateOpeningPage() {
         setRoundName('');
         setDescription('');
         setDeadline('');
-        setSkills([]);
+        setRequiredSkills([]);
         alert('Form Canceled');
     };
 
@@ -48,6 +49,31 @@ function CreateOpeningPage() {
                 onChange={(e) => setRoundName(e.target.value)}
               />
             </Grid>
+            <Grid item xs={12}>
+            <Typography variant='body2' fontSize={30}>Required Skills:</Typography>
+            <Autocomplete
+              fullWidth
+              multiple
+              freeSolo
+              options={[]}
+              value={requiredSkills}
+              onChange={(event, newValue) => {
+                setRequiredSkills(newValue);
+              }}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip key={index} label={option} {...getTagProps({ index })} />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Add skills"
+                  sx={{ width: '50%' }}
+                />
+              )}
+            />
+          </Grid>
           </Grid>
 
           <Grid item xs={6} container spacing={2}>
@@ -71,18 +97,16 @@ function CreateOpeningPage() {
                 onChange={(e) => setDeadline(e.target.value)}
               />
             </Grid>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant='body2' fontSize={30}>Skills:</Typography>
+            <Grid item xs={12}>
+            <Typography variant='body2' fontSize={30}>Desired Skills:</Typography>
             <Autocomplete
               fullWidth
               multiple
               freeSolo
               options={[]}
-              value={skills}
+              value={desiredSkills}
               onChange={(event, newValue) => {
-                setSkills(newValue);
+                setDesiredSkills(newValue);
               }}
               renderTags={(value, getTagProps) =>
                 value.map((option, index) => (
@@ -98,6 +122,9 @@ function CreateOpeningPage() {
               )}
             />
           </Grid>
+          </Grid>
+
+          
 
           <Grid item container xs={12} justifyContent="center" spacing={2}>
             <Grid item>
