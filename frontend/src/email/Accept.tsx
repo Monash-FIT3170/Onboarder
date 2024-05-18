@@ -44,8 +44,8 @@ import {
               Please reply to this email <Link href="" style={link}>
                 novaroverteam@monash.edu
               </Link>{" "} no later than <b>20/05/2024</b>{" "} to accept
-              the position. If you have any question regard the postion or us.
-              Feel free to reach out. {" "}
+              the position. If you have any question regard the postion or us,
+              feel free to reach out. {" "}
             </Text>
           </Section>
   
