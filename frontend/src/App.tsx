@@ -6,6 +6,7 @@ import LoginPage from "../src/screens/LoginPage";
 import RegisterPage from "../src/screens/RegisterPage";
 import RecruitmentPage from "../src/screens/RecruitmentPage";
 import ApplicantOpenings from "../src/screens/ApplicantOpenings";
+import AdminOpening from "../src/screens/AdminOpening";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/applicant-opening" element={<ApplicantOpenings />} />
+        <Route path="/admin-opening" element={<AdminOpening />} />
       </Routes>
     </>
   );
