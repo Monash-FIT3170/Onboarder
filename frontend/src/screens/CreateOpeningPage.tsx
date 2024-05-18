@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Button, Typography, TextField, Box, Autocomplete, Chip } from '@mui/material';
+import axios from "axios";
 
 function CreateOpeningPage() {
     const [openingName, setOpeningName] = useState('');
@@ -9,9 +10,30 @@ function CreateOpeningPage() {
     const [requiredSkills, setRequiredSkills] = useState([]);
     const [desiredSkills, setDesiredSkills] = useState([]);
 
-    const handleSubmit = () => {
-        alert('Opening has successfully been created!');
-    };
+    // const handleSubmit = () => {
+    //     alert('Opening has successfully been created!');
+    // };
+
+    const handleSubmit = async () => {
+      const openingData = {
+          name: openingName,
+          description: description,
+          required_skills: requiredSkills,
+          desired_skills: desiredSkills,
+      };
+
+      try {
+          const response = await axios.post(`http://127.0.0.1:3000/recruitmentRounds/${roundName}/openings`, openingData);
+          if (response.status === 200) {
+              alert('Opening successfully been created!');
+          } else {
+              alert('Failed to create opening.');
+          }
+      } catch (error) {
+          console.error('Error creating the opening!', error);
+          alert('Error creating the opening!');
+      }
+  };
 
     const handleCancel = () => {
         setOpeningName('');
