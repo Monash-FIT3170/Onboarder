@@ -1,13 +1,13 @@
-import Grid from "@mui/material/Grid"
-import React, { useState } from "react"
-import { Select, MenuItem, Button, TextField } from "@mui/material"
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
-import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon"
-import { DateTime } from "luxon"
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
-import axios from "axios"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+import Grid from "@mui/material/Grid";
+import React, { useState } from "react";
+import { Select, MenuItem, Button, TextField } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { DateTime } from "luxon";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
@@ -20,7 +20,7 @@ const styles = {
     textAlign: "left",
     height: "50px",
     display: "flex",
-    alignItems: 'center',
+    alignItems: "center",
   },
   main: {
     padding: "2rem",
@@ -45,38 +45,34 @@ const styles = {
     borderRadius: "4px",
     cursor: "pointer",
   },
-}
+};
 
 const AddRecruitmentRoundPage = () => {
-  const [deadline, setDeadline] = useState(DateTime.now())
-  const [semester, setSemester] = useState("")
-  const [year, setYear] = useState("")
-  const history = useNavigate()
+  const [deadline, setDeadline] = useState(DateTime.now());
+  const [semester, setSemester] = useState("");
+  const [year, setYear] = useState("");
+  const history = useNavigate();
   const handleSubmit = (event: any) => {
-    event.preventDefault()
-    if (
-      !deadline ||
-      !semester ||
-      !year ||
-      year.length <= 0
-    ) {
-      alert("Please fill in all fields")
-      return
+    event.preventDefault();
+    if (!deadline || !semester || !year || year.length <= 0) {
+      alert("Please fill in all fields");
+      return;
     }
     axios
       .post("http://127.0.0.1:3000/recruitmentRounds", {
         deadline: deadline.toString(),
         semester: semester,
         year: year,
+        status: "I",
       })
       .then((response) => {
-        console.log(response)
-        history("/viewrecruitmentround")
+        console.log(response);
+        history("/viewrecruitmentround");
       })
       .catch((error) => {
-        console.error("There was an error!", error)
-      })
-  }
+        console.error("There was an error!", error);
+      });
+  };
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
@@ -157,7 +153,7 @@ const AddRecruitmentRoundPage = () => {
               </Grid>
             </Grid>
           </Grid>
-          
+
           <Grid item xs={1} sm={1}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
@@ -188,7 +184,7 @@ const AddRecruitmentRoundPage = () => {
                     value={deadline}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setDeadline(newValue)
+                        setDeadline(newValue);
                       }
                     }}
                     defaultValue={DateTime.now()}
@@ -227,16 +223,13 @@ const AddRecruitmentRoundPage = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={"Sem1"}>Semester 1</MenuItem>
-                  <MenuItem value={"Sem2"}>Semester 2</MenuItem>
-                  <MenuItem value={"Summer"}>Summer Semester</MenuItem>
-                  <MenuItem value={"Winter"}>Winter Semester</MenuItem>
-                  <MenuItem value={"Other"}>Other</MenuItem>
+                  <MenuItem value={"1"}>1</MenuItem>
+                  <MenuItem value={"2"}>2</MenuItem>
                 </Select>
               </Grid>
             </Grid>
           </Grid>
-          
+
           <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={12} sm={12}>
@@ -280,7 +273,7 @@ const AddRecruitmentRoundPage = () => {
         </Grid>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default AddRecruitmentRoundPage
+export default AddRecruitmentRoundPage;

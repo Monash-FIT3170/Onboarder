@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react"
-import TextField from "@mui/material/TextField"
-import Button from "@mui/material/Button"
-import Table from "@mui/material/Table"
-import TableBody from "@mui/material/TableBody"
-import TableCell from "@mui/material/TableCell"
-import TableContainer from "@mui/material/TableContainer"
-import TableHead from "@mui/material/TableHead"
-import TableRow from "@mui/material/TableRow"
-import Paper from "@mui/material/Paper"
-import Grid from "@mui/material/Grid"
-import Typography from "@mui/material/Typography"
-import axios from "axios"
-import { Link } from "react-router-dom"
-import { TableSortLabel } from "@mui/material"
+import React, { useEffect, useState } from "react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { TableSortLabel } from "@mui/material";
 
 const styles = {
   recruitmentRoundPage: {
@@ -26,7 +26,7 @@ const styles = {
     textAlign: "left",
     height: "50px",
     display: "flex",
-    alignItems: 'center',
+    alignItems: "center",
   },
   main: {
     padding: "2rem",
@@ -56,14 +56,14 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 780px)",
+    height: "calc(100vh - 600px)",
     overflowY: "auto",
     display: "block",
   },
-}
+};
 
 const ViewRecruitmentRoundPage = () => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   //const [sum, setSum] = useState(0)
   enum Status {
     A = "Active",
@@ -72,20 +72,20 @@ const ViewRecruitmentRoundPage = () => {
   }
 
   useEffect(() => {
-    console.log("useEffect")
+    console.log("useEffect");
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
       .then((response) => {
-        console.log("Response: ")
-        console.log(response)
-        setData(response.data) //.replaceAll("'", '"')
-        console.log("setData done. Data:")
-        console.log(data)
+        console.log("Response: ");
+        console.log(response);
+        setData(response.data); //.replaceAll("'", '"')
+        console.log("setData done. Data:");
+        console.log(data);
       })
       .catch((error) => {
-        console.error("There was an error!", error)
-      })
-  }, [])
+        console.error("There was an error!", error);
+      });
+  }, []);
   return (
     <div style={styles.recruitmentRoundPage}>
       <header style={styles.header}>
@@ -153,37 +153,46 @@ const ViewRecruitmentRoundPage = () => {
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody >
+              <TableBody>
                 {/* Add active recruitment rounds rows */}
                 {Array.isArray(data) &&
                   data
                     .filter((item: any) => item.status != "R")
                     .map((item: any) => {
                       const deadline = new Date(item.deadline);
-                      const formattedDeadline = `${deadline.getDate().toString().padStart(2, '0')}/${(deadline.getMonth() + 1).toString().padStart(2, '0')}/${deadline.getFullYear()} ${deadline.getHours().toString().padStart(2, '0')}:${deadline.getMinutes().toString().padStart(2, '0')}`;
+                      const formattedDeadline = `${deadline
+                        .getDate()
+                        .toString()
+                        .padStart(2, "0")}/${(deadline.getMonth() + 1)
+                        .toString()
+                        .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
+                        .getHours()
+                        .toString()
+                        .padStart(2, "0")}:${deadline
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, "0")}`;
                       return (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          {item.student_team_name + " " + item.id}
-                        </TableCell>
-                        <TableCell>{formattedDeadline}</TableCell>
-                        <TableCell>
-                          {Status[item.status as keyof typeof Status] ||
-                            "Unknown Status"}
-                        </TableCell>
-                        <TableCell>{item.semester}</TableCell>
-                        <TableCell>{item.year}</TableCell>
-                        <TableCell>{item.openings_count}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            style={{padding: 0}}
-                          >
-                            VIEW
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    )})}
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            {item.student_team_name + " " + item.id}
+                          </TableCell>
+                          <TableCell>{formattedDeadline}</TableCell>
+                          <TableCell>
+                            {Status[item.status as keyof typeof Status] ||
+                              "Unknown Status"}
+                          </TableCell>
+                          <TableCell>{item.semester}</TableCell>
+                          <TableCell>{item.year}</TableCell>
+                          <TableCell>{item.openings_count}</TableCell>
+                          <TableCell>
+                            <Button variant="contained" style={{ padding: 0 }}>
+                              VIEW
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -216,29 +225,41 @@ const ViewRecruitmentRoundPage = () => {
                     .slice(0, 3)
                     .map((item: any) => {
                       const deadline = new Date(item.deadline);
-                      const formattedDeadline = `${deadline.getDate().toString().padStart(2, '0')}/${(deadline.getMonth() + 1).toString().padStart(2, '0')}/${deadline.getFullYear()} ${deadline.getHours().toString().padStart(2, '0')}:${deadline.getMinutes().toString().padStart(2, '0')}`;
+                      const formattedDeadline = `${deadline
+                        .getDate()
+                        .toString()
+                        .padStart(2, "0")}/${(deadline.getMonth() + 1)
+                        .toString()
+                        .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
+                        .getHours()
+                        .toString()
+                        .padStart(2, "0")}:${deadline
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, "0")}`;
                       return (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          {item.student_team_name + " " + item.id}
-                        </TableCell>
-                        <TableCell>{formattedDeadline}</TableCell>
-                        <TableCell>
-                          {Status[item.status as keyof typeof Status] ||
-                            "Unknown Status"}
-                        </TableCell>
-                        <TableCell>{item.semester}</TableCell>
-                        <TableCell>{item.year}</TableCell>
-                        <TableCell>{item.openings_count}</TableCell>
-                      </TableRow>
-                    )})}
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            {item.student_team_name + " " + item.id}
+                          </TableCell>
+                          <TableCell>{formattedDeadline}</TableCell>
+                          <TableCell>
+                            {Status[item.status as keyof typeof Status] ||
+                              "Unknown Status"}
+                          </TableCell>
+                          <TableCell>{item.semester}</TableCell>
+                          <TableCell>{item.year}</TableCell>
+                          <TableCell>{item.openings_count}</TableCell>
+                        </TableRow>
+                      );
+                    })}
               </TableBody>
             </Table>
           </TableContainer>
         </section>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default ViewRecruitmentRoundPage
+export default ViewRecruitmentRoundPage;
