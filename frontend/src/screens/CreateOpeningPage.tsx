@@ -44,7 +44,7 @@ function CreateOpeningPage() {
         `http://127.0.0.1:3000/recruitmentRounds/${state.roundId}/openings`,
         openingData
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert("Opening successfully been created!");
       } else {
         alert("Failed to create opening.");
