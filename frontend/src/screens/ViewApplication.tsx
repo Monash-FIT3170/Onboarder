@@ -38,7 +38,7 @@ export default function RecruitmentPlatform() {
       </Box>
       <hr style={{ width: '100%', color: '#1f8ae7', opacity: '0.5', marginTop: '-25px' }} />
       <Box>
-        <Typography variant="h5" component="div" marginLeft="10px">
+        <Typography variant="h5" component="div" marginLeft="10px" marginBottom='20px'marginTop='20px'>
           Applicant Info
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -54,29 +54,32 @@ export default function RecruitmentPlatform() {
           <Box sx={{ width: '50%' }}>
             <TextField required id="phone-number" label="Phone Number" defaultValue="1234567890" />
           </Box>
+          <Box sx={{ width: '50%' }}>
+            <TextField id="Additional-information" label="Additional Information" defaultValue="I am perfect for this role as ..." />
+          </Box>
         </Box>
       </Box>
       <Box>
-        <Typography variant="h5" component="div"marginLeft="10px">
+        <Typography variant="h5" component="div"marginLeft="10px" marginBottom='20px' marginTop='20px'>
           Course Info
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
           <Box sx={{ width: '50%' }}>
             <TextField required id="Course-name" label="Course Name" defaultValue="Bachelor of Engineering" />
           </Box>
           <Box sx={{ width: '50%' }}>
-            <TextField required id="Specialisation" label="Specialisation" defaultValue="Mechanical Engineering" />
+            <TextField required id="Specialisation" label="Major" defaultValue="Mechanical Engineering" />
           </Box>
           <Box sx={{ width: '50%' }}>
-            <TextField required id="Skills" label="Skills" defaultValue="..." />
+            <TextField required id="Skills" label="Skills" defaultValue="CAD, Programming" />
           </Box>
           <Box sx={{ width: '50%' }}>
-            <TextField required id="Major" label="Major" defaultValue="SE" />
-          </Box>
-          <Box sx={{ width: '50%' }}>
-            <TextField required id="Semesters-remaining" label="Semesters Remaining" defaultValue="2" />
+            <TextField required id="Semesters remaining" label="Semesters Remaining" defaultValue="2" />
           </Box>
         </Box>
+        <Box sx={{ display:'flex', minWidth:'full' }}>
+            <TextField fullWidth required id="Current semester" label="Current Remaining" defaultValue="2" />
+          </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop:'70px' }}>
         <Button variant="contained" sx={{ m: 1, backgroundColor: '#1f8ae7' }}>
