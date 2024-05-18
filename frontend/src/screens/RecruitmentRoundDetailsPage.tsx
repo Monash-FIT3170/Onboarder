@@ -80,6 +80,7 @@ function RecruitmentRoundDetailsPage() {
     navigate("/create-opening", {
       state: {
         deadline: rounds[0].deadline,
+        roundId: rounds[0]?.id,
         round: rounds[0]?.student_team_name + " " + rounds[0]?.id,
       },
     });

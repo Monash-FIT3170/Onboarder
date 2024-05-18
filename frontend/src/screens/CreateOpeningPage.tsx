@@ -22,6 +22,7 @@ function CreateOpeningPage() {
   const location = useLocation();
   const state = location.state as {
     deadline: string;
+    roundId: number;
     round: string;
   };
   console.log(state);
