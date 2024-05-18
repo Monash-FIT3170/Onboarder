@@ -8,7 +8,7 @@ import {
   Autocomplete,
   Chip,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function CreateOpeningPage() {
@@ -18,6 +18,7 @@ function CreateOpeningPage() {
   const [deadline, setDeadline] = useState("");
   const [requiredSkills, setRequiredSkills] = useState([]);
   const [desiredSkills, setDesiredSkills] = useState([]);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const state = location.state as {
@@ -62,6 +63,7 @@ function CreateOpeningPage() {
     setDeadline("");
     setRequiredSkills([]);
     alert("Form Canceled");
+    navigate("/recruitment-details-page");
   };
 
   return (
