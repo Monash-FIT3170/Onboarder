@@ -59,6 +59,7 @@ function CreateOpeningPage() {
     setOpeningName("");
     setDescription("");
     setRequiredSkills([]);
+    setDesiredSkills([]);
     alert("Form Canceled");
     navigate("/recruitment-details-page");
   };
@@ -88,6 +89,7 @@ function CreateOpeningPage() {
           <Typography variant="body2" fontSize={30}>
             For Round: {state.round}
           </Typography>
+
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>
@@ -131,6 +133,7 @@ function CreateOpeningPage() {
           <Typography variant="body2" fontSize={30}>
             Deadline: {formatDeadline(state.deadline)}
           </Typography>
+
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>
