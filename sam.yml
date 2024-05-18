@@ -30,6 +30,12 @@ Resources:
           version: 1.0.0
         paths:
           /recruitmentRounds:
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -47,7 +53,7 @@ Resources:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"                
           /recruitmentRounds/{roundId}:
             get:
               x-amazon-apigateway-integration:
@@ -70,6 +76,12 @@ Resources:
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
@@ -102,6 +114,12 @@ Resources:
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /applications/{applicationId}:
             get:
               x-amazon-apigateway-integration:
@@ -116,8 +134,20 @@ Resources:
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           /applications/{applicationId}/reject:
             post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"

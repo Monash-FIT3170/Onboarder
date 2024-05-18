@@ -17,13 +17,13 @@ HEADERS = {
 def dispatch(event: dict):
 
     # intercept cognito here
-
+    print(event)
     resource = event.get('resource')
     method = event.get('httpMethod')
     func = routes.get(resource, {}).get(method)
 
     path_params = event.get('pathParameters', {})
-    # print(event)
+
     querystring_params = event.get('queryStringParameters', {})
     body = event.get('body', {})
     # possible validation here
@@ -52,6 +52,10 @@ def route(path: str, methods: list[str]) -> Callable:
 # OPTIONS HANDLER
 
 @route('/recruitmentRounds', ['OPTIONS'])
+@route('/recruitmentRounds/{roundId}/openings', ['OPTIONS'])
+@route('/openings/{openingId}/applications', ['OPTIONS'])
+@route('/applications/{applicationId}/accept', ['OPTIONS'])
+@route('/applications/{applicationId}/reject', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
