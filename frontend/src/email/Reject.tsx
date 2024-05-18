@@ -12,7 +12,7 @@ import {
     Section,
     Text,
   } from "@react-email/components";
-import * as React from "react";
+  import * as React from "react";
   
 
   export const EmailReject = () => (
@@ -21,21 +21,6 @@ import * as React from "react";
       <Preview>RejectEmail</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Section>
-            <Row>
-              <Column>
-              {/* This will be a top asset of our brand */}
-                {/* <Img
-                  style={headerBlue}
-                  src={``}
-                  width="305"
-                  height="28"
-                  alt="Google Play developers header blue transparent"
-                />*/}
-              </Column>
-            </Row>
-          </Section>
-  
           <Section style={paragraphContent}>
             <Hr style={hr} />
             <Text style={heading}>Confirmation of rejection</Text>

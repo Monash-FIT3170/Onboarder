@@ -25,13 +25,6 @@ import {
             <Row>
               <Column>
               {/* This will be a top asset of our brand */}
-                {/* <Img
-                  style={headerBlue}
-                  src={``}
-                  width="305"
-                  height="28"
-                  alt="Google Play developers header blue transparent"
-                />*/}
               </Column>
             </Row>
           </Section>
@@ -39,10 +32,10 @@ import {
           <Section style={paragraphContent}>
             <Hr style={hr} />
             <Text style={heading}>Confirmation of acceptance</Text>
-            <Text style={paragraph}>Dear [NAME],</Text>
+            <Text style={paragraph}>Dear Tim,</Text>
             <Text style={paragraph}>
-              We are very excited to inform you that your application to join [ENG TEAM NAME] 
-              has been successful. We delighted to offer you a [POSTION NAME] in our team.
+              We are very excited to inform you that your application to join Monash Nova Rover
+              has been successful. We delighted to offer you a Operation in our team.
             </Text>
           </Section>
 
