@@ -49,6 +49,21 @@ def route(path: str, methods: list[str]) -> Callable:
     return inner
 
 
+# OPTIONS HANDLER
+
+@route('/recruitmentRounds', ['OPTIONS'])
+def options_handler(_={}, __={}, ___={}):
+    return {
+        'statusCode': 200,
+        'headers': {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*"
+        }
+    }
+
+
 # RECRUITMENT ROUNDS
 
 @route('/recruitmentRounds', ['GET'])
