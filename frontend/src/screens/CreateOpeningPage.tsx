@@ -8,14 +8,13 @@ import {
   Autocomplete,
   Chip,
 } from "@mui/material";
+import { formatDeadline } from "../util/Util";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function CreateOpeningPage() {
   const [openingName, setOpeningName] = useState("");
-  const [roundName, setRoundName] = useState("");
   const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState("");
   const [requiredSkills, setRequiredSkills] = useState([]);
   const [desiredSkills, setDesiredSkills] = useState([]);
   const navigate = useNavigate();
@@ -26,7 +25,6 @@ function CreateOpeningPage() {
     roundId: number;
     round: string;
   };
-  console.log(state);
 
   // const handleSubmit = () => {
   //     alert('Opening has successfully been created!');
@@ -34,15 +32,16 @@ function CreateOpeningPage() {
 
   const handleSubmit = async () => {
     const openingData = {
-      name: openingName,
+      title: openingName,
       description: description,
+      status: "I",
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
     };
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/recruitmentRounds/${roundName}/openings`,
+        `http://127.0.0.1:3000/recruitmentRounds/${state.roundId}/openings`,
         openingData
       );
       if (response.status === 200) {
@@ -58,22 +57,14 @@ function CreateOpeningPage() {
 
   const handleCancel = () => {
     setOpeningName("");
-    setRoundName("");
     setDescription("");
-    setDeadline("");
     setRequiredSkills([]);
     alert("Form Canceled");
     navigate("/recruitment-details-page");
   };
 
   return (
-    <Grid
-      container
-      spacing={2}
-      alignItems="center"
-      justifyContent="center"
-      sx={{ marginTop: "20px" }}
-    >
+    <Grid container spacing={2} alignItems="center" justifyContent="center">
       <Grid item xs={12}>
         <Typography variant="h3" textAlign="center">
           Create Opening
@@ -95,15 +86,8 @@ function CreateOpeningPage() {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>
-            For Round:
+            For Round: {state.round}
           </Typography>
-          <TextField
-            fullWidth
-            label="Enter Round Name"
-            size="small"
-            value={roundName}
-            onChange={(e) => setRoundName(e.target.value)}
-          />
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>
@@ -145,15 +129,8 @@ function CreateOpeningPage() {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>
-            Deadline:
+            Deadline: {formatDeadline(state.deadline)}
           </Typography>
-          <TextField
-            fullWidth
-            label="Enter Deadline"
-            size="small"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-          />
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" fontSize={30}>

@@ -75,7 +75,7 @@ function RecruitmentRoundDetailsPage() {
       alert("Status updated successfully!");
     } catch (error) {
       console.error("Error archiving round:", error);
-      alert("Failed to update status.");
+      alert("Failed to update status");
     } finally {
       setIsUpdating(false);
     }
