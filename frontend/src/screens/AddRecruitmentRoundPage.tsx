@@ -1,13 +1,24 @@
-import Grid from "@mui/material/Grid";
-import React, { useState } from "react";
-import { Select, MenuItem, Button, TextField } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
-import { DateTime } from "luxon";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid"
+import React, { useState } from "react"
+import {
+  Select,
+  MenuItem,
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material"
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon"
+import { DateTime } from "luxon"
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
+import axios from "axios"
+import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
@@ -32,18 +43,20 @@ const styles = {
     borderRadius: "4px",
     cursor: "pointer",
   },
-};
+}
 
 const AddRecruitmentRoundPage = () => {
-  const [deadline, setDeadline] = useState(DateTime.now());
-  const [semester, setSemester] = useState("");
-  const [year, setYear] = useState("");
-  const history = useNavigate();
+  const [deadline, setDeadline] = useState(DateTime.now())
+  const [semester, setSemester] = useState("")
+  const [year, setYear] = useState("")
+  const [open, setOpen] = useState(false)
+  const [dialogParam, setDialogParam] = useState(false);
+  const history = useNavigate()
   const handleSubmit = (event: any) => {
-    event.preventDefault();
+    event.preventDefault()
     if (!deadline || !semester || !year || year.length <= 0) {
-      alert("Please fill in all fields");
-      return;
+      alert("Please fill in all fields")
+      return
     }
     axios
       .post("http://127.0.0.1:3000/recruitmentRounds", {
@@ -53,13 +66,16 @@ const AddRecruitmentRoundPage = () => {
         status: "I",
       })
       .then((response) => {
-        console.log(response);
-        history("/viewrecruitmentround");
+        console.log(response)
+        setOpen(true)
+        setDialogParam(true)
       })
       .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  };
+        console.error("There was an error!", error)
+        setOpen(true)
+        setDialogParam(false)
+      })
+  }
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>
@@ -74,38 +90,7 @@ const AddRecruitmentRoundPage = () => {
           rowSpacing={6}
           justifyContent="center"
           alignItems="center"
-          //minHeight={'100vh'}
         >
-          {/* <Grid item xs={1} sm={1}></Grid>
-          <Grid item xs={2} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Round Name:</h1>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={2} sm={2}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Grid item xs={12}>
-                <TextField
-                  placeholder="Enter round name"
-                  fullWidth
-                  value={recruitment_round_name}
-                  onChange={(e) => setRoundName(e.target.value)}
-                />
-              </Grid>
-            </Grid>
-          </Grid> */}
           <Grid item xs={2} sm={2}></Grid>
           <Grid item xs={2} sm={2}>
             <Grid
@@ -167,7 +152,7 @@ const AddRecruitmentRoundPage = () => {
                     value={deadline}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setDeadline(newValue);
+                        setDeadline(newValue)
                       }
                     }}
                     defaultValue={DateTime.now()}
@@ -255,8 +240,19 @@ const AddRecruitmentRoundPage = () => {
           </Grid>
         </Grid>
       </form>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogContent>
+          <DialogContentText>
+          {dialogParam ? 'Recruitment Round has been successfully created!' : 'There was an error in creating the Recruitment Round!\nPlease try again later!'}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setOpen(false); history("/viewrecruitmentround")}}>GO TO ROUNDS TABLE</Button>
+          <Button onClick={() => {setOpen(false); setDeadline(DateTime.now()), setSemester(""), setYear("")}}>CREATE MORE ROUNDS</Button>
+        </DialogActions>
+      </Dialog>
     </div>
-  );
-};
+  )
+}
 
-export default AddRecruitmentRoundPage;
+export default AddRecruitmentRoundPage

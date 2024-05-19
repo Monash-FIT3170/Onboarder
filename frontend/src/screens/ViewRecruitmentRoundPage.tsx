@@ -55,7 +55,6 @@ const styles = {
 
 const ViewRecruitmentRoundPage = () => {
   const [data, setData] = useState([]);
-  //const [sum, setSum] = useState(0)
   enum Status {
     A = "Active",
     I = "Inactive",
@@ -104,7 +103,7 @@ const ViewRecruitmentRoundPage = () => {
                       <h3>{item.student_team_name}</h3>
                     ) : (
                       <h3>Name Not Found</h3>
-                    ) // Code for if we need it, but defaults to dummy value
+                    ) 
                 )
                 .at(0)}
             {/* <h3>'Student Team 1'</h3> */}
@@ -133,8 +132,6 @@ const ViewRecruitmentRoundPage = () => {
             size="small"
             fullWidth
           />
-          {/* <Grid item xs={6} style={{ textAlign: "right" }}>
-          </Grid> */}
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
             <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
@@ -260,6 +257,7 @@ const ViewRecruitmentRoundPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          
         </section>
       </main>
     </div>
