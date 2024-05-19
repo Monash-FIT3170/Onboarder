@@ -1,27 +1,35 @@
-import { useState, useEffect } from "react"
-import { Typography, Button, CircularProgress, IconButton } from "@mui/material"
-import styled from "styled-components"
-import BackIcon from "../assets/BackIcon"
-import LoadingSpinner from "../components/LoadSpinner"
-import { OpeningsTable, openingsResultProps } from "../components/OpeningsTable"
-import axios from "axios"
+import { useState, useEffect } from "react";
+import {
+  Typography,
+  Button,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
+import styled from "styled-components";
+import BackIcon from "../assets/BackIcon";
+import LoadingSpinner from "../components/LoadSpinner";
+import {
+  OpeningsTable,
+  openingsResultProps,
+} from "../components/OpeningsTable";
+import axios from "axios";
 import {
   SingleRoundTable,
   SingleRoundResultProps,
-} from "../components/SingleRoundTable"
-import { useLocation, useNavigate } from "react-router-dom"
+} from "../components/SingleRoundTable";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HeadWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`
+`;
 
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-`
+`;
 
 const OpeningsWrapper = styled.div`
   display: flex;
@@ -29,62 +37,62 @@ const OpeningsWrapper = styled.div`
   align-items: center;
   position: relative;
   top: 10px;
-`
+`;
 
 function RecruitmentRoundDetailsPage() {
-  const [rounds, setRounds] = useState<SingleRoundResultProps[]>([])
-  const [openings, setOpening] = useState<openingsResultProps[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const [rounds, setRounds] = useState<SingleRoundResultProps[]>([]);
+  const [openings, setOpening] = useState<openingsResultProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const state = location.state as {
-    recruitment_round_id: number
-  }
+    recruitment_round_id: number;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const roundsResponse = await axios.get(
           `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}`
-        )
+        );
         const openingsResponse = await axios.get(
           `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/openings`
-        )
-        setRounds(roundsResponse.data)
-        setOpening(openingsResponse.data)
+        );
+        setRounds(roundsResponse.data);
+        setOpening(openingsResponse.data);
       } catch (error) {
-        console.error("Error fetching data:", error)
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [state.recruitment_round_id])
+    fetchData();
+  }, [state.recruitment_round_id]);
 
   const updateStatus = async (statusChange: string) => {
-    setIsUpdating(true)
+    setIsUpdating(true);
     const data = {
       status: statusChange,
-    }
+    };
     try {
       await axios.patch(
         `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/status`,
         data
-      )
-      alert("Status updated successfully!")
+      );
+      alert("Status updated successfully!");
     } catch (error) {
-      console.error("Error archiving round:", error)
-      alert("Failed to update status")
+      console.error("Error archiving round:", error);
+      alert("Failed to update status");
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   const handleAddOpening = () => {
@@ -94,8 +102,26 @@ function RecruitmentRoundDetailsPage() {
         roundId: rounds[0]?.id,
         round: rounds[0]?.student_team_name + " " + rounds[0]?.id,
       },
-    })
-  }
+    });
+  };
+
+  const handleView = (
+    id: number,
+    recruitment_round_id: number,
+    student_team_name: string,
+    title: string,
+    application_count: number
+  ) => {
+    navigate("/viewopen", {
+      state: {
+        id,
+        recruitment_round_id,
+        student_team_name,
+        title,
+        application_count,
+      },
+    });
+  };
 
   return (
     <>
@@ -120,7 +146,7 @@ function RecruitmentRoundDetailsPage() {
             }}
             disabled={isUpdating}
             onClick={() => {
-              updateStatus("R")
+              updateStatus("R");
             }}
           >
             {isUpdating ? (
@@ -133,7 +159,7 @@ function RecruitmentRoundDetailsPage() {
           <Button
             variant="contained"
             onClick={() => {
-              updateStatus("A")
+              updateStatus("A");
             }}
           >
             {isUpdating ? (
@@ -164,10 +190,13 @@ function RecruitmentRoundDetailsPage() {
             Add Opening{" "}
           </Button>
         </OpeningsWrapper>
-        <OpeningsTable results={openings}></OpeningsTable>
+        <OpeningsTable
+          results={openings}
+          viewHandler={handleView}
+        ></OpeningsTable>
       </div>
     </>
-  )
+  );
 }
 
-export default RecruitmentRoundDetailsPage
+export default RecruitmentRoundDetailsPage;

@@ -19,3 +19,16 @@ export const getStatusText = (status: string): string => {
       return "Unknown";
   }
 };
+
+export const getAppStatusText = (status: string): string => {
+  switch (status) {
+    case "A":
+      return "Accepted";
+    case "R":
+      return "Rejected";
+    case "U":
+      return "Unassessed";
+    default:
+      return "Unknown";
+  }
+};

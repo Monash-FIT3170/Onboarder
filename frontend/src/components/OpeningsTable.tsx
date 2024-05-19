@@ -11,29 +11,6 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 
-// Endpoint to be used:
-//      GET /recruitmentRounds/{roundId}/openings-
-//        View all openings for a specific recruitment round
-// Sample response type:
-// {
-//     "total_pages": {},
-//     "current_page": {},
-//     "results": {
-//         [
-//             1: {
-//             "applications_received": {},
-//             "opening_status": {},
-//             "opening_name": {},
-//              },
-//             2: {
-//             "applications_received": {},
-//             "opening_status": {},
-//             "opening_name": {},
-//              },
-//         ]
-//     }
-// }
-
 export interface openingsResultProps {
   id: number;
   recruitment_round_id: number;
@@ -53,9 +30,25 @@ export interface openingsResultProps {
 
 interface OpeningsTableProps {
   results: openingsResultProps[];
+  viewHandler: (
+    id: number,
+    recruitment_round_id: number,
+    student_team_name: string,
+    title: string,
+    application_count: number
+  ) => void;
 }
 
-const generateRowFunction = (results: openingsResultProps[]) => {
+const generateRowFunction = (
+  results: openingsResultProps[],
+  viewHandler: (
+    id: number,
+    recruitment_round_id: number,
+    student_team_name: string,
+    title: string,
+    application_count: number
+  ) => void
+) => {
   return results.map((result) => {
     return (
       <TableRow
@@ -70,7 +63,20 @@ const generateRowFunction = (results: openingsResultProps[]) => {
           {result.applications_pending_review} Applications Pending Review
         </TableCell>
         <TableCell>
-          <Button variant="contained"> View </Button>
+          <Button
+            variant="contained"
+            onClick={() =>
+              viewHandler(
+                result.id,
+                result.recruitment_round_id,
+                result.student_team_name,
+                result.title,
+                result.application_count
+              )
+            }
+          >
+            View
+          </Button>
         </TableCell>
       </TableRow>
     );
@@ -87,7 +93,9 @@ export function OpeningsTable(props: OpeningsTableProps) {
             <TableCell> Applications Received </TableCell>
             <TableCell> Status of Applications </TableCell>
           </TableHead>
-          <TableBody>{generateRowFunction(props.results)}</TableBody>
+          <TableBody>
+            {generateRowFunction(props.results, props.viewHandler)}
+          </TableBody>
         </Table>
       </TableContainer>
     </>
