@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import {
   TextField,
   Button,
@@ -12,11 +12,11 @@ import {
   Grid,
   Typography,
   TableSortLabel,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+} from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
-import axios from "axios";
-import { Link } from "react-router-dom";
+import axios from "axios"
+import { Link } from "react-router-dom"
 
 const styles = {
   recruitmentRoundPage: {
@@ -51,41 +51,41 @@ const styles = {
     overflowY: "auto",
     display: "block",
   },
-};
+}
 
 const ViewRecruitmentRoundPage = () => {
-  const [data, setData] = useState([]);
-  //const [sum, setSum] = useState(0)
+  const [data, setData] = useState([])
   enum Status {
     A = "Active",
     I = "Inactive",
     R = "Archived",
   }
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const SHOW_ARCHIVED_AMOUNT = 3
 
   useEffect(() => {
-    console.log("useEffect");
+    console.log("useEffect")
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
       .then((response) => {
-        console.log("Response: ");
-        console.log(response);
-        setData(response.data); //.replaceAll("'", '"')
-        console.log("setData done. Data:");
-        console.log(data);
+        console.log("Response: ")
+        console.log(response)
+        setData(response.data)
+        console.log("setData done. Data:")
+        console.log(data)
       })
       .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, []);
+        console.error("There was an error!", error)
+      })
+  }, [])
 
   const handleViewRound = (id: number) => {
     navigate("/recruitment-details-page", {
       state: {
         recruitment_round_id: id,
       },
-    });
-  };
+    })
+  }
 
   return (
     <div style={styles.recruitmentRoundPage}>
@@ -98,22 +98,27 @@ const ViewRecruitmentRoundPage = () => {
             <div></div>
             {Array.isArray(data) &&
               data
-                .map(
-                  (item: any) =>
-                    item.student_team_name.length > 0 ? (
-                      <h3>{item.student_team_name}</h3>
-                    ) : (
-                      <h3>Name Not Found</h3>
-                    ) // Code for if we need it, but defaults to dummy value
+                .map((item: any) =>
+                  item.student_team_name.length > 0 ? (
+                    <h3>{item.student_team_name}</h3>
+                  ) : (
+                    <h3>Name Not Found</h3>
+                  )
                 )
                 .at(0)}
-            {/* <h3>'Student Team 1'</h3> */}
           </Grid>
         </Grid>
         <section style={styles.section}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              <h4>Current Recruitment Rounds</h4>
+              <h4>
+                Current Recruitment Rounds: Showing{" "}
+                {
+                  data.filter(
+                    (item: any) => item.status == "I" || item.status == "R"
+                  ).length
+                }
+              </h4>
             </Grid>
             <Grid item>
               <Link
@@ -133,8 +138,6 @@ const ViewRecruitmentRoundPage = () => {
             size="small"
             fullWidth
           />
-          {/* <Grid item xs={6} style={{ textAlign: "right" }}>
-          </Grid> */}
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
             <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
@@ -157,7 +160,7 @@ const ViewRecruitmentRoundPage = () => {
                   data
                     .filter((item: any) => item.status != "R")
                     .map((item: any) => {
-                      const deadline = new Date(item.deadline);
+                      const deadline = new Date(item.deadline)
                       const formattedDeadline = `${deadline
                         .getDate()
                         .toString()
@@ -169,7 +172,7 @@ const ViewRecruitmentRoundPage = () => {
                         .padStart(2, "0")}:${deadline
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}`;
+                        .padStart(2, "0")}`
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
@@ -188,21 +191,24 @@ const ViewRecruitmentRoundPage = () => {
                               variant="contained"
                               style={{ padding: 0 }}
                               onClick={() => {
-                                handleViewRound(item.id);
+                                handleViewRound(item.id)
                               }}
                             >
                               VIEW
                             </Button>
                           </TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
               </TableBody>
             </Table>
           </TableContainer>
         </section>
         <section style={styles.section}>
-          <h4>Archived Recruitment Rounds: Showing 3</h4>
+          <h4>
+            Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of{" "}
+            {data.filter((item: any) => item.status == "R").length}
+          </h4>
           <TextField
             style={{ marginBottom: "1rem", width: "25%" }}
             variant="outlined"
@@ -226,9 +232,9 @@ const ViewRecruitmentRoundPage = () => {
                 {Array.isArray(data) &&
                   data
                     .filter((item: any) => item.status == "R")
-                    .slice(0, 3)
+                    .slice(0, SHOW_ARCHIVED_AMOUNT)
                     .map((item: any) => {
-                      const deadline = new Date(item.deadline);
+                      const deadline = new Date(item.deadline)
                       const formattedDeadline = `${deadline
                         .getDate()
                         .toString()
@@ -240,7 +246,7 @@ const ViewRecruitmentRoundPage = () => {
                         .padStart(2, "0")}:${deadline
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}`;
+                        .padStart(2, "0")}`
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
@@ -255,7 +261,7 @@ const ViewRecruitmentRoundPage = () => {
                           <TableCell>{item.year}</TableCell>
                           <TableCell>{item.openings_count}</TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
               </TableBody>
             </Table>
@@ -263,7 +269,7 @@ const ViewRecruitmentRoundPage = () => {
         </section>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default ViewRecruitmentRoundPage;
+export default ViewRecruitmentRoundPage
