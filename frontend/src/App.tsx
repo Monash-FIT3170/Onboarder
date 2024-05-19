@@ -8,6 +8,8 @@ import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
 import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
+import ViewOpenPage from "../src/screens/ViewOpeningPage";
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
             element={<RecruitmentRoundDetailsPage />}
           />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
+          <Route path="/viewopen" element={<ViewOpenPage />} />
         </Routes>
       </Box>
     </>
