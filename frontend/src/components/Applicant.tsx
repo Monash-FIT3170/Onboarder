@@ -8,32 +8,45 @@ import {
   Button,
   Paper,
   Typography,
-} from "@mui/material";
-import styled from "styled-components";
-import { formatDeadline } from "../util/Util";
+} from "@mui/material"
+import styled from "styled-components"
+import { useNavigate } from "react-router-dom"
+import { formatDeadline } from "../util/Util"
+
 
 export interface applicantOpeningResultProps {
-  id: number;
-  recruitment_round_id: number;
-  recruitment_round_year: number;
-  recruitment_round_semester: string;
-  deadline: string;
-  student_team_id: number;
-  student_team_name: string;
-  title: string;
-  description: string;
-  status: string;
-  required_skills: string[];
-  desired_skills: string[];
-  application_count: number;
-  applications_pending_review: number;
+  id: number
+  recruitment_round_id: number
+  recruitment_round_year: number
+  recruitment_round_semester: string
+  deadline: string
+  student_team_id: number
+  student_team_name: string
+  title: string
+  description: string
+  status: string
+  required_skills: string[]
+  desired_skills: string[]
+  application_count: number
+  applications_pending_review: number
 }
 
 interface applicantOpeningTableProps {
-  results: applicantOpeningResultProps[];
+  results: applicantOpeningResultProps[]
 }
 
+
+
+
 const generateRowFunction = (results: applicantOpeningResultProps[]) => {
+  const navigate = useNavigate();
+  const handleApply = (id: number) => {
+    navigate("/application-submission", {
+      state: {
+        id: id,
+      },
+    })
+  }
   return results.map((result) => {
     return (
       <TableRow
@@ -48,12 +61,20 @@ const generateRowFunction = (results: applicantOpeningResultProps[]) => {
         <TableCell>{result.recruitment_round_semester}</TableCell>
         <TableCell>{result.recruitment_round_year}</TableCell>
         <TableCell>
-          <Button variant="contained"> Apply </Button>
+          <Button
+            variant="contained"
+            style={{ padding: 0 }}
+            onClick={() => {
+              handleApply(result.id)
+            }}
+          >
+            APPLY
+          </Button>
         </TableCell>
       </TableRow>
-    );
-  });
-};
+    )
+  })
+}
 
 export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   return (
@@ -71,5 +92,5 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
         </Table>
       </TableContainer>
     </>
-  );
+  )
 }
