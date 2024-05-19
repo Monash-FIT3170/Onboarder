@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   Grid,
   Button,
@@ -6,62 +6,85 @@ import {
   TextField,
   Autocomplete,
   Chip,
-} from "@mui/material";
-import { formatDeadline } from "../util/Util";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material"
+import { formatDeadline } from "../util/Util"
+import { useLocation, useNavigate } from "react-router-dom"
+import axios from "axios"
 
 function CreateOpeningPage() {
-  const [openingName, setOpeningName] = useState("");
-  const [description, setDescription] = useState("");
-  const [requiredSkills, setRequiredSkills] = useState([]);
-  const [desiredSkills, setDesiredSkills] = useState([]);
-  const navigate = useNavigate();
+  const [openingName, setOpeningName] = useState("")
+  const [description, setDescription] = useState("")
+  const [requiredSkills, setRequiredSkills] = useState([])
+  const [desiredSkills, setDesiredSkills] = useState([])
+  const [open, setOpen] = useState(false)
+  const [dialogParam, setIsSuccessful] = useState(false)
+  const navigate = useNavigate()
 
-  const location = useLocation();
+  const location = useLocation()
   const state = location.state as {
-    deadline: string;
-    roundId: number;
-    round: string;
-  };
+    deadline: string
+    roundId: number
+    round: string
+  }
 
   // const handleSubmit = () => {
   //     alert('Opening has successfully been created!');
   // };
 
   const handleSubmit = async () => {
+    if (
+      !openingName ||
+      !description ||
+      !requiredSkills ||
+      !desiredSkills ||
+      openingName.length <= 0 ||
+      description.length <= 0 ||
+      requiredSkills.length <= 0 ||
+      desiredSkills.length <= 0
+    ) {
+      alert("Please fill in all fields")
+      return
+    }
     const openingData = {
       title: openingName,
       description: description,
       status: "I",
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
-    };
+    }
 
     try {
       const response = await axios.post(
         `http://127.0.0.1:3000/recruitmentRounds/${state.roundId}/openings`,
         openingData
-      );
+      )
       if (response.status === 201) {
-        alert("Opening successfully been created!");
+        console.log(response)
+        setOpen(true)
+        setIsSuccessful(true)
       } else {
-        alert("Failed to create opening.");
+        console.log(response)
+        setOpen(true)
+        setIsSuccessful(false)
       }
     } catch (error) {
-      console.error("Error creating the opening!", error);
-      alert("Error creating the opening!");
+      console.error("There was an error!", error)
+      setOpen(true)
+      setIsSuccessful(false)
     }
-  };
+  }
 
   const handleCancel = () => {
-    setOpeningName("");
-    setDescription("");
-    setRequiredSkills([]);
-    setDesiredSkills([]);
-    alert("Form Canceled");
-    navigate("/recruitment-details-page");
-  };
+    navigate("/recruitment-details-page", {
+      state: {
+        recruitment_round_id: state.roundId,
+      },
+    })
+  }
 
   return (
     <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -100,7 +123,7 @@ function CreateOpeningPage() {
             options={[]}
             value={requiredSkills}
             onChange={(event, newValue) => {
-              setRequiredSkills(newValue);
+              setRequiredSkills(newValue)
             }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
@@ -143,7 +166,7 @@ function CreateOpeningPage() {
             options={[]}
             value={desiredSkills}
             onChange={(event, newValue) => {
-              setDesiredSkills(newValue);
+              setDesiredSkills(newValue)
             }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
@@ -169,8 +192,42 @@ function CreateOpeningPage() {
           </Button>
         </Grid>
       </Grid>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogContent>
+          <DialogContentText>
+            {dialogParam
+              ? "Opening successfully been created!"
+              : "There was an error in creating the Opening!\n Please try again later!"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setOpen(false)
+              navigate("/recruitment-details-page", {
+                state: {
+                  recruitment_round_id: state.roundId,
+                },
+              })
+            }}
+          >
+            GO TO OPENINGS TABLE
+          </Button>
+          <Button
+            onClick={() => {
+              setOpen(false)
+              setOpeningName(""),
+                setDescription(""),
+                setDesiredSkills([]),
+                setRequiredSkills([])
+            }}
+          >
+            CREATE MORE OPENINGS
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
-  );
+  )
 }
 
-export default CreateOpeningPage;
+export default CreateOpeningPage
