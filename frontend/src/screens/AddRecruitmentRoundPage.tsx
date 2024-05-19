@@ -49,33 +49,40 @@ const AddRecruitmentRoundPage = () => {
   const [semester, setSemester] = useState("")
   const [year, setYear] = useState("")
   const [open, setOpen] = useState(false)
-  const [dialogParam, setDialogParam] = useState(false)
+  const [dialogParam, setIsSuccessful] = useState(false)
   const navigate = useNavigate()
+  const API_URL = "http://127.0.0.1:3000/recruitmentRounds/"
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault()
     if (!deadline || !semester || !year || year.length <= 0) {
       alert("Please fill in all fields")
       return
     }
-    axios
-      .post("http://127.0.0.1:3000/recruitmentRounds", {
+    try {
+      const response = await axios.post(
+        API_URL, {
         deadline: deadline.toString(),
         semester: semester,
         year: year,
         status: "I",
-      })
-      .then((response) => {
+    })
+      if (response.status === 201) {
         console.log(response)
         setOpen(true)
-        setDialogParam(true)
-      })
-      .catch((error) => {
-        console.error("There was an error!", error)
+        setIsSuccessful(true)
+      } else {
+        console.log(response)
         setOpen(true)
-        setDialogParam(false)
-      })
+        setIsSuccessful(false)
+      }
+    } catch (error) {
+      console.error("There was an error!", error)
+      setOpen(true)
+      setIsSuccessful(false)
+    }
   }
+
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>

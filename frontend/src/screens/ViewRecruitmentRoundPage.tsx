@@ -61,18 +61,43 @@ const ViewRecruitmentRoundPage = () => {
     R = "Archived",
   }
   const navigate = useNavigate()
-  const SHOW_ARCHIVED_AMOUNT = 3
+  const [filter, setFilter] = useState('');
+  const SHOW_ARCHIVED_AMOUNT = 3;
+  const formatDeadline = (deadline: Date) => {
+    return `${deadline
+      .getDate()
+      .toString()
+      .padStart(2, "0")}/${(deadline.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${deadline
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+  };
+  const filterData = (item: any) => {
+    const { student_team_name, id, deadline, status, semester, year, openings_count } = item;
+    const formattedDeadline = formatDeadline(new Date(deadline));
+    const statusText = Status[status as keyof typeof Status] || "Unknown Status";
+  
+    return [
+      `${student_team_name} ${id}`,
+      formattedDeadline,
+      statusText,
+      semester,
+      year,
+      openings_count,
+    ].some((value: any) => value.toString().toLowerCase().includes(filter.toLowerCase()));
+  }; 
 
   useEffect(() => {
-    console.log("useEffect")
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
       .then((response) => {
-        console.log("Response: ")
         console.log(response)
         setData(response.data)
-        console.log("setData done. Data:")
-        console.log(data)
       })
       .catch((error) => {
         console.error("There was an error!", error)
@@ -136,7 +161,9 @@ const ViewRecruitmentRoundPage = () => {
             variant="outlined"
             placeholder="Round Name, Deadline, etc..."
             size="small"
+            label="Filter"
             fullWidth
+            onChange={(e) => setFilter(e.target.value)}
           />
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
             <Table style={styles.table} stickyHeader>
@@ -158,21 +185,10 @@ const ViewRecruitmentRoundPage = () => {
                 {/* Add active recruitment rounds rows */}
                 {Array.isArray(data) &&
                   data
-                    .filter((item: any) => item.status != "R")
+                    .filter((item: any) => item.status != "R").filter(filterData)
                     .map((item: any) => {
                       const deadline = new Date(item.deadline)
-                      const formattedDeadline = `${deadline
-                        .getDate()
-                        .toString()
-                        .padStart(2, "0")}/${(deadline.getMonth() + 1)
-                        .toString()
-                        .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
-                        .getHours()
-                        .toString()
-                        .padStart(2, "0")}:${deadline
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, "0")}`
+                      const formattedDeadline = formatDeadline(deadline);
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
@@ -209,13 +225,6 @@ const ViewRecruitmentRoundPage = () => {
             Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of{" "}
             {data.filter((item: any) => item.status == "R").length}
           </h4>
-          <TextField
-            style={{ marginBottom: "1rem", width: "25%" }}
-            variant="outlined"
-            placeholder="Round Name, Deadline, etc..."
-            size="small"
-            fullWidth
-          />
           <TableContainer component={Paper}>
             <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
@@ -235,18 +244,7 @@ const ViewRecruitmentRoundPage = () => {
                     .slice(0, SHOW_ARCHIVED_AMOUNT)
                     .map((item: any) => {
                       const deadline = new Date(item.deadline)
-                      const formattedDeadline = `${deadline
-                        .getDate()
-                        .toString()
-                        .padStart(2, "0")}/${(deadline.getMonth() + 1)
-                        .toString()
-                        .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
-                        .getHours()
-                        .toString()
-                        .padStart(2, "0")}:${deadline
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, "0")}`
+                      const formattedDeadline = formatDeadline(deadline)
                       return (
                         <TableRow key={item.id}>
                           <TableCell>

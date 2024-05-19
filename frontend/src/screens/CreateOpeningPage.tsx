@@ -69,7 +69,7 @@ function CreateOpeningPage() {
       } else {
         //alert("Failed to create opening.");
         setOpen(true)
-        setDialogParam(true)
+        setDialogParam(false)
       }
     } catch (error) {
       console.error("Error creating the opening!", error)
