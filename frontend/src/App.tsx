@@ -5,7 +5,6 @@ import AppBarOnBoarder from "./components/AppBarOnboarder";
 import LoginPage from "../src/screens/LoginPage";
 import RegisterPage from "../src/screens/RegisterPage";
 import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
-import RecruitmentPage from "../src/screens/RecruitmentPage";
 import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
@@ -16,16 +15,21 @@ function App() {
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<RecruitmentPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/create-opening" element={<CreateOpeningPage />} />
-          <Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage/>} />
-          <Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage/>} />
+          <Route
+            path="/viewrecruitmentround"
+            element={<ViewRecruitmentRoundPage />}
+          />
+          <Route
+            path="/addrecruitmentround"
+            element={<AddRecruitmentRoundPage />}
+          />
           <Route
             path="/recruitment-details-page"
             element={<RecruitmentRoundDetailsPage />}
           />
+          <Route path="/create-opening" element={<CreateOpeningPage />} />
         </Routes>
       </Box>
     </>
