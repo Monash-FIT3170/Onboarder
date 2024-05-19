@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import {
   TextField,
   Button,
@@ -12,11 +12,11 @@ import {
   Grid,
   Typography,
   TableSortLabel,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+} from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
-import axios from "axios";
-import { Link } from "react-router-dom";
+import axios from "axios"
+import { Link } from "react-router-dom"
 
 const styles = {
   recruitmentRoundPage: {
@@ -51,41 +51,41 @@ const styles = {
     overflowY: "auto",
     display: "block",
   },
-};
+}
 
 const ViewRecruitmentRoundPage = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([])
   enum Status {
     A = "Active",
     I = "Inactive",
     R = "Archived",
   }
-  const navigate = useNavigate();
-  const SHOW_ARCHIVED_AMOUNT = 3;
+  const navigate = useNavigate()
+  const SHOW_ARCHIVED_AMOUNT = 3
 
   useEffect(() => {
-    console.log("useEffect");
+    console.log("useEffect")
     axios
       .get("http://127.0.0.1:3000/recruitmentRounds")
       .then((response) => {
-        console.log("Response: ");
-        console.log(response);
-        setData(response.data); //.replaceAll("'", '"')
-        console.log("setData done. Data:");
-        console.log(data);
+        console.log("Response: ")
+        console.log(response)
+        setData(response.data)
+        console.log("setData done. Data:")
+        console.log(data)
       })
       .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, []);
+        console.error("There was an error!", error)
+      })
+  }, [])
 
   const handleViewRound = (id: number) => {
     navigate("/recruitment-details-page", {
       state: {
         recruitment_round_id: id,
       },
-    });
-  };
+    })
+  }
 
   return (
     <div style={styles.recruitmentRoundPage}>
@@ -98,13 +98,12 @@ const ViewRecruitmentRoundPage = () => {
             <div></div>
             {Array.isArray(data) &&
               data
-                .map(
-                  (item: any) =>
-                    item.student_team_name.length > 0 ? (
-                      <h3>{item.student_team_name}</h3>
-                    ) : (
-                      <h3>Name Not Found</h3>
-                    ) 
+                .map((item: any) =>
+                  item.student_team_name.length > 0 ? (
+                    <h3>{item.student_team_name}</h3>
+                  ) : (
+                    <h3>Name Not Found</h3>
+                  )
                 )
                 .at(0)}
             {/* <h3>'Student Team 1'</h3> */}
@@ -155,7 +154,7 @@ const ViewRecruitmentRoundPage = () => {
                   data
                     .filter((item: any) => item.status != "R")
                     .map((item: any) => {
-                      const deadline = new Date(item.deadline);
+                      const deadline = new Date(item.deadline)
                       const formattedDeadline = `${deadline
                         .getDate()
                         .toString()
@@ -167,7 +166,7 @@ const ViewRecruitmentRoundPage = () => {
                         .padStart(2, "0")}:${deadline
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}`;
+                        .padStart(2, "0")}`
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
@@ -186,21 +185,24 @@ const ViewRecruitmentRoundPage = () => {
                               variant="contained"
                               style={{ padding: 0 }}
                               onClick={() => {
-                                handleViewRound(item.id);
+                                handleViewRound(item.id)
                               }}
                             >
                               VIEW
                             </Button>
                           </TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
               </TableBody>
             </Table>
           </TableContainer>
         </section>
         <section style={styles.section}>
-          <h4>Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of {data.filter((item: any) => item.status == "R").length}</h4>
+          <h4>
+            Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of{" "}
+            {data.filter((item: any) => item.status == "R").length}
+          </h4>
           <TextField
             style={{ marginBottom: "1rem", width: "25%" }}
             variant="outlined"
@@ -226,7 +228,7 @@ const ViewRecruitmentRoundPage = () => {
                     .filter((item: any) => item.status == "R")
                     .slice(0, SHOW_ARCHIVED_AMOUNT)
                     .map((item: any) => {
-                      const deadline = new Date(item.deadline);
+                      const deadline = new Date(item.deadline)
                       const formattedDeadline = `${deadline
                         .getDate()
                         .toString()
@@ -238,7 +240,7 @@ const ViewRecruitmentRoundPage = () => {
                         .padStart(2, "0")}:${deadline
                         .getMinutes()
                         .toString()
-                        .padStart(2, "0")}`;
+                        .padStart(2, "0")}`
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
@@ -253,16 +255,15 @@ const ViewRecruitmentRoundPage = () => {
                           <TableCell>{item.year}</TableCell>
                           <TableCell>{item.openings_count}</TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
               </TableBody>
             </Table>
           </TableContainer>
-          
         </section>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default ViewRecruitmentRoundPage;
+export default ViewRecruitmentRoundPage

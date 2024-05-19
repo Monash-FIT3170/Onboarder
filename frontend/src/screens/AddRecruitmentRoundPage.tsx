@@ -6,7 +6,6 @@ import {
   Button,
   TextField,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
@@ -50,7 +49,7 @@ const AddRecruitmentRoundPage = () => {
   const [semester, setSemester] = useState("")
   const [year, setYear] = useState("")
   const [open, setOpen] = useState(false)
-  const [dialogParam, setDialogParam] = useState(false);
+  const [dialogParam, setDialogParam] = useState(false)
   const history = useNavigate()
   const handleSubmit = (event: any) => {
     event.preventDefault()
@@ -243,12 +242,28 @@ const AddRecruitmentRoundPage = () => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogContent>
           <DialogContentText>
-          {dialogParam ? 'Recruitment Round has been successfully created!' : 'There was an error in creating the Recruitment Round!\nPlease try again later!'}
+            {dialogParam
+              ? "Recruitment Round has been successfully created!"
+              : "There was an error in creating the Recruitment Round!\nPlease try again later!"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {setOpen(false); history("/viewrecruitmentround")}}>GO TO ROUNDS TABLE</Button>
-          <Button onClick={() => {setOpen(false); setDeadline(DateTime.now()), setSemester(""), setYear("")}}>CREATE MORE ROUNDS</Button>
+          <Button
+            onClick={() => {
+              setOpen(false)
+              history("/viewrecruitmentround")
+            }}
+          >
+            GO TO ROUNDS TABLE
+          </Button>
+          <Button
+            onClick={() => {
+              setOpen(false)
+              setDeadline(DateTime.now()), setSemester(""), setYear("")
+            }}
+          >
+            CREATE MORE ROUNDS
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
