@@ -50,7 +50,8 @@ const AddRecruitmentRoundPage = () => {
   const [year, setYear] = useState("")
   const [open, setOpen] = useState(false)
   const [dialogParam, setDialogParam] = useState(false)
-  const history = useNavigate()
+  const navigate = useNavigate()
+
   const handleSubmit = (event: any) => {
     event.preventDefault()
     if (!deadline || !semester || !year || year.length <= 0) {
@@ -251,7 +252,7 @@ const AddRecruitmentRoundPage = () => {
           <Button
             onClick={() => {
               setOpen(false)
-              history("/viewrecruitmentround")
+              navigate("/viewrecruitmentround")
             }}
           >
             GO TO ROUNDS TABLE
