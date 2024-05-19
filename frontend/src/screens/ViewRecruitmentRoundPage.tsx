@@ -61,6 +61,7 @@ const ViewRecruitmentRoundPage = () => {
     R = "Archived",
   }
   const navigate = useNavigate();
+  const SHOW_ARCHIVED_AMOUNT = 3;
 
   useEffect(() => {
     console.log("useEffect");
@@ -199,7 +200,7 @@ const ViewRecruitmentRoundPage = () => {
           </TableContainer>
         </section>
         <section style={styles.section}>
-          <h4>Archived Recruitment Rounds: Showing 3</h4>
+          <h4>Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of {data.filter((item: any) => item.status == "R").length}</h4>
           <TextField
             style={{ marginBottom: "1rem", width: "25%" }}
             variant="outlined"
@@ -223,7 +224,7 @@ const ViewRecruitmentRoundPage = () => {
                 {Array.isArray(data) &&
                   data
                     .filter((item: any) => item.status == "R")
-                    .slice(0, 3)
+                    .slice(0, SHOW_ARCHIVED_AMOUNT)
                     .map((item: any) => {
                       const deadline = new Date(item.deadline);
                       const formattedDeadline = `${deadline
