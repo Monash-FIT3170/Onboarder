@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react"
+import { React, useState, useEffect, startTransition } from "react"
 import {
   Grid,
   TextField,
@@ -16,10 +16,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  IconButton,
 } from "@mui/material"
 import axios from "axios"
 import LoadingSpinner from "../components/LoadSpinner"
 import { useLocation, useNavigate } from "react-router-dom"
+import BackIcon from "../assets/BackIcon"
 import { StaticDatePicker } from "@mui/x-date-pickers"
 interface ResultProps {
   id: number
@@ -46,17 +48,28 @@ export default function RecruitmentPlatform() {
   const [dialogParam, setIsSuccessful] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [isDisabledAccept, setIsDisabledAccept] = useState(true);
+  const [isDisabledReject, setIsDisabledReject] = useState(true);
+
 
   const state = location.state as {
-    opening_name: string,
-    recruitment_round_name: string,
+    opening_name: string
+    recruitment_round_name: string
     application_id: number
+    id: number
+    recruitment_round_id: number
+    student_team_name: string
+    title: string
+    application_count: number
   }
 
   useEffect(() => {
+ 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:3000/applications/${state.application_id}`)
+        const response = await axios.get(
+          `http://127.0.0.1:3000/applications/${state.application_id}`
+        )
         console.log(response.data)
         setApplicantInformation(response.data)
       } catch (error) {
@@ -64,16 +77,72 @@ export default function RecruitmentPlatform() {
       } finally {
         setLoading(false)
       }
-    }
+    }   
 
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (applicantInformation[0]?.accepted == "U") {
+      setIsDisabledAccept(false); 
+      setIsDisabledReject(false); 
+    } else if (applicantInformation[0]?.accepted == "A") {
+      setIsDisabledReject(false); 
+    } else if (applicantInformation[0]?.accepted == "R") {
+      setIsDisabledAccept(false); 
+    } else {
+      console.log("Invalid User Status")
+    }
+  }, [applicantInformation]);
+
+  const handleBack = (
+    id: number,
+    recruitment_round_id: number,
+    student_team_name: string,
+    title: string,
+    application_count: number
+  ) => {
+    navigate("/viewopen", {
+      state: {
+        id,
+        recruitment_round_id,
+        student_team_name,
+        title,
+        application_count,
+      },
+    })
+  }
 
   const handleAccept = async (event: any) => {
     event.preventDefault()
 
     try {
-      const response = await axios.patch(`http://127.0.0.1:3000/applications/${applicationId}/accept`)
+      const response = await axios.post(
+        `http://127.0.0.1:3000/applications/${state.application_id}/accept`
+      )
+      if (response.status === 201) {
+        console.log(response)
+        setOpen(true)
+        setIsSuccessful(true)
+      } else {
+        console.log(response)
+        setOpen(true)
+        setIsSuccessful(false)
+      }
+    } catch (error) {
+      console.error("There was an error!", error)
+      setOpen(true)
+      setIsSuccessful(false)
+    }
+  }
+
+  const handleReject = async (event: any) => {
+    event.preventDefault()
+
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:3000/applications/${state.application_id}/reject`
+      )
       if (response.status === 201) {
         console.log(response)
         setOpen(true)
@@ -103,6 +172,20 @@ export default function RecruitmentPlatform() {
         component="div"
         sx={{ width: "50%", marginTop: "30px" }}
       >
+        {" "}
+        <IconButton
+          onClick={() =>
+            handleBack(
+              state.id,
+              state.recruitment_round_id,
+              state.student_team_name,
+              state.title,
+              state.application_count
+            )
+          }
+        >
+          <BackIcon />
+        </IconButton>
         {state.opening_name}
       </Typography>
       <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
@@ -246,10 +329,10 @@ export default function RecruitmentPlatform() {
         xs={12}
         sx={{ display: "flex", justifyContent: "center", marginTop: "70px" }}
       >
-        <Button variant="contained" sx={{ m: 1, backgroundColor: "#1f8ae7" }}>
+        <Button variant="contained" sx={{ m: 1, backgroundColor: "#1f8ae7" }} onClick={handleAccept} disabled={isDisabledAccept}>
           ACCEPT
         </Button>
-        <Button variant="contained" color="error" sx={{ m: 1 }}>
+        <Button variant="contained" color="error" sx={{ m: 1 }} onClick={handleReject} disabled={isDisabledReject}>
           REJECT
         </Button>
         <Dialog open={open} onClose={() => setOpen(false)}>
@@ -267,7 +350,7 @@ export default function RecruitmentPlatform() {
             <Button
               onClick={() => {
                 setOpen(false)
-                navigate("/viewopen")
+                handleBack(state.id, state.recruitment_round_id, state.student_team_name, state.title, state.application_count)
               }}
             >
               CLOSE
