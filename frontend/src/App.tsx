@@ -9,6 +9,7 @@ import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 import ViewOpenPage from "../src/screens/ViewOpeningPage";
+import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
           <Route path="/viewopen" element={<ViewOpenPage />} />
+          <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
         </Routes>
       </Box>
     </>
