@@ -14,7 +14,7 @@ import {
   applicantOpeningResultProps,
 } from "../components/Applicant";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"
 
 const TitleWrapper = styled.div`
   display: flex;

@@ -40,10 +40,11 @@ interface applicantOpeningTableProps {
 
 const generateRowFunction = (results: applicantOpeningResultProps[]) => {
   const navigate = useNavigate();
-  const handleApply = (id: number) => {
+  const handleApply = (id: number, r_id: number) => {
     navigate("/application-submission", {
       state: {
-        id: id,
+        round_id: r_id,
+        opening_id: id,
       },
     })
   }
@@ -65,7 +66,7 @@ const generateRowFunction = (results: applicantOpeningResultProps[]) => {
             variant="contained"
             style={{ padding: 0 }}
             onClick={() => {
-              handleApply(result.id)
+              handleApply(result.id, result.recruitment_round_id)
             }}
           >
             APPLY
