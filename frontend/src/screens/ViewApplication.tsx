@@ -1,10 +1,28 @@
-import * as React from 'react';
+import {React,useState,useEffect} from 'react';
 import { Grid, TextField, Button, Typography, Table, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import axios from 'axios';
 
 export default function RecruitmentPlatform() {
+  const [applicantInformation, setApplicantInformation] = useState(null);
+  const loading = true;
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:3000/applications/1');
+        setApplicantInformation(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching applicant data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <>
+
+
       <Typography variant="h4" component="div" sx={{ width: '100%', marginLeft: '-10px', marginTop: '-10px', backgroundColor: '#1f8ae7', color: '#fff', padding: '10px' }}>
         Onboarding: Recruitment Platform
       </Typography>
@@ -35,7 +53,7 @@ export default function RecruitmentPlatform() {
       </Grid>
       <Grid container item xs={12} spacing={2}>
         <Grid item xs={6}>
-          <TextField required id="first-name" label="First Name" defaultValue="John" InputProps={{ readOnly: true }} fullWidth />
+          <TextField required id="first-name" label="First Name" defaultValue="w" InputProps={{ readOnly: true }} fullWidth />
         </Grid>
         <Grid item xs={6}>
           <TextField required id="last-name" label="Last Name" defaultValue="Doe" InputProps={{ readOnly: true }} fullWidth />
