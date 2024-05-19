@@ -17,13 +17,13 @@ HEADERS = {
 def dispatch(event: dict):
 
     # intercept cognito here
-
+    print(event)
     resource = event.get('resource')
     method = event.get('httpMethod')
     func = routes.get(resource, {}).get(method)
 
     path_params = event.get('pathParameters', {})
-    # print(event)
+
     querystring_params = event.get('queryStringParameters', {})
     body = event.get('body', {})
     # possible validation here
