@@ -1,6 +1,5 @@
-import { Route, Routes } from "react-router-dom";
-import { Box } from "@mui/material";
-import AppBarOnBoarder from "./components/AppBarOnboarder";
+import React from "react";
+import { Link, Route, Routes } from "react-router-dom";
 
 import LoginPage from "../src/screens/LoginPage";
 import RegisterPage from "../src/screens/RegisterPage";
