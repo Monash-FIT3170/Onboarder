@@ -9,6 +9,12 @@ import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 import ViewApplication from "../src/screens/ViewApplication";
 
+
+
+
+import ApplicantOpenings from "./screens/ApplicantOpenings";
+import AdminAcceptPage from "../src/screens/AdminAcceptPage";
+
 function App() {
   return (
     <>
@@ -31,6 +37,12 @@ function App() {
           />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
           <Route path="/ValidationTextFields" element={<ViewApplication />} />
+
+          
+
+          <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+        <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+
         </Routes>
       </Box>
     </>
