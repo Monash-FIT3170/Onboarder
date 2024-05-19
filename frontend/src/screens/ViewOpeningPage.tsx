@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 import {
   Button,
   Typography,
@@ -10,52 +10,50 @@ import {
   TableHead,
   Paper,
   IconButton,
-} from "@mui/material";
-import BackIcon from "../assets/BackIcon";
-import { useLocation, useNavigate } from "react-router-dom";
-import LoadingSpinner from "../components/LoadSpinner";
-import { getAppStatusText } from "../util/Util";
-import axios from "axios";
+} from "@mui/material"
+import BackIcon from "../assets/BackIcon"
+import { useLocation, useNavigate } from "react-router-dom"
+import LoadingSpinner from "../components/LoadSpinner"
+import { getAppStatusText } from "../util/Util"
+import axios from "axios"
 
 export interface SingleApplicationProps {
-  id: number;
-  opening_id: number;
-  email: string;
-  name: string;
-  phone: string;
-  semesters_until_completion: number;
-  current_semester: number;
-  course_enrolled: string;
-  major_enrolled: string;
-  cover_letter: string;
-  skills: string[];
-  accepted: string;
-  created_at: string;
+  id: number
+  opening_id: number
+  email: string
+  name: string
+  phone: string
+  semesters_until_completion: number
+  current_semester: number
+  course_enrolled: string
+  major_enrolled: string
+  cover_letter: string
+  skills: string[]
+  accepted: string
+  created_at: string
 }
 
 function ViewOpenPage() {
   // State to manage the sorting direction
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   // Placeholder function for handling the sort
   const handleSort = () => {
-    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-  };
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+  }
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [applications, setApplications] = useState<SingleApplicationProps[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [applications, setApplications] = useState<SingleApplicationProps[]>([])
+  const [loading, setLoading] = useState(true)
 
   const state = location.state as {
-    id: number;
-    recruitment_round_id: number;
-    student_team_name: string;
-    title: string;
-    application_count: number;
-  };
+    id: number
+    recruitment_round_id: number
+    student_team_name: string
+    title: string
+    application_count: number
+  }
 
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
@@ -72,37 +70,45 @@ function ViewOpenPage() {
             onClick={() => {
               navigate("/admin-acceptpage", {
                 state: {
-                  applicationId: application.id,
+                  application_id: application.id,
+                  opening_name: state.title,
+                  recruitment_round_name:
+                    state.student_team_name + " " + state.recruitment_round_id,
+                  id: state.id,
+                  recruitment_round_id: state.recruitment_round_id,
+                  student_team_name: state.student_team_name,
+                  title: state.title,
+                  application_count: state.application_count,
                 },
-              });
+              })
             }}
           >
             View
           </Button>
         </TableCell>
       </TableRow>
-    ));
-  };
+    ))
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
           `http://127.0.0.1:3000/openings/${state.id}/applications`
-        );
-        setApplications(applicationsResponse.data);
+        )
+        setApplications(applicationsResponse.data)
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [state.id]);
+    fetchData()
+  }, [state.id])
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner />
   }
 
   return (
@@ -192,7 +198,7 @@ function ViewOpenPage() {
         </Table>
       </TableContainer>
     </div>
-  );
+  )
 }
 
-export default ViewOpenPage;
+export default ViewOpenPage
