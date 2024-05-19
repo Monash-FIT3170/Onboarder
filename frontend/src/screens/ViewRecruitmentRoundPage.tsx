@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
+import {
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Grid,
+  Typography,
+  TableSortLabel,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { TableSortLabel } from "@mui/material";
 
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    backgroundColor: "#1976d2",
-    color: "#fff",
-    padding: "1rem",
-    textAlign: "left",
-    height: "50px",
-    display: "flex",
-    alignItems: "center",
-  },
-  main: {
-    padding: "2rem",
   },
   studentTeam: {
     color: "gray",
@@ -56,7 +47,7 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 600px)",
+    height: "calc(100vh - 400px)",
     overflowY: "auto",
     display: "block",
   },
@@ -70,6 +61,7 @@ const ViewRecruitmentRoundPage = () => {
     I = "Inactive",
     R = "Archived",
   }
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("useEffect");
@@ -86,12 +78,18 @@ const ViewRecruitmentRoundPage = () => {
         console.error("There was an error!", error);
       });
   }, []);
+
+  const handleViewRound = (id: number) => {
+    navigate("/recruitment-details-page", {
+      state: {
+        recruitment_round_id: id,
+      },
+    });
+  };
+
   return (
     <div style={styles.recruitmentRoundPage}>
-      <header style={styles.header}>
-        <h4>Onboarding: Recruitment Platform</h4>
-      </header>
-      <main style={styles.main}>
+      <main>
         <Typography variant="h4" style={styles.studentTeam}>
           Recruitment Rounds
         </Typography>
@@ -186,7 +184,13 @@ const ViewRecruitmentRoundPage = () => {
                           <TableCell>{item.year}</TableCell>
                           <TableCell>{item.openings_count}</TableCell>
                           <TableCell>
-                            <Button variant="contained" style={{ padding: 0 }}>
+                            <Button
+                              variant="contained"
+                              style={{ padding: 0 }}
+                              onClick={() => {
+                                handleViewRound(item.id);
+                              }}
+                            >
                               VIEW
                             </Button>
                           </TableCell>

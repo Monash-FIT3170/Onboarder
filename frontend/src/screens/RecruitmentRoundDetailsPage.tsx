@@ -12,7 +12,7 @@ import {
   SingleRoundTable,
   SingleRoundResultProps,
 } from "../components/SingleRoundTable";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -40,15 +40,20 @@ function RecruitmentRoundDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const state = location.state as {
+    recruitment_round_id: number;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const roundsResponse = await axios.get(
-          "http://127.0.0.1:3000/recruitmentRounds/1"
+          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}`
         );
         const openingsResponse = await axios.get(
-          "http://127.0.0.1:3000/recruitmentRounds/1/openings"
+          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/openings`
         );
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
@@ -60,7 +65,7 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, []);
+  }, [state.recruitment_round_id]);
 
   const updateStatus = async (statusChange: string) => {
     setIsUpdating(true);
@@ -69,7 +74,7 @@ function RecruitmentRoundDetailsPage() {
     };
     try {
       await axios.patch(
-        `http://127.0.0.1:3000/recruitmentRounds/1/status`,
+        `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/status`,
         data
       );
       alert("Status updated successfully!");

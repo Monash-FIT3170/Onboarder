@@ -11,19 +11,6 @@ import { useNavigate } from "react-router-dom";
 const styles = {
   recruitmentRoundPage: {
     fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    backgroundColor: "#1976d2",
-    color: "#fff",
-    padding: "1rem",
-    textAlign: "left",
-    height: "50px",
-    display: "flex",
-    alignItems: "center",
-  },
-  main: {
-    padding: "2rem",
   },
   section: {
     marginBottom: "2rem",
@@ -75,11 +62,7 @@ const AddRecruitmentRoundPage = () => {
   };
   return (
     <div style={styles.recruitmentRoundPage}>
-      <header style={styles.header}>
-        <h4>Onboarding: Recruitment Platform</h4>
-      </header>
-
-      <main style={styles.main}>
+      <main>
         <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>
           Create Recruitment Round
         </h1>
