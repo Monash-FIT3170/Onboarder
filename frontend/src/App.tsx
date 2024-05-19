@@ -7,7 +7,6 @@ import RegisterPage from "../src/screens/RegisterPage";
 import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
 import RecruitmentPage from "../src/screens/RecruitmentPage";
 import CreateOpeningPage from "../src/screens/CreateOpeningPage";
-import ApplicantOpening from "../src/screens/ApplicantOpenings";
 
 function App() {
   return (
@@ -19,7 +18,6 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
-          <Route path="/applicant-opening" element={<ApplicantOpening />} />
           <Route
             path="/recruitment-details-page"
             element={<RecruitmentRoundDetailsPage />}
