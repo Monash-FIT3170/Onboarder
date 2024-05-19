@@ -9,7 +9,13 @@ import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 import ViewOpenPage from "../src/screens/ViewOpeningPage";
+
+
+
+
 import ApplicantOpenings from "./screens/ApplicantOpenings";
+import AdminAcceptPage from "../src/screens/AdminAcceptPage";
+
 
 function App() {
   return (
@@ -33,7 +39,12 @@ function App() {
           />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
           <Route path="/viewopen" element={<ViewOpenPage />} />
+
+          
+
           <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+        <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+
         </Routes>
       </Box>
     </>
