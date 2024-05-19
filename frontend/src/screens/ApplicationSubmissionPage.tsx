@@ -14,7 +14,12 @@ import {
   TextField,
   Button,
   Chip,
-  IconButton
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle
 } from "@mui/material"
 import BackIcon from "../assets/BackIcon"
 import axios from "axios"
@@ -37,6 +42,8 @@ export default () => {
   })
   // Define skills state
   const [skills, setSkills] = useState([])
+  const [open, setOpen] = useState(false)
+  const [dialogParam, setIsSuccessful] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const state = location.state as {
@@ -52,8 +59,8 @@ export default () => {
       .then((res) => {
         setStudentTeam(res.data)
       })
-      .catch((err) => {
-        console.error("Error fetching student team data:", err)
+      .catch((error) => {
+        console.error("There was an error!", error)
       })
   }, [])
 
@@ -82,13 +89,17 @@ export default () => {
     if (isAnyFieldEmpty) {
       alert("Please fill in all required fields.")
     } else {
-      // axios.post('https://example.com/api', formData)
-      //   .then(response => {
-      //     console.log('Form data successfully submitted:', response.data);
-      //   })
-      //   .catch(error => {
-      //     console.error('Error submitting form data:', error);
-      //   });
+      axios.post('https://example.com/api', formData)
+        .then(response => {
+          console.log(response)
+          setOpen(true)
+          setIsSuccessful(true)
+        })
+        .catch(error => {
+          console.error("There was an error!", error)
+          setOpen(true)
+          setIsSuccessful(false)
+        });
     }
   }
 
@@ -249,6 +260,30 @@ export default () => {
       <Button fullWidth variant="contained" onClick={handleSubmit}>
         Submit
       </Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>
+        {dialogParam
+              ? "Application Successful!"
+              : "Error in Application Submission!"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {dialogParam
+              ? "Your application has been successfully lodged. We will get back to you soon."
+              : "There was an error in lodging your application. Please try again later!"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setOpen(false)
+              navigate("/applicant-openings")
+            }}
+          >
+            CLOSE
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }
