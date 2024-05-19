@@ -61,27 +61,31 @@ const ViewRecruitmentRoundPage = () => {
     R = "Archived",
   }
   const navigate = useNavigate()
-  const [filter, setFilter] = useState('');
-  const SHOW_ARCHIVED_AMOUNT = 3;
+  const [filter, setFilter] = useState("")
+  const SHOW_ARCHIVED_AMOUNT = 3
   const formatDeadline = (deadline: Date) => {
-    return `${deadline
-      .getDate()
-      .toString()
-      .padStart(2, "0")}/${(deadline.getMonth() + 1)
+    return `${deadline.getDate().toString().padStart(2, "0")}/${(
+      deadline.getMonth() + 1
+    )
       .toString()
       .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
       .getHours()
       .toString()
-      .padStart(2, "0")}:${deadline
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
-  };
-  const filterData = (item: any) => {
-    const { student_team_name, id, deadline, status, semester, year, openings_count } = item;
-    const formattedDeadline = formatDeadline(new Date(deadline));
-    const statusText = Status[status as keyof typeof Status] || "Unknown Status";
-  
+      .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`
+  }
+  const filterData = (round: any) => {
+    const {
+      student_team_name,
+      id,
+      deadline,
+      status,
+      semester,
+      year,
+      openings_count,
+    } = round
+    const formattedDeadline = formatDeadline(new Date(deadline))
+    const statusText = Status[status as keyof typeof Status] || "Unknown Status"
+
     return [
       `${student_team_name} ${id}`,
       formattedDeadline,
@@ -89,19 +93,24 @@ const ViewRecruitmentRoundPage = () => {
       semester,
       year,
       openings_count,
-    ].some((value: any) => value.toString().toLowerCase().includes(filter.toLowerCase()));
-  }; 
+    ].some((value: any) =>
+      value.toString().toLowerCase().includes(filter.toLowerCase())
+    )
+  }
+  const API_URL = "http://127.0.0.1:3000/recruitmentRounds"
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:3000/recruitmentRounds")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(API_URL)
         console.log(response)
         setData(response.data)
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("There was an error!", error)
-      })
+      }
+    }
+
+    fetchData()
   }, [])
 
   const handleViewRound = (id: number) => {
@@ -185,10 +194,11 @@ const ViewRecruitmentRoundPage = () => {
                 {/* Add active recruitment rounds rows */}
                 {Array.isArray(data) &&
                   data
-                    .filter((item: any) => item.status != "R").filter(filterData)
+                    .filter((item: any) => item.status != "R")
+                    .filter(filterData)
                     .map((item: any) => {
                       const deadline = new Date(item.deadline)
-                      const formattedDeadline = formatDeadline(deadline);
+                      const formattedDeadline = formatDeadline(deadline)
                       return (
                         <TableRow key={item.id}>
                           <TableCell>

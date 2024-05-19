@@ -60,13 +60,12 @@ const AddRecruitmentRoundPage = () => {
       return
     }
     try {
-      const response = await axios.post(
-        API_URL, {
+      const response = await axios.post(API_URL, {
         deadline: deadline.toString(),
         semester: semester,
         year: year,
         status: "I",
-    })
+      })
       if (response.status === 201) {
         console.log(response)
         setOpen(true)

@@ -21,7 +21,7 @@ function CreateOpeningPage() {
   const [requiredSkills, setRequiredSkills] = useState([])
   const [desiredSkills, setDesiredSkills] = useState([])
   const [open, setOpen] = useState(false)
-  const [dialogParam, setDialogParam] = useState(false)
+  const [dialogParam, setIsSuccessful] = useState(false)
   const navigate = useNavigate()
 
   const location = useLocation()
@@ -63,17 +63,18 @@ function CreateOpeningPage() {
         openingData
       )
       if (response.status === 201) {
-        //alert("Opening successfully been created!");
+        console.log(response)
         setOpen(true)
-        setDialogParam(true)
+        setIsSuccessful(true)
       } else {
-        //alert("Failed to create opening.");
+        console.log(response)
         setOpen(true)
-        setDialogParam(false)
+        setIsSuccessful(false)
       }
     } catch (error) {
-      console.error("Error creating the opening!", error)
-      alert("Error creating the opening!")
+      console.error("There was an error!", error)
+      setOpen(true)
+      setIsSuccessful(false)
     }
   }
 
@@ -83,7 +84,6 @@ function CreateOpeningPage() {
         recruitment_round_id: state.roundId,
       },
     })
-    //navigate("/recruitment-details-page/"+state.roundId)
   }
 
   return (
