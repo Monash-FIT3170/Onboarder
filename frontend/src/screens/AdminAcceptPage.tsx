@@ -1,4 +1,4 @@
-import { React, useState, useEffect, startTransition } from "react"
+import { React, useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -17,81 +17,82 @@ import {
   DialogContentText,
   DialogActions,
   IconButton,
-} from "@mui/material"
-import axios from "axios"
-import LoadingSpinner from "../components/LoadSpinner"
-import { useLocation, useNavigate } from "react-router-dom"
-import BackIcon from "../assets/BackIcon"
-import { StaticDatePicker } from "@mui/x-date-pickers"
+  CircularProgress,
+} from "@mui/material";
+import axios from "axios";
+import LoadingSpinner from "../components/LoadSpinner";
+import { useLocation, useNavigate } from "react-router-dom";
+import BackIcon from "../assets/BackIcon";
+
 interface ResultProps {
-  id: number
-  opening_id: number // assuming deadline is a date in string format
-  email: string
-  name: string
-  phone: string
-  semesters_until_completion: number
-  current_semester: number
-  course_enrolled: string
-  major_enrolled: string
-  cover_letter: string
-  skills: string[]
-  accepted: string
-  created_at: number
+  id: number;
+  opening_id: number; // assuming deadline is a date in string format
+  email: string;
+  name: string;
+  phone: string;
+  semesters_until_completion: number;
+  current_semester: number;
+  course_enrolled: string;
+  major_enrolled: string;
+  cover_letter: string;
+  skills: string[];
+  accepted: string;
+  created_at: number;
 }
 
 export default function RecruitmentPlatform() {
   const [applicantInformation, setApplicantInformation] = useState<
     ResultProps[]
-  >([])
-  const [loading, setLoading] = useState(true)
-  const [open, setOpen] = useState(false)
-  const [dialogParam, setIsSuccessful] = useState(false)
-  const navigate = useNavigate()
-  const location = useLocation()
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [dialogParam, setDialogParam] = useState("");
+  const [loadingAccept, setLoadingAccept] = useState(false);
+  const [loadingReject, setLoadingReject] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isDisabledAccept, setIsDisabledAccept] = useState(true);
   const [isDisabledReject, setIsDisabledReject] = useState(true);
 
-
   const state = location.state as {
-    opening_name: string
-    recruitment_round_name: string
-    application_id: number
-    id: number
-    recruitment_round_id: number
-    student_team_name: string
-    title: string
-    application_count: number
-  }
+    opening_name: string;
+    recruitment_round_name: string;
+    application_id: number;
+    id: number;
+    recruitment_round_id: number;
+    student_team_name: string;
+    title: string;
+    application_count: number;
+  };
 
   useEffect(() => {
- 
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `http://127.0.0.1:3000/applications/${state.application_id}`
-        )
-        console.log(response.data)
-        setApplicantInformation(response.data)
+        );
+        console.log(response.data);
+        setApplicantInformation(response.data);
       } catch (error) {
-        console.error("Error fetching applicant data:", error)
+        console.error("Error fetching applicant data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }   
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, [state.application_id]);
 
   useEffect(() => {
-    if (applicantInformation[0]?.accepted == "U") {
-      setIsDisabledAccept(false); 
-      setIsDisabledReject(false); 
-    } else if (applicantInformation[0]?.accepted == "A") {
-      setIsDisabledReject(false); 
-    } else if (applicantInformation[0]?.accepted == "R") {
-      setIsDisabledAccept(false); 
+    if (applicantInformation[0]?.accepted === "U") {
+      setIsDisabledAccept(false);
+      setIsDisabledReject(false);
+    } else if (applicantInformation[0]?.accepted === "A") {
+      setIsDisabledReject(false);
+    } else if (applicantInformation[0]?.accepted === "R") {
+      setIsDisabledAccept(false);
     } else {
-      console.log("Invalid User Status")
+      console.log("Invalid User Status");
     }
   }, [applicantInformation]);
 
@@ -110,63 +111,62 @@ export default function RecruitmentPlatform() {
         title,
         application_count,
       },
-    })
-  }
+    });
+  };
 
   const handleAccept = async (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
+    setLoadingAccept(true);
 
     try {
       const response = await axios.post(
         `http://127.0.0.1:3000/applications/${state.application_id}/accept`
-      )
+      );
       if (response.status === 201) {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(true)
+        console.log(response);
+        setDialogParam("Applicant Accepted!");
       } else {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(false)
+        console.log(response);
+        setDialogParam("There was an error accepting the applicant.");
       }
     } catch (error) {
-      console.error("There was an error!", error)
-      setOpen(true)
-      setIsSuccessful(false)
+      console.error("There was an error!", error);
+      setDialogParam("There was an error accepting the applicant.");
+    } finally {
+      setOpen(true);
+      setLoadingAccept(false);
     }
-  }
+  };
 
   const handleReject = async (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
+    setLoadingReject(true);
 
     try {
       const response = await axios.post(
         `http://127.0.0.1:3000/applications/${state.application_id}/reject`
-      )
+      );
       if (response.status === 201) {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(true)
+        console.log(response);
+        setDialogParam("Applicant Rejected!");
       } else {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(false)
+        console.log(response);
+        setDialogParam("There was an error rejecting the applicant.");
       }
     } catch (error) {
-      console.error("There was an error!", error)
-      setOpen(true)
-      setIsSuccessful(false)
+      console.error("There was an error!", error);
+      setDialogParam("There was an error rejecting the applicant.");
+    } finally {
+      setOpen(true);
+      setLoadingReject(false);
     }
-  }
+  };
 
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
   return (
     <>
-      {/* <Typography variant="h4" component="div" sx={{ width: '100%', marginLeft: '-10px', marginTop: '-10px', backgroundColor: '#1f8ae7', color: '#fff', padding: '10px' }}>
-        Onboarding: Recruitment Platform
-      </Typography> */}
       <Typography
         variant="h5"
         component="div"
@@ -318,7 +318,7 @@ export default function RecruitmentPlatform() {
             fullWidth
             required
             id="Current semester"
-            label="Current Remaining"
+            label="Current Semester"
             defaultValue={`${applicantInformation[0]?.current_semester}`}
             disabled={true}
           />
@@ -329,28 +329,39 @@ export default function RecruitmentPlatform() {
         xs={12}
         sx={{ display: "flex", justifyContent: "center", marginTop: "70px" }}
       >
-        <Button variant="contained" sx={{ m: 1, backgroundColor: "#1f8ae7" }} onClick={handleAccept} disabled={isDisabledAccept}>
-          ACCEPT
+        <Button
+          variant="contained"
+          sx={{ m: 1, backgroundColor: "#1f8ae7" }}
+          onClick={handleAccept}
+          disabled={isDisabledAccept || loadingAccept}
+        >
+          {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT"}
         </Button>
-        <Button variant="contained" color="error" sx={{ m: 1 }} onClick={handleReject} disabled={isDisabledReject}>
-          REJECT
+        <Button
+          variant="contained"
+          color="error"
+          sx={{ m: 1 }}
+          onClick={handleReject}
+          disabled={isDisabledReject || loadingReject}
+        >
+          {loadingReject ? <CircularProgress size={24} /> : "REJECT"}
         </Button>
         <Dialog open={open} onClose={() => setOpen(false)}>
-          <DialogTitle>
-            {dialogParam ? "Applicant Accepted!" : "Applicant Rejected!"}
-          </DialogTitle>
+          <DialogTitle>{dialogParam}</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              {dialogParam
-                ? "Applicant has been accepted for a position"
-                : "Applicant has been rejected for a position"}
-            </DialogContentText>
+            <DialogContentText>{dialogParam}</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={() => {
-                setOpen(false)
-                handleBack(state.id, state.recruitment_round_id, state.student_team_name, state.title, state.application_count)
+                setOpen(false);
+                handleBack(
+                  state.id,
+                  state.recruitment_round_id,
+                  state.student_team_name,
+                  state.title,
+                  state.application_count
+                );
               }}
             >
               CLOSE
@@ -359,5 +370,5 @@ export default function RecruitmentPlatform() {
         </Dialog>
       </Grid>
     </>
-  )
+  );
 }

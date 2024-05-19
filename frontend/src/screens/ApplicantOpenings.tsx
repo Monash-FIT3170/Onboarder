@@ -1,20 +1,26 @@
 import { useState, useEffect } from "react";
 import {
   Typography,
-  Button,
   Grid,
   TextField,
   MenuItem,
   Select,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import styled from "styled-components";
-import LoadingSpinner from "../components/LoadSpinner";
+// import LoadingSpinner from "../components/LoadSpinner";
 import {
   ApplicantOpeningsTable,
   applicantOpeningResultProps,
-} from "../components/Applicant";
+} from "../components/ApplicantOpeningsTable";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom"
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -22,12 +28,36 @@ const TitleWrapper = styled.div`
   gap: 10px;
 `;
 
+const generateSkeletonRows = () => {
+  return Array.from(new Array(10)).map((_, index) => (
+    <TableRow key={index}>
+      <TableCell>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant="rectangular" height={30} />
+      </TableCell>
+    </TableRow>
+  ));
+};
+
 function RecruitmentRoundDetailsPage() {
   const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
   const [semester, setSemester] = useState("All");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,10 +75,6 @@ function RecruitmentRoundDetailsPage() {
 
     fetchData();
   }, []);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <>
@@ -116,7 +142,25 @@ function RecruitmentRoundDetailsPage() {
           marginTop: "30px",
         }}
       >
-        <ApplicantOpeningsTable results={openings}></ApplicantOpeningsTable>
+        {loading ? (
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Opening Name</TableCell>
+                  <TableCell>Deadline</TableCell>
+                  <TableCell>Student Team</TableCell>
+                  <TableCell>Semester</TableCell>
+                  <TableCell>Year</TableCell>
+                  <TableCell>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{generateSkeletonRows()}</TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <ApplicantOpeningsTable results={openings}></ApplicantOpeningsTable>
+        )}
       </div>
     </>
   );

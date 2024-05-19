@@ -1,5 +1,5 @@
-import Grid from "@mui/material/Grid"
-import React, { useState } from "react"
+import Grid from "@mui/material/Grid";
+import React, { useState } from "react";
 import {
   Select,
   MenuItem,
@@ -9,14 +9,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material"
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
-import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon"
-import { DateTime } from "luxon"
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
-import axios from "axios"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+  CircularProgress,
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { DateTime } from "luxon";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const styles = {
   recruitmentRoundPage: {
@@ -42,45 +42,49 @@ const styles = {
     borderRadius: "4px",
     cursor: "pointer",
   },
-}
+};
 
 const AddRecruitmentRoundPage = () => {
-  const [deadline, setDeadline] = useState(DateTime.now())
-  const [semester, setSemester] = useState("")
-  const [year, setYear] = useState("")
-  const [open, setOpen] = useState(false)
-  const [dialogParam, setIsSuccessful] = useState(false)
-  const navigate = useNavigate()
-  const API_URL = "http://127.0.0.1:3000/recruitmentRounds/"
+  const [deadline, setDeadline] = useState(DateTime.now());
+  const [semester, setSemester] = useState("");
+  const [year, setYear] = useState("");
+  const [open, setOpen] = useState(false);
+  const [dialogParam, setIsSuccessful] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const API_URL = "http://127.0.0.1:3000/recruitmentRounds/";
 
   const handleSubmit = async (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
     if (!deadline || !semester || !year || year.length <= 0) {
-      alert("Please fill in all fields")
-      return
+      alert("Please fill in all fields");
+      return;
     }
+    setLoading(true);
     try {
       const response = await axios.post(API_URL, {
         deadline: deadline.toString(),
         semester: semester,
         year: year,
         status: "I",
-      })
+      });
       if (response.status === 201) {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(true)
+        console.log(response);
+        setOpen(true);
+        setIsSuccessful(true);
       } else {
-        console.log(response)
-        setOpen(true)
-        setIsSuccessful(false)
+        console.log(response);
+        setOpen(true);
+        setIsSuccessful(false);
       }
     } catch (error) {
-      console.error("There was an error!", error)
-      setOpen(true)
-      setIsSuccessful(false)
+      console.error("There was an error!", error);
+      setOpen(true);
+      setIsSuccessful(false);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div style={styles.recruitmentRoundPage}>
@@ -158,7 +162,7 @@ const AddRecruitmentRoundPage = () => {
                     value={deadline}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setDeadline(newValue)
+                        setDeadline(newValue);
                       }
                     }}
                     defaultValue={DateTime.now()}
@@ -221,8 +225,9 @@ const AddRecruitmentRoundPage = () => {
                   size="large"
                   style={styles.addRoundButton}
                   type="submit"
+                  disabled={loading}
                 >
-                  Submit
+                  {loading ? <CircularProgress size={24} /> : "Submit"}
                 </Button>
               </Grid>
               <Grid item xs={2} sm={2}></Grid>
@@ -257,16 +262,16 @@ const AddRecruitmentRoundPage = () => {
         <DialogActions>
           <Button
             onClick={() => {
-              setOpen(false)
-              navigate("/viewrecruitmentround")
+              setOpen(false);
+              navigate("/viewrecruitmentround");
             }}
           >
             GO TO ROUNDS TABLE
           </Button>
           <Button
             onClick={() => {
-              setOpen(false)
-              setDeadline(DateTime.now()), setSemester(""), setYear("")
+              setOpen(false);
+              setDeadline(DateTime.now()), setSemester(""), setYear("");
             }}
           >
             CREATE MORE ROUNDS
@@ -274,7 +279,7 @@ const AddRecruitmentRoundPage = () => {
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};
 
-export default AddRecruitmentRoundPage
+export default AddRecruitmentRoundPage;
