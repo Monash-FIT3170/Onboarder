@@ -10,6 +10,7 @@ import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 import ViewOpenPage from "../src/screens/ViewOpeningPage";
 import ApplicantOpenings from "./screens/ApplicantOpenings";
+import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/create-opening" element={<CreateOpeningPage />} />
           <Route path="/viewopen" element={<ViewOpenPage />} />
           <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+          <Route path="/application-submission" element={<ApplicationSubmissionPage />} />
         </Routes>
       </Box>
     </>
