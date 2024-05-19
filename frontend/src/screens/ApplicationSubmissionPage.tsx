@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Grid,
   Table,
@@ -19,37 +17,36 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  DialogTitle
-} from "@mui/material"
-import BackIcon from "../assets/BackIcon"
-import axios from "axios"
-import Autocomplete from "@mui/material/Autocomplete"
-import { useLocation, useNavigate } from "react-router-dom"
+  DialogTitle,
+} from "@mui/material";
+import BackIcon from "../assets/BackIcon";
+import axios from "axios";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default () => {
-  const [studentTeam, setStudentTeam] = useState([])
+function ApplicationSubmissionPage() {
+  const [studentTeam, setStudentTeam] = useState([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
-    additionalInformation: "",
+    coverLetter: "",
     courseName: "",
     major: "",
     skills: [],
     currentSemester: "",
     semesterRemaining: "",
-  })
+  });
   // Define skills state
-  const [skills, setSkills] = useState([])
-  const [open, setOpen] = useState(false)
-  const [dialogParam, setIsSuccessful] = useState(false)
-  const location = useLocation()
-  const navigate = useNavigate()
+  const [open, setOpen] = useState(false);
+  const [dialogParam, setIsSuccessful] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
   const state = location.state as {
-    round_id: number
-    opening_id: number
-  }
+    round_id: number;
+    opening_id: number;
+  };
 
   useEffect(() => {
     axios
@@ -57,17 +54,18 @@ export default () => {
         `http://127.0.0.1:3000/recruitmentRounds/${state.round_id}/openings/${state.opening_id}`
       )
       .then((res) => {
-        setStudentTeam(res.data)
+        setStudentTeam(res.data);
       })
       .catch((error) => {
-        console.error("There was an error!", error)
-      })
-  }, [])
+        console.error("There was an error!", error);
+      });
+  }, [state.round_id, state.opening_id]);
 
-  const handleInputChange = (event) => {
-    const { id, value } = event.target
-    setFormData({ ...formData, [id]: value })
-  }
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const handleInputChange = (event: any) => {
+    const { id, value } = event.target;
+    setFormData({ ...formData, [id]: value });
+  };
 
   const handleSubmit = () => {
     // Check if any of the required fields are empty
@@ -78,39 +76,58 @@ export default () => {
       "phoneNumber",
       "courseName",
       "skills",
-    ]
+      "currentSemester",
+      "semesterRemaining",
+      "coverLetter", // Updated field
+    ];
     const isAnyFieldEmpty = requiredFields.some((field) => {
       if (Array.isArray(formData[field])) {
-        return formData[field].length === 0
+        return formData[field].length === 0;
       }
-      return !formData[field]
-    })
+      return !formData[field];
+    });
 
     if (isAnyFieldEmpty) {
-      alert("Please fill in all required fields.")
+      alert("Please fill in all required fields.");
     } else {
-      axios.post('https://example.com/api', formData)
-        .then(response => {
-          console.log(response)
-          setOpen(true)
-          setIsSuccessful(true)
+      const submissionData = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        phone: formData.phoneNumber,
+        email: formData.email,
+        semesters_until_completion: formData.semesterRemaining,
+        current_semester: formData.currentSemester,
+        course_enrolled: formData.courseName,
+        major_enrolled: formData.major,
+        cover_letter: formData.coverLetter, // Updated field
+        skills: formData.skills,
+      };
+
+      axios
+        .post(
+          `http://127.0.0.1:3000/openings/${state.opening_id}/applications`,
+          submissionData
+        )
+        .then((response) => {
+          console.log(response);
+          setOpen(true);
+          setIsSuccessful(true);
         })
-        .catch(error => {
-          console.error("There was an error!", error)
-          setOpen(true)
-          setIsSuccessful(false)
+        .catch((error) => {
+          console.error("There was an error!", error);
+          setOpen(true);
+          setIsSuccessful(false);
         });
     }
-  }
+  };
 
   return (
     <div>
       {studentTeam.map((row, index) => (
         <div key={index}>
           <Typography variant="h5" color="inherit" component="div">
-          <IconButton onClick={() => navigate("/applicant-openings")}>
-            <BackIcon />
-          </IconButton>
+            <IconButton onClick={() => navigate("/applicant-openings")}>
+              <BackIcon />
+            </IconButton>
             {row.title}
           </Typography>
           <Typography variant="body1" color="inherit" component="div">
@@ -187,9 +204,11 @@ export default () => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id="additionalInformation"
-            label="Additional Information"
+            id="coverLetter" // Updated field
+            label="Cover Letter" // Updated label
             variant="outlined"
+            multiline
+            rows={4}
             onChange={handleInputChange}
           />
         </Grid>
@@ -223,9 +242,9 @@ export default () => {
             multiple
             freeSolo
             options={[]}
-            value={formData.skills} // Use formData.skills
+            value={formData.skills}
             onChange={(event, newValue) => {
-              setFormData({ ...formData, skills: newValue }) // Update formData
+              setFormData({ ...formData, skills: newValue });
             }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
@@ -262,9 +281,9 @@ export default () => {
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
-        {dialogParam
-              ? "Application Successful!"
-              : "Error in Application Submission!"}
+          {dialogParam
+            ? "Application Successful!"
+            : "Error in Application Submission!"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -276,8 +295,8 @@ export default () => {
         <DialogActions>
           <Button
             onClick={() => {
-              setOpen(false)
-              navigate("/applicant-openings")
+              setOpen(false);
+              navigate("/applicant-openings");
             }}
           >
             CLOSE
@@ -285,5 +304,7 @@ export default () => {
         </DialogActions>
       </Dialog>
     </div>
-  )
+  );
 }
+
+export default ApplicationSubmissionPage;
