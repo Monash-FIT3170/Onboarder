@@ -106,13 +106,19 @@ const ViewRecruitmentRoundPage = () => {
                   )
                 )
                 .at(0)}
-            {/* <h3>'Student Team 1'</h3> */}
           </Grid>
         </Grid>
         <section style={styles.section}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              <h4>Current Recruitment Rounds: Showing {data.filter((item: any) => item.status == "I" || item.status == "R").length}</h4>
+              <h4>
+                Current Recruitment Rounds: Showing{" "}
+                {
+                  data.filter(
+                    (item: any) => item.status == "I" || item.status == "R"
+                  ).length
+                }
+              </h4>
             </Grid>
             <Grid item>
               <Link
