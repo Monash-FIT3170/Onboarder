@@ -4,10 +4,17 @@ import {
   Button,
   CircularProgress,
   IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Skeleton,
 } from "@mui/material";
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
-import LoadingSpinner from "../components/LoadSpinner";
 import {
   OpeningsTable,
   openingsResultProps,
@@ -91,10 +98,6 @@ function RecruitmentRoundDetailsPage() {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   const handleAddOpening = () => {
     navigate("/create-opening", {
       state: {
@@ -125,17 +128,26 @@ function RecruitmentRoundDetailsPage() {
 
   return (
     <>
-      {/* Single Recruitment Round Table */}
       <HeadWrapper>
         <TitleWrapper>
           <IconButton onClick={() => navigate("/viewrecruitmentround")}>
-            <BackIcon />
+            {loading ? (
+              <Skeleton variant="circular" width={40} height={40} />
+            ) : (
+              <BackIcon />
+            )}
           </IconButton>
           <Typography variant="h5">
-            {`${rounds[0]?.student_team_name} ${rounds[0]?.id}`}
+            {loading ? (
+              <Skeleton width={200} />
+            ) : (
+              `${rounds[0]?.student_team_name} ${rounds[0]?.id}`
+            )}
           </Typography>
         </TitleWrapper>
-        {rounds[0]?.status === "A" ? (
+        {loading ? (
+          <Skeleton variant="rectangular" width={150} height={40} />
+        ) : rounds[0]?.status === "A" ? (
           <Button
             variant="outlined"
             style={{
@@ -170,11 +182,52 @@ function RecruitmentRoundDetailsPage() {
           </Button>
         )}
       </HeadWrapper>
+
       <div style={{ marginTop: "40px" }}>
-        <SingleRoundTable results={rounds} />
+        {loading ? (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {[...Array(1)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <SingleRoundTable results={rounds} />
+        )}
       </div>
 
-      {/* Openings for Recruitment Round Table */}
       <div
         style={{
           display: "flex",
@@ -184,16 +237,59 @@ function RecruitmentRoundDetailsPage() {
         }}
       >
         <OpeningsWrapper>
-          <Typography variant="h6">Recruitment Round Openings</Typography>
-          <Button variant="contained" onClick={handleAddOpening}>
-            {" "}
-            Add Opening{" "}
+          <Typography variant="h6">
+            {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={handleAddOpening}
+            disabled={loading}
+          >
+            {loading ? <Skeleton width={100} /> : "Add Opening"}
           </Button>
         </OpeningsWrapper>
-        <OpeningsTable
-          results={openings}
-          viewHandler={handleView}
-        ></OpeningsTable>
+        {loading ? (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={200} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="rectangular" width={80} height={30} />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {[...Array(4)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="rectangular" width={80} height={30} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <OpeningsTable results={openings} viewHandler={handleView} />
+        )}
       </div>
     </>
   );

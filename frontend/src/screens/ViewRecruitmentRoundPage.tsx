@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -12,11 +12,11 @@ import {
   Grid,
   Typography,
   TableSortLabel,
-} from "@mui/material"
-import { useNavigate } from "react-router-dom"
-
-import axios from "axios"
-import { Link } from "react-router-dom"
+  Skeleton,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const styles = {
   recruitmentRoundPage: {
@@ -51,18 +51,20 @@ const styles = {
     overflowY: "auto",
     display: "block",
   },
-}
+};
 
 const ViewRecruitmentRoundPage = () => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   enum Status {
     A = "Active",
     I = "Inactive",
     R = "Archived",
   }
-  const navigate = useNavigate()
-  const [filter, setFilter] = useState("")
-  const SHOW_ARCHIVED_AMOUNT = 3
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState("");
+  const SHOW_ARCHIVED_AMOUNT = 3;
+
   const formatDeadline = (deadline: Date) => {
     return `${deadline.getDate().toString().padStart(2, "0")}/${(
       deadline.getMonth() + 1
@@ -71,8 +73,9 @@ const ViewRecruitmentRoundPage = () => {
       .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
       .getHours()
       .toString()
-      .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`
-  }
+      .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`;
+  };
+
   const filterData = (round: any) => {
     const {
       student_team_name,
@@ -82,9 +85,10 @@ const ViewRecruitmentRoundPage = () => {
       semester,
       year,
       openings_count,
-    } = round
-    const formattedDeadline = formatDeadline(new Date(deadline))
-    const statusText = Status[status as keyof typeof Status] || "Unknown Status"
+    } = round;
+    const formattedDeadline = formatDeadline(new Date(deadline));
+    const statusText =
+      Status[status as keyof typeof Status] || "Unknown Status";
 
     return [
       `${student_team_name} ${id}`,
@@ -95,31 +99,34 @@ const ViewRecruitmentRoundPage = () => {
       openings_count,
     ].some((value: any) =>
       value.toString().toLowerCase().includes(filter.toLowerCase())
-    )
-  }
-  const API_URL = "http://127.0.0.1:3000/recruitmentRounds"
+    );
+  };
+
+  const API_URL = "http://127.0.0.1:3000/recruitmentRounds";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL)
-        console.log(response)
-        setData(response.data)
+        const response = await axios.get(API_URL);
+        console.log(response);
+        setData(response.data);
       } catch (error) {
-        console.error("There was an error!", error)
+        console.error("There was an error!", error);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleViewRound = (id: number) => {
     navigate("/recruitment-details-page", {
       state: {
         recruitment_round_id: id,
       },
-    })
-  }
+    });
+  };
 
   return (
     <div style={styles.recruitmentRoundPage}>
@@ -191,41 +198,69 @@ const ViewRecruitmentRoundPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* Add active recruitment rounds rows */}
-                {Array.isArray(data) &&
-                  data
-                    .filter((item: any) => item.status != "R")
-                    .filter(filterData)
-                    .map((item: any) => {
-                      const deadline = new Date(item.deadline)
-                      const formattedDeadline = formatDeadline(deadline)
-                      return (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            {item.student_team_name + " " + item.id}
-                          </TableCell>
-                          <TableCell>{formattedDeadline}</TableCell>
-                          <TableCell>
-                            {Status[item.status as keyof typeof Status] ||
-                              "Unknown Status"}
-                          </TableCell>
-                          <TableCell>{item.semester}</TableCell>
-                          <TableCell>{item.year}</TableCell>
-                          <TableCell>{item.openings_count}</TableCell>
-                          <TableCell>
-                            <Button
-                              variant="contained"
-                              style={{ padding: 0 }}
-                              onClick={() => {
-                                handleViewRound(item.id)
-                              }}
-                            >
-                              VIEW
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
+                {loading
+                  ? Array.from(new Array(5)).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            width={80}
+                            height={30}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : data
+                      .filter((item: any) => item.status != "R")
+                      .filter(filterData)
+                      .map((item: any) => {
+                        const deadline = new Date(item.deadline);
+                        const formattedDeadline = formatDeadline(deadline);
+                        return (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              {item.student_team_name + " " + item.id}
+                            </TableCell>
+                            <TableCell>{formattedDeadline}</TableCell>
+                            <TableCell>
+                              {Status[item.status as keyof typeof Status] ||
+                                "Unknown Status"}
+                            </TableCell>
+                            <TableCell>{item.semester}</TableCell>
+                            <TableCell>{item.year}</TableCell>
+                            <TableCell>{item.openings_count}</TableCell>
+                            <TableCell>
+                              <Button
+                                variant="contained"
+                                style={{ padding: 0 }}
+                                onClick={() => {
+                                  handleViewRound(item.id);
+                                }}
+                              >
+                                VIEW
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -248,36 +283,58 @@ const ViewRecruitmentRoundPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(data) &&
-                  data
-                    .filter((item: any) => item.status == "R")
-                    .slice(0, SHOW_ARCHIVED_AMOUNT)
-                    .map((item: any) => {
-                      const deadline = new Date(item.deadline)
-                      const formattedDeadline = formatDeadline(deadline)
-                      return (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            {item.student_team_name + " " + item.id}
-                          </TableCell>
-                          <TableCell>{formattedDeadline}</TableCell>
-                          <TableCell>
-                            {Status[item.status as keyof typeof Status] ||
-                              "Unknown Status"}
-                          </TableCell>
-                          <TableCell>{item.semester}</TableCell>
-                          <TableCell>{item.year}</TableCell>
-                          <TableCell>{item.openings_count}</TableCell>
-                        </TableRow>
-                      )
-                    })}
+                {loading
+                  ? Array.from(new Array(5)).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : data
+                      .filter((item: any) => item.status == "R")
+                      .slice(0, SHOW_ARCHIVED_AMOUNT)
+                      .map((item: any) => {
+                        const deadline = new Date(item.deadline);
+                        const formattedDeadline = formatDeadline(deadline);
+                        return (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              {item.student_team_name + " " + item.id}
+                            </TableCell>
+                            <TableCell>{formattedDeadline}</TableCell>
+                            <TableCell>
+                              {Status[item.status as keyof typeof Status] ||
+                                "Unknown Status"}
+                            </TableCell>
+                            <TableCell>{item.semester}</TableCell>
+                            <TableCell>{item.year}</TableCell>
+                            <TableCell>{item.openings_count}</TableCell>
+                          </TableRow>
+                        );
+                      })}
               </TableBody>
             </Table>
           </TableContainer>
         </section>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default ViewRecruitmentRoundPage
+export default ViewRecruitmentRoundPage;

@@ -18,11 +18,17 @@ import {
   DialogContentText,
   DialogActions,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
 import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
+import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
+
+const SectionTitle = styled.div`
+  margin-top: 30px;
+`;
 
 function ApplicationSubmissionPage() {
   const [studentTeam, setStudentTeam] = useState([]);
@@ -38,9 +44,9 @@ function ApplicationSubmissionPage() {
     currentSemester: "",
     semesterRemaining: "",
   });
-  // Define skills state
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as {
@@ -61,14 +67,12 @@ function ApplicationSubmissionPage() {
       });
   }, [state.round_id, state.opening_id]);
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
     setFormData({ ...formData, [id]: value });
   };
 
   const handleSubmit = () => {
-    // Check if any of the required fields are empty
     const requiredFields = [
       "firstName",
       "lastName",
@@ -78,7 +82,7 @@ function ApplicationSubmissionPage() {
       "skills",
       "currentSemester",
       "semesterRemaining",
-      "coverLetter", // Updated field
+      "coverLetter",
     ];
     const isAnyFieldEmpty = requiredFields.some((field) => {
       if (Array.isArray(formData[field])) {
@@ -98,9 +102,11 @@ function ApplicationSubmissionPage() {
         current_semester: formData.currentSemester,
         course_enrolled: formData.courseName,
         major_enrolled: formData.major,
-        cover_letter: formData.coverLetter, // Updated field
+        cover_letter: formData.coverLetter,
         skills: formData.skills,
       };
+
+      setIsSubmitting(true);
 
       axios
         .post(
@@ -116,6 +122,9 @@ function ApplicationSubmissionPage() {
           console.error("There was an error!", error);
           setOpen(true);
           setIsSuccessful(false);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
         });
     }
   };
@@ -161,9 +170,11 @@ function ApplicationSubmissionPage() {
         </Table>
       </TableContainer>
 
-      <Typography variant="h5" color="inherit" component="div">
-        Application Information
-      </Typography>
+      <SectionTitle>
+        <Typography variant="h5" color="inherit" component="div">
+          Application Information
+        </Typography>
+      </SectionTitle>
       <Grid container spacing={2} style={{ marginBottom: 20 }}>
         <Grid item xs={6}>
           <TextField
@@ -204,8 +215,8 @@ function ApplicationSubmissionPage() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id="coverLetter" // Updated field
-            label="Cover Letter" // Updated label
+            id="coverLetter"
+            label="Cover Letter"
             variant="outlined"
             multiline
             rows={4}
@@ -276,8 +287,13 @@ function ApplicationSubmissionPage() {
         </Grid>
       </Grid>
 
-      <Button fullWidth variant="contained" onClick={handleSubmit}>
-        Submit
+      <Button
+        fullWidth
+        variant="contained"
+        onClick={handleSubmit}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? <CircularProgress size={24} /> : "Submit"}
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
