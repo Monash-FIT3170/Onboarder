@@ -21,16 +21,20 @@ const FlexContainer = styled(Box)(({ theme }) => ({
 const FormSection = styled(Box)(({ theme }) => ({
   flex: 1,
   display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center',
   padding: theme.spacing(4),
+  [theme.breakpoints.up('md')]: {
+    maxWidth: '50%',
+  },
 }));
 
 const ImageSection = styled(Box)(({ theme }) => ({
   flex: 1,
-  backgroundImage: 'TODOOO', // TODO: ADD THIS
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#f0f8ff', // Light blue background
   [theme.breakpoints.down('md')]: {
     minHeight: '300px',
   },
@@ -83,7 +87,7 @@ const RegisterPage: React.FC = () => {
   return (
     <FlexContainer>
       <FormSection>
-        <StyledPaper elevation={3}>
+        <StyledPaper elevation={0}>
           <Typography component="h1" variant="h5">
             Register
           </Typography>
@@ -166,7 +170,13 @@ const RegisterPage: React.FC = () => {
         </form>
         </StyledPaper>
       </FormSection>
-      <ImageSection />
+      <ImageSection>
+        <img
+          src="/path/to/your/login-image.png"
+          alt="Login illustration"
+          style={{ maxWidth: '100%', maxHeight: '100%' }}
+        />
+      </ImageSection>
     </FlexContainer>
   );
 };
