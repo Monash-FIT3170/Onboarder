@@ -53,6 +53,11 @@ const SubmitButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(3, 0, 2),
 }));
 
+const StyledForm = styled('form')(({ theme }) => ({
+  width: '100%',
+  maxWidth: '400px',
+}));
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -88,10 +93,13 @@ const RegisterPage: React.FC = () => {
     <FlexContainer>
       <FormSection>
         <StyledPaper elevation={0}>
-          <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" gutterBottom>
             Register
-          </Typography>
-        <form onSubmit={handleSubmit}>
+        </Typography>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          Already have an account? <Link href="/login">Login now!</Link>
+        </Typography>
+        <StyledForm onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -167,7 +175,7 @@ const RegisterPage: React.FC = () => {
             CREATE ACCOUNT
           </SubmitButton>
           
-        </form>
+        </StyledForm>
         </StyledPaper>
       </FormSection>
       <ImageSection>

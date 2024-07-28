@@ -99,6 +99,7 @@ const LoginPage: React.FC = () => {
           <Link href="#" variant="body2">
             Forgot password?
           </Link>
+          <br></br>  {/* kingzel ECMA7 optimised*/}
           <FormControlLabel
             control={
               <Checkbox
