@@ -16,6 +16,8 @@ import { formatDeadline } from "../util/Util";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+
 function CreateOpeningPage() {
   const [openingName, setOpeningName] = useState("");
   const [description, setDescription] = useState("");
@@ -25,13 +27,15 @@ function CreateOpeningPage() {
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const location = useLocation();
-  const state = location.state as {
-    deadline: string;
-    roundId: number;
-    round: string;
-  };
+
+  const setRecruitmentDetails = useRecruitmentStore(
+    (state) => state.setRecruitmentDetails
+  );
+
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails
+  );
 
   const handleSubmit = async () => {
     if (
@@ -60,7 +64,7 @@ function CreateOpeningPage() {
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/recruitmentRounds/${state.roundId}/openings`,
+        `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings`,
         openingData
       );
       if (response.status === 201) {
@@ -82,11 +86,7 @@ function CreateOpeningPage() {
   };
 
   const handleCancel = () => {
-    navigate("/recruitment-details-page", {
-      state: {
-        recruitment_round_id: state.roundId,
-      },
-    });
+    navigate("/recruitment-details-page");
   };
 
   return (
@@ -129,7 +129,7 @@ function CreateOpeningPage() {
         </Typography>
         <TextField
           fullWidth
-          value={state.round}
+          value={recruitmentDetails.roundId}
           InputProps={{
             readOnly: true,
           }}
@@ -143,7 +143,7 @@ function CreateOpeningPage() {
         </Typography>
         <TextField
           fullWidth
-          value={formatDeadline(state.deadline)}
+          value={formatDeadline(recruitmentDetails.roundDeadline)}
           InputProps={{
             readOnly: true,
           }}
@@ -227,7 +227,7 @@ function CreateOpeningPage() {
               setOpen(false);
               navigate("/recruitment-details-page", {
                 state: {
-                  recruitment_round_id: state.roundId,
+                  recruitment_round_id: recruitmentDetails.roundId,
                 },
               });
             }}
