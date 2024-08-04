@@ -13,7 +13,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { formatDeadline } from "../util/Util";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
@@ -27,7 +27,6 @@ function CreateOpeningPage() {
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const setRecruitmentDetails = useRecruitmentStore(
     (state) => state.setRecruitmentDetails

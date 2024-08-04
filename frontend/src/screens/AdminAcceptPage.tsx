@@ -59,11 +59,9 @@ export default function RecruitmentPlatform() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Check if selectedApplicant has application_id (similar to recruitmentDetails.roundId check)
       if (!selectedApplicant?.application_id) {
         console.error("No application ID selected");
-        // Redirect if no application ID is found
-        navigate("/viewopen"); // Adjust redirect path as needed
+        navigate("/viewopen"); 
         return;
       }
   
