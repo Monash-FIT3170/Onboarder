@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 
 const styles = {
   recruitmentRoundPage: {
@@ -64,6 +65,9 @@ const ViewRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const SHOW_ARCHIVED_AMOUNT = 3;
+  const setSelectedRecruitmentRoundId = useRecruitmentStore(
+    (state) => state.setSelectedRecruitmentRoundId
+  );
 
   const formatDeadline = (deadline: Date) => {
     return `${deadline.getDate().toString().padStart(2, "0")}/${(
@@ -121,11 +125,8 @@ const ViewRecruitmentRoundPage = () => {
   }, []);
 
   const handleViewRound = (id: number) => {
-    navigate("/recruitment-details-page", {
-      state: {
-        recruitment_round_id: id,
-      },
-    });
+    setSelectedRecruitmentRoundId(id);
+    navigate("/recruitment-details-page");
   };
 
   return (

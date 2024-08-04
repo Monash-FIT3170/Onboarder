@@ -26,6 +26,8 @@ import {
 } from "../components/SingleRoundTable";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+
 const HeadWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -52,20 +54,26 @@ function RecruitmentRoundDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const state = location.state as {
-    recruitment_round_id: number;
-  };
+  const selectedRecruitmentRoundId = useRecruitmentStore(
+    (state) => state.selectedRecruitmentRoundId
+  );
 
   useEffect(() => {
     const fetchData = async () => {
+      if (selectedRecruitmentRoundId === null) {
+        console.error("No recruitment round ID selected");
+        // Redirect if no ID is selected
+        navigate("/viewrecruitmentround"); 
+        return;
+      }
+
       try {
         const roundsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}`
+          `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}`
         );
         const openingsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/openings`
+          `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}/openings`
         );
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
@@ -77,7 +85,8 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, [state.recruitment_round_id]);
+  }, [selectedRecruitmentRoundId, navigate]);
+  
 
   const updateStatus = async (statusChange: string) => {
     setIsUpdating(true);
@@ -86,7 +95,7 @@ function RecruitmentRoundDetailsPage() {
     };
     try {
       await axios.patch(
-        `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/status`,
+        `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}/status`,
         data
       );
       alert("Status updated successfully!");
