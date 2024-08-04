@@ -14,9 +14,11 @@ import {
   TextField,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAppStatusText } from "../util/Util";
 import axios from "axios";
+
+import { useOpeningStore } from "../util/stores/openingStore";
 
 export interface SingleApplicationProps {
   id: number;
@@ -43,7 +45,6 @@ function ViewOpenPage() {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
 
-  const location = useLocation();
   const navigate = useNavigate();
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     []
@@ -51,12 +52,17 @@ function ViewOpenPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const state = location.state as {
-    id: number;
-    recruitment_round_id: number;
-    student_team_name: string;
-    title: string;
-    application_count: number;
+  const selectedOpening = useOpeningStore(state => state.selectedOpening);
+
+  const handleViewApplication = (applicationId: number) => {
+    navigate("/admin-acceptpage", {
+      state: {
+        application_id: applicationId,
+        opening_name: selectedOpening?.title,
+        recruitment_round_name: `${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`,
+        ...selectedOpening,
+      },
+    });
   };
 
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
@@ -71,21 +77,7 @@ function ViewOpenPage() {
         <TableCell>
           <Button
             variant="contained"
-            onClick={() => {
-              navigate("/admin-acceptpage", {
-                state: {
-                  application_id: application.id,
-                  opening_name: state.title,
-                  recruitment_round_name:
-                    state.student_team_name + " " + state.recruitment_round_id,
-                  id: state.id,
-                  recruitment_round_id: state.recruitment_round_id,
-                  student_team_name: state.student_team_name,
-                  title: state.title,
-                  application_count: state.application_count,
-                },
-              });
-            }}
+            onClick={() => handleViewApplication(application.id)}
           >
             View
           </Button>
@@ -95,10 +87,15 @@ function ViewOpenPage() {
   };
 
   useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/viewrecruitmentround");
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
-          `http://127.0.0.1:3000/openings/${state.id}/applications`
+          `http://127.0.0.1:3000/openings/${selectedOpening.id}/applications`
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
@@ -109,7 +106,7 @@ function ViewOpenPage() {
     };
 
     fetchData();
-  }, [state.id]);
+  }, [selectedOpening, navigate]);
 
   return (
     <div>
@@ -121,7 +118,7 @@ function ViewOpenPage() {
           onClick={() =>
             navigate("/recruitment-details-page", {
               state: {
-                recruitment_round_id: state.recruitment_round_id,
+                recruitment_round_id: selectedOpening?.recruitment_round_id,
               },
             })
           }
@@ -129,7 +126,7 @@ function ViewOpenPage() {
           <BackIcon />
         </IconButton>
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {state.title}
+          {selectedOpening?.title}
         </Typography>
       </div>
 
@@ -144,8 +141,8 @@ function ViewOpenPage() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{`${state.student_team_name} ${state.recruitment_round_id}`}</TableCell>
-              <TableCell>{state.application_count}</TableCell>
+              <TableCell>{`${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>{selectedOpening?.application_count}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

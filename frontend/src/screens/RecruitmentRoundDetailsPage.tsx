@@ -24,9 +24,10 @@ import {
   SingleRoundTable,
   SingleRoundResultProps,
 } from "../components/SingleRoundTable";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import { useOpeningStore } from "../util/stores/openingStore";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -57,6 +58,10 @@ function RecruitmentRoundDetailsPage() {
 
   const selectedRecruitmentRoundId = useRecruitmentStore(
     (state) => state.selectedRecruitmentRoundId
+  );
+
+  const setSelectedOpening = useOpeningStore(
+    state => state.setSelectedOpening
   );
 
   useEffect(() => {
@@ -124,15 +129,14 @@ function RecruitmentRoundDetailsPage() {
     title: string,
     application_count: number
   ) => {
-    navigate("/viewopen", {
-      state: {
-        id,
-        recruitment_round_id,
-        student_team_name,
-        title,
-        application_count,
-      },
+    setSelectedOpening({
+      id,
+      recruitment_round_id,
+      student_team_name,
+      title,
+      application_count,
     });
+    navigate("/viewopen");
   };
 
   return (
