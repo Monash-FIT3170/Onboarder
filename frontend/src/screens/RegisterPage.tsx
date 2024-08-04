@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Link, Grid, Paper } from "@mui/material";
+import { Box, Button, TextField, Typography, Link, Grid } from "@mui/material";
 import { styled } from "@mui/system";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
@@ -37,7 +37,7 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 	margin: theme.spacing(3, 0, 2),
 }));
 
-const StyledForm = styled("form")(({ theme }) => ({
+const StyledForm = styled("form")(() => ({
 	// width: "100%",
 	maxWidth: "400px",
 }));

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Button,
@@ -9,6 +9,7 @@ import {
 	FormControlLabel,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import { supabase } from "../util/supabaseClient";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
 	display: "flex",
@@ -30,6 +31,10 @@ const FormSection = styled(Box)(({ theme }) => ({
 	},
 }));
 
+const GoogleButton = styled(Button)(({ theme }) => ({
+	marginTop: theme.spacing(2),
+}));
+
 const ImageSection = styled(Box)(({ theme }) => ({
 	flex: 1,
 	display: "flex",
@@ -41,7 +46,7 @@ const ImageSection = styled(Box)(({ theme }) => ({
 	},
 }));
 
-const StyledForm = styled("form")(({ theme }) => ({
+const StyledForm = styled("form")(() => ({
 	width: "100%",
 	maxWidth: "400px",
 }));
@@ -60,6 +65,28 @@ const LoginPage: React.FC = () => {
 		// Handle login logic here
 		console.log({ email, password, rememberMe });
 	};
+
+	const handleGoogleLogin = async () => {
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: {
+				redirectTo: "http://localhost:5173/register",
+			},
+		});
+		if (error) console.error("Error logging in with Google:", error);
+	};
+
+	useEffect(() => {
+		const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+			if (event === "SIGNED_IN") {
+				console.log("User signed in:", session?.user);
+			}
+		});
+
+		return () => {
+			authListener.subscription.unsubscribe();
+		};
+	}, []);
 
 	return (
 		<FlexContainer>
@@ -115,6 +142,9 @@ const LoginPage: React.FC = () => {
 					<SubmitButton type="submit" fullWidth variant="contained" color="primary">
 						LOG IN
 					</SubmitButton>
+					<GoogleButton fullWidth variant="outlined" onClick={handleGoogleLogin}>
+						Login with Google
+					</GoogleButton>
 				</StyledForm>
 			</FormSection>
 			<ImageSection>
