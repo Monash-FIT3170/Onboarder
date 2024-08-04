@@ -19,6 +19,7 @@ import { getAppStatusText } from "../util/Util";
 import axios from "axios";
 
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useApplicantStore } from "../util/stores/applicantStore";
 
 export interface SingleApplicationProps {
   id: number;
@@ -53,16 +54,21 @@ function ViewOpenPage() {
   const [search, setSearch] = useState("");
 
   const selectedOpening = useOpeningStore(state => state.selectedOpening);
+  const setSelectedApplicant = useApplicantStore(state => state.setSelectedApplicant);
 
   const handleViewApplication = (applicationId: number) => {
-    navigate("/admin-acceptpage", {
-      state: {
-        application_id: applicationId,
-        opening_name: selectedOpening?.title,
-        recruitment_round_name: `${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`,
-        ...selectedOpening,
-      },
-    });
+    setSelectedApplicant({
+      opening_name: selectedOpening?.title ?? null,
+      recruitment_round_name: `${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`,
+      application_id: applicationId,
+      opening_id: selectedOpening?.id ?? null,
+      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
+      student_team_name: selectedOpening?.student_team_name ?? null,
+      opening_title: selectedOpening?.title ?? null,
+      application_count: selectedOpening?.application_count ?? null,
+    })
+
+    navigate("/admin-acceptpage");
   };
 
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
@@ -116,11 +122,7 @@ function ViewOpenPage() {
       >
         <IconButton
           onClick={() =>
-            navigate("/recruitment-details-page", {
-              state: {
-                recruitment_round_id: selectedOpening?.recruitment_round_id,
-              },
-            })
+            navigate("/recruitment-details-page")
           }
         >
           <BackIcon />
