@@ -56,8 +56,12 @@ function RecruitmentRoundDetailsPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
 
-  const selectedRecruitmentRoundId = useRecruitmentStore(
-    (state) => state.selectedRecruitmentRoundId
+  const setRecruitmentDetails = useRecruitmentStore(
+    (state) => state.setRecruitmentDetails
+  );
+
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails
   );
 
   const setSelectedOpening = useOpeningStore(
@@ -66,19 +70,19 @@ function RecruitmentRoundDetailsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (selectedRecruitmentRoundId === null) {
+      if (recruitmentDetails.roundId === null) {
         console.error("No recruitment round ID selected");
         // Redirect if no ID is selected
-        navigate("/viewrecruitmentround"); 
+        navigate("/viewrecruitmentround");
         return;
       }
 
       try {
         const roundsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}`
+          `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}`
         );
         const openingsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}/openings`
+          `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings`
         );
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
@@ -90,7 +94,7 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, [selectedRecruitmentRoundId, navigate]);
+  }, [recruitmentDetails, navigate]);
   
 
   const updateStatus = async (statusChange: string) => {
@@ -100,7 +104,7 @@ function RecruitmentRoundDetailsPage() {
     };
     try {
       await axios.patch(
-        `http://127.0.0.1:3000/recruitmentRounds/${selectedRecruitmentRoundId}/status`,
+        `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/status`,
         data
       );
       alert("Status updated successfully!");
@@ -113,13 +117,12 @@ function RecruitmentRoundDetailsPage() {
   };
 
   const handleAddOpening = () => {
-    navigate("/create-opening", {
-      state: {
-        deadline: rounds[0].deadline,
-        roundId: rounds[0]?.id,
-        round: rounds[0]?.student_team_name + " " + rounds[0]?.id,
-      },
-    });
+    setRecruitmentDetails({
+      roundId: recruitmentDetails.roundId, 
+      roundDeadline: rounds[0].deadline, 
+      roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id
+    })
+    navigate("/create-opening");
   };
 
   const handleView = (

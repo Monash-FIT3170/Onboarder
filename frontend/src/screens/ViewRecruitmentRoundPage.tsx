@@ -65,8 +65,8 @@ const ViewRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const SHOW_ARCHIVED_AMOUNT = 3;
-  const setSelectedRecruitmentRoundId = useRecruitmentStore(
-    (state) => state.setSelectedRecruitmentRoundId
+  const setRecruitmentDetails = useRecruitmentStore(
+    (state) => state.setRecruitmentDetails
   );
 
   const formatDeadline = (deadline: Date) => {
@@ -125,7 +125,7 @@ const ViewRecruitmentRoundPage = () => {
   }, []);
 
   const handleViewRound = (id: number) => {
-    setSelectedRecruitmentRoundId(id);
+    setRecruitmentDetails({roundId: id, roundDeadline: null, roundName: null})
     navigate("/recruitment-details-page");
   };
 
