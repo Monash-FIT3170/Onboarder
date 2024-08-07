@@ -28,10 +28,6 @@ function CreateOpeningPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const setRecruitmentDetails = useRecruitmentStore(
-    (state) => state.setRecruitmentDetails
-  );
-
   const recruitmentDetails = useRecruitmentStore(
     (state) => state.recruitmentDetails
   );
@@ -224,11 +220,7 @@ function CreateOpeningPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/recruitment-details-page", {
-                state: {
-                  recruitment_round_id: recruitmentDetails.roundId,
-                },
-              });
+              navigate("/recruitment-details-page");
             }}
           >
             Go to Openings Table

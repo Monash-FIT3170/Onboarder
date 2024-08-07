@@ -9,6 +9,7 @@ interface RecruitmentDetails {
 interface RecruitmentStore {
   recruitmentDetails: RecruitmentDetails;
   setRecruitmentDetails: (details: RecruitmentDetails) => void;
+  clearRecruitmentDetails: () => void;
 }
 
 export const useRecruitmentStore = create<RecruitmentStore>((set) => ({
@@ -18,4 +19,5 @@ export const useRecruitmentStore = create<RecruitmentStore>((set) => ({
     roundName: null,
   },
   setRecruitmentDetails: (details) => set({ recruitmentDetails: details }),
+  clearRecruitmentDetails: () => set({ recruitmentDetails: { roundId: null, roundDeadline: null, roundName: null } }),
 }));

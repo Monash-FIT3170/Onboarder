@@ -56,6 +56,7 @@ export default function RecruitmentPlatform() {
   const [isDisabledReject, setIsDisabledReject] = useState(true);
 
   const selectedApplicant = useApplicantStore(state => state.selectedApplicant);
+  const clearSelectedApplicant = useApplicantStore(state => state.clearSelectedApplicant);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,6 +116,8 @@ export default function RecruitmentPlatform() {
       setOpen(true);
       setLoadingAccept(false);
     }
+
+    clearSelectedApplicant();
   };
 
   const handleReject = async (event: any) => {
@@ -141,6 +144,11 @@ export default function RecruitmentPlatform() {
     }
   };
 
+  const handleBack = () => {
+    clearSelectedApplicant();
+    navigate("/viewopen");
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -152,7 +160,7 @@ export default function RecruitmentPlatform() {
         sx={{ width: "50%", marginTop: "30px" }}
       >
         {" "}
-        <IconButton onClick={() => navigate("/viewopen")}>
+        <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
         {selectedApplicant?.opening_name}
@@ -322,10 +330,7 @@ export default function RecruitmentPlatform() {
           </DialogContent>
           <DialogActions>
             <Button
-              onClick={() => {
-                setOpen(false);
-                navigate("/viewopen");
-              }}
+              onClick={() => handleBack()}
             >
               CLOSE
             </Button>

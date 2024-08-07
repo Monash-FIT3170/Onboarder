@@ -68,12 +68,16 @@ function RecruitmentRoundDetailsPage() {
     state => state.setSelectedOpening
   );
 
+  const clearRecruitmentDetails = useRecruitmentStore(
+    state => state.clearRecruitmentDetails
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       if (recruitmentDetails.roundId === null) {
         console.error("No recruitment round ID selected");
         // Redirect if no ID is selected
-        navigate("/viewrecruitmentround");
+        handleBack();
         return;
       }
 
@@ -121,7 +125,7 @@ function RecruitmentRoundDetailsPage() {
       roundId: recruitmentDetails.roundId, 
       roundDeadline: rounds[0].deadline, 
       roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id
-    })
+    });
     navigate("/create-opening");
   };
 
@@ -142,11 +146,16 @@ function RecruitmentRoundDetailsPage() {
     navigate("/viewopen");
   };
 
+  const handleBack = () => {
+    clearRecruitmentDetails();
+    navigate("/viewrecruitmentround");
+  };
+
   return (
     <>
       <HeadWrapper>
         <TitleWrapper>
-          <IconButton onClick={() => navigate("/viewrecruitmentround")}>
+          <IconButton onClick={() => handleBack()}>
             {loading ? (
               <Skeleton variant="circular" width={40} height={40} />
             ) : (

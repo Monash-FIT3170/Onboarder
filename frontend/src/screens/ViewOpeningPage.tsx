@@ -54,6 +54,7 @@ function ViewOpenPage() {
   const [search, setSearch] = useState("");
 
   const selectedOpening = useOpeningStore(state => state.selectedOpening);
+  const clearSelectedOpening = useOpeningStore(state => state.clearSelectedOpening);
   const setSelectedApplicant = useApplicantStore(state => state.setSelectedApplicant);
 
   const handleViewApplication = (applicationId: number) => {
@@ -114,6 +115,11 @@ function ViewOpenPage() {
     fetchData();
   }, [selectedOpening, navigate]);
 
+  const handleBack = () => {
+    clearSelectedOpening();
+    navigate("/recruitment-details-page");
+  }
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -121,9 +127,7 @@ function ViewOpenPage() {
         style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
       >
         <IconButton
-          onClick={() =>
-            navigate("/recruitment-details-page")
-          }
+          onClick={() => handleBack() }
         >
           <BackIcon />
         </IconButton>
