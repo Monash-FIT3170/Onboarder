@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   TableContainer,
   TableHead,
@@ -10,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { formatDeadline } from "../util/Util";
+import { useOpeningStore } from '../util/stores/openingApplicantStore';
 
 export interface applicantOpeningResultProps {
   id: number;
@@ -34,16 +36,14 @@ interface applicantOpeningTableProps {
 
 const generateRowFunction = (
   results: applicantOpeningResultProps[],
-  navigate: ReturnType<typeof useNavigate>
+  navigate: ReturnType<typeof useNavigate>,
+  setOpeningDetails: (round_id: number, opening_id: number) => void
 ) => {
   const handleApply = (id: number, r_id: number) => {
-    navigate("/application-submission", {
-      state: {
-        round_id: r_id,
-        opening_id: id,
-      },
-    });
+    setOpeningDetails(r_id, id);
+    navigate("/application-submission");
   };
+
   return results.map((result) => {
     return (
       <TableRow
@@ -75,19 +75,23 @@ const generateRowFunction = (
 
 export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   const navigate = useNavigate();
+  const setOpeningDetails = useOpeningStore((state) => state.setOpeningDetails);
 
   return (
     <>
       <TableContainer component={Paper}>
         <Table aria-label="openings_table">
           <TableHead>
-            <TableCell> Opening Name </TableCell>
-            <TableCell> Deadline </TableCell>
-            <TableCell> Student Team </TableCell>
-            <TableCell> Semester </TableCell>
-            <TableCell> Year </TableCell>
+            <TableRow>
+              <TableCell> Opening Name </TableCell>
+              <TableCell> Deadline </TableCell>
+              <TableCell> Student Team </TableCell>
+              <TableCell> Semester </TableCell>
+              <TableCell> Year </TableCell>
+              <TableCell> Actions </TableCell>
+            </TableRow>
           </TableHead>
-          <TableBody>{generateRowFunction(props.results, navigate)}</TableBody>
+          <TableBody>{generateRowFunction(props.results, navigate, setOpeningDetails)}</TableBody>
         </Table>
       </TableContainer>
     </>
