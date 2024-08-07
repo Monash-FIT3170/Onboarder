@@ -94,7 +94,7 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, [recruitmentDetails, navigate]);
+  }, [recruitmentDetails]);
   
 
   const updateStatus = async (statusChange: string) => {

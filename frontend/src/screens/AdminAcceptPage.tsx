@@ -78,7 +78,7 @@ export default function RecruitmentPlatform() {
     };
   
     fetchData();
-  }, [selectedApplicant, navigate]);
+  }, [selectedApplicant]);
 
   useEffect(() => {
     if (applicantInformation[0]?.accepted === "U") {
