@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { supabase } from "../util/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
 	display: "flex",
@@ -60,6 +61,8 @@ const LoginPage: React.FC = () => {
 	const [password, setPassword] = useState("");
 	const [rememberMe, setRememberMe] = useState(false);
 
+	const navigate = useNavigate();
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		// Handle login logic here
@@ -67,26 +70,48 @@ const LoginPage: React.FC = () => {
 	};
 
 	const handleGoogleLogin = async () => {
-		const { error } = await supabase.auth.signInWithOAuth({
-			provider: "google",
-			options: {
-				redirectTo: "http://localhost:5173/register",
-			},
-		});
-		if (error) console.error("Error logging in with Google:", error);
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: "http://localhost:5173/login",
+				},
+			});
+
+			if (error) console.error("Error logging in with Google:", error);
+		} catch (error) {
+			console.log("OAuth error");
+		}
 	};
 
 	useEffect(() => {
-		const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-			if (event === "SIGNED_IN") {
-				console.log("User signed in:", session?.user);
-			}
-		});
+		// Check for OAuth errors on page load
+		const urlParams = new URLSearchParams(window.location.search);
+		const error = urlParams.get("error");
+		const errorDescription = urlParams.get("error_description");
 
-		return () => {
-			authListener.subscription.unsubscribe();
+		if (error) {
+			console.error(`OAuth Error: ${error}, Description: ${errorDescription}`);
+
+			// clearing the url params
+			window.history.replaceState({}, document.title, window.location.pathname);
+
+			// Add logic to Display error to user here
+		}
+
+		// Check if user is signed in on initial component render
+		const checkUser = async () => {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			if (user) {
+				// Redirecting user to dashboard if user is signed in
+				navigate("/viewrecruitmentround");
+			}
 		};
-	}, []);
+
+		checkUser();
+	}, [navigate]);
 
 	return (
 		<FlexContainer>
