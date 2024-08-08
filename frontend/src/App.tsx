@@ -13,6 +13,7 @@ import ViewOpenPage from "../src/screens/ViewOpeningPage"
 import ApplicantOpenings from "./screens/ApplicantOpenings"
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage"
 import AdminAcceptPage from "../src/screens/AdminAcceptPage"
+import CommonDashboard from "./screens/CommonDashboard"
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
           />
           <Route path="/create-opening" element={<CreateOpeningPage />} />
           <Route path="/viewopen" element={<ViewOpenPage />} />
-
+          <Route path="/common-dashboard" element={<CommonDashboard />} />
           <Route path="/applicant-openings" element={<ApplicantOpenings />} />
           <Route
             path="/application-submission"
