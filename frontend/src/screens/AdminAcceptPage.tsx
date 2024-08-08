@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -21,8 +21,10 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadSpinner";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
+
+import { useApplicantStore } from "../util/stores/applicantStore";
 
 interface ResultProps {
   id: number;
@@ -50,38 +52,34 @@ export default function RecruitmentPlatform() {
   const [loadingAccept, setLoadingAccept] = useState(false);
   const [loadingReject, setLoadingReject] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const [isDisabledAccept, setIsDisabledAccept] = useState(true);
   const [isDisabledReject, setIsDisabledReject] = useState(true);
 
-  const state = location.state as {
-    opening_name: string;
-    recruitment_round_name: string;
-    application_id: number;
-    id: number;
-    recruitment_round_id: number;
-    student_team_name: string;
-    title: string;
-    application_count: number;
-  };
+  const selectedApplicant = useApplicantStore(state => state.selectedApplicant);
+  const clearSelectedApplicant = useApplicantStore(state => state.clearSelectedApplicant);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!selectedApplicant?.application_id) {
+        console.error("No application ID selected");
+        navigate("/viewopen"); 
+        return;
+      }
+  
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:3000/applications/${state.application_id}`
+        const applicantResponse = await axios.get(
+          `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`
         );
-        console.log(response.data);
-        setApplicantInformation(response.data);
+        setApplicantInformation(applicantResponse.data);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [state.application_id]);
+  }, [selectedApplicant]);
 
   useEffect(() => {
     if (applicantInformation[0]?.accepted === "U") {
@@ -96,31 +94,13 @@ export default function RecruitmentPlatform() {
     }
   }, [applicantInformation]);
 
-  const handleBack = (
-    id: number,
-    recruitment_round_id: number,
-    student_team_name: string,
-    title: string,
-    application_count: number
-  ) => {
-    navigate("/viewopen", {
-      state: {
-        id,
-        recruitment_round_id,
-        student_team_name,
-        title,
-        application_count,
-      },
-    });
-  };
-
   const handleAccept = async (event: any) => {
     event.preventDefault();
     setLoadingAccept(true);
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/applications/${state.application_id}/accept`
+        `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}/accept`
       );
       if (response.status === 201) {
         console.log(response);
@@ -136,6 +116,8 @@ export default function RecruitmentPlatform() {
       setOpen(true);
       setLoadingAccept(false);
     }
+
+    clearSelectedApplicant();
   };
 
   const handleReject = async (event: any) => {
@@ -144,7 +126,7 @@ export default function RecruitmentPlatform() {
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/applications/${state.application_id}/reject`
+        `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}/reject`
       );
       if (response.status === 201) {
         console.log(response);
@@ -162,6 +144,11 @@ export default function RecruitmentPlatform() {
     }
   };
 
+  const handleBack = () => {
+    clearSelectedApplicant();
+    navigate("/viewopen");
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -173,20 +160,10 @@ export default function RecruitmentPlatform() {
         sx={{ width: "50%", marginTop: "30px" }}
       >
         {" "}
-        <IconButton
-          onClick={() =>
-            handleBack(
-              state.id,
-              state.recruitment_round_id,
-              state.student_team_name,
-              state.title,
-              state.application_count
-            )
-          }
-        >
+        <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
-        {state.opening_name}
+        {selectedApplicant?.opening_name}
       </Typography>
       <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -197,7 +174,7 @@ export default function RecruitmentPlatform() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{state.recruitment_round_name}</TableCell>
+              <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -353,16 +330,7 @@ export default function RecruitmentPlatform() {
           </DialogContent>
           <DialogActions>
             <Button
-              onClick={() => {
-                setOpen(false);
-                handleBack(
-                  state.id,
-                  state.recruitment_round_id,
-                  state.student_team_name,
-                  state.title,
-                  state.application_count
-                );
-              }}
+              onClick={() => handleBack()}
             >
               CLOSE
             </Button>
