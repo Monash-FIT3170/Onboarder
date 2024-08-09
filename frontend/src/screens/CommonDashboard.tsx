@@ -7,8 +7,13 @@ import {
     Table,
     TableRow,
     TableCell,
-    Paper
+    Paper,
+    Skeleton,
 } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { commonDashboardResultProps } from "../components/CommonDashboardTable";
+import { CommonDashboardTable } from "../components/CommonDashboardTable";
 const styles = {
     commonDashboard: {
         fontFamily: "Arial, sans-serif",
@@ -44,7 +49,49 @@ const styles = {
     },
 };
 
+const generateSkeletonRows = () => {
+    return Array.from(new Array(10)).map((_, index) => (
+        <TableRow key={index}>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="rectangular" height={30} />
+            </TableCell>
+        </TableRow>
+    ));
+};
+
 function CommonDashboard() {
+    const [roles, setRoles] = useState<commonDashboardResultProps[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const rolesResponse = await axios.get(`http://127.0.0.1:3000/roles/${state.user_id}`); // TODO This needs to refer somehow to logged in user
+                setRoles(rolesResponse.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
     return (
         <div style={styles.commonDashboard}>
             <main>
@@ -54,9 +101,7 @@ function CommonDashboard() {
                 <section style={styles.section}>
                     <Grid container alignItems="center" justifyContent="space-between">
                         <Grid item>
-                            <h4>
-                                Your Student Teams
-                            </h4>
+                            <h3>Your Student Teams</h3>
                         </Grid>
                         <Grid item>
                             <Button variant="contained" style={styles.addRoundButton}>
@@ -64,41 +109,47 @@ function CommonDashboard() {
                             </Button>
                         </Grid>
                     </Grid>
-                    <TableContainer component={Paper} style={styles.scrollableTableBody}>
-                        <Table style={styles.table} stickyHeader>
-                            <TableHead style={styles.tableHeader}>
-                                <TableRow>
-                                    <TableCell>Team Name</TableCell>
-                                    <TableCell>
-                                        Your Role
-                                    </TableCell>
-                                    <TableCell>Owner</TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            rowGap: "20px",
+                            marginTop: "30px",
+                        }}
+                    >
+                        {loading ? (
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Team Name</TableCell>
+                                            <TableCell>Your Role</TableCell>
+                                            <TableCell>Owner Email</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>{generateSkeletonRows()}</TableBody>
+                                </Table>
+                            </TableContainer>
+                        ) : (
+                            <CommonDashboardTable results={roles}></CommonDashboardTable>
+                        )}
+                    </div>
                 </section>
 
                 <section style={styles.section}>
                     <Grid container alignItems="center" justifyContent="space-between">
                         <Grid item>
-                            <h4>
-                                Other Actions
-                            </h4>
+                            <h4>Other Actions</h4>
                         </Grid>
                         <Grid item>
-                            <Button variant="contained" style={{
-                                backgroundColor: 'white',
-                                color: 'black',
-                                border: '1px solid black'
-                            }}
+                            <Button
+                                variant="contained"
+                                style={{
+                                    backgroundColor: "white",
+                                    color: "black",
+                                    border: "1px solid black",
+                                }}
                             >
                                 VIEW INTERVIEWS AND CHANGE AVAILABILITY
                             </Button>
@@ -107,7 +158,7 @@ function CommonDashboard() {
                 </section>
             </main>
         </div>
-    )
-};
+    );
+}
 
 export default CommonDashboard;
