@@ -7,16 +7,19 @@ import {
 	Link,
 	Checkbox,
 	FormControlLabel,
+	Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { supabase } from "../util/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import loginImage from "../assets/RegisterPage.jpg";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
 	display: "flex",
-	height: "100vh",
+	height: "calc(100vh - 200px)",
+	minHeight: "500px",
 	[theme.breakpoints.down("md")]: {
-		flexDirection: "column",
+		height: "calc(100vh - 100px)",
 	},
 }));
 
@@ -41,9 +44,8 @@ const ImageSection = styled(Box)(({ theme }) => ({
 	display: "flex",
 	justifyContent: "center",
 	alignItems: "center",
-	backgroundColor: "#f0f8ff", // Light blue background
 	[theme.breakpoints.down("md")]: {
-		minHeight: "300px",
+		display: "none",
 	},
 }));
 
@@ -56,10 +58,17 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 	marginTop: theme.spacing(2),
 }));
 
+const CoverImage = styled("img")({
+	width: "100%",
+	height: "80%",
+	objectFit: "cover",
+});
+
 const LoginPage: React.FC = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [rememberMe, setRememberMe] = useState(false);
+	const [error, setError] = useState("");
 
 	const navigate = useNavigate();
 
@@ -96,7 +105,11 @@ const LoginPage: React.FC = () => {
 			// clearing the url params
 			window.history.replaceState({}, document.title, window.location.pathname);
 
-			// Add logic to Display error to user here
+			if (errorDescription === "Database error saving new user") {
+				setError(
+					"Oops! It looks like you're not using a Monash email. Please sign in with your official Monash University email address."
+				);
+			}
 		}
 
 		// Check if user is signed in on initial component render
@@ -168,16 +181,17 @@ const LoginPage: React.FC = () => {
 						LOG IN
 					</SubmitButton>
 					<GoogleButton fullWidth variant="outlined" onClick={handleGoogleLogin}>
-						Login with Google
+						Sign in with Google
 					</GoogleButton>
+					{error && (
+						<Alert severity="error" sx={{ mt: 2, width: "100%", justifyContent: "center" }}>
+							{error}
+						</Alert>
+					)}
 				</StyledForm>
 			</FormSection>
 			<ImageSection>
-				<img
-					src="/path/to/your/login-image.png"
-					alt="Login illustration"
-					style={{ maxWidth: "100%", maxHeight: "100%" }}
-				/>
+				<CoverImage src={loginImage} alt="Login illustration" />
 			</ImageSection>
 		</FlexContainer>
 	);
