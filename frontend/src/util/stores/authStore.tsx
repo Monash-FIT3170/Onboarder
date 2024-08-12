@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import { supabase } from "../supabaseClient";
+import { UserRole } from "../Util";
 
 interface AuthState {
 	user: any | null;
 	loading: boolean;
+	team: string | null;
+	role: UserRole | null;
 	initializeAuth: () => Promise<void>;
 	signOut: () => Promise<void>;
 	checkSession: () => Promise<void>;
@@ -12,6 +15,8 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
 	user: null,
 	loading: true,
+	team: null,
+	role: null,
 	initializeAuth: async () => {
 		const {
 			data: { session },
@@ -32,5 +37,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 			data: { session },
 		} = await supabase.auth.getSession();
 		set({ user: session?.user ?? null, loading: false });
+	},
+	updateTeamAndRole: (team: string | null, role: UserRole | null) => {
+		set({ team, role });
 	},
 }));
