@@ -31,6 +31,23 @@ export default {
 
 ## Authentication and Authorization
 
+Setup:
+
+1. Create a file named '.env' in the frontend directory (not root directory).
+2. Add the following content to the .env file:
+
+```
+VITE_SUPABASE_URL=SUPABASE_URL
+VITE_SUPABASE_KEY=SUPABASE_KEY
+```
+
+3. Replace SUPABASE_URL and SUPABASE_KEY with the actual values. This can be found in the discord chat in resources channel.
+4. This is already added to gitignore so it wouldn't be committed.
+
+Important: Keep your .env file secure. Never share its contents publicly or commit it to version control.
+
+Features
+
 - Authentication is restricted to Monash email addresses only
 - Protected routes ensure access only for authenticated users
 - User, team, and role information can be accessed from the auth store (authStore.js)
