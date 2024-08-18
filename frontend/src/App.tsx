@@ -13,6 +13,7 @@ import ViewOpenPage from "../src/screens/ViewOpeningPage"
 import ApplicantOpenings from "./screens/ApplicantOpenings"
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage"
 import AdminAcceptPage from "../src/screens/AdminAcceptPage"
+import Feedbacknote from "./screens/FeedbackNote"
 
 function App() {
   return (
@@ -43,7 +44,10 @@ function App() {
             element={<ApplicationSubmissionPage />}
           />
           <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+
+          <Route path="/feedbacknote" element={<Feedbacknote />} />
         </Routes>
+        
       </Box>
     </>
   )
