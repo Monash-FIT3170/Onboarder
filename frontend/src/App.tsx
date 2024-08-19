@@ -13,6 +13,7 @@ import ApplicantOpenings from "./screens/ApplicantOpenings";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 
 function App() {
 	return (
@@ -31,6 +32,7 @@ function App() {
 						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
 						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
 					</Route>
 				</Routes>
 			</Box>
