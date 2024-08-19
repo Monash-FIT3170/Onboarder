@@ -26,16 +26,21 @@ import {
 
   function Feedbacknote() {
     const navigate = useNavigate();
-    const [loading] = useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [loading] = useState(false); // TODO: Z
+    const [openAccept, setOpenAccept] = React.useState(false);
+    const [openReject, setOpenReject] = React.useState(false);
     const handleAccept = async () => {
-        setOpen(true)
+        setOpenAccept(true)
     }
     const handleReject = async () => {
-        setOpen(true)
+        setOpenReject(true)
     }
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseAccpet = () => {
+        setOpenAccept(false)
+        navigate("");
+    };
+    const handleCloseReject = () => {
+        setOpenReject(false)
         navigate("");
     };
     const handleBack = () => {
@@ -48,7 +53,7 @@ import {
             <div
             style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}>
             <IconButton
-            onClick={() => handleBack() }>
+            onClick={() => handleBack()}>
             <BackIcon />
             </IconButton>
             <Typography variant="h5" style={{ marginLeft: "10px" }}>
@@ -116,7 +121,7 @@ import {
            
             </Grid>
         </Grid>
-        <Grid container spacing={2} md={1} justifyContent="left">
+        <Grid container spacing={2} justifyContent="left">
             <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
             <Typography variant="body2" fontSize={20} margin={1}>
             Score: 
@@ -160,9 +165,9 @@ import {
                         {loading ? <CircularProgress size={24} /> : "Accept"}
                     </Button>
                 <BootstrapDialog
-                    onClose={handleClose}
+                    onClose={handleCloseAccpet}
                     aria-labelledby="customized-dialog-title"
-                    open={open}
+                    open={openAccept}
                 >
                     <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                     Candidate [Name] Accepted!
@@ -173,7 +178,7 @@ import {
                     </Typography>
                     </DialogContent>
                     <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
+                    <Button autoFocus onClick={handleCloseAccpet}>
                         Close
                     </Button>
                     </DialogActions>
@@ -193,9 +198,9 @@ import {
                         {loading ? <CircularProgress size={24} /> : "Reject"}
                     </Button>
                 <BootstrapDialog
-                    onClose={handleClose}
+                    onClose={handleCloseReject}
                     aria-labelledby="customized-dialog-title"
-                    open={open}
+                    open={openReject}
                 >
                     <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                     Candidate [Name] Rejected!
@@ -206,7 +211,7 @@ import {
                     </Typography>
                     </DialogContent>
                     <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
+                    <Button autoFocus onClick={handleCloseReject}>
                         Close
                     </Button>
                     </DialogActions>
