@@ -14,3 +14,60 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
     const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTaskOn(event.target.checked);
     };
+
+    return(
+        <Box sx={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+        <Typography variant="h5" sx={{ marginBottom: '20px' }}>
+            Task Configuration
+        </Typography>
+        
+        <FormControlLabel
+            control={<Switch checked={taskOn} onChange={handleToggle} />}
+            label="Task On?"
+            sx={{ marginBottom: '20px', float: 'right' }}
+        />
+    
+        <TextField
+            label="Team"
+            value={team}
+            onChange={(e) => setTeam(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: '20px' }}
+        />
+
+        <TextField
+            label="Recruitment Round"
+            value={recruitmentRound}
+            onChange={(e) => setRecruitmentRound(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: '20px' }}
+        />
+
+        <TextField
+            label="Opening"
+            value={opening}
+            onChange={(e) => setOpening(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: '20px' }}
+        />
+
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    );
+
+};
+
+
+
