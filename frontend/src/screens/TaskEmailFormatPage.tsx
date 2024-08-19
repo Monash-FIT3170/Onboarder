@@ -28,7 +28,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
                 label="Task Details"
                 value={`${team} - ${recruitmentRound} - ${opening}`}
                 fullWidth
-                sx={{ marginBottom: '20px' }}
+                sx={{ marginBottom: '20px', backgroundColor: '#f0f0f0' }} // Grey background to indicate read-only
                 InputProps={{
                     readOnly: true,
                 }}
