@@ -21,16 +21,22 @@ function App() {
 			<AppBarOnBoarder />
 			<Box component={"section"} sx={{ padding: "20px" }}>
 				<Routes>
+          // Login routes
 					<Route path="/" element={<LoginPage />} />
 					<Route path="/login" element={<LoginPage />} />
+
+          // Applicant routes
+          <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+          <Route path="/application-submission" element={<ApplicationSubmissionPage />} />
+
+          // Student team member only routes
 					<Route element={<ProtectedRoute />}>
 						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
+            <Route path="/common-dashboard" element={<CommonDashboard />} />
 						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
 						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
 						<Route path="/create-opening" element={<CreateOpeningPage />} />
 						<Route path="/viewopen" element={<ViewOpenPage />} />
-						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
-						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
 					</Route>
 				</Routes>
