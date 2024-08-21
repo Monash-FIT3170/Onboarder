@@ -28,7 +28,7 @@ CREATE TABLE public."STUDENT_TEAM" (
 CREATE TABLE public."PROFILE_TEAM_INFO" (
     profile_id BIGINT NOT NULL,
     student_team_id BIGINT NOT NULL,
-    role VARCHAR NOT NULL,
+    role VARCHAR(1) NOT NULL CHECK (role IN ('O', 'A', 'T')),
     CONSTRAINT PROFILE_TEAM_INFO_pkey PRIMARY KEY (profile_id, student_team_id),
     CONSTRAINT PROFILE_TEAM_INFO_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES "PROFILE" (id),
     CONSTRAINT PROFILE_TEAM_INFO_student_team_id_fkey FOREIGN KEY (student_team_id) REFERENCES "STUDENT_TEAM" (id)
@@ -41,7 +41,7 @@ CREATE TABLE public."RECRUITMENT_ROUND" (
     semester VARCHAR NOT NULL,
     year BIGINT NOT NULL,
     deadline TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR NOT NULL,
+    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I', 'R')),
     CONSTRAINT RECRUITMENT_ROUND_pkey PRIMARY KEY (id),
     CONSTRAINT RECRUITMENT_ROUND_student_team_id_fkey FOREIGN KEY (student_team_id) REFERENCES "STUDENT_TEAM" (id)
 ) TABLESPACE pg_default;
@@ -52,7 +52,7 @@ CREATE TABLE public."OPENING" (
     recruitment_round_id BIGINT NOT NULL,
     title VARCHAR NOT NULL,
     description VARCHAR,
-    status VARCHAR NOT NULL,
+    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I', 'R')),
     required_skills VARCHAR[] NOT NULL,
     desired_skills VARCHAR[],
     task_email_format VARCHAR,
@@ -87,7 +87,7 @@ CREATE TABLE public."APPLICATION" (
     candidate_availability VARCHAR,
     interview_date TIMESTAMP WITH TIME ZONE,
     interview_notes VARCHAR,
-    status VARCHAR NOT NULL,
+    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'I', 'R')),
     profile_id BIGINT,
     CONSTRAINT APPLICATION_pkey PRIMARY KEY (id),
     CONSTRAINT APPLICATION_opening_id_fkey FOREIGN KEY (opening_id) REFERENCES "OPENING" (id),
