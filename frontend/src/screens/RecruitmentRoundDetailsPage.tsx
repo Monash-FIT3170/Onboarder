@@ -24,7 +24,10 @@ import {
   SingleRoundTable,
   SingleRoundResultProps,
 } from "../components/SingleRoundTable";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import { useOpeningStore } from "../util/stores/openingStore";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -52,20 +55,38 @@ function RecruitmentRoundDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const state = location.state as {
-    recruitment_round_id: number;
-  };
+  const setRecruitmentDetails = useRecruitmentStore(
+    (state) => state.setRecruitmentDetails
+  );
+
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails
+  );
+
+  const setSelectedOpening = useOpeningStore(
+    state => state.setSelectedOpening
+  );
+
+  const clearRecruitmentDetails = useRecruitmentStore(
+    state => state.clearRecruitmentDetails
+  );
 
   useEffect(() => {
     const fetchData = async () => {
+      if (recruitmentDetails.roundId === null) {
+        console.error("No recruitment round ID selected");
+        // Redirect if no ID is selected
+        handleBack();
+        return;
+      }
+
       try {
         const roundsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}`
+          `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}`
         );
         const openingsResponse = await axios.get(
-          `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/openings`
+          `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings`
         );
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
@@ -77,7 +98,8 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, [state.recruitment_round_id]);
+  }, [recruitmentDetails]);
+  
 
   const updateStatus = async (statusChange: string) => {
     setIsUpdating(true);
@@ -86,7 +108,7 @@ function RecruitmentRoundDetailsPage() {
     };
     try {
       await axios.patch(
-        `http://127.0.0.1:3000/recruitmentRounds/${state.recruitment_round_id}/status`,
+        `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/status`,
         data
       );
       alert("Status updated successfully!");
@@ -99,13 +121,12 @@ function RecruitmentRoundDetailsPage() {
   };
 
   const handleAddOpening = () => {
-    navigate("/create-opening", {
-      state: {
-        deadline: rounds[0].deadline,
-        roundId: rounds[0]?.id,
-        round: rounds[0]?.student_team_name + " " + rounds[0]?.id,
-      },
+    setRecruitmentDetails({
+      roundId: recruitmentDetails.roundId, 
+      roundDeadline: rounds[0].deadline, 
+      roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id
     });
+    navigate("/create-opening");
   };
 
   const handleView = (
@@ -115,22 +136,26 @@ function RecruitmentRoundDetailsPage() {
     title: string,
     application_count: number
   ) => {
-    navigate("/viewopen", {
-      state: {
-        id,
-        recruitment_round_id,
-        student_team_name,
-        title,
-        application_count,
-      },
+    setSelectedOpening({
+      id,
+      recruitment_round_id,
+      student_team_name,
+      title,
+      application_count,
     });
+    navigate("/viewopen");
+  };
+
+  const handleBack = () => {
+    clearRecruitmentDetails();
+    navigate("/viewrecruitmentround");
   };
 
   return (
     <>
       <HeadWrapper>
         <TitleWrapper>
-          <IconButton onClick={() => navigate("/viewrecruitmentround")}>
+          <IconButton onClick={() => handleBack()}>
             {loading ? (
               <Skeleton variant="circular" width={40} height={40} />
             ) : (

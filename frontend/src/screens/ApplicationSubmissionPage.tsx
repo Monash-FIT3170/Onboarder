@@ -25,6 +25,7 @@ import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useOpeningStore } from '../util/stores/openingApplicantStore';
 
 const SectionTitle = styled.div`
   margin-top: 30px;
@@ -47,25 +48,23 @@ function ApplicationSubmissionPage() {
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-  const state = location.state as {
-    round_id: number;
-    opening_id: number;
-  };
+  const { round_id, opening_id } = useOpeningStore();
 
   useEffect(() => {
-    axios
-      .get(
-        `http://127.0.0.1:3000/recruitmentRounds/${state.round_id}/openings/${state.opening_id}`
-      )
-      .then((res) => {
-        setStudentTeam(res.data);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, [state.round_id, state.opening_id]);
+    if (round_id !== null && opening_id !== null) {
+      axios
+        .get(
+          `http://127.0.0.1:3000/recruitmentRounds/${round_id}/openings/${opening_id}`
+        )
+        .then((res) => {
+          setStudentTeam(res.data);
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    }
+  }, [round_id, opening_id]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
@@ -110,7 +109,7 @@ function ApplicationSubmissionPage() {
 
       axios
         .post(
-          `http://127.0.0.1:3000/openings/${state.opening_id}/applications`,
+          `http://127.0.0.1:3000/openings/${opening_id}/applications`,
           submissionData
         )
         .then((response) => {
