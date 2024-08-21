@@ -95,106 +95,91 @@ CREATE TABLE public."APPLICATION" (
 ) TABLESPACE pg_default;
 
 -- +++++++++ POSTGRES FUNCTIONS +++++++++
+
+-- Function to get all recruitment rounds with openings count
+
 DROP FUNCTION IF EXISTS get_all_rec_rounds_with_openings_count();
 
 CREATE OR REPLACE FUNCTION get_all_rec_rounds_with_openings_count()
 RETURNS TABLE (
     id BIGINT,
-    deadline TIMESTAMP WITH TIME ZONE,
+    student_team_id BIGINT,
     semester VARCHAR,
     year BIGINT,
-    student_team_id BIGINT,
-    student_team_name VARCHAR,
+    deadline TIMESTAMP WITH TIME ZONE,
     status VARCHAR,
     openings_count BIGINT
 )
 AS $$
 SELECT
     rr.id,
-    rr.deadline,
+    rr.student_team_id,
     rr.semester,
     rr.year,
-    rr.student_team_id,
-    st.name AS student_team_name,
+    rr.deadline,
     rr.status,
     COALESCE(oc.openings_count, 0) AS openings_count
 FROM
     public."RECRUITMENT_ROUND" rr
-LEFT JOIN public."STUDENT_TEAM" st on rr.student_team_id = st.id
 LEFT JOIN
     (
         SELECT
-            recruitment_round_ID,
+            recruitment_round_id,
             COUNT(*) AS openings_count
         FROM
             public."OPENING"
         GROUP BY
-            recruitment_round_ID
-    ) oc ON rr.id = oc.recruitment_round_ID;
+            recruitment_round_id
+    ) oc ON rr.id = oc.recruitment_round_id;
 $$ LANGUAGE SQL;
+
+-- Function to get all openings with application count
 
 DROP FUNCTION IF EXISTS get_openings_with_application_count();
 
 CREATE OR REPLACE FUNCTION get_openings_with_application_count()
 RETURNS TABLE (
     id BIGINT,
-    recruitment_round_ID BIGINT,
-    recruitment_round_year BIGINT,
-    recruitment_round_semester VARCHAR,
-    deadline TIMESTAMP WITH TIME ZONE,
+    recruitment_round_id BIGINT,
     student_team_id BIGINT,
-    student_team_name VARCHAR,
     title VARCHAR,
     description VARCHAR,
     status VARCHAR,
     required_skills VARCHAR[],
     desired_skills VARCHAR[],
-    application_count BIGINT,
-    applications_pending_review BIGINT
+    task_email_format VARCHAR,
+    task_enabled BOOLEAN,
+    applications_count BIGINT
 )
+LANGUAGE SQL
 AS $$
-BEGIN
-RETURN QUERY
-SELECT
-    o.id,
-    o.recruitment_round_ID,
-    rr.year AS recruitment_round_year,
-    rr.semester AS recruitment_round_semester,
-    rr.deadline,
-    st.id AS student_team_id,
-    st.name AS student_team_name,
-    o.title,
-    o.description,
-    o.status,
-    o.required_skills,
-    o.desired_skills,
-    COALESCE(a.application_count, 0) AS application_count,
-    COALESCE(pr.pending_review_count, 0) AS applications_pending_review
-FROM
-    public."OPENING" o
-JOIN public."RECRUITMENT_ROUND" rr ON o.recruitment_round_ID = rr.id
-JOIN public."STUDENT_TEAM" st ON rr.student_team_id = st.id
-LEFT JOIN
-    (
-        SELECT
-            opening_id,
-            COUNT(*) AS application_count
-        FROM
-            public."APPLICATION"
-        GROUP BY
-            opening_id
-    ) a ON o.id = a.opening_id
-LEFT JOIN
-    (
-        SELECT
-            opening_id,
-            COUNT(*) AS pending_review_count
-        FROM
-            public."APPLICATION"
-        WHERE accepted = 'U'
-        GROUP BY
-            opening_id
-    ) pr ON o.id = pr.opening_id;
-END;
-$$ LANGUAGE plpgsql;
+    SELECT
+        o.id,
+        o.recruitment_round_id,
+        rr.student_team_id, 
+        o.title,
+        o.description,
+        o.status,
+        o.required_skills,
+        o.desired_skills,
+        o.task_email_format,
+        o.task_enabled,
+        COALESCE(ac.applications_count, 0) AS applications_count
+    FROM
+        public."OPENING" o
+    JOIN
+        public."RECRUITMENT_ROUND" rr ON o.recruitment_round_id = rr.id 
+    LEFT JOIN
+        (
+            SELECT
+                opening_id,
+                COUNT(*) AS applications_count
+            FROM
+                public."APPLICATION"
+            GROUP BY
+                opening_id
+        ) ac ON o.id = ac.opening_id;
+$$;
+
+
 

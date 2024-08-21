@@ -5,7 +5,6 @@ import os
 os.environ["SUPABASE_URL"] = "https://bcnxifsqkyzzpgshacts.supabase.co"
 os.environ["SUPABASE_KEY"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjbnhpZnNxa3l6enBnc2hhY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU1NjM5NjQsImV4cCI6MjAzMTEzOTk2NH0.XT_aSkBLaaaX-66BqDF7Z1oP5qlgJLGNXSovibjatdU"
 
-
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
@@ -32,7 +31,7 @@ def create_rec_round(
     student_team_id,
     status
 ):
-    # status can only be (A)ctive or (I)nactive
+    # status can only be (A)ctive, (I)nactive, or (R)eview
     data = {
         "deadline": deadline,
         "semester": semester,
@@ -52,16 +51,20 @@ def create_opening(
     description,
     status,
     required_skills,
-    desired_skills
+    desired_skills,
+    task_email_format,
+    task_enabled
 ):
-    # status can only be (A)ctive or (I)nactive
+    # status can only be (A)ctive, (I)nactive, or (R)eview
     data = {
         "recruitment_round_id": recruitment_round_ID,
         "title": title,
         "description": description,
         "status": status,
         "required_skills": required_skills,
-        "desired_skills": desired_skills
+        "desired_skills": desired_skills,
+        "task_email_format": task_email_format,
+        "task_enabled": task_enabled
     }
     response = supabase.table('OPENING').insert(data).execute()
 
@@ -79,6 +82,10 @@ def create_application(
     major_enrolled,
     cover_letter,
     skills,
+    candidate_availability,
+    interview_date,
+    interview_notes,
+    profile_id
 ):
     data = {
         "opening_id": int(openingId),
@@ -90,7 +97,11 @@ def create_application(
         "course_enrolled": course_enrolled,
         "major_enrolled": major_enrolled if major_enrolled else None,
         "cover_letter": cover_letter if cover_letter else None,
-        "skills": skills
+        "skills": skills,
+        "candidate_availability": candidate_availability,
+        "interview_date": interview_date,
+        "interview_notes": interview_notes,
+        "profile_id": profile_id
     }
     response = supabase.table('APPLICATION').insert(data).execute()
 
@@ -116,8 +127,7 @@ def get_specific_student_team(student_team_id):
 
 
 def get_all_rec_rounds():
-    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
-        "student_team_id", 4).execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
     return response.data
 
 
@@ -132,8 +142,7 @@ def get_specific_rec_round(round_id):
 
 def get_all_openings():
     response = supabase.rpc(
-        'get_openings_with_application_count').select("*").eq(
-        "student_team_id", 4).execute()
+        'get_openings_with_application_count').select("*").execute()
 
     return response.data
 
