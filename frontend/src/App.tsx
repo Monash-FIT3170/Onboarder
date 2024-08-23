@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import { Box } from "@mui/material";
 import AppBarOnBoarder from "./components/AppBarOnboarder";
 
-// Import the new ViewTeamLeads component
-import ViewTeamLeads from "./screens/ViewTeamLeads";
+// Import the necessary screens
+import AllocateTeamLeads from "./screens/AllocateTeamLeads";
 import LoginPage from "../src/screens/LoginPage";
 import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
 import CreateOpeningPage from "../src/screens/CreateOpeningPage";
@@ -21,9 +21,9 @@ function App() {
             <AppBarOnBoarder />
             <Box component={"section"} sx={{ padding: "20px" }}>
                 <Routes>
-                    {/* Set the default route to ViewTeamLeads */}
-                    <Route path="/" element={<ViewTeamLeads />} />
-                    <Route path="/viewteamleads" element={<ViewTeamLeads />} />
+                    {/* Set the default route to AllocateTeamLeads */}
+                    <Route path="/" element={<AllocateTeamLeads />} />
+                    <Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<ProtectedRoute />}>
                         <Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
