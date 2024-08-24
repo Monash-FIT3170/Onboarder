@@ -9,6 +9,7 @@ import {
     Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../util/stores/authStore";
 
 export interface commonDashboardResultProps {
     id: number; // user id
@@ -26,17 +27,23 @@ const generateRowFunction = (
     results: commonDashboardResultProps[],
     navigate: ReturnType<typeof useNavigate>
 ) => {
-    // const handleDeleteOrLeave = (u_id: number, t_id: number) => {
-    //   // TODO implement functionality for deleting/leaving team
-    // };
-    const handleView = (t_id: number, r_name: string) => {
-        navigate("/viewrecruitmentround", {
-            state: {
-                student_team_id: t_id,
-                user_team_role: r_name,
-            },
-        });
+    const authStore = useAuthStore();
+
+    const handleDeleteOrLeave = (u_role: string, u_id: number, t_id: number) => {
+        if (u_role === "Owner") {
+            
+
+        } else {
+            
+
+        }
     };
+
+    const handleView = (t_id: number, t_name: string, user_role: string) => {
+        authStore.updateTeamAndRole(t_id, t_name, user_role);
+        navigate("/viewrecruitmentround");
+    };
+
     return results.map((result) => {
         return (
             <TableRow key={result.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
@@ -50,7 +57,7 @@ const generateRowFunction = (
                         variant="contained"
                         style={{ padding: 0 }}
                         onClick={() => {
-                            // handleDeleteOrLeave(result.id, result.student_team_id);
+                            handleDeleteOrLeave(result.user_team_role, result.id, result.student_team_id);
                         }}
                     >
                         {result.user_team_role === "Owner" ? "DELETE" : "LEAVE"}
@@ -59,7 +66,7 @@ const generateRowFunction = (
                         variant="contained"
                         style={{ padding: 0 }}
                         onClick={() => {
-                            handleView(result.student_team_id, result.user_team_role);
+                            handleView(result.student_team_id, result.student_team_name, result.user_team_role);
                         }}
                     >
                         VIEW ROUNDS

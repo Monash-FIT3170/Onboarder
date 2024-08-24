@@ -136,6 +136,15 @@ def get_student_teams(profile_id):
 
     return response.data
 
+def get_rec_rounds_for_student_team(student_team_id):
+    response = supabase.table('RECRUITMENT_ROUND') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
+
 # RECRUITMENT ROUND GETTERS
 
 

@@ -6,19 +6,22 @@ interface AuthState {
 	user: any | null;
 	profile: any | null;
 	loading: boolean;
-	team: string | null;
+	team_id: any | null;
+	team_name: string | null;
 	role: UserRole | null;
 	initializeAuth: () => Promise<void>;
 	signOut: () => Promise<void>;
 	checkSession: () => Promise<void>;
 	fetchProfile: () => Promise<string | null>;
+	updateTeamAndRole(team_id: any | null, team_name: string | null, role: string | null): void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
 	user: null,
 	profile: null,
 	loading: true,
-	team: null,
+	team_id: null,
+	team_name: null,
 	role: null,
 
 	initializeAuth: async () => {
@@ -60,9 +63,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 		set({ user: session?.user ?? null, loading: false });
 	},
 
-	updateTeamAndRole: (team: string | null, role: UserRole | null) => {
-		set({ team, role });
+	updateTeamAndRole: (team_id: any | null, team_name: string | null, role: UserRole | null) => {
+		set({ team_id, team_name, role });
 	},
+
 	fetchProfile: async (): Promise<string | null> => {
 		const {
 			data: { session },

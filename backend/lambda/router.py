@@ -94,7 +94,35 @@ def get_student_teams(path_params={}, _={}, __={}):
 
     return response
 
+@route('/studentTeams', ['POST'])
+def delete_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.delete_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 # RECRUITMENT ROUNDS
+
+@route('/studentTeams/{studentTeamId}/recruitmentRounds', ['GET'])
+def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_rec_rounds_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 @route('/recruitmentRounds', ['GET'])
 @route('/recruitmentRounds/{roundId}', ['GET'])
