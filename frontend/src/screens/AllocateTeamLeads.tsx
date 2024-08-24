@@ -24,7 +24,7 @@ const AllocateTeamLeads = () => {
   const API_URL = "http://127.0.0.1:3000/allocateTeamLeads";
 
   useEffect(() => {
-    const fetchOpenings = async () => {
+    const fetchOpenings = async () => { 
       try {
         const response = await axios.get(API_URL);
         setOpenings(response.data);
