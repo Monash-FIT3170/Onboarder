@@ -85,27 +85,33 @@ function CommonDashboard() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-                authStore.initializeAuth();
-
 				let profile_id = authStore.profile;
+
+				if (!profile_id) {
+					profile_id = await authStore.fetchProfile();
+				}
 
 				console.log("Profile ID: ", profile_id);
 
-				const rolesResponse = await axios.get(`http://127.0.0.1:3000/studentTeams/1`); // TODO This needs to refer somehow to logged in user
+				const rolesResponse = await axios.get(`http://127.0.0.1:3000/studentTeams/${profile_id}`); // TODO This needs to refer somehow to logged in user
 
-                let tableData = rolesResponse.data.map((role: any) => {
-                    return {
-                        student_team_name: role.student_team_name,
-                        user_team_role: role.your_role === 'O' ? 'Owner' : role.your_role === 'A' ? 'Admin' : 'Team Lead',
-                        student_team_owner: role.owner_email,
-                    };
-                }).sort((a, b) => {
-                    const roleRanking = { 'O': 0, 'A': 1, 'T': 2 };
-                    return roleRanking[a.user_team_role.charAt(0)] - roleRanking[b.user_team_role.charAt(0)];
-                });
-				
+				let tableData = rolesResponse.data
+					.map((role: any) => {
+						return {
+							student_team_name: role.student_team_name,
+							user_team_role:
+								role.your_role === "O" ? "Owner" : role.your_role === "A" ? "Admin" : "Team Lead",
+							student_team_owner: role.owner_email,
+						};
+					})
+					.sort((a, b) => {
+						const roleRanking = { O: 0, A: 1, T: 2 };
+						return (
+							roleRanking[a.user_team_role.charAt(0)] - roleRanking[b.user_team_role.charAt(0)]
+						);
+					});
+
 				setRoles(tableData);
-
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			} finally {

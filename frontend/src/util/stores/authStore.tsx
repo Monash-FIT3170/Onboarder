@@ -11,6 +11,7 @@ interface AuthState {
 	initializeAuth: () => Promise<void>;
 	signOut: () => Promise<void>;
 	checkSession: () => Promise<void>;
+	fetchProfile: () => Promise<string | null>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -61,5 +62,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
 	updateTeamAndRole: (team: string | null, role: UserRole | null) => {
 		set({ team, role });
+	},
+	fetchProfile: async (): Promise<string | null> => {
+		const {
+			data: { session },
+		} = await supabase.auth.getSession();
+
+		if (!session?.user?.id) {
+			console.error("No user session found");
+			set({ loading: false });
+			return null;
+		}
+
+		const { data: profileData, error: profileError } = await supabase
+			.from("PROFILE")
+			.select("id")
+			.eq("user_id", session.user.id);
+
+		if (profileError) {
+			set({ loading: false });
+			return null;
+		} else {
+			const profileId = profileData?.[0]?.id ?? null;
+			set({ profile: profileId, loading: false });
+			return profileId;
+		}
 	},
 }));
