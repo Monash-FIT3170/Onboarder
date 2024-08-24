@@ -68,6 +68,31 @@ def options_handler(_={}, __={}, ___={}):
         }
     }
 
+# STUDENT TEAMS
+
+@route('/studentTeams', ['GET'])
+@route('/studentTeams/{profileId}', ['GET'])
+def get_student_teams(path_params={}, _={}, __={}):
+    profile_id = None
+
+    print("REACEHD ROUTER")
+
+    if path_params:
+        profile_id = path_params.get('profileId')
+    if profile_id:
+        data = controller.get_student_teams(profile_id)
+    else:
+        data = controller.get_all_student_teams()
+
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 # RECRUITMENT ROUNDS
 

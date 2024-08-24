@@ -80,15 +80,21 @@ function CommonDashboard() {
     const [roles, setRoles] = useState<commonDashboardResultProps[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const { user, profile } = useAuthStore();
+    const authStore = useAuthStore();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // authVariables.initializeAuth();
+                await authStore.initializeAuth();
 
-                // const rolesResponse = await axios.get(`http://127.0.0.1:3000/roles/${state.user_id}`); // TODO This needs to refer somehow to logged in user
-                // setRoles(rolesResponse.data);
+                let profile_id = authStore.profile;
+
+                console.log("Profile ID: ", profile_id);
+
+                const rolesResponse = await axios.get(`http://127.0.0.1:3000/studentTeams/${profile_id}`); // TODO This needs to refer somehow to logged in user
+
+                console.log(rolesResponse);
+                setRoles(rolesResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {

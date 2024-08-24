@@ -110,8 +110,6 @@ def create_application(
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
 # STUDENT TEAM GETTERS
-
-
 def get_all_student_teams():
     response = supabase.table('STUDENT_TEAM').select("*").execute()
     return response.data
@@ -125,17 +123,31 @@ def get_specific_student_team(student_team_id):
 
     return response.data
 
+def get_student_teams(profile_id):
+    try: 
+        response = supabase.table('student_teams_with_roles_and_owners') \
+            .select("*") \
+            .eq("profile_id", profile_id) \
+            .execute()
+    except Exception as e:
+        print(e)
+        return e
+
+
+    return response.data
+
 # RECRUITMENT ROUND GETTERS
 
 
 def get_all_rec_rounds():
     response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
+
     return response.data
 
 
 def get_specific_rec_round(round_id):
     response = supabase.rpc('get_all_rec_rounds_with_openings_count') \
-        .eq("id", round_id)\
+        .eq("id", round_id) \
         .execute()
 
     return response.data

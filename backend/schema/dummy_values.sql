@@ -1,8 +1,7 @@
 INSERT INTO public."PROFILE" (user_id, interview_availability) VALUES
-    ('9fded038-82cc-4faf-bf78-07132998d1bf', ARRAY['Monday 9 AM - 12 PM']),
-    ('a904bb07-79bf-4b38-aaf2-85c9e535baac', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('ae2537d0-5d2c-41af-8c0b-d4b39fea12f9', ARRAY['Wednesday 10 AM - 1 PM']),
-    ('eb1310e9-e6d3-4c33-9ae0-3f8617b06c3a', ARRAY['Wednesday 10 AM - 1 PM']);
+    ('a904bb07-79bf-4b38-aaf2-85c9e535baac', ARRAY['Monday 9 AM - 12 PM']),
+    ('9fded038-82cc-4faf-bf78-07132998d1bf', ARRAY['Tuesday 1 PM - 4 PM']),
+    ('ae2537d0-5d2c-41af-8c0b-d4b39fea12f9', ARRAY['Wednesday 10 AM - 1 PM']);
 
 INSERT INTO public."STUDENT_TEAM" (name) VALUES
     ('Team Alpha'),
@@ -11,9 +10,14 @@ INSERT INTO public."STUDENT_TEAM" (name) VALUES
 
 INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUES
     (1, 1, 'O'),
-    (2, 2, 'A'),
-    (3, 3, 'T'),
-    (4, 1, 'O');
+    (1, 2, 'A'),
+    (1, 3, 'T'),
+    (2, 1, 'A'),
+    (2, 2, 'O'),
+    (2, 3, 'T'),
+    (3, 1, 'T'),
+    (3, 2, 'A'),
+    (3, 3, 'O');
 
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, deadline, status) VALUES
     (1, 'Semester 1', 2024, '2024-06-01 12:00:00+00', 'A'),
