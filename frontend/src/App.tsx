@@ -14,6 +14,7 @@ import ApplicantOpenings from "./screens/ApplicantOpenings";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ViewTeamLeads  from "./screens/ViewTeamLeads";
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                     {/* Set the default route to AllocateTeamLeads */}
                     <Route path="/" element={<AllocateTeamLeads />} />
                     <Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
+                    <Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<ProtectedRoute />}>
                         <Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
