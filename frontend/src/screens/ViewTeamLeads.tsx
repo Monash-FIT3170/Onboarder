@@ -1,18 +1,41 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Typography,
-  Table,
-  TableContainer,
-  TableBody,
-  TableCell,
-  TableRow,
-  TableHead,
-  Paper,
-  IconButton,
-  Skeleton,
-  TextField,
-} from "@mui/material";
-import BackIcon from "../assets/BackIcon"; // Replace with your actual icon import
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+// Define the structure of a Team Lead
+export interface TeamLeadProps {
+  id: number;
+  name: string;
+}
+
+function ViewTeamLeads() {
+  // State to store the list of team leads
+  const [teamLeads, setTeamLeads] = useState<TeamLeadProps[]>([]);
+
+  // State to manage loading status
+  const [loading, setLoading] = useState(true);
+
+  // Fetch the team leads data from the API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const teamLeadsResponse = await axios.get(
+          `http://127.0.0.1:3000/teamleads`
+        );
+        setTeamLeads(teamLeadsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return {
+    teamLeads,
+    loading,
+  };
+}
+
+export default ViewTeamLeads;
