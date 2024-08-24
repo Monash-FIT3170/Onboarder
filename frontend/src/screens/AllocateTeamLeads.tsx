@@ -13,17 +13,20 @@ import {
   Box,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AllocateTeamLeads = () => {
   const [openings, setOpenings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { teamLeadId } = useParams();
+  const navigate = useNavigate();
+  const API_URL = "http://127.0.0.1:3000/allocateTeamLeads";
 
   useEffect(() => {
-    const fetchOpenings = async () => {
+    const fetchOpenings = async () => { 
       try {
-        const response = await axios.get(`http://127.0.0.1:3000/teamLeads/${teamLeadId}/openings`);
+        const response = await axios.get(API_URL);
         setOpenings(response.data);
       } catch (error) {
         console.error("Error fetching openings:", error);
@@ -37,6 +40,7 @@ const AllocateTeamLeads = () => {
 
   const handleAllocate = (openingId: number) => {
     // Logic to allocate or deallocate team lead to the opening
+    navigate("/allocate-team-leads");
     console.log(`Allocating team lead ${teamLeadId} to opening ${openingId}`);
   };
 
