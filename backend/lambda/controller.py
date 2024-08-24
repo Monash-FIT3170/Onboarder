@@ -25,18 +25,18 @@ def create_student_team(
 
 
 def create_rec_round(
+    student_team_id,
     deadline,
     semester,
     year,
-    student_team_id,
     status
 ):
-    # status can only be (A)ctive, (I)nactive, or (R)eview
+    # status can only be (A)ctive, (I)nactive, or A(R)chived
     data = {
+        "student_team_id": student_team_id,
         "deadline": deadline,
         "semester": semester,
         "year": year,
-        "student_team_id": student_team_id,
         "status": status
     }
 
@@ -53,9 +53,9 @@ def create_opening(
     required_skills,
     desired_skills,
     task_email_format,
-    task_enabled
+    task_enabled,
 ):
-    # status can only be (A)ctive, (I)nactive, or (R)eview
+    # status can only be (A)ctive, (I)nactive, or A(R)chived
     data = {
         "recruitment_round_id": recruitment_round_ID,
         "title": title,
@@ -64,7 +64,7 @@ def create_opening(
         "required_skills": required_skills,
         "desired_skills": desired_skills,
         "task_email_format": task_email_format,
-        "task_enabled": task_enabled
+        "task_enabled": task_enabled,
     }
     response = supabase.table('OPENING').insert(data).execute()
 
@@ -118,8 +118,10 @@ def get_all_student_teams():
 
 
 def get_specific_student_team(student_team_id):
-    response = supabase.table('STUDENT_TEAM').select(
-        "*").eq("id", student_team_id).execute()
+    response = supabase.table('STUDENT_TEAM') \
+        .select("*") \
+        .eq("id", student_team_id) \
+        .execute()
 
     return response.data
 
@@ -132,8 +134,9 @@ def get_all_rec_rounds():
 
 
 def get_specific_rec_round(round_id):
-    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
-        "id", round_id).execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count') \
+        .eq("id", round_id)\
+        .execute()
 
     return response.data
 
@@ -141,15 +144,18 @@ def get_specific_rec_round(round_id):
 
 
 def get_all_openings():
-    response = supabase.rpc(
-        'get_openings_with_application_count').select("*").execute()
+    response = supabase.rpc('get_openings_with_application_count') \
+        .select("*") \
+        .execute()
 
     return response.data
 
 
 def get_all_opens_for_round(round_id):
-    response = supabase.rpc('get_openings_with_application_count').select(
-        "*").eq("recruitment_round_id", round_id).execute()
+    response = supabase.rpc('get_openings_with_application_count') \
+        .select("*") \
+        .eq("recruitment_round_id", round_id) \
+        .execute()
 
     return response.data
 

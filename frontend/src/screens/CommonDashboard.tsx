@@ -14,6 +14,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { commonDashboardResultProps } from "../components/CommonDashboardTable";
 import { CommonDashboardTable } from "../components/CommonDashboardTable";
+import { useAuthStore } from "../util/stores/authStore";
+
 const styles = {
     commonDashboard: {
         fontFamily: "Arial, sans-serif",
@@ -78,11 +80,15 @@ function CommonDashboard() {
     const [roles, setRoles] = useState<commonDashboardResultProps[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const { user, profile } = useAuthStore();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const rolesResponse = await axios.get(`http://127.0.0.1:3000/roles/${state.user_id}`); // TODO This needs to refer somehow to logged in user
-                setRoles(rolesResponse.data);
+                // authVariables.initializeAuth();
+
+                // const rolesResponse = await axios.get(`http://127.0.0.1:3000/roles/${state.user_id}`); // TODO This needs to refer somehow to logged in user
+                // setRoles(rolesResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {

@@ -32,7 +32,7 @@ function App() {
           // Student team member only routes
 					<Route element={<ProtectedRoute />}>
 						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
-            <Route path="/common-dashboard" element={<CommonDashboard />} />
+            			<Route path="/common-dashboard" element={<CommonDashboard />} />
 						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
 						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
 						<Route path="/create-opening" element={<CreateOpeningPage />} />
