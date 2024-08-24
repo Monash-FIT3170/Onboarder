@@ -13,7 +13,6 @@ interface AuthState {
 	checkSession: () => Promise<void>;
 }
 
-
 export const useAuthStore = create<AuthState>((set, get) => ({
 	user: null,
 	profile: null,
@@ -26,7 +25,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			data: { session },
 		} = await supabase.auth.getSession();
 
-		set({ user: session?.user ?? null, loading: false });
+		set({ user: session?.user ?? null });
 
 		// Get the profile id from the PROFILE table
 		const { data: profileData, error: profileError } = await supabase
@@ -38,7 +37,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			console.error("Error fetching profile:", profileError);
 		} else {
 			const profileId = profileData?.[0]?.id ?? null;
-			set({ profile: profileId });
+			set({ profile: profileId, loading: false });
 		}
 
 		supabase.auth.onAuthStateChange(async (_, session) => {
@@ -46,7 +45,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 				set({ user: session?.user ?? null, loading: false });
 			}
 		});
-
 	},
 
 	signOut: async () => {
