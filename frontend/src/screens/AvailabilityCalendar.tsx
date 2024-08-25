@@ -9,11 +9,11 @@ import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the s
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
-import { enUS } from "date-fns/locale";
+import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
 
 // Locale configuration for the calendar using date-fns
-const locales = { "en-US": enUS };
+const locales = { "en-AU": enAU };
 
 // Setup the localizer to use date-fns for formatting and parsing dates
 const localizer = dateFnsLocalizer({
