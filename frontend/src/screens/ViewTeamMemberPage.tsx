@@ -37,7 +37,7 @@ const ViewTeamMembersPage: React.FC = () => {
           `http://127.0.0.1:3000/profileTeamInfo/${team_id}`
         );
         const profileTeamInfo = profileTeamResponse.data;
-
+        console.log(profileTeamInfo)
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -45,17 +45,20 @@ const ViewTeamMembersPage: React.FC = () => {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
+            console.log(memberInfo)
             const studentResponse = await axios.get(
-              `http://127.0.0.1:3000/studentTeams/${memberInfo.profile_id}`
+              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}`
             );
-            const studentInfo = studentResponse.data.find(
-              (student: any) => student.student_team_id === team_id
-            );
+            // const studentInfo = studentResponse.data.find(
+            //   (student: any) => student.student_team_id === team_id
+            // );
+            const studentInfo = studentResponse.data[0];
+            console.log(studentInfo)
 
             if (studentInfo) {
               return {
-                email: studentInfo.owner_email,
-                role: getRoleText(memberInfo.your_role),
+                email: studentInfo.email,
+                role: getRoleText(memberInfo.role),
                 profile_id: memberInfo.profile_id,
               };
             }
