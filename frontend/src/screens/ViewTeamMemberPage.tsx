@@ -21,50 +21,60 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { profile, team_id, team_name } = useAuthStore();
+  const { team_id, team_name } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
-      if (!profile) {
-        setError("No profile selected");
+      if (!team_id) {
+        setError("No team selected");
         setIsLoading(false);
         return;
       }
 
       try {
-        // First API call to get profile team info
+        // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/profileTeamInfo/${profile}`
+          `http://127.0.0.1:3000/profileTeamInfo/${team_id}`
         );
         const profileTeamInfo = profileTeamResponse.data;
 
-        if (!profileTeamInfo || profileTeamInfo.length === 0) {
+        if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
 
-        // Filter for the current team
-        const currentTeamInfo = profileTeamInfo.find(
-          (info: any) => info.student_team_id === team_id
+        // Fetch student information for each member
+        const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
+          try {
+            const studentResponse = await axios.get(
+              `http://127.0.0.1:3000/studentTeams/${memberInfo.profile_id}`
+            );
+            const studentInfo = studentResponse.data.find(
+              (student: any) => student.student_team_id === team_id
+            );
+
+            if (studentInfo) {
+              return {
+                email: studentInfo.owner_email,
+                role: getRoleText(memberInfo.your_role),
+                profile_id: memberInfo.profile_id,
+              };
+            }
+            return null;
+          } catch (error) {
+            console.error(
+              `Error fetching student info for profile ${memberInfo.profile_id}:`,
+              error
+            );
+            return null;
+          }
+        });
+
+        const resolvedMembers = await Promise.all(membersPromises);
+        setMembers(
+          resolvedMembers.filter(
+            (member): member is TeamMember => member !== null
+          )
         );
-
-        if (!currentTeamInfo) {
-          throw new Error("Current team information not found");
-        }
-
-        // Fetch student information for each member of the current team
-        const teamMembersResponse = await axios.get(
-          `http://127.0.0.1:3000/studentTeams/${team_id}`
-        );
-
-        const teamMembers = teamMembersResponse.data;
-
-        const mappedMembers = teamMembers.map((member: any) => ({
-          email: member.owner_email,
-          role: getRoleText(member.your_role),
-          profile_id: member.profile_id,
-        }));
-
-        setMembers(mappedMembers);
       } catch (error) {
         console.error("Error fetching team members:", error);
         setError("Failed to fetch team members");
@@ -74,7 +84,7 @@ const ViewTeamMembersPage: React.FC = () => {
     };
 
     fetchTeamMembers();
-  }, [profile, team_id]);
+  }, [team_id]);
 
   const getRoleText = (role: string) => {
     switch (role) {
