@@ -20,6 +20,7 @@ import axios from "axios";
 
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useApplicantStore } from "../util/stores/applicantStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 export interface SingleApplicationProps {
   id: number;
@@ -56,11 +57,11 @@ function ViewOpenPage() {
   const selectedOpening = useOpeningStore(state => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(state => state.clearSelectedOpening);
   const setSelectedApplicant = useApplicantStore(state => state.setSelectedApplicant);
-
+  const authStore = useAuthStore();
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
-      recruitment_round_name: `${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
       application_id: applicationId,
       opening_id: selectedOpening?.id ?? null,
       recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
@@ -70,6 +71,21 @@ function ViewOpenPage() {
     })
 
     navigate("/admin-acceptpage");
+  };
+
+  const handleViewInterviewNotes = (applicationId: number) => {
+    setSelectedApplicant({
+      opening_name: selectedOpening?.title ?? null,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
+      application_id: applicationId,
+      opening_id: selectedOpening?.id ?? null,
+      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
+      student_team_name: selectedOpening?.student_team_name ?? null,
+      opening_title: selectedOpening?.title ?? null,
+      application_count: selectedOpening?.application_count ?? null,
+    })
+
+    navigate("/feedbacknote");
   };
 
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
@@ -82,12 +98,21 @@ function ViewOpenPage() {
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
         <TableCell>
+          <div>
+          {application.status == "A" ? <Button
+            variant="outlined"
+            onClick={() => handleViewInterviewNotes(application.id)}
+          >
+            INTERVIEW NOTES
+          </Button> : <div></div>}
           <Button
+              sx={{ ml: 2 }} 
             variant="contained"
             onClick={() => handleViewApplication(application.id)}
           >
-            View
+            VIEW
           </Button>
+          </div>
         </TableCell>
       </TableRow>
     ));
@@ -160,7 +185,7 @@ function ViewOpenPage() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{`${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
               <TableCell>{selectedOpening?.application_count}</TableCell>
             </TableRow>
           </TableBody>
@@ -205,6 +230,7 @@ function ViewOpenPage() {
                   {sortDirection === "asc" ? "↓" : "↑"}
                 </Button>
               </TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

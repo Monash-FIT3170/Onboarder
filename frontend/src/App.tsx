@@ -18,6 +18,7 @@ import Dashboard from "./screens/Dashboard";
 // import CreateStudentTeam from "./screens/CreateStudentTeamModal";
 import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
+import Feedbacknote from "./screens/FeedbackNote"
 
 function App() {
 	return (
@@ -42,7 +43,10 @@ function App() {
 						<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
 					</Route>
+
+          <Route path="/feedbacknote" element={<Feedbacknote />} />
 				</Routes>
+        
 			</Box>
 		</ThemeProvider>
 	);
