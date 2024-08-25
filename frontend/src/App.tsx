@@ -14,6 +14,7 @@ import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./screens/Dashboard";
+// import CreateStudentTeam from "./screens/CreateStudentTeamModal";
 import theme from "./assets/Theme";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
             <Route
               path="/viewrecruitmentround"
               element={<ViewRecruitmentRoundPage />}

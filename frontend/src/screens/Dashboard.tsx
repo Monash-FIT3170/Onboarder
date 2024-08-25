@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -5,6 +6,7 @@ import {
   CardContent,
   CardMedia,
   CardActionArea,
+  Button,
 } from "@mui/material";
 import {
   DashboardTable,
@@ -14,6 +16,7 @@ import {
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import JobInterviewIcon from "../assets/JobInterview.jpg";
+import AddTeamModal from "./AddTeamModal"; // Import the new modal component
 
 const TitleWrap = styled.div`
   margin: auto;
@@ -43,6 +46,13 @@ const StyledCardMedia = styled(CardMedia)`
   padding: 16px;
 `;
 
+const ButtonStyle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
 const data1: StudentTeamResultProps = {
   team_name: "Monash Rova",
   role: "Owner",
@@ -55,9 +65,24 @@ const mockData: DashboardTableProps = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
 
   const handleInterviewCardClick = () => {
     navigate("/interviews");
+  };
+
+  const handleAddTeamClick = () => {
+    setIsAddTeamModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsAddTeamModalOpen(false);
+  };
+
+  const handleSubmitTeam = (teamName: string, teamDescription: string) => {
+    // TODO: Implement team creation logic
+    console.log("Team created:", { teamName, teamDescription });
+    // You might want to update the mockData or fetch new data here
   };
 
   return (
@@ -67,9 +92,12 @@ const Dashboard = () => {
           Student Team
         </Typography>
       </TitleWrap>
-      <Typography variant="h4" style={{ marginBottom: "20px" }}>
-        Your student teams
-      </Typography>
+      <ButtonStyle>
+        <Typography variant="h4">Your student teams</Typography>
+        <Button variant="contained" onClick={handleAddTeamClick}>
+          Add Team
+        </Button>
+      </ButtonStyle>
       <DashboardTable results={mockData.results} />
       <CardContainer>
         <StyledCard>
@@ -86,6 +114,11 @@ const Dashboard = () => {
           </CardActionArea>
         </StyledCard>
       </CardContainer>
+      <AddTeamModal
+        open={isAddTeamModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitTeam}
+      />
     </Box>
   );
 };
