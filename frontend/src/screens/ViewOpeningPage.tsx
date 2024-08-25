@@ -20,6 +20,7 @@ import axios from "axios";
 
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useApplicantStore } from "../util/stores/applicantStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 export interface SingleApplicationProps {
   id: number;
@@ -33,7 +34,7 @@ export interface SingleApplicationProps {
   major_enrolled: string;
   cover_letter: string;
   skills: string[];
-  accepted: string;
+  status: string;
   created_at: string;
 }
 
@@ -56,11 +57,11 @@ function ViewOpenPage() {
   const selectedOpening = useOpeningStore(state => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(state => state.clearSelectedOpening);
   const setSelectedApplicant = useApplicantStore(state => state.setSelectedApplicant);
-
+  const authStore = useAuthStore();
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
-      recruitment_round_name: `${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
       application_id: applicationId,
       opening_id: selectedOpening?.id ?? null,
       recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
@@ -72,22 +73,46 @@ function ViewOpenPage() {
     navigate("/admin-acceptpage");
   };
 
+  const handleViewInterviewNotes = (applicationId: number) => {
+    setSelectedApplicant({
+      opening_name: selectedOpening?.title ?? null,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
+      application_id: applicationId,
+      opening_id: selectedOpening?.id ?? null,
+      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
+      student_team_name: selectedOpening?.student_team_name ?? null,
+      opening_title: selectedOpening?.title ?? null,
+      application_count: selectedOpening?.application_count ?? null,
+    })
+
+    navigate("/feedbacknote");
+  };
+
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
       <TableRow key={application.id}>
         <TableCell>{application.name}</TableCell>
         <TableCell>{application.email}</TableCell>
-        <TableCell>{getAppStatusText(application.accepted)}</TableCell>
+        <TableCell>{getAppStatusText(application.status)}</TableCell>
         <TableCell>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
         <TableCell>
+          <div>
+          {application.status == "A" ? <Button
+            variant="outlined"
+            onClick={() => handleViewInterviewNotes(application.id)}
+          >
+            INTERVIEW NOTES
+          </Button> : <div></div>}
           <Button
+              sx={{ ml: 2 }} 
             variant="contained"
             onClick={() => handleViewApplication(application.id)}
           >
-            View
+            VIEW
           </Button>
+          </div>
         </TableCell>
       </TableRow>
     ));
@@ -120,6 +145,11 @@ function ViewOpenPage() {
     navigate("/recruitment-details-page");
   }
 
+  const respond = ()=>{
+    clearSelectedOpening();
+    navigate("/view-interview-allocation");
+  }
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -134,6 +164,14 @@ function ViewOpenPage() {
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
           {selectedOpening?.title}
         </Typography>
+
+        <div style={{ marginLeft: "auto" }}>
+          <Button variant="outlined">CONFIGURE EMAIL</Button>
+          <Button variant="contained" sx={{ ml: 2 }} onClick={()=>{
+            console.log("Navigating to /view-interview-allocation");
+            respond();
+           }}>VIEW CANDIDATE SUBMISSION STATUS</Button>
+        </div>
       </div>
 
       {/* creates a table showing all the number of applications for each recruitment round */}
@@ -147,7 +185,7 @@ function ViewOpenPage() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{`${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
               <TableCell>{selectedOpening?.application_count}</TableCell>
             </TableRow>
           </TableBody>
@@ -192,6 +230,7 @@ function ViewOpenPage() {
                   {sortDirection === "asc" ? "↓" : "↑"}
                 </Button>
               </TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

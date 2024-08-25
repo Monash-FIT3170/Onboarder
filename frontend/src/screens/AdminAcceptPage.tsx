@@ -23,6 +23,7 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadSpinner";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
+import { useAuthStore } from "../util/stores/authStore";
 
 import { useApplicantStore } from "../util/stores/applicantStore";
 
@@ -36,9 +37,9 @@ interface ResultProps {
   current_semester: number;
   course_enrolled: string;
   major_enrolled: string;
-  cover_letter: string;
+  additional_info: string;
   skills: string[];
-  accepted: string;
+  status: string;
   created_at: number;
 }
 
@@ -55,6 +56,7 @@ export default function RecruitmentPlatform() {
   const [isDisabledAccept, setIsDisabledAccept] = useState(true);
   const [isDisabledReject, setIsDisabledReject] = useState(true);
 
+  const authStore = useAuthStore();
   const selectedApplicant = useApplicantStore(state => state.selectedApplicant);
   const clearSelectedApplicant = useApplicantStore(state => state.clearSelectedApplicant);
 
@@ -82,13 +84,18 @@ export default function RecruitmentPlatform() {
   }, [selectedApplicant]);
 
   useEffect(() => {
-    if (applicantInformation[0]?.accepted === "U") {
+    if (applicantInformation[0]?.status === "A") {
       setIsDisabledAccept(false);
       setIsDisabledReject(false);
-    } else if (applicantInformation[0]?.accepted === "A") {
-      setIsDisabledReject(false);
-    } else if (applicantInformation[0]?.accepted === "R") {
-      setIsDisabledAccept(false);
+    } else if (applicantInformation[0]?.status === "C") {
+      setIsDisabledAccept(true);
+      setIsDisabledReject(true);
+    } else if (applicantInformation[0]?.status === "X") {
+      setIsDisabledAccept(true);
+      setIsDisabledReject(true);
+    } else if (applicantInformation[0]?.status === "R") {
+      setIsDisabledAccept(true);
+      setIsDisabledReject(true);
     } else {
       console.log("Invalid User Status");
     }
@@ -234,7 +241,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Additional-information"
             label="Additional Information"
-            defaultValue={`${applicantInformation[0]?.cover_letter}`}
+            defaultValue={`${applicantInformation[0]?.additional_info}`}
             disabled={true}
             fullWidth
           />
