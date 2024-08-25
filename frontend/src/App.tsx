@@ -51,6 +51,7 @@ function App() {
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
 						<Route path="/feedbacknote" element={<Feedbacknote />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
+						<Route path="/view-team-members" element={<ViewTeamMemberPage />} />
                     </Route>
 					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
 

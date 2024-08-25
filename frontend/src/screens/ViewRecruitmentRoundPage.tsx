@@ -149,11 +149,6 @@ const ViewRecruitmentRoundPage = () => {
     navigate("/view-team-members");
   };
 
-  const handleAllocateTeamLeads = () => {
-    // Implement logic to allocate team leads
-    // This might involve navigating to a new page or opening a modal
-  };
-
   const handleBack = () => {
     navigate("/dashboard");
   };
@@ -198,13 +193,6 @@ const ViewRecruitmentRoundPage = () => {
             <div></div>
             <h3>{authStore.team_name}</h3>
           </Grid>
-          <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAllocateTeamLeads}
-            >
-              Allocate Team Leads
-            </Button>
         </Grid>
         <section style={styles.section}>
           <Grid container alignItems="center" justifyContent="space-between">
