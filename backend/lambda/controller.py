@@ -13,15 +13,47 @@ supabase: Client = create_client(url, key)
 
 
 def create_student_team(
-    name
+    name,
+    description
 ):
     data = {
-        "name": name
+        "name": name,
+        "description": description
     }
 
     response = supabase.table('STUDENT_TEAM').insert(data).execute()
 
     return response.data
+
+def delete_student_team(student_team_id):
+    response = supabase.table('STUDENT_TEAM').delete().eq("id", student_team_id).execute()
+    return response.data
+
+def add_profile_team_info(profile_id, student_team_id, role):
+    data = {
+        "profile_id": profile_id,
+        "student_team_id": student_team_id,
+        "role": role
+    }
+
+    try:
+        response = supabase.table('PROFILE_TEAM_INFO').insert(data).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+    
+def update_availability(profileId, availability):
+    data = {
+        "interview_availability": availability
+    }
+
+    try:
+        response = supabase.table('PROFILE').update(data).eq("id", profileId).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
 
 
 def create_rec_round(
@@ -70,6 +102,16 @@ def create_opening(
 
     return response.data
 
+def allocate_member_to_opening(opening_id, profile_id):
+    data = {
+        "opening_id": opening_id,
+        "profile_id": profile_id
+    }
+
+    response = supabase.table('TEAM_LEAD_ASSIGNMENT').insert(data).execute()
+
+    return response.data
+
 
 def create_application(
     openingId,
@@ -109,11 +151,18 @@ def create_application(
 
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
+def get_availability(profileId):
+    try:
+        response = supabase.table('PROFILE').select("interview_availability").eq("id", profileId).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+
 # STUDENT TEAM GETTERS
 def get_all_student_teams():
     response = supabase.table('STUDENT_TEAM').select("*").execute()
     return response.data
-
 
 def get_specific_student_team(student_team_id):
     response = supabase.table('STUDENT_TEAM') \
@@ -133,6 +182,21 @@ def get_student_teams(profile_id):
         print(e)
         return e
 
+    return response.data
+
+def get_all_members_of_student_team(student_team_id):
+    response = supabase.table('PROFILE_TEAM_INFO') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
+def get_allocated_members_for_student_team(student_team_id):
+    response = supabase.rpc('get_allocated_members_for_student_team') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
 
     return response.data
 
