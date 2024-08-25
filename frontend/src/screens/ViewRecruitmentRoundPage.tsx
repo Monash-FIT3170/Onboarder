@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   TextField,
   Button,
   Table,
@@ -13,7 +14,9 @@ import {
   Typography,
   TableSortLabel,
   Skeleton,
+  IconButton,
 } from "@mui/material";
+import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -49,7 +52,7 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 600px)",
+    height: "calc(100vh - 650px)",
     overflowY: "auto",
     display: "block",
   },
@@ -131,20 +134,66 @@ const ViewRecruitmentRoundPage = () => {
   }, []);
 
   const handleViewRound = (id: number) => {
-    setRecruitmentDetails({roundId: id, roundDeadline: null, roundName: null})
+    setRecruitmentDetails({
+      roundId: id,
+      roundDeadline: null,
+      roundName: null,
+    });
     navigate("/recruitment-details-page");
+  };
+
+  const handleViewTeamMembers = () => {
+    navigate("/view-team-members");
+  };
+
+  const handleAllocateTeamLeads = () => {
+    // Implement logic to allocate team leads
+    // This might involve navigating to a new page or opening a modal
+  };
+
+  const handleBack = () => {
+    navigate("/dashboard");
   };
 
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>
-        <Typography variant="h4" style={styles.studentTeam}>
-          Recruitment Rounds
-        </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
+          <Box display="flex" alignItems="baseline">
+            <IconButton onClick={handleBack} sx={{ mr: 2 }}>
+              <BackIcon />
+            </IconButton>
+            <Typography variant="h4" style={styles.studentTeam}>
+              Recruitment Rounds
+            </Typography>
+          </Box>
+          <Box>
+            <Button
+              variant="outlined"
+              color="primary"
+              style={{ marginRight: "10px" }}
+              onClick={handleViewTeamMembers}
+            >
+              View Team Members
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAllocateTeamLeads}
+            >
+              Allocate Team Leads
+            </Button>
+          </Box>
+        </Box>
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>
-                <h3>{authStore.team_name}</h3>
+            <h3>{authStore.team_name}</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
