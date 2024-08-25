@@ -284,7 +284,7 @@ const ViewRecruitmentRoundPage = () => {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {item.student_team_name + " " + item.id}
+                              {authStore.team_name + " " + item.id}
                             </TableCell>
                             <TableCell>{formattedDeadline}</TableCell>
                             <TableCell>

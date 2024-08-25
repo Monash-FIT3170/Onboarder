@@ -248,7 +248,7 @@ def add_profile_team_info(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['profile_id', 'student_team_id', 'role']
+    required_fields = ['email', 'student_team_id', 'role']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -258,7 +258,7 @@ def add_profile_team_info(path_params={}, _={}, body={}):
         }
     
     try:
-        profile_id = data['profile_id']
+        email = data['email']
         student_team_id = data['student_team_id']
         role = data['role']
     except (ValueError, KeyError):
@@ -268,7 +268,7 @@ def add_profile_team_info(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.add_profile_team_info(profile_id, student_team_id, role)
+    response = controller.add_profile_team_info(email, student_team_id, role)
     
     return {
         'statusCode': 201,

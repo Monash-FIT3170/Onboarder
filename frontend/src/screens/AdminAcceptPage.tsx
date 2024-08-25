@@ -23,6 +23,7 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadSpinner";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
+import { useAuthStore } from "../util/stores/authStore";
 
 import { useApplicantStore } from "../util/stores/applicantStore";
 
@@ -55,6 +56,7 @@ export default function RecruitmentPlatform() {
   const [isDisabledAccept, setIsDisabledAccept] = useState(true);
   const [isDisabledReject, setIsDisabledReject] = useState(true);
 
+  const authStore = useAuthStore();
   const selectedApplicant = useApplicantStore(state => state.selectedApplicant);
   const clearSelectedApplicant = useApplicantStore(state => state.clearSelectedApplicant);
 

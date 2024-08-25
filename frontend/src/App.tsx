@@ -18,6 +18,7 @@ import Dashboard from "./screens/Dashboard";
 import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
 import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
+import Feedbacknote from "./screens/FeedbackNote";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
               path="/view-interview-allocation"
               element={<ViewInterviewAllocation />}
             />
+            <Route path="/feedbacknote" element={<Feedbacknote />} />
           </Route>
         </Routes>
       </Box>
