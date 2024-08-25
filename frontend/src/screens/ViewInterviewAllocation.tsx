@@ -79,6 +79,11 @@ const ViewInterviewAllocation = () => {
     ));
   };
 
+  const respond = ()=>{
+    // clearSelectedOpening();
+    navigate("/viewopen");
+  }
+
   return (
     <>
       <TitleWrapper>
@@ -87,7 +92,7 @@ const ViewInterviewAllocation = () => {
       <PaddingBox></PaddingBox>
       <Box display="flex" alignItems="center">
       <IconButton
-           onClick={() =>  navigate("/viewopen") }
+           onClick={() => respond()  }
         >
           <BackIcon />
         </IconButton>
