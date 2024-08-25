@@ -267,8 +267,19 @@ def get_all_applications_for_opening(opening_id):
 
 
 def get_application(application_id):
-    response = supabase.table('APPLICATION').select(
-        "*").eq("id", application_id).execute()
+    response = supabase.table('APPLICATION') \
+        .select("*") \
+        .eq("id", application_id) \
+        .execute()
+
+    if response.data:
+        profile_id = response.data[0]['profile_id']
+        profile_response = supabase.table('PROFILE') \
+            .select('email') \
+            .eq('id', profile_id) \
+            .execute()
+        if profile_response.data:
+            response.data[0]['profile_email'] = profile_response.data[0]['email']
 
     return response.data
 
