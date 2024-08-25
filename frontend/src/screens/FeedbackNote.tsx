@@ -14,12 +14,11 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import LoadingSpinner from "../components/LoadSpinner";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useState, useEffect } from "react";
-import React from "react";
 import { useAuthStore } from "../util/stores/authStore";
-
+import React from "react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -46,7 +45,9 @@ interface ResultProps {
     created_at: number;
     interview_date: string;
     interviewer_assigned: string;
-  }
+    interview_notes: string;
+    interview_score: number;
+}
 
 function Feedbacknote() {
     const navigate = useNavigate();
@@ -69,15 +70,37 @@ function Feedbacknote() {
     };
     const authStore = useAuthStore();
     const handleBack = () => {
+        handleUpdate();
         clearSelectedApplicant();
         navigate("/viewopen");
-      };
+    };
 
     const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
     const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
-    const [applicantInformation, setApplicantInformation] = useState<
-    ResultProps[]
-  >([]);
+    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
+
+    const handleUpdate = () => {
+        const submissionData = {
+            interview_score: score,
+            interview_notes: feedback,
+        };
+
+        axios
+            .post(`http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`, submissionData)
+            .then((response) => {
+                console.log(response);
+                // setOpen(true);
+                // setIsSuccessful(true);
+            })
+            .catch((error) => {
+                console.error("There was an error!", error);
+                // setOpen(true);
+                // setIsSuccessful(false);
+            })
+            .finally(() => {
+                // setIsSubmitting(false);
+            });
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -104,6 +127,12 @@ function Feedbacknote() {
         fetchData();
     }, [selectedApplicant]);
 
+    const [feedback, setFeedback] = useState("");
+    const [score, setScore] = useState("");
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
     return (
         <>
             <Grid container spacing={4} justifyContent="left">
@@ -118,11 +147,11 @@ function Feedbacknote() {
                     </div>
                 </Grid>
             </Grid>
-            <Grid container spacing={12} columnSpacing={12} justifyContent="left">
-                <Grid item xs={12} md={8} marginBlock={4}>
-                    <Typography variant="body2" fontSize={20}>
-                        Application Info
-                    </Typography>
+            <Typography variant="body2" fontSize={20}>
+                Application Info
+            </Typography>
+            <Grid container spacing={0} justifyContent="left">
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
                         <TextField
                             disabled
@@ -130,19 +159,23 @@ function Feedbacknote() {
                             label="Applicant Name"
                             defaultValue={`${applicantInformation[0]?.name}`}
                             variant="filled"
+                            fullWidth
                         />
                     </div>
-
+                </Grid>
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
                         <TextField
                             disabled
                             id="outlined-disabled"
                             label="Interviewer"
-                            defaultValue={`${applicantInformation[0]?.interviewer_assigned}`}
+                            defaultValue={`${applicantInformation[0]?.interviewer_email}`}
                             variant="filled"
+                            fullWidth
                         />
                     </div>
-
+                </Grid>
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
                         <TextField
                             disabled
@@ -150,9 +183,11 @@ function Feedbacknote() {
                             label="Student team"
                             defaultValue={`${authStore.team_name}`}
                             variant="filled"
+                            fullWidth
                         />
                     </div>
-
+                </Grid>
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
                         <TextField
                             disabled
@@ -160,9 +195,11 @@ function Feedbacknote() {
                             label="Date of Interview"
                             defaultValue={`${applicantInformation[0]?.interview_date}`}
                             variant="filled"
+                            fullWidth
                         />
                     </div>
-
+                </Grid>
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
                         <TextField
                             disabled
@@ -170,31 +207,42 @@ function Feedbacknote() {
                             label="Position"
                             defaultValue={selectedApplicant?.recruitment_round_name}
                             variant="filled"
+                            fullWidth
                         />
                     </div>
                 </Grid>
             </Grid>
-            <Grid container spacing={2} justifyContent="left">
-                <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                    <Typography variant="body2" fontSize={20} margin={1}>
-                        Score:
-                    </Typography>
-                    <TextField
-                        disabled
-                        id="outlined-disabled"
-                        label="Out of 10"
-                        defaultValue="10"
-                        variant="filled"
-                    />
-                </div>
-            </Grid>
-            <Grid container spacing={4} justifyContent="left">
-                <Grid item xs={12} md={3}>
-                    <Typography variant="body2" fontSize={20}>
-                        Feedback
-                    </Typography>
+            <Typography variant="body2" fontSize={20} margin={1}>
+                Score (Auto Saved)
+            </Typography>
+            <Grid justifyContent="left">
+                <Grid item xs={12} md={6}>
                     <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField fullWidth label="Feedback note" variant="filled" />
+                        <TextField
+                            id="outlined"
+                            label="Out of 10"
+                            variant="filled"
+                            defaultValue = {applicantInformation[0]?.interview_score}
+                            onChange={(e) => setScore(e.target.value)}
+                        />
+                    </div>
+                </Grid>
+            </Grid>
+            <Typography variant="body2" fontSize={20}>
+                Interview Notes (Auto Saved)
+            </Typography>
+            <Grid container spacing={0} justifyContent="left">
+                <Grid item xs={12}>
+                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
+                        <TextField
+                            fullWidth
+                            label="Feedback note"
+                            defaultValue = {applicantInformation[0]?.interview_notes}
+                            variant="filled"
+                            multiline
+                            rows={5}
+                            onChange={(e) => setFeedback(e.target.value)}
+                        />
                     </div>
                 </Grid>
             </Grid>

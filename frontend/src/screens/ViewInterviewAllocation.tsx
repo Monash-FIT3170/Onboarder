@@ -106,10 +106,10 @@ const ViewInterviewAllocation = () => {
         fetchData();
     }, [selectedOpening, navigate]);
 
-    const handleBack = () => {
-        clearSelectedOpening();
-        navigate("/viewopen");
-    };
+    // const handleBack = () => {
+    //     clearSelectedOpening();
+    //     navigate("/viewopen");
+    // };
     const interviewScheduledCount = applications.filter((app) => app.candidate_availability).length;
     const interviewNotScheduledCount = applications.filter(
         (app) => !app.candidate_availability
