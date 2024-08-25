@@ -75,8 +75,6 @@ def options_handler(_={}, __={}, ___={}):
 def get_student_teams(path_params={}, _={}, __={}):
     profile_id = None
 
-    print("REACEHD ROUTER")
-
     if path_params:
         profile_id = path_params.get('profileId')
     if profile_id:
@@ -107,6 +105,58 @@ def delete_student_team(path_params={}, _={}, __={}):
     }
 
     return response
+
+@route('/profileTeamInfo', ['POST'])
+def add_profile_team_info(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'student_team_id', 'role']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        student_team_id = data['student_team_id']
+        role = data['role']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.add_profile_team_info(profile_id, student_team_id, role)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/profileTeamInfo/{studentTeamId}', ['GET'])
+
 
 # RECRUITMENT ROUNDS
 

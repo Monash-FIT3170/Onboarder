@@ -85,8 +85,8 @@ function CommonDashboard() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				let profile_id = authStore.profile;
-				// let profile_id = 1;
+				// let profile_id = authStore.profile;
+				let profile_id = 1;
 
 				if (!profile_id) {
 					profile_id = await authStore.fetchProfile();
@@ -111,6 +111,31 @@ function CommonDashboard() {
 					});
 
 				setRoles(tableData);
+
+				// POST request to add a profile to a team
+				console.log("POSTED")
+				const profileTeamUrl = `/profileTeamInfo`
+
+				const data = {
+					profile_id: 4,
+					studend_team_id: 1,
+					role: 'T'
+				}
+				
+				try {
+					const response = await axios.post(profileTeamUrl, data, {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+			
+					console.log('Success:', response.data);
+					// Handle success (e.g., update UI, show a success message)
+				} catch (error) {
+					
+				}
+
+
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			} finally {

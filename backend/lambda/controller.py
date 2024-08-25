@@ -136,6 +136,30 @@ def get_student_teams(profile_id):
 
     return response.data
 
+def get_all_members_of_student_team(student_team_id):
+    response = supabase.table('PROFILE_TEAM') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
+
+def add_profile_team_info(profile_id, student_team_id, role):
+    data = {
+        "profile_id": profile_id,
+        "student_team_id": student_team_id,
+        "role": role
+    }
+
+    try:
+        response = supabase.table('PROFILE_TEAM_INFO').insert(data).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+
+
 def get_rec_rounds_for_student_team(student_team_id):
     response = supabase.table('RECRUITMENT_ROUND') \
         .select("*") \
