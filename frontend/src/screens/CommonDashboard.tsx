@@ -1,215 +1,200 @@
 import {
-	Button,
-	Grid,
-	TableContainer,
-	TableBody,
-	TableHead,
-	Table,
-	TableRow,
-	TableCell,
-	Paper,
-	Skeleton,
+    Button,
+    Grid,
+    TableContainer,
+    TableBody,
+    TableHead,
+    Table,
+    TableRow,
+    TableCell,
+    Paper,
+    Skeleton,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { commonDashboardResultProps } from "../components/CommonDashboardTable";
+import { StudentTeamResultProps } from "../components/CommonDashboardTable";
 import { CommonDashboardTable } from "../components/CommonDashboardTable";
 import { useAuthStore } from "../util/stores/authStore";
 
 const styles = {
-	commonDashboard: {
-		fontFamily: "Arial, sans-serif",
-	},
-	studentTeam: {
-		color: "gray",
-		marginBottom: "1rem",
-	},
-	section: {
-		marginBottom: "2rem",
-	},
-	addRoundButton: {
-		marginBottom: "1rem",
-	},
-	table: {
-		minWidth: 650,
-	},
-	tableHeader: {
-		backgroundColor: "#f2f2f2",
-	},
-	viewButton: {
-		backgroundColor: "#1976d2",
-		color: "white",
-		padding: "0.5rem 1rem",
-		border: "none",
-		borderRadius: "4px",
-		cursor: "pointer",
-	},
-	scrollableTableBody: {
-		height: "calc(100vh - 400px)",
-		overflowY: "auto",
-		display: "block",
-	},
+    commonDashboard: {
+        fontFamily: "Arial, sans-serif",
+    },
+    studentTeam: {
+        color: "gray",
+        marginBottom: "1rem",
+    },
+    section: {
+        marginBottom: "2rem",
+    },
+    addRoundButton: {
+        marginBottom: "1rem",
+    },
+    table: {
+        minWidth: 650,
+    },
+    tableHeader: {
+        backgroundColor: "#f2f2f2",
+    },
+    viewButton: {
+        backgroundColor: "#1976d2",
+        color: "white",
+        padding: "0.5rem 1rem",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
+    scrollableTableBody: {
+        height: "calc(100vh - 400px)",
+        overflowY: "auto",
+        display: "block",
+    },
 };
 
 const generateSkeletonRows = () => {
-	return Array.from(new Array(10)).map((_, index) => (
-		<TableRow key={index}>
-			<TableCell>
-				<Skeleton variant="text" />
-			</TableCell>
-			<TableCell>
-				<Skeleton variant="text" />
-			</TableCell>
-			<TableCell>
-				<Skeleton variant="text" />
-			</TableCell>
-			<TableCell>
-				<Skeleton variant="text" />
-			</TableCell>
-			<TableCell>
-				<Skeleton variant="text" />
-			</TableCell>
-			<TableCell>
-				<Skeleton variant="rectangular" height={30} />
-			</TableCell>
-		</TableRow>
-	));
+    return Array.from(new Array(10)).map((_, index) => (
+        <TableRow key={index}>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="text" />
+            </TableCell>
+            <TableCell>
+                <Skeleton variant="rectangular" height={30} />
+            </TableCell>
+        </TableRow>
+    ));
 };
 
 function CommonDashboard() {
-	const [roles, setRoles] = useState<commonDashboardResultProps[]>([]);
-	const [loading, setLoading] = useState(true);
+    const [roles, setRoles] = useState<StudentTeamResultProps[]>([]);
+    const [loading, setLoading] = useState(true);
 
-	const authStore = useAuthStore();
+    const authStore = useAuthStore();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				// let profile_id = authStore.profile;
-				let profile_id = 1;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let profile_id = authStore.profile;
+                // let profile_id = 1;
 
-				if (!profile_id) {
-					profile_id = await authStore.fetchProfile();
-				}
+                if (!profile_id) {
+                    profile_id = await authStore.fetchProfile();
+                }
 
-				const rolesResponse = await axios.get(`http://127.0.0.1:3000/studentTeams/${profile_id}`);
+                const rolesResponse = await axios.get(
+                    `http://127.0.0.1:3000/studentTeams/${profile_id}`
+                );
 
-				let tableData = rolesResponse.data
-					.map((role: any) => {
-						return {
-							student_team_id: role.student_team_id,
-							student_team_name: role.student_team_name,
-							user_team_role: role.your_role === "O" ? "Owner" : role.your_role === "A" ? "Admin" : "Team Lead",
-							student_team_owner: role.owner_email,
-						};
-					})
-					.sort((a: commonDashboardResultProps, b: commonDashboardResultProps) => {
-						const roleRanking: { [key: string]: number } = { O: 0, A: 1, T: 2 };
-						return (
-							roleRanking[a.user_team_role.charAt(0)] - roleRanking[b.user_team_role.charAt(0)]
-						);
-					});
+                let tableData = rolesResponse.data
+                    .map((role: any) => {
+                        return {
+                            student_team_id: role.student_team_id,
+                            student_team_name: role.student_team_name,
+                            user_team_role:
+                                role.your_role === "O"
+                                    ? "Owner"
+                                    : role.your_role === "A"
+                                    ? "Admin"
+                                    : "Team Lead",
+                            student_team_owner: role.owner_email,
+                        };
+                    })
+                    .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
+                        const roleRanking: { [key: string]: number } = { O: 0, A: 1, T: 2 };
+                        return (
+                            roleRanking[a.user_team_role.charAt(0)] -
+                            roleRanking[b.user_team_role.charAt(0)]
+                        );
+                    });
 
-				setRoles(tableData);
+                setRoles(tableData);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-				// POST request to add a profile to a team
-				console.log("POSTED")
-				const profileTeamUrl = `/profileTeamInfo`
+        fetchData();
+    }, []);
+    return (
+        <div style={styles.commonDashboard}>
+            <main>
+                <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>
+                    Student Teams
+                </h1>
+                <section style={styles.section}>
+                    <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid item>
+                            <h3>Your Student Teams</h3>
+                        </Grid>
+                        <Grid item>
+                            <Button variant="contained" style={styles.addRoundButton}>
+                                ADD TEAM
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            rowGap: "20px",
+                            marginTop: "30px",
+                        }}
+                    >
+                        {loading ? (
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Team Name</TableCell>
+                                            <TableCell>Your Role</TableCell>
+                                            <TableCell>Owner Email</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>{generateSkeletonRows()}</TableBody>
+                                </Table>
+                            </TableContainer>
+                        ) : (
+                            <CommonDashboardTable results={roles}></CommonDashboardTable>
+                        )}
+                    </div>
+                </section>
 
-				const data = {
-					profile_id: 4,
-					studend_team_id: 1,
-					role: 'T'
-				}
-				
-				try {
-					const response = await axios.post(profileTeamUrl, data, {
-						headers: {
-							'Content-Type': 'application/json',
-						},
-					});
-			
-					console.log('Success:', response.data);
-					// Handle success (e.g., update UI, show a success message)
-				} catch (error) {
-					
-				}
-
-
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchData();
-	}, []);
-	return (
-		<div style={styles.commonDashboard}>
-			<main>
-				<h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>Student Teams</h1>
-				<section style={styles.section}>
-					<Grid container alignItems="center" justifyContent="space-between">
-						<Grid item>
-							<h3>Your Student Teams</h3>
-						</Grid>
-						<Grid item>
-							<Button variant="contained" style={styles.addRoundButton}>
-								ADD TEAM
-							</Button>
-						</Grid>
-					</Grid>
-					<div
-						style={{
-							display: "flex",
-							flexDirection: "column",
-							rowGap: "20px",
-							marginTop: "30px",
-						}}
-					>
-						{loading ? (
-							<TableContainer component={Paper}>
-								<Table sx={{ minWidth: 650 }} aria-label="simple table">
-									<TableHead>
-										<TableRow>
-											<TableCell>Team Name</TableCell>
-											<TableCell>Your Role</TableCell>
-											<TableCell>Owner Email</TableCell>
-											<TableCell>Actions</TableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>{generateSkeletonRows()}</TableBody>
-								</Table>
-							</TableContainer>
-						) : (
-							<CommonDashboardTable results={roles}></CommonDashboardTable>
-						)}
-					</div>
-				</section>
-
-				<section style={styles.section}>
-					<Grid container alignItems="center" justifyContent="space-between">
-						<Grid item>
-							<h4>Other Actions</h4>
-						</Grid>
-						<Grid item>
-							<Button
-								variant="contained"
-								style={{
-									backgroundColor: "white",
-									color: "black",
-									border: "1px solid black",
-								}}
-							>
-								VIEW INTERVIEWS AND CHANGE AVAILABILITY
-							</Button>
-						</Grid>
-					</Grid>
-				</section>
-			</main>
-		</div>
-	);
+                <section style={styles.section}>
+                    <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid item>
+                            <h4>Other Actions</h4>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                style={{
+                                    backgroundColor: "white",
+                                    color: "black",
+                                    border: "1px solid black",
+                                }}
+                            >
+                                VIEW INTERVIEWS AND CHANGE AVAILABILITY
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </section>
+            </main>
+        </div>
+    );
 }
 
 export default CommonDashboard;

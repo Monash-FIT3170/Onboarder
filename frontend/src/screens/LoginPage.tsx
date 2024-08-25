@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
 			} = await supabase.auth.getUser();
 			if (user) {
 				// Redirecting user to dashboard if user is signed in
-				navigate("/common-dashboard");
+				navigate("/dashboard");
 			}
 		};
 
