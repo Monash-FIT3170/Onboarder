@@ -49,6 +49,7 @@ def route(path: str, methods: list[str]) -> Callable:
 
 
 # OPTIONS HANDLER
+@route('/profile/{profileId}', ['OPTIONS'])
 @route('/studentTeams', ['OPTIONS'])
 @route('/applications/{applicationId}', ['OPTIONS'])
 @route('/studentTeams/{profileId}', ['OPTIONS'])
@@ -73,6 +74,21 @@ def options_handler(_={}, __={}, ___={}):
             "Access-Control-Allow-Methods": "*"
         }
     }
+
+
+@route('/profile/{profileId}', ['GET'])
+def get_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 
 @route('/profile/{profileId}/availability', ['GET'])

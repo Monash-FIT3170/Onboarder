@@ -167,6 +167,9 @@ def create_application(
 
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
+def get_profile(profile_id):
+    response = supabase.table('PROFILE').select("*").eq("id", profile_id).execute()
+    return response.data
 
 def get_availability(profileId):
     try:
