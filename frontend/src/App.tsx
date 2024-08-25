@@ -33,6 +33,7 @@ function App() {
 						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
+						<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
 					</Route>
 				</Routes>
 			</Box>
