@@ -50,14 +50,16 @@ def route(path: str, methods: list[str]) -> Callable:
 
 # OPTIONS HANDLER
 @route('/studentTeams', ['OPTIONS'])
+@route('/applications/{applicationId}', ['OPTIONS'])
 @route('/studentTeams/{profileId}', ['OPTIONS'])
+@route('/profile/{profileId}/availability', ['OPTIONS'])
 @route('/profileTeamInfo', ['OPTIONS'])
 @route('/profileTeamInfo/{studentTeamId}', ['OPTIONS'])
 @route('/recruitmentRounds', ['OPTIONS'])
 @route('/recruitmentRounds/{roundId}/openings', ['OPTIONS'])
+@route('/openings', ['OPTIONS'])
+@route('/openings/{openingId}', ['OPTIONS'])
 @route('/openings/{openingId}/applications', ['OPTIONS'])
-@route('/applications/{applicationId}/accept', ['OPTIONS'])
-@route('/applications/{applicationId}/reject', ['OPTIONS'])
 @route('/recruitmentRounds/{roundId}/status', ['OPTIONS'])
 @route('/sendInterviewEmails/{openingId}', ['OPTIONS'])
 @route('/updateAvailability/{applicationId}', ['OPTIONS'])
@@ -637,6 +639,22 @@ def update_recruitment_round_status(path_params={}, _={}, body={}):
             'body': json.dumps({'error': str(e)}),
             'headers': HEADERS
         }
+
+@route('/openings/{openingId}', ['GET'])
+def get_opening(path_params={}, _={}, __={}):
+    # parameter validation
+    opening_id = path_params.get('openingId')
+    records = controller.get_opening(opening_id)
+
+    records = json.dumps(records)
+
+    response = {
+        'statusCode': 200,
+        'body': records,
+        'headers': HEADERS
+    }
+    return response
+
 
 @route('/openings/{openingId}', ['POST'])
 def update_opening(path_params={}, __={}, body={}):

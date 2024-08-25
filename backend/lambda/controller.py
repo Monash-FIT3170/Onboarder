@@ -276,6 +276,11 @@ def get_specific_open_for_round(round_id, opening_id):
 
     return response.data
 
+def get_opening(opening_id):
+    response = supabase.table('OPENING').select("*").eq("id", opening_id).execute()
+
+    return response.data
+
 # APPLICATION GETTERS
 
 
