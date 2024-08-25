@@ -31,11 +31,12 @@ function App() {
                 <Routes>
                     {/* Set the default route to AllocateTeamLeads */}
                     <Route path="/" element={<AllocateTeamLeads />} />
-                    <Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
-                    <Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
+
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<ProtectedRoute />}>
 						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
+						<Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
 						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
                         <Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
                         <Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />

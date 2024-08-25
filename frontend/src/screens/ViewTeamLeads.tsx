@@ -32,10 +32,16 @@ function ViewTeamLeads() {
     fetchData();
   }, []);
 
-  return {
-    teamLeads,
-    loading,
-  };
+  return (
+    <div>
+      {teamLeads.map((teamLead: TeamLeadProps) => (
+        <div key={teamLead.id}>
+          <h2>{teamLead.name}</h2>
+          <p>{teamLead.role}</p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default ViewTeamLeads;
