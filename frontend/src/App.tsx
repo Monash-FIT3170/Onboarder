@@ -13,6 +13,7 @@ import ApplicantOpenings from "./screens/ApplicantOpenings";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TaskEmailFormatPage from "./screens/TaskEmailFormatPage";
 import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
 import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
@@ -21,55 +22,37 @@ import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <AppBarOnBoarder />
-      <Box component={"section"} sx={{ padding: "20px" }}>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
-            <Route
-              path="/viewrecruitmentround"
-              element={<ViewRecruitmentRoundPage />}
-            />
-            <Route
-              path="/addrecruitmentround"
-              element={<AddRecruitmentRoundPage />}
-            />
-            <Route
-              path="/recruitment-details-page"
-              element={<RecruitmentRoundDetailsPage />}
-            />
-            <Route path="/create-opening" element={<CreateOpeningPage />} />
-            <Route path="/viewopen" element={<ViewOpenPage />} />
-            <Route path="/view-team-members" element={<ViewTeamMemberPage />} />
-            <Route path="/applicant-openings" element={<ApplicantOpenings />} />
-            <Route
-              path="/application-submission"
-              element={<ApplicationSubmissionPage />}
-            />
-            <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
-            <Route
-              path="/availability-calendar"
-              element={<AvailabilityCalendar />}
-            />
-            <Route
-              path="/availability-calendar/:id"
-              element={<AvailabilityCalendar />}
-            />
-            <Route
-              path="/view-interview-allocation"
-              element={<ViewInterviewAllocation />}
-            />
-            <Route path="/feedbacknote" element={<Feedbacknote />} />
-          </Route>
-        </Routes>
-      </Box>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider theme={theme}>
+			<AppBarOnBoarder />
+			<Box component={"section"} sx={{ padding: "20px" }}>
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/login" element={<LoginPage />} />
+					<Route element={<ProtectedRoute />}>
+						<Route path="/dashboard" element={<Dashboard />} />
+						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
+						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
+						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
+						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
+						<Route path="/create-opening" element={<CreateOpeningPage />} />
+						<Route path="/viewopen" element={<ViewOpenPage />} />
+						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
+						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
+						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
+						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
+						<Route path="/feedbacknote" element={<Feedbacknote />} />
+						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
+					</Route>
+					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+
+
+				</Routes>
+        
+			</Box>
+		</ThemeProvider>
+	);
 }
 
 export default App;

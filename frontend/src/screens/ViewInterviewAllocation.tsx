@@ -14,10 +14,12 @@ import {
     Box,
     IconButton,
     Skeleton,
+    Button,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 const TitleWrapper = styled.div`
     display: flex;
@@ -60,7 +62,7 @@ const ViewInterviewAllocation = () => {
     const selectedOpening = useOpeningStore((state) => state.selectedOpening);
     const clearSelectedOpening = useOpeningStore((state) => state.clearSelectedOpening);
     const [applications, setApplications] = useState<SingleApplicationProps[]>([]);
-
+    const authStore = useAuthStore();
     const generateRowFunction = (applications: SingleApplicationProps[]) => {
         return applications.map((application) => (
             <TableRow key={application.id}>
@@ -120,20 +122,30 @@ const ViewInterviewAllocation = () => {
     navigate("/viewopen");
   }
 
+  const handleScheduleInterview = async () => {
+  }
+
   return (
     <>
       <TitleWrapper>
         <Typography variant="h4">Candiate Submission Status</Typography>
       </TitleWrapper>
       <PaddingBox></PaddingBox>
-      <Box display="flex" alignItems="center">
-      <IconButton
-           onClick={() =>  navigate("/viewopen") }
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box display="flex" alignItems="center">
+          <IconButton onClick={() => navigate("/viewopen")}>
+            <BackIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ ml: 2 }}>{selectedOpening?.title}</Typography>
+        </Box>
+        <Button
+          variant="contained"
+          onClick={handleScheduleInterview}
+          disabled={loading}
+          style={{ marginLeft: "1rem" }}
         >
-          <BackIcon />
-        </IconButton>
-      
-      <Typography variant="h6" sx={{ ml: 2 }}>Operating: Events Officer</Typography>
+          {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
+        </Button>
       </Box>
       <PaddingBox>
       <PaddingBox></PaddingBox>
@@ -147,7 +159,7 @@ const ViewInterviewAllocation = () => {
                             <TableCell>Interviews Not Scheduled</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>{`${selectedOpening?.student_team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+                            <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
                             <TableCell>None</TableCell>
                             <TableCell>{interviewScheduledCount}</TableCell>
                             <TableCell>{interviewNotScheduledCount}</TableCell>
