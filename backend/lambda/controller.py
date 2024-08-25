@@ -3,7 +3,7 @@ import os
 import smtplib
 import ssl
 from email.message import EmailMessage
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet # type: ignore
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
@@ -117,6 +117,10 @@ def allocate_member_to_opening(opening_id, profile_id):
 
     return response.data
 
+def update_opening(opening_id, data):
+    response = supabase.table('OPENING').update(data).eq("id", opening_id).execute()
+
+    return response.data
 
 def create_application(
     openingId,
@@ -323,6 +327,11 @@ def update_recruitment_round_status(round_id, new_status):
     response = supabase.table('RECRUITMENT_ROUND').update({
         "status": new_status
     }).eq("id", round_id).execute()
+
+    return response.data
+
+def update_application(application_id, data):
+    response = supabase.table('APPLICATION').update(data).eq("id", application_id).execute()
 
     return response.data
 

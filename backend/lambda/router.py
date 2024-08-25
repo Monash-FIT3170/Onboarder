@@ -638,6 +638,47 @@ def update_recruitment_round_status(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
 
+@route('/openings/{openingId}', ['POST'])
+def update_opening(path_params={}, __={}, body={}):
+    opening_id = path_params.get('openingId')
+
+    # Get the request body
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+        return response
+
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+        return response
+
+    # Update opening
+    try:
+        response = controller.update_opening(opening_id, data)
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'data': response
+            }),
+            'headers': HEADERS
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
+        }
 
 # APPLICATIONS
 
@@ -745,44 +786,49 @@ def get_application(path_params={}, _={}, __={}):
     }
     return response
 
-
-@route('/applications/{applicationId}/accept', ['POST'])
-def acceptApplication(path_params={}, __={}, ___={}):
+@route('/applications/{applicationId}', ['POST'])
+def update_application(path_params={}, __={}, body={}):
     application_id = path_params.get('applicationId')
 
-    data = controller.accept_application(application_id)
-    data = json.dumps(data)
+    # Get the request body
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+        return response
 
-    response = {
-        'statusCode': 201,
-        'body': json.dumps({
-            'success': True,
-            'msg': f"Application {application_id} accepted"
-        }),
-        'headers': HEADERS
-    }
-    return response
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+        return response
 
-
-@route('/applications/{applicationId}/reject', ['POST'])
-def rejectApplication(path_params={}, __={}, ___={}):
-    application_id = path_params.get('applicationId')
-
-    data = controller.reject_application(application_id)
-    data = json.dumps(data)
-
-    response = {
-        'statusCode': 201,
-        'body': json.dumps({
-            'success': True,
-            'msg': f"Application {application_id} rejected"
-        }),
-        'headers': HEADERS
-    }
-    return response
+    # Update application
+    try:
+        response = controller.update_application(application_id, data)
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'data': response
+            }),
+            'headers': HEADERS
+        }
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)}),
+            'headers': HEADERS
+        }
 
 # Email
-
 
 @route('/sendInterviewEmails/{openingId}', ['POST'])
 def send_email(path_params={}, querystring_params={}, body={}):

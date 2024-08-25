@@ -89,7 +89,7 @@ CREATE TABLE public."APPLICATION" (
     candidate_availability VARCHAR[],
     interview_date TIMESTAMP WITH TIME ZONE,
     interview_notes VARCHAR,
-    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'C', 'R')),
+    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'C', 'R', 'X')),
     profile_id BIGINT,
     CONSTRAINT APPLICATION_pkey PRIMARY KEY (id),
     CONSTRAINT APPLICATION_opening_id_fkey FOREIGN KEY (opening_id) REFERENCES "OPENING" (id),
