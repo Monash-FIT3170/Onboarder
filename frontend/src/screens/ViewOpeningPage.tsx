@@ -134,6 +134,13 @@ function ViewOpenPage() {
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
           {selectedOpening?.title}
         </Typography>
+
+        <div>
+          <Button variant="outlined">CONFIGURE EMAIL</Button>
+          <Button variant="contained" sx={{ ml: 2 }} onClick={()=>{
+            console.log("Navigating to /view-interview-allocation");
+            navigate("/view-interview-allocation")}}>VIEW CANDIDATE SUBMISSION STATUS</Button>
+        </div>
       </div>
 
       {/* creates a table showing all the number of applications for each recruitment round */}

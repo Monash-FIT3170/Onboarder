@@ -10,9 +10,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Box
+  Box,
+  IconButton
 } from "@mui/material";
 import BackIcon from '../assets/BackIcon';
+import { useNavigate } from "react-router-dom";
+
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -27,37 +30,37 @@ const PaddingBox = styled.div`
 `;
 
 // Mock data
-// const mockData = [
-//   {
-//     applicantName: "John Doe",
-//     email: "john.doe@example.com",
-//     roundName: "Round 1",
-//     studentTeam: "Monash Deep Neuron",
-//     interviewSlots: "10:00 AM - 10:30 AM",
-//     slotSelected: "YES",
-//   },
-//   {
-//     applicantName: "Jane Smith",
-//     email: "jane.smith@example.com",
-//     roundName: "Round 2",
-//     studentTeam: "Monash Nova",
-//     interviewSlots: "11:00 AM - 11:30 AM",
-//     slotSelected: "NO",
-//   },
-//   {
-//     applicantName: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//     roundName: "Round 1",
-//     studentTeam: "Monash Human Power",
-//     interviewSlots: "01:00 PM - 01:30 PM",
-//     slotSelected: "YES",
-//   },
+const mockData = [
+  {
+    applicantName: "John Doe",
+    email: "john.doe@example.com",
+    roundName: "Round 1",
+    studentTeam: "Monash Deep Neuron",
+    interviewSlots: "10:00 AM - 10:30 AM",
+    slotSelected: "YES",
+  },
+  {
+    applicantName: "Jane Smith",
+    email: "jane.smith@example.com",
+    roundName: "Round 2",
+    studentTeam: "Monash Nova",
+    interviewSlots: "11:00 AM - 11:30 AM",
+    slotSelected: "NO",
+  },
+  {
+    applicantName: "Alice Johnson",
+    email: "alice.johnson@example.com",
+    roundName: "Round 1",
+    studentTeam: "Monash Human Power",
+    interviewSlots: "01:00 PM - 01:30 PM",
+    slotSelected: "YES",
+  },
 
-// ];
+];
 
 const ViewInterviewAllocation = () => {
   const [searchTerm, setSearchTerm] = useState(""); 
-
+  const navigate = useNavigate();
   // Filter by search
   const filteredData = mockData.filter((applicant) =>
     applicant.applicantName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -83,7 +86,11 @@ const ViewInterviewAllocation = () => {
       </TitleWrapper>
       <PaddingBox></PaddingBox>
       <Box display="flex" alignItems="center">
-      <BackIcon ></BackIcon>
+      <IconButton
+           onClick={() =>  navigate("/viewopen") }
+        >
+          <BackIcon />
+        </IconButton>
       
       <Typography variant="h6" sx={{ ml: 2 }}>Operating: Events Officer</Typography>
       </Box>
