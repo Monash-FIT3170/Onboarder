@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
-	Box,
-	Button,
-	Typography,
-	Alert,
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Link,
+  Checkbox,
+  FormControlLabel,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { supabase } from "../util/supabaseClient";
@@ -11,140 +15,198 @@ import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/RegisterPage.jpg";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
-	display: "flex",
-	height: "calc(100vh - 200px)",
-	minHeight: "500px",
-	[theme.breakpoints.down("md")]: {
-		height: "calc(100vh - 100px)",
-	},
+  display: "flex",
+  height: "calc(100vh - 200px)",
+  minHeight: "500px",
+  [theme.breakpoints.down("md")]: {
+    height: "calc(100vh - 100px)",
+  },
 }));
 
 const FormSection = styled(Box)(({ theme }) => ({
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	justifyContent: "center",
-	padding: theme.spacing(30),
-	[theme.breakpoints.up("md")]: {
-		maxWidth: "50%",
-		padding: theme.spacing(30),
-	},
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: theme.spacing(4),
+  [theme.breakpoints.up("md")]: {
+    maxWidth: "50%",
+  },
 }));
 
-const DarkBlueButton = styled(Button)(({ theme }) => ({
-	marginTop: theme.spacing(2),
-	width: "100%",
-	backgroundColor: "#007FFF", // Monash blue
-	color: "#fff",
-	'&:hover': {
-		backgroundColor: "#005BB5",
-	},
+const GoogleButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
 }));
 
 const ImageSection = styled(Box)(({ theme }) => ({
-	flex: 1,
-	display: "flex",
-	justifyContent: "center",
-	alignItems: "center",
-	[theme.breakpoints.down("md")]: {
-		display: "none",
-	},
+  flex: 1,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  [theme.breakpoints.down("md")]: {
+    display: "none",
+  },
+}));
+
+const StyledForm = styled("form")(() => ({
+  width: "100%",
+  maxWidth: "400px",
+}));
+
+const SubmitButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
 }));
 
 const CoverImage = styled("img")({
-	width: "100%",
-	height: "80%",
-	objectFit: "cover",
+  width: "100%",
+  height: "80%",
+  objectFit: "cover",
 });
 
 const LoginPage: React.FC = () => {
-	const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	const handleMonashLogin = async () => {
-		try {
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: "google", // You can replace this with your Monash SSO logic if available
-				options: {
-					redirectTo: "http://localhost:5173/login",
-				},
-			});
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Handle login logic here
+    console.log({ email, password, rememberMe });
+  };
 
-			if (error) console.error("Error logging in with Monash SSO:", error);
-		} catch (error) {
-			console.log("OAuth error");
-		}
-	};
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "http://localhost:5173/login",
+        },
+      });
 
-	const handleApplicantLogin = () => {
-		navigate("/applicant-openings");
-	}
+      if (error) console.error("Error logging in with Google:", error);
+    } catch (error) {
+      console.log("OAuth error");
+    }
+  };
 
-	useEffect(() => {
-		// Check for OAuth errors on page load
-		const urlParams = new URLSearchParams(window.location.search);
-		const error = urlParams.get("error");
-		const errorDescription = urlParams.get("error_description");
+  useEffect(() => {
+    // Check for OAuth errors on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get("error");
+    const errorDescription = urlParams.get("error_description");
 
-		if (error) {
-			console.error(`OAuth Error: ${error}, Description: ${errorDescription}`);
+    if (error) {
+      console.error(`OAuth Error: ${error}, Description: ${errorDescription}`);
 
-			// clearing the url params
-			window.history.replaceState({}, document.title, window.location.pathname);
+      // clearing the url params
+      window.history.replaceState({}, document.title, window.location.pathname);
 
-			if (errorDescription === "Database error saving new user") {
-				setError(
-					"Oops! It looks like you're not using a Monash email. Please sign in with your official Monash University email address."
-				);
-			}
-		}
+      if (errorDescription === "Database error saving new user") {
+        setError(
+          "Oops! It looks like you're not using a Monash email. Please sign in with your official Monash University email address."
+        );
+      }
+    }
 
-		// Check if user is signed in on initial component render
-		const checkUser = async () => {
-			const {
-				data: { user },
-			} = await supabase.auth.getUser();
-			if (user) {
-				// Redirecting user to dashboard if user is signed in
-				navigate("/common-dashboard");
-			}
-		};
+    // Check if user is signed in on initial component render
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        // Redirecting user to dashboard if user is signed in
+        navigate("/dashboard");
+      }
+    };
 
-		checkUser();
-	}, [navigate]);
+    checkUser();
+  }, [navigate]);
 
-	return (
-		<FlexContainer>
-			<FormSection>
-				<Typography component="h1" variant="h5" gutterBottom>
-					Log In
-				</Typography>
-				<Typography variant="body2" color="textSecondary" gutterBottom>
-					Part of a student team? Log in with your Monash email to get started.
-				</Typography>
-				<DarkBlueButton variant="contained" onClick={handleMonashLogin} sx={{ mb: 7 }}>
-					LOG IN VIA MONASH SSO
-				</DarkBlueButton>
-
-				<Typography variant="body2" color="textSecondary" gutterBottom>
-					Want to start your application process? Click below.
-				</Typography>
-				<DarkBlueButton variant="contained" onClick={handleApplicantLogin} >
-					Apply for a position
-				</DarkBlueButton>
-
-				{error && (
-					<Alert severity="error" sx={{ mt: 2, width: "100%", justifyContent: "center" }}>
-						{error}
-					</Alert>
-				)}
-			</FormSection>
-			<ImageSection>
-				<CoverImage src={loginImage} alt="Login illustration" />
-			</ImageSection>
-		</FlexContainer>
-	);
+  return (
+    <FlexContainer>
+      <FormSection>
+        <StyledForm onSubmit={handleSubmit} className="">
+          <Typography component="h1" variant="h5" gutterBottom>
+            Log In
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Don't have an account? <Link href="/register">Create one!</Link>
+          </Typography>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Link href="#" variant="body2">
+            Forgot password?
+          </Link>
+          <br></br> {/* kingzel ECMA7 optimised*/}
+          <FormControlLabel
+            control={
+              <Checkbox
+                value="remember"
+                color="primary"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+            }
+            label="Remember me"
+          />
+          <SubmitButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+          >
+            LOG IN
+          </SubmitButton>
+          <GoogleButton
+            fullWidth
+            variant="outlined"
+            onClick={handleGoogleLogin}
+          >
+            Sign in with Google
+          </GoogleButton>
+          {error && (
+            <Alert
+              severity="error"
+              sx={{ mt: 2, width: "100%", justifyContent: "center" }}
+            >
+              {error}
+            </Alert>
+          )}
+        </StyledForm>
+      </FormSection>
+      <ImageSection>
+        <CoverImage src={loginImage} alt="Login illustration" />
+      </ImageSection>
+    </FlexContainer>
+  );
 };
 
 export default LoginPage;
