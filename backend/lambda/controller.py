@@ -167,6 +167,9 @@ def create_application(
 
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
+def get_profile(profile_id):
+    response = supabase.table('PROFILE').select("*").eq("id", profile_id).execute()
+    return response.data
 
 def get_availability(profileId):
     try:
@@ -273,6 +276,11 @@ def get_all_opens_for_round(round_id):
 def get_specific_open_for_round(round_id, opening_id):
     response = supabase.rpc('get_openings_with_application_count').select(
         "*").eq("id", opening_id).eq("recruitment_round_id", round_id).execute()
+
+    return response.data
+
+def get_opening(opening_id):
+    response = supabase.table('OPENING').select("*").eq("id", opening_id).execute()
 
     return response.data
 

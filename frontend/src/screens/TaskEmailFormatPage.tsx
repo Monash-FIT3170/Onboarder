@@ -62,7 +62,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
                 const openingResponse = await axios.get(
                     `http://127.0.0.1:3000/openings/${selectedOpening.id}`
                 );
-                setEmailBody(openingResponse.data);
+                setEmailBody(openingResponse.data[0].task_email_format);
             } catch (error) {
                 console.error("Error fetching applicant data:", error);
             } finally {
