@@ -1,5 +1,6 @@
 .aws-sam
 .env
+env.json
 
 # Logs
 logs
@@ -25,3 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+frontend/.env
