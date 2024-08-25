@@ -44,7 +44,7 @@ interface ResultProps {
     status: string;
     created_at: number;
     interview_date: string;
-    interviewer_assigned: string;
+    profile_email: string;
     interview_notes: string;
     interview_score: number;
 }
@@ -109,14 +109,11 @@ function Feedbacknote() {
                 navigate("/viewopen");
                 return;
             }
-            console.log("selectedApplicant?.application_id", selectedApplicant?.application_id);
             try {
                 const applicantResponse = await axios.get(
                     `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`
                 );
-                console.log("applicantResponse", applicantResponse.data);
                 setApplicantInformation(applicantResponse.data);
-                console.log("applicantInformation", applicantInformation);
             } catch (error) {
                 console.error("Error fetching applicant data:", error);
             } finally {
@@ -169,7 +166,7 @@ function Feedbacknote() {
                             disabled
                             id="outlined-disabled"
                             label="Interviewer"
-                            defaultValue={`${applicantInformation[0]?.interviewer_email}`}
+                            defaultValue={`${applicantInformation[0]?.profile_email}`}
                             variant="filled"
                             fullWidth
                         />
