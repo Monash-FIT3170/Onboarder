@@ -94,8 +94,8 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				let profile_id = authStore.profile;
-				// let profile_id = 1;
+				// let profile_id = authStore.profile;
+				let profile_id = 1;
 
 				if (!profile_id) {
 					profile_id = await authStore.fetchProfile();

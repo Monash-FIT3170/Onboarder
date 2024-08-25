@@ -72,7 +72,7 @@ function RecruitmentRoundDetailsPage() {
                     `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}`
                 );
                 const openingsResponse = await axios.get(
-                    `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings`
+                    `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings` // TODO THIS NEEDS TO GIVE MORE INFO
                 );
                 setRounds(roundsResponse.data);
                 setOpening(openingsResponse.data);

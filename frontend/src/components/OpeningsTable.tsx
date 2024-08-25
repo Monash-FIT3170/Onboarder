@@ -24,7 +24,7 @@ export interface openingsResultProps {
   status: string;
   required_skills: string[];
   desired_skills: string[];
-  application_count: number;
+  applications_count: number;
   applications_pending_review: number;
 }
 
@@ -35,7 +35,7 @@ interface OpeningsTableProps {
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    application_count: number
+    applications_count: number
   ) => void;
 }
 
@@ -46,7 +46,7 @@ const generateRowFunction = (
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    application_count: number
+    applications_count: number
   ) => void
 ) => {
   return results.map((result) => {
@@ -58,10 +58,10 @@ const generateRowFunction = (
         <TableCell component="th" scope="row">
           {result.title}
         </TableCell>
-        <TableCell>{result.application_count}</TableCell>
-        <TableCell>
+        <TableCell>{result.applications_count}</TableCell>
+        {/* <TableCell>
           {result.applications_pending_review} Applications Pending Review
-        </TableCell>
+        </TableCell> */}
         <TableCell>
           <Button
             variant="contained"
@@ -71,7 +71,7 @@ const generateRowFunction = (
                 result.recruitment_round_id,
                 result.student_team_name,
                 result.title,
-                result.application_count
+                result.applications_count
               )
             }
           >
@@ -91,7 +91,7 @@ export function OpeningsTable(props: OpeningsTableProps) {
           <TableHead>
             <TableCell> Opening Name </TableCell>
             <TableCell> Applications Received </TableCell>
-            <TableCell> Status of Applications </TableCell>
+            {/* <TableCell> Status of Applications </TableCell> */}
           </TableHead>
           <TableBody>
             {generateRowFunction(props.results, props.viewHandler)}
