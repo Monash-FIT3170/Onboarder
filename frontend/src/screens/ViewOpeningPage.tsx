@@ -120,6 +120,11 @@ function ViewOpenPage() {
     navigate("/recruitment-details-page");
   }
 
+  const respond = ()=>{
+    clearSelectedOpening();
+    navigate("/view-interview-allocation");
+  }
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -139,7 +144,8 @@ function ViewOpenPage() {
           <Button variant="outlined">CONFIGURE EMAIL</Button>
           <Button variant="contained" sx={{ ml: 2 }} onClick={()=>{
             console.log("Navigating to /view-interview-allocation");
-            navigate("/view-interview-allocation")}}>VIEW CANDIDATE SUBMISSION STATUS</Button>
+            respond();
+           }}>VIEW CANDIDATE SUBMISSION STATUS</Button>
         </div>
       </div>
 

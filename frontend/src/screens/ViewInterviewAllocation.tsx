@@ -115,23 +115,28 @@ const ViewInterviewAllocation = () => {
         (app) => !app.candidate_availability
     ).length;
 
-    return (
-        <>
-            <TitleWrapper>
-                <Typography variant="h4">Candiate Submission Status</Typography>
-            </TitleWrapper>
-            <PaddingBox></PaddingBox>
-            <Box display="flex" alignItems="center">
-                <IconButton onClick={() => handleBack()}>
-                    <BackIcon />
-                </IconButton>
+  const respond = ()=>{
+    // clearSelectedOpening();
+    navigate("/viewopen");
+  }
 
-                <Typography variant="h6" sx={{ ml: 2 }}>
-                    {selectedOpening?.title}
-                </Typography>
-            </Box>
-            <PaddingBox>
-                <PaddingBox></PaddingBox>
+  return (
+    <>
+      <TitleWrapper>
+        <Typography variant="h4">Candiate Submission Status</Typography>
+      </TitleWrapper>
+      <PaddingBox></PaddingBox>
+      <Box display="flex" alignItems="center">
+      <IconButton
+           onClick={() =>  navigate("/viewopen") }
+        >
+          <BackIcon />
+        </IconButton>
+      
+      <Typography variant="h6" sx={{ ml: 2 }}>Operating: Events Officer</Typography>
+      </Box>
+      <PaddingBox>
+      <PaddingBox></PaddingBox>
 
                 <TableContainer>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
