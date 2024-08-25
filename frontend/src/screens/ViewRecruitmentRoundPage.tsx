@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   TextField,
   Button,
   Table,
@@ -131,16 +132,53 @@ const ViewRecruitmentRoundPage = () => {
   }, []);
 
   const handleViewRound = (id: number) => {
-    setRecruitmentDetails({roundId: id, roundDeadline: null, roundName: null})
+    setRecruitmentDetails({
+      roundId: id,
+      roundDeadline: null,
+      roundName: null,
+    });
     navigate("/recruitment-details-page");
+  };
+
+  const handleViewTeamMembers = () => {
+    navigate("/view-team-members");
+  };
+
+  const handleAllocateTeamLeads = () => {
+    // Implement logic to allocate team leads
+    // This might involve navigating to a new page or opening a modal
   };
 
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>
-        <Typography variant="h4" style={styles.studentTeam}>
-          Recruitment Rounds
-        </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
+          <Typography variant="h4" style={styles.studentTeam}>
+            Recruitment Rounds
+          </Typography>
+          <Box>
+            <Button
+              variant="outlined"
+              color="primary"
+              style={{ marginRight: "10px" }}
+              onClick={handleViewTeamMembers}
+            >
+              View Team Members
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAllocateTeamLeads}
+            >
+              Allocate Team Leads
+            </Button>
+          </Box>
+        </Box>
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>

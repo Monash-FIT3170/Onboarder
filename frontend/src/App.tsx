@@ -15,7 +15,7 @@ import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
-import InviteTeamMembers from "./screens/InviteTeamMembers";
+import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
 import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 
@@ -44,6 +44,7 @@ function App() {
             />
             <Route path="/create-opening" element={<CreateOpeningPage />} />
             <Route path="/viewopen" element={<ViewOpenPage />} />
+            <Route path="/view-team-members" element={<ViewTeamMemberPage />} />
             <Route path="/applicant-openings" element={<ApplicantOpenings />} />
             <Route
               path="/application-submission"
