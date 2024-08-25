@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
   }, [setStudentTeams, authStore]);
 
   const handleInterviewCardClick = () => {
-    navigate("/interviews");
+    navigate("/availability-calendar-user");
   };
 
   const handleAddTeamClick = () => {
