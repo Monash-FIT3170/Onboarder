@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 
-export interface commonDashboardResultProps {
+export interface StudentTeamResultProps {
     id: number; // user id
     student_team_id: number;
     student_team_name: string;
@@ -19,23 +19,19 @@ export interface commonDashboardResultProps {
     student_team_owner: string;
 }
 
-interface commonDashboardTableProps {
-    results: commonDashboardResultProps[];
+interface DashboardTableProps {
+    results: StudentTeamResultProps[];
 }
 
 const generateRowFunction = (
-    results: commonDashboardResultProps[],
+    results: StudentTeamResultProps[],
     navigate: ReturnType<typeof useNavigate>
 ) => {
     const authStore = useAuthStore();
 
     const handleDeleteOrLeave = (u_role: string, u_id: number, t_id: number) => {
         if (u_role === "Owner") {
-            
-
         } else {
-            
-
         }
     };
 
@@ -51,13 +47,18 @@ const generateRowFunction = (
                     {result.student_team_name}
                 </TableCell>
                 <TableCell>{result.user_team_role}</TableCell>
-                <TableCell>{result.student_team_owner}</TableCell> {/* TODO add logic to say "You" if the user is the owner */}
+                <TableCell>{result.student_team_owner}</TableCell>{" "}
+                {/* TODO add logic to say "You" if the user is the owner */}
                 <TableCell>
                     <Button
                         variant="contained"
                         style={{ padding: 0 }}
                         onClick={() => {
-                            handleDeleteOrLeave(result.user_team_role, result.id, result.student_team_id);
+                            handleDeleteOrLeave(
+                                result.user_team_role,
+                                result.id,
+                                result.student_team_id
+                            );
                         }}
                     >
                         {result.user_team_role === "Owner" ? "DELETE" : "LEAVE"}
@@ -66,7 +67,11 @@ const generateRowFunction = (
                         variant="contained"
                         style={{ padding: 0 }}
                         onClick={() => {
-                            handleView(result.student_team_id, result.student_team_name, result.user_team_role);
+                            handleView(
+                                result.student_team_id,
+                                result.student_team_name,
+                                result.user_team_role
+                            );
                         }}
                     >
                         VIEW ROUNDS
@@ -77,7 +82,7 @@ const generateRowFunction = (
     });
 };
 
-export function CommonDashboardTable(props: commonDashboardTableProps) {
+export function CommonDashboardTable(props: DashboardTableProps) {
     const navigate = useNavigate();
 
     return (

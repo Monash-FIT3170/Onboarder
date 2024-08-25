@@ -1,84 +1,103 @@
 import {
+  TableContainer,
   TableHead,
   Table,
   TableBody,
   TableCell,
   TableRow,
   Button,
-  Box,
+  Paper,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../util/stores/authStore";
 
 export interface StudentTeamResultProps {
-  team_name: string;
-  role: string;
-  owner_info: string;
+  id: number; // user id
+  student_team_id: number;
+  student_team_name: string;
+  user_team_role: string;
+  student_team_owner: string;
 }
 
 export interface DashboardTableProps {
   results: StudentTeamResultProps[];
 }
 
-const ActionCell = styled(TableCell)({
-  display: "flex",
-  gap: "4px",
-  justifyContent: "flex-end",
-});
+const generateRowFunction = (
+  results: StudentTeamResultProps[],
+  navigate: ReturnType<typeof useNavigate>
+) => {
+  const authStore = useAuthStore();
 
-const HeaderCell = styled(TableCell)({
-  fontWeight: "bold",
-});
+  const handleDeleteOrLeave = (u_role: string, u_id: number, t_id: number) => {
+      if (u_role === "Owner") {
+      } else {
+      }
+  };
 
-const TableWidth = styled(Table)({
-  width: "85%",
-});
+  const handleView = (t_id: number, t_name: string, user_role: string) => {
+      authStore.updateTeamAndRole(t_id, t_name, user_role);
+      navigate("/viewrecruitmentround");
+  };
 
-const generateRowFunction = (results: StudentTeamResultProps[]) => {
   return results.map((result) => {
-    return (
-      <TableRow key={result.team_name}>
-        <TableCell component="th" scope="row">
-          {result.team_name}
-        </TableCell>
-        <TableCell>{result.role}</TableCell>
-        <TableCell>{result.owner_info}</TableCell>
-        <ActionCell>
-          <Button
-            variant="contained"
-            onClick={() => {
-              console.log("Leave team clicked");
-            }}
-          >
-            Leave Team
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              console.log("View rounds clicked");
-            }}
-          >
-            View Rounds
-          </Button>
-        </ActionCell>
-      </TableRow>
-    );
+      return (
+          <TableRow key={result.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+              <TableCell component="th" scope="row">
+                  {result.student_team_name}
+              </TableCell>
+              <TableCell>{result.user_team_role}</TableCell>
+              <TableCell>{result.student_team_owner}</TableCell>{" "}
+              {/* TODO add logic to say "You" if the user is the owner */}
+              <TableCell>
+                  <Button
+                      variant="contained"
+                      style={{ padding: 0 }}
+                      onClick={() => {
+                          handleDeleteOrLeave(
+                              result.user_team_role,
+                              result.id,
+                              result.student_team_id
+                          );
+                      }}
+                  >
+                      {result.user_team_role === "Owner" ? "DELETE" : "LEAVE"}
+                  </Button>
+                  <Button
+                      variant="contained"
+                      style={{ padding: 0 }}
+                      onClick={() => {
+                          handleView(
+                              result.student_team_id,
+                              result.student_team_name,
+                              result.user_team_role
+                          );
+                      }}
+                  >
+                      VIEW ROUNDS
+                  </Button>
+              </TableCell>
+          </TableRow>
+      );
   });
 };
 
 export function DashboardTable(props: DashboardTableProps) {
+  const navigate = useNavigate();
+
   return (
-    <Box display={"flex"} justifyContent={"center"}>
-      <TableWidth aria-label="dashboard_table">
-        <TableHead>
-          <TableRow>
-            <HeaderCell>Team Name</HeaderCell>
-            <HeaderCell>Your Role</HeaderCell>
-            <HeaderCell>Owner</HeaderCell>
-            <HeaderCell></HeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{generateRowFunction(props.results)}</TableBody>
-      </TableWidth>
-    </Box>
+      <>
+          <TableContainer component={Paper}>
+              <Table aria-label="openings_table">
+                  <TableHead>
+                      <TableCell> Team Name</TableCell>
+                      <TableCell> Your Role</TableCell>
+                      <TableCell> Owner </TableCell>
+                      <TableCell> Actions </TableCell>
+                  </TableHead>
+                  <TableBody>{generateRowFunction(props.results, navigate)}</TableBody>
+              </Table>
+          </TableContainer>
+      </>
   );
 }
