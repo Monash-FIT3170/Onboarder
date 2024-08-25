@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 const HeadWrapper = styled.div`
     display: flex;
@@ -57,7 +58,7 @@ function RecruitmentRoundDetailsPage() {
     const setSelectedOpening = useOpeningStore((state) => state.setSelectedOpening);
 
     const clearRecruitmentDetails = useRecruitmentStore((state) => state.clearRecruitmentDetails);
-
+    const authStore = useAuthStore();
     useEffect(() => {
         const fetchData = async () => {
             if (recruitmentDetails.roundId === null) {
@@ -151,7 +152,7 @@ function RecruitmentRoundDetailsPage() {
                         {loading ? (
                             <Skeleton width={200} />
                         ) : (
-                            `${rounds[0]?.student_team_name} ${rounds[0]?.id}`
+                            `${authStore.team_name} ${rounds[0]?.id}`
                         )}
                     </Typography>
                 </TitleWrapper>
