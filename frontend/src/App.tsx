@@ -13,46 +13,37 @@ import ApplicantOpenings from "./screens/ApplicantOpenings";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
 // import CreateStudentTeam from "./screens/CreateStudentTeamModal";
 import theme from "./assets/Theme";
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <AppBarOnBoarder />
-      <Box component={"section"} sx={{ padding: "20px" }}>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
-            <Route
-              path="/viewrecruitmentround"
-              element={<ViewRecruitmentRoundPage />}
-            />
-            <Route
-              path="/addrecruitmentround"
-              element={<AddRecruitmentRoundPage />}
-            />
-            <Route
-              path="/recruitment-details-page"
-              element={<RecruitmentRoundDetailsPage />}
-            />
-            <Route path="/create-opening" element={<CreateOpeningPage />} />
-            <Route path="/viewopen" element={<ViewOpenPage />} />
-            <Route path="/applicant-openings" element={<ApplicantOpenings />} />
-            <Route
-              path="/application-submission"
-              element={<ApplicationSubmissionPage />}
-            />
-            <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
-          </Route>
-        </Routes>
-      </Box>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider theme={theme}>
+			<AppBarOnBoarder />
+			<Box component={"section"} sx={{ padding: "20px" }}>
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/login" element={<LoginPage />} />
+					<Route element={<ProtectedRoute />}>
+						<Route path="/dashboard" element={<Dashboard />} />
+						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
+						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
+						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
+						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
+						<Route path="/create-opening" element={<CreateOpeningPage />} />
+						<Route path="/viewopen" element={<ViewOpenPage />} />
+						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
+						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
+						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
+						<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+					</Route>
+				</Routes>
+			</Box>
+		</ThemeProvider>
+	);
 }
 
 export default App;
