@@ -119,7 +119,7 @@ const ViewRecruitmentRoundPage = () => {
       try {
         const response = await axios.get(API_URL);
 
-        setData(response.data[0]);
+        setData(response.data);
       } catch (error) {
         console.error("There was an error!", error);
       } finally {
@@ -144,16 +144,7 @@ const ViewRecruitmentRoundPage = () => {
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>
-            {Array.isArray(data) &&
-              data
-                .map((item: any) =>
-                  item.student_team_name.length > 0 ? (
-                    <h3>{item.student_team_name}</h3>
-                  ) : (
-                    <h3>Name Not Found</h3>
-                  )
-                )
-                .at(0)}
+                <h3>{authStore.team_name}</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
