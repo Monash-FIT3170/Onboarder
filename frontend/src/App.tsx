@@ -42,11 +42,12 @@ function App() {
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
 						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
-						<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+						<Route path="/feedbacknote" element={<Feedbacknote />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
 					</Route>
+					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
 
-          <Route path="/feedbacknote" element={<Feedbacknote />} />
+
 				</Routes>
         
 			</Box>

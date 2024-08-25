@@ -49,7 +49,7 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 400px)",
+    height: "calc(100vh - 600px)",
     overflowY: "auto",
     display: "block",
   },
@@ -154,7 +154,7 @@ const ViewRecruitmentRoundPage = () => {
                 Current Recruitment Rounds: Showing{" "}
                 {
                   data.filter(
-                    (item: any) => item.status == "I" || item.status == "R"
+                    (item: any) => item.status == "I" || item.status == "A"
                   ).length
                 }
               </h4>
@@ -265,7 +265,7 @@ const ViewRecruitmentRoundPage = () => {
         </section>
         <section style={styles.section}>
           <h4>
-            Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of{" "}
+            Archived Recruitment Rounds: Showing {data.filter((item: any) => item.status == "R").length < 3 ? data.filter((item: any) => item.status == "R").length  : SHOW_ARCHIVED_AMOUNT} of{" "}
             {data.filter((item: any) => item.status == "R").length}
           </h4>
           <TableContainer component={Paper}>
