@@ -1,8 +1,7 @@
-import json
-
-from typing import Callable
 
 import controller
+from typing import Callable
+import json
 
 routes = dict()
 
@@ -57,6 +56,8 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/applications/{applicationId}/accept', ['OPTIONS'])
 @route('/applications/{applicationId}/reject', ['OPTIONS'])
 @route('/recruitmentRounds/{roundId}/status', ['OPTIONS'])
+@route('/sendInterviewEmails/{openingId}', ['OPTIONS'])
+@route('/updateAvailability/{applicationId}', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -68,8 +69,61 @@ def options_handler(_={}, __={}, ___={}):
         }
     }
 
+# STUDENT TEAMS
+
+@route('/studentTeams', ['GET'])
+@route('/studentTeams/{profileId}', ['GET'])
+def get_student_teams(path_params={}, _={}, __={}):
+    profile_id = None
+
+    print("REACEHD ROUTER")
+
+    if path_params:
+        profile_id = path_params.get('profileId')
+    if profile_id:
+        data = controller.get_student_teams(profile_id)
+    else:
+        data = controller.get_all_student_teams()
+
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/studentTeams', ['POST'])
+def delete_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.delete_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 # RECRUITMENT ROUNDS
+
+@route('/studentTeams/{studentTeamId}/recruitmentRounds', ['GET'])
+def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_rec_rounds_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 @route('/recruitmentRounds', ['GET'])
 @route('/recruitmentRounds/{roundId}', ['GET'])
@@ -466,6 +520,108 @@ def rejectApplication(path_params={}, __={}, ___={}):
         'body': json.dumps({
             'success': True,
             'msg': f"Application {application_id} rejected"
+        }),
+        'headers': HEADERS
+    }
+    return response
+
+# Email
+
+
+@route('/sendInterviewEmails/{openingId}', ['POST'])
+def send_email(path_params={}, querystring_params={}, body={}):
+    try:
+        opening_id = path_params.get('openingId')
+
+        print(opening_id, "opening_id")
+
+        data = controller.send_interview_email(opening_id)
+        print(data, "data")
+        data = json.dumps(data)
+
+        response = {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'msg': data
+            }),
+            'headers': HEADERS
+        }
+        return response
+    except Exception as e:
+        error_message = f"An error occurred: {str(e)}"
+        response = {
+            'statusCode': 500,
+            'body': json.dumps({
+                'success': False,
+                'error': error_message
+            }),
+            'headers': HEADERS
+        }
+        return response
+
+
+@route('/decrypt_id/{id}', ['GET'])
+def decrypt_id(path_params={}, _={}, __={}):
+    id = path_params.get('id')
+    result = controller.decrypt_id(id)
+
+    if result is None:
+        raise Exception(f"Could not decrypt ID {id}")
+
+    response = {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': result
+        }),
+        'headers': HEADERS
+    }
+    return response
+
+
+@route('/updateAvailability/{applicationId}', ['POST'])
+def updateAvailability(path_params={}, querystring_params={}, body={}):
+    if not body:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+        return response
+
+    # Parse the request body as JSON
+    try:
+        data = json.loads(body)
+    except ValueError:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+        return response
+
+    required_fields = ['candidate_availablity']
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        response = {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+        return response
+
+    applicationId = path_params.get('applicationId')
+    candidate_availablity = data['candidate_availablity']
+
+    controller.update_availability(applicationId, candidate_availablity)
+
+    response = {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'msg': "Availability updated"
         }),
         'headers': HEADERS
     }
