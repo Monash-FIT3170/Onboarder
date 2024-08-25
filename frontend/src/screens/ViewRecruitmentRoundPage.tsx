@@ -14,7 +14,9 @@ import {
   Typography,
   TableSortLabel,
   Skeleton,
+  IconButton,
 } from "@mui/material";
+import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -50,7 +52,7 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 400px)",
+    height: "calc(100vh - 650px)",
     overflowY: "auto",
     display: "block",
   },
@@ -149,6 +151,10 @@ const ViewRecruitmentRoundPage = () => {
     // This might involve navigating to a new page or opening a modal
   };
 
+  const handleBack = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>
@@ -158,9 +164,14 @@ const ViewRecruitmentRoundPage = () => {
           justifyContent="space-between"
           mb={2}
         >
-          <Typography variant="h4" style={styles.studentTeam}>
-            Recruitment Rounds
-          </Typography>
+          <Box display="flex" alignItems="baseline">
+            <IconButton onClick={handleBack} sx={{ mr: 2 }}>
+              <BackIcon />
+            </IconButton>
+            <Typography variant="h4" style={styles.studentTeam}>
+              Recruitment Rounds
+            </Typography>
+          </Box>
           <Box>
             <Button
               variant="outlined"
@@ -182,7 +193,7 @@ const ViewRecruitmentRoundPage = () => {
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>
-                <h3>{authStore.team_name}</h3>
+            <h3>{authStore.team_name}</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>

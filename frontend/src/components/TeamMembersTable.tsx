@@ -11,50 +11,52 @@ import {
 } from "@mui/material";
 
 export interface TeamMember {
-  name: string;
   email: string;
   role: string;
+  profile_id: number;
 }
 
 interface TeamMembersTableProps {
   members: TeamMember[];
-  onRemove: (index: number) => void;
+  onRemove: (profileId: number) => void;
+  currentUserProfileId: number | null;
+  userRole: string | null;
 }
 
 const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
   members,
   onRemove,
+  currentUserProfileId,
+  userRole,
 }) => {
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
             <TableCell>Email</TableCell>
             <TableCell>Role</TableCell>
-            <TableCell></TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {members.map((member, index) => (
-            <TableRow key={index}>
-              <TableCell>{member.name}</TableCell>
+          {members.map((member) => (
+            <TableRow key={member.profile_id}>
               <TableCell>{member.email}</TableCell>
               <TableCell>{member.role}</TableCell>
               <TableCell>
-                {member.role === "Owner" ? (
+                {member.profile_id === currentUserProfileId ? (
                   "Current User"
-                ) : (
+                ) : userRole === "O" && member.role !== "Owner" ? (
                   <Button
                     variant="contained"
                     color="error"
                     size="small"
-                    onClick={() => onRemove(index)}
+                    onClick={() => onRemove(member.profile_id)}
                   >
                     REMOVE
                   </Button>
-                )}
+                ) : null}
               </TableCell>
             </TableRow>
           ))}
