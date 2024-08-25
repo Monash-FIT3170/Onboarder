@@ -18,10 +18,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TaskEmailFormatPage from "./screens/TaskEmailFormatPage";
 import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
-// import CreateStudentTeam from "./screens/CreateStudentTeamModal";
+import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
 import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
-import Feedbacknote from "./screens/FeedbackNote"
+import Feedbacknote from "./screens/FeedbackNote";
 import ViewTeamLeads  from "./screens/ViewTeamLeads";
 
 function App() {
