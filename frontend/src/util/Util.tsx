@@ -23,11 +23,11 @@ export const getStatusText = (status: string): string => {
 export const getAppStatusText = (status: string): string => {
 	switch (status) {
 		case "A":
-			return "Accepted";
+			return "Applicant";
+		case "C":
+			return "Candidate";
 		case "R":
-			return "Rejected";
-		case "U":
-			return "Unassessed";
+			return "Recruit";
 		default:
 			return "Unknown";
 	}
