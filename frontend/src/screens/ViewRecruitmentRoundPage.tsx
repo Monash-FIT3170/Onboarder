@@ -134,6 +134,9 @@ const ViewRecruitmentRoundPage = () => {
     setRecruitmentDetails({roundId: id, roundDeadline: null, roundName: null})
     navigate("/recruitment-details-page");
   };
+  const handleAllocateTeamLeads = () => {
+    navigate("/viewTeamLeads");
+  };
 
   return (
     <div style={styles.recruitmentRoundPage}>
@@ -146,6 +149,13 @@ const ViewRecruitmentRoundPage = () => {
             <div></div>
                 <h3>{authStore.team_name}</h3>
           </Grid>
+          <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAllocateTeamLeads}
+            >
+              Allocate Team Leads
+            </Button>
         </Grid>
         <section style={styles.section}>
           <Grid container alignItems="center" justifyContent="space-between">
