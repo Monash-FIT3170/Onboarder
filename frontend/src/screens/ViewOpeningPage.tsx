@@ -33,7 +33,7 @@ export interface SingleApplicationProps {
   major_enrolled: string;
   cover_letter: string;
   skills: string[];
-  accepted: string;
+  status: string;
   created_at: string;
 }
 
@@ -77,7 +77,7 @@ function ViewOpenPage() {
       <TableRow key={application.id}>
         <TableCell>{application.name}</TableCell>
         <TableCell>{application.email}</TableCell>
-        <TableCell>{getAppStatusText(application.accepted)}</TableCell>
+        <TableCell>{getAppStatusText(application.status)}</TableCell>
         <TableCell>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
@@ -120,6 +120,11 @@ function ViewOpenPage() {
     navigate("/recruitment-details-page");
   }
 
+  const respond = ()=>{
+    clearSelectedOpening();
+    navigate("/view-interview-allocation");
+  }
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -134,6 +139,14 @@ function ViewOpenPage() {
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
           {selectedOpening?.title}
         </Typography>
+
+        <div style={{ marginLeft: "auto" }}>
+          <Button variant="outlined">CONFIGURE EMAIL</Button>
+          <Button variant="contained" sx={{ ml: 2 }} onClick={()=>{
+            console.log("Navigating to /view-interview-allocation");
+            respond();
+           }}>VIEW CANDIDATE SUBMISSION STATUS</Button>
+        </div>
       </div>
 
       {/* creates a table showing all the number of applications for each recruitment round */}

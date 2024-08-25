@@ -17,6 +17,7 @@ import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
 import InviteTeamMembers from "./screens/InviteTeamMembers";
 import theme from "./assets/Theme";
+import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
             <Route
               path="/viewrecruitmentround"
               element={<ViewRecruitmentRoundPage />}
@@ -42,10 +44,6 @@ function App() {
             />
             <Route path="/create-opening" element={<CreateOpeningPage />} />
             <Route path="/viewopen" element={<ViewOpenPage />} />
-            <Route
-              path="/invite-team-members"
-              element={<InviteTeamMembers />}
-            />
             <Route path="/applicant-openings" element={<ApplicantOpenings />} />
             <Route
               path="/application-submission"
@@ -59,6 +57,10 @@ function App() {
             <Route
               path="/availability-calendar/:id"
               element={<AvailabilityCalendar />}
+            />
+            <Route
+              path="/view-interview-allocation"
+              element={<ViewInterviewAllocation />}
             />
           </Route>
         </Routes>

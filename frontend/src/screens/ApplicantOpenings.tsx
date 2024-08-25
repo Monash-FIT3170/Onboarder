@@ -21,6 +21,7 @@ import {
   applicantOpeningResultProps,
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
+import { useAuthStore } from "../util/stores/authStore";
 
 const TitleWrapper = styled.div`
   display: flex;

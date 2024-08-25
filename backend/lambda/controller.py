@@ -5,7 +5,6 @@ import ssl
 from email.message import EmailMessage
 from cryptography.fernet import Fernet
 
-
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
@@ -14,30 +13,62 @@ supabase: Client = create_client(url, key)
 
 
 def create_student_team(
-    name
+    name,
+    description
 ):
     data = {
-        "name": name
+        "name": name,
+        "description": description
     }
 
     response = supabase.table('STUDENT_TEAM').insert(data).execute()
 
     return response.data
 
+def delete_student_team(student_team_id):
+    response = supabase.table('STUDENT_TEAM').delete().eq("id", student_team_id).execute()
+    return response.data
+
+def add_profile_team_info(profile_id, student_team_id, role):
+    data = {
+        "profile_id": profile_id,
+        "student_team_id": student_team_id,
+        "role": role
+    }
+
+    try:
+        response = supabase.table('PROFILE_TEAM_INFO').insert(data).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+    
+def update_availability(profileId, availability):
+    data = {
+        "interview_availability": availability
+    }
+
+    try:
+        response = supabase.table('PROFILE').update(data).eq("id", profileId).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+
 
 def create_rec_round(
+    student_team_id,
     deadline,
     semester,
     year,
-    student_team_id,
     status
 ):
-    # status can only be (A)ctive or (I)nactive
+    # status can only be (A)ctive, (I)nactive, or A(R)chived
     data = {
+        "student_team_id": student_team_id,
         "deadline": deadline,
         "semester": semester,
         "year": year,
-        "student_team_id": student_team_id,
         "status": status
     }
 
@@ -52,18 +83,32 @@ def create_opening(
     description,
     status,
     required_skills,
-    desired_skills
+    desired_skills,
+    task_email_format,
+    task_enabled,
 ):
-    # status can only be (A)ctive or (I)nactive
+    # status can only be (A)ctive, (I)nactive, or A(R)chived
     data = {
         "recruitment_round_id": recruitment_round_ID,
         "title": title,
         "description": description,
         "status": status,
         "required_skills": required_skills,
-        "desired_skills": desired_skills
+        "desired_skills": desired_skills,
+        "task_email_format": task_email_format,
+        "task_enabled": task_enabled,
     }
     response = supabase.table('OPENING').insert(data).execute()
+
+    return response.data
+
+def allocate_member_to_opening(opening_id, profile_id):
+    data = {
+        "opening_id": opening_id,
+        "profile_id": profile_id
+    }
+
+    response = supabase.table('TEAM_LEAD_ASSIGNMENT').insert(data).execute()
 
     return response.data
 
@@ -79,6 +124,10 @@ def create_application(
     major_enrolled,
     cover_letter,
     skills,
+    candidate_availability,
+    interview_date,
+    interview_notes,
+    profile_id
 ):
     data = {
         "opening_id": int(openingId),
@@ -90,7 +139,11 @@ def create_application(
         "course_enrolled": course_enrolled,
         "major_enrolled": major_enrolled if major_enrolled else None,
         "cover_letter": cover_letter if cover_letter else None,
-        "skills": skills
+        "skills": skills,
+        "candidate_availability": candidate_availability,
+        "interview_date": interview_date,
+        "interview_notes": interview_notes,
+        "profile_id": profile_id
     }
     response = supabase.table('APPLICATION').insert(data).execute()
 
@@ -98,32 +151,77 @@ def create_application(
 
 # ---------------- ALL GETTER FUNCTIONS ----------------
 
+def get_availability(profileId):
+    try:
+        response = supabase.table('PROFILE').select("interview_availability").eq("id", profileId).execute()
+        return response.data
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
+
 # STUDENT TEAM GETTERS
-
-
 def get_all_student_teams():
     response = supabase.table('STUDENT_TEAM').select("*").execute()
     return response.data
 
-
 def get_specific_student_team(student_team_id):
-    response = supabase.table('STUDENT_TEAM').select(
-        "*").eq("id", student_team_id).execute()
+    response = supabase.table('STUDENT_TEAM') \
+        .select("*") \
+        .eq("id", student_team_id) \
+        .execute()
 
     return response.data
+
+def get_student_teams(profile_id):
+    try: 
+        response = supabase.table('student_teams_with_roles_and_owners') \
+            .select("*") \
+            .eq("profile_id", profile_id) \
+            .execute()
+    except Exception as e:
+        print(e)
+        return e
+
+    return response.data
+
+def get_all_members_of_student_team(student_team_id):
+    response = supabase.table('PROFILE_TEAM_INFO') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
+def get_allocated_members_for_student_team(student_team_id):
+    response = supabase.rpc('get_allocated_members_for_student_team') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
+def get_rec_rounds_for_student_team(student_team_id):
+    response = supabase.table('RECRUITMENT_ROUND') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
+
 
 # RECRUITMENT ROUND GETTERS
 
 
 def get_all_rec_rounds():
-    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
-        "student_team_id", 4).execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count').execute()
+
     return response.data
 
 
 def get_specific_rec_round(round_id):
-    response = supabase.rpc('get_all_rec_rounds_with_openings_count').eq(
-        "id", round_id).execute()
+    response = supabase.rpc('get_all_rec_rounds_with_openings_count') \
+        .eq("id", round_id) \
+        .execute()
 
     return response.data
 
@@ -131,16 +229,18 @@ def get_specific_rec_round(round_id):
 
 
 def get_all_openings():
-    response = supabase.rpc(
-        'get_openings_with_application_count').select("*").eq(
-        "student_team_id", 4).execute()
+    response = supabase.rpc('get_openings_with_application_count') \
+        .select("*") \
+        .execute()
 
     return response.data
 
 
 def get_all_opens_for_round(round_id):
-    response = supabase.rpc('get_openings_with_application_count').select(
-        "*").eq("recruitment_round_id", round_id).execute()
+    response = supabase.rpc('get_openings_with_application_count') \
+        .select("*") \
+        .eq("recruitment_round_id", round_id) \
+        .execute()
 
     return response.data
 

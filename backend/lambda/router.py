@@ -49,7 +49,10 @@ def route(path: str, methods: list[str]) -> Callable:
 
 
 # OPTIONS HANDLER
-
+@route('/studentTeams', ['OPTIONS'])
+@route('/studentTeams/{profileId}', ['OPTIONS'])
+@route('/profileTeamInfo', ['OPTIONS'])
+@route('/profileTeamInfo/{studentTeamId}', ['OPTIONS'])
 @route('/recruitmentRounds', ['OPTIONS'])
 @route('/recruitmentRounds/{roundId}/openings', ['OPTIONS'])
 @route('/openings/{openingId}/applications', ['OPTIONS'])
@@ -70,7 +73,313 @@ def options_handler(_={}, __={}, ___={}):
     }
 
 
+@route('/profile/{profileId}/availability', ['GET'])
+def get_availability(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_availability(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/profile/{profileId}/availability', ['POST'])
+def update_availability(path_params={}, _={}, body={}):
+    profile_id = path_params.get('profileId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['availability']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        availability = data['availability']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_availability(profile_id, availability)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+# STUDENT TEAMS
+
+@route('/studentTeams', ['GET'])
+@route('/studentTeams/{profileId}', ['GET'])
+def get_student_teams(path_params={}, _={}, __={}):
+    profile_id = None
+
+    if path_params:
+        profile_id = path_params.get('profileId')
+    if profile_id:
+        data = controller.get_student_teams(profile_id)
+    else:
+        data = controller.get_all_student_teams()
+
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/studentTeams', ['POST'])
+def create_student_team(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'team_name', 'team_description']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        team_name = data['team_name']
+        team_description = data['team_description']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_student_team(team_name, team_description)
+
+    print(response, "response")
+    
+    # Create entry in profile_team_info table
+    student_team_id = response[0].get('id')
+    role = 'O'
+    controller.add_profile_team_info(profile_id, student_team_id, role)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+
+@route('/studentTeams/{studentTeamId}', ['POST'])
+def delete_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.delete_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/profileTeamInfo', ['POST'])
+def add_profile_team_info(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'student_team_id', 'role']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        student_team_id = data['student_team_id']
+        role = data['role']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.add_profile_team_info(profile_id, student_team_id, role)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/profileTeamInfo/{studentTeamId}', ['GET'])
+def get_team_members(path_params={}, _={}, __={}):
+    # parameter validation
+    if path_params:
+        student_team_id = path_params.get('studentTeamId')
+    if student_team_id:
+        data = controller.get_all_members_of_student_team(student_team_id)
+    else:
+        pass
+
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
+
+
 # RECRUITMENT ROUNDS
+
+@route('/studentTeams/{studentTeamId}/recruitmentRounds', ['GET'])
+def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_rec_rounds_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/studentTeams/{studentTeamId}/allocations', ['POST'])
+def allocate_member_to_opening(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        student_team_id = path_params.get('studentTeamId')
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'opening_id']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        opening_id = data['opening_id']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.allocate_member_to_opening(profile_id, opening_id)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/studentTeams/{studentTeamId}/allocations', ['GET'])
+def get_allocations_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_allocated_members_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 @route('/recruitmentRounds', ['GET'])
 @route('/recruitmentRounds/{roundId}', ['GET'])
