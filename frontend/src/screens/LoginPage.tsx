@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Button,
-	TextField,
 	Typography,
-	Link,
-	Checkbox,
-	FormControlLabel,
 	Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -28,15 +24,21 @@ const FormSection = styled(Box)(({ theme }) => ({
 	display: "flex",
 	flexDirection: "column",
 	justifyContent: "center",
-	alignItems: "center",
-	padding: theme.spacing(4),
+	padding: theme.spacing(30),
 	[theme.breakpoints.up("md")]: {
 		maxWidth: "50%",
+		padding: theme.spacing(30),
 	},
 }));
 
-const GoogleButton = styled(Button)(({ theme }) => ({
+const DarkBlueButton = styled(Button)(({ theme }) => ({
 	marginTop: theme.spacing(2),
+	width: "100%",
+	backgroundColor: "#007FFF", // Monash blue
+	color: "#fff",
+	'&:hover': {
+		backgroundColor: "#005BB5",
+	},
 }));
 
 const ImageSection = styled(Box)(({ theme }) => ({
@@ -49,15 +51,6 @@ const ImageSection = styled(Box)(({ theme }) => ({
 	},
 }));
 
-const StyledForm = styled("form")(() => ({
-	width: "100%",
-	maxWidth: "400px",
-}));
-
-const SubmitButton = styled(Button)(({ theme }) => ({
-	marginTop: theme.spacing(2),
-}));
-
 const CoverImage = styled("img")({
 	width: "100%",
 	height: "80%",
@@ -65,33 +58,28 @@ const CoverImage = styled("img")({
 });
 
 const LoginPage: React.FC = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [rememberMe, setRememberMe] = useState(false);
 	const [error, setError] = useState("");
 
 	const navigate = useNavigate();
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		// Handle login logic here
-		console.log({ email, password, rememberMe });
-	};
-
-	const handleGoogleLogin = async () => {
+	const handleMonashLogin = async () => {
 		try {
 			const { error } = await supabase.auth.signInWithOAuth({
-				provider: "google",
+				provider: "google", // You can replace this with your Monash SSO logic if available
 				options: {
 					redirectTo: "http://localhost:5173/login",
 				},
 			});
 
-			if (error) console.error("Error logging in with Google:", error);
+			if (error) console.error("Error logging in with Monash SSO:", error);
 		} catch (error) {
 			console.log("OAuth error");
 		}
 	};
+
+	const handleApplicantLogin = () => {
+		navigate("/applicant-openings");
+	}
 
 	useEffect(() => {
 		// Check for OAuth errors on page load
@@ -119,7 +107,7 @@ const LoginPage: React.FC = () => {
 			} = await supabase.auth.getUser();
 			if (user) {
 				// Redirecting user to dashboard if user is signed in
-				navigate("/viewrecruitmentround");
+				navigate("/dashboard");
 			}
 		};
 
@@ -129,66 +117,28 @@ const LoginPage: React.FC = () => {
 	return (
 		<FlexContainer>
 			<FormSection>
-				<StyledForm onSubmit={handleSubmit} className="">
-					<Typography component="h1" variant="h5" gutterBottom>
-						Log In
-					</Typography>
-					<Typography variant="body2" color="textSecondary" gutterBottom>
-						Don't have an account? <Link href="/register">Create one!</Link>
-					</Typography>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="email"
-						label="Email"
-						name="email"
-						autoComplete="email"
-						autoFocus
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					<Link href="#" variant="body2">
-						Forgot password?
-					</Link>
-					<br></br> {/* kingzel ECMA7 optimised*/}
-					<FormControlLabel
-						control={
-							<Checkbox
-								value="remember"
-								color="primary"
-								checked={rememberMe}
-								onChange={(e) => setRememberMe(e.target.checked)}
-							/>
-						}
-						label="Remember me"
-					/>
-					<SubmitButton type="submit" fullWidth variant="contained" color="primary">
-						LOG IN
-					</SubmitButton>
-					<GoogleButton fullWidth variant="outlined" onClick={handleGoogleLogin}>
-						Sign in with Google
-					</GoogleButton>
-					{error && (
-						<Alert severity="error" sx={{ mt: 2, width: "100%", justifyContent: "center" }}>
-							{error}
-						</Alert>
-					)}
-				</StyledForm>
+				<Typography component="h1" variant="h5" gutterBottom>
+					Log In
+				</Typography>
+				<Typography variant="body2" color="textSecondary" gutterBottom>
+					Part of a student team? Log in with your Monash email to get started.
+				</Typography>
+				<DarkBlueButton variant="contained" onClick={handleMonashLogin} sx={{ mb: 7 }}>
+					LOG IN VIA MONASH SSO
+				</DarkBlueButton>
+
+				<Typography variant="body2" color="textSecondary" gutterBottom>
+					Want to start your application process? Click below.
+				</Typography>
+				<DarkBlueButton variant="contained" onClick={handleApplicantLogin} >
+					Apply for a position
+				</DarkBlueButton>
+
+				{error && (
+					<Alert severity="error" sx={{ mt: 2, width: "100%", justifyContent: "center" }}>
+						{error}
+					</Alert>
+				)}
 			</FormSection>
 			<ImageSection>
 				<CoverImage src={loginImage} alt="Login illustration" />

@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 const styles = {
   recruitmentRoundPage: {
@@ -65,6 +66,9 @@ const ViewRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const SHOW_ARCHIVED_AMOUNT = 3;
+
+  const authStore = useAuthStore();
+
   const setRecruitmentDetails = useRecruitmentStore(
     (state) => state.setRecruitmentDetails
   );
@@ -106,13 +110,15 @@ const ViewRecruitmentRoundPage = () => {
     );
   };
 
-  const API_URL = "http://127.0.0.1:3000/recruitmentRounds";
+  let student_team_id = authStore.team_id;
+
+  const API_URL = `http://127.0.0.1:3000/studentTeams/${student_team_id}/recruitmentRounds`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(API_URL);
-        console.log(response);
+
         setData(response.data);
       } catch (error) {
         console.error("There was an error!", error);
@@ -138,16 +144,7 @@ const ViewRecruitmentRoundPage = () => {
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>
-            {Array.isArray(data) &&
-              data
-                .map((item: any) =>
-                  item.student_team_name.length > 0 ? (
-                    <h3>{item.student_team_name}</h3>
-                  ) : (
-                    <h3>Name Not Found</h3>
-                  )
-                )
-                .at(0)}
+                <h3>{authStore.team_name}</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
@@ -238,7 +235,7 @@ const ViewRecruitmentRoundPage = () => {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {item.student_team_name + " " + item.id}
+                              {authStore.team_name + " " + item.id}
                             </TableCell>
                             <TableCell>{formattedDeadline}</TableCell>
                             <TableCell>
