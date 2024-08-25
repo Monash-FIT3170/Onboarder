@@ -318,6 +318,69 @@ def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
 
     return response
 
+@route('/studentTeams/{studentTeamId}/allocations', ['POST'])
+def allocate_member_to_opening(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        student_team_id = path_params.get('studentTeamId')
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'opening_id']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        opening_id = data['opening_id']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.allocate_member_to_opening(profile_id, opening_id)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/studentTeams/{studentTeamId}/allocations', ['GET'])
+def get_allocations_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_allocated_members_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 @route('/recruitmentRounds', ['GET'])
 @route('/recruitmentRounds/{roundId}', ['GET'])
 def fetch_recruitment_rounds(path_params={}, _={}, __={}):

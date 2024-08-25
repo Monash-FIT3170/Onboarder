@@ -202,3 +202,31 @@ FROM
     public."STUDENT_TEAM" st
 JOIN 
     public."PROFILE_TEAM_INFO" pti ON st.id = pti.student_team_id;
+
+-- Function to get allocated members for a student team
+DROP FUNCTION IF EXISTS get_allocated_members_for_student_team();
+
+CREATE OR REPLACE FUNCTION get_allocated_members_for_student_team()
+RETURNS TABLE (
+    round_name VARCHAR,
+    opening_name VARCHAR,
+    team_leads_allocated INTEGER,
+    student_team_id BIGINT
+)
+AS $$
+SELECT
+    rr.semester || ' ' || rr.year AS round_name,
+    o.title AS opening_name,
+    COUNT(tla.id) AS team_leads_allocated,
+    rr.student_team_id
+FROM
+    public."RECRUITMENT_ROUND" rr
+JOIN
+    public."OPENING" o ON rr.id = o.recruitment_round_id
+LEFT JOIN
+    public."TEAM_LEAD_ASSIGNMENT" tla ON o.id = tla.opening_id
+GROUP BY
+    rr.semester || ' ' || rr.year,
+    o.title,
+    rr.student_team_id;
+$$ LANGUAGE SQL;

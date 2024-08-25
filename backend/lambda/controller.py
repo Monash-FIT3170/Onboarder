@@ -102,6 +102,16 @@ def create_opening(
 
     return response.data
 
+def allocate_member_to_opening(opening_id, profile_id):
+    data = {
+        "opening_id": opening_id,
+        "profile_id": profile_id
+    }
+
+    response = supabase.table('TEAM_LEAD_ASSIGNMENT').insert(data).execute()
+
+    return response.data
+
 
 def create_application(
     openingId,
@@ -182,6 +192,13 @@ def get_all_members_of_student_team(student_team_id):
 
     return response.data
 
+def get_allocated_members_for_student_team(student_team_id):
+    response = supabase.rpc('get_allocated_members_for_student_team') \
+        .select("*") \
+        .eq("student_team_id", student_team_id) \
+        .execute()
+
+    return response.data
 
 def get_rec_rounds_for_student_team(student_team_id):
     response = supabase.table('RECRUITMENT_ROUND') \
