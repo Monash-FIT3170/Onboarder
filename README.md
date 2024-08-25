@@ -5,18 +5,27 @@ Recruitment platform for Monash University student teams
 Please install NodeJS, Docker, AWS CLI and AWS SAM CLI on your local machine.
 Make sure docker is running before running local server.
 
-To launch Front-End:
+## To launch Front-End:
+
 Execute in front-end folder: (cd frontend)
 npm install
 npm run dev
 
-Enter "/viewrecruitmentround" after localhost to access Admin View
+Enter "/viewrecruitmentround" after localhost to access Admin View  
 Enter "/applicant-openings" after localhost to access Applicant View
 
-To launch Back-End/Server:
-Execute in root folder:
+## To Launch the Backend Server
+
+Create an `env.json` file in the root directory:
+
+- Fill in the values from the Discord channel named resources.
+
+Navigate to the root folder:
+
+```
 sam build
-sam local start-api OR sam local start-api --warm-containers EAGER (for faster loadtimes)
+sam local start-api --warm-containers EAGER --env-vars env.json
+```
 
 Members: /
 Antony Razzell /
