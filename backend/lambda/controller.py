@@ -29,14 +29,19 @@ def delete_student_team(student_team_id):
     response = supabase.table('STUDENT_TEAM').delete().eq("id", student_team_id).execute()
     return response.data
 
-def add_profile_team_info(profile_id, student_team_id, role):
-    data = {
-        "profile_id": profile_id,
-        "student_team_id": student_team_id,
-        "role": role
-    }
-
+def add_profile_team_info(email, student_team_id, role):
     try:
+        # Get the profile ID based on the email
+        profile_response = supabase.table('PROFILE').select('id').eq('email', email).execute()
+        profile_id = profile_response.data[0]['id']
+
+        data = {
+            "profile_id": profile_id,
+            "student_team_id": student_team_id,
+            "role": role
+        }
+
+        # Insert the profile team info
         response = supabase.table('PROFILE_TEAM_INFO').insert(data).execute()
         return response.data
     except Exception as e:
