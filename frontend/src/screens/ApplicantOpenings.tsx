@@ -149,7 +149,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  {/* <TableCell>Deadline</TableCell> */}
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
