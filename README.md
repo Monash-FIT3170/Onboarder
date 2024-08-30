@@ -28,28 +28,23 @@ Recruitment platform for Monash University student teams
   - [Additional Notes](#additional-notes)
   - [Common Issues](#common-issues)
 
-## Team Members
+## Contributors
 
-Below are the details of our team members, including their roles and Monash email addresses:
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ahmadhafiz17"><img src="https://avatars.githubusercontent.com/u/140464163?v=4?s=100" width="100px;" alt="ahmadhafiz17"/><br /><sub><b>ahmadhafiz17</b></sub></a><br /><a href="#code-ahmadhafiz17" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
 
-| Member                           | Monash Email                   |
-|----------------------------------|--------------------------------|
-| Hanif Zafari (SA)                | hmoh0035@student.monash.edu    |
-| Anthony Razzell (SA)             | araz0013@student.monash.edu    |
-| Rahul Saxena (SA)                | rsax0001@student.monash.edu    |
-| Fahad Assadi (RTE)               | fass0001@student.monash.edu    |
-| Rahul Sahni (RTE)                | rsah0008@student.monash.edu    |
-| Umair Mohammad (RTE)             | umoh0005@student.monash.edu    |
-| Tran Ngo (RTE)                   | tngo0031@student.monash.edu    |
-| Nguyen Khang (RTE)               | nhuy0018@student.monash.edu    |
-| Ranith Pathiranage (RTE)         | rsim0010@student.monash.edu    |
-| Shubh Bajpai (PO)                | sbaj0015@student.monash.edu    |
-| Sai Rami (PO)                    | sram0056@student.monash.edu    |
-| Tavishi Saxena (PO)              | tsax0001@student.monash.edu    |
-| Ahmed Hafiz (PO)                 | abin0036@student.monash.edu    |
-| Jesse Cruickshank (PO)           | jcru0005@student.monash.edu    |
-| Brendon Perera (PO)              | bper0009@student.monash.edu    |
-| Zilei Chen (PO)                  | zche0160@student.monash.edu    |
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Prerequisites
 
