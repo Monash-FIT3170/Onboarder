@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   TextField,
   Button,
   Table,
@@ -13,11 +14,14 @@ import {
   Typography,
   TableSortLabel,
   Skeleton,
+  IconButton,
 } from "@mui/material";
+import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import { useAuthStore } from "../util/stores/authStore";
 
 const styles = {
   recruitmentRoundPage: {
@@ -48,7 +52,7 @@ const styles = {
     cursor: "pointer",
   },
   scrollableTableBody: {
-    height: "calc(100vh - 400px)",
+    height: "calc(100vh - 650px)",
     overflowY: "auto",
     display: "block",
   },
@@ -65,6 +69,9 @@ const ViewRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const SHOW_ARCHIVED_AMOUNT = 3;
+
+  const authStore = useAuthStore();
+
   const setRecruitmentDetails = useRecruitmentStore(
     (state) => state.setRecruitmentDetails
   );
@@ -106,13 +113,15 @@ const ViewRecruitmentRoundPage = () => {
     );
   };
 
-  const API_URL = "http://127.0.0.1:3000/recruitmentRounds";
+  let student_team_id = authStore.team_id;
+
+  const API_URL = `http://127.0.0.1:3000/studentTeams/${student_team_id}/recruitmentRounds`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(API_URL);
-        console.log(response);
+
         setData(response.data);
       } catch (error) {
         console.error("There was an error!", error);
@@ -125,29 +134,66 @@ const ViewRecruitmentRoundPage = () => {
   }, []);
 
   const handleViewRound = (id: number) => {
-    setRecruitmentDetails({roundId: id, roundDeadline: null, roundName: null})
+    setRecruitmentDetails({
+      roundId: id,
+      roundDeadline: null,
+      roundName: null,
+    });
     navigate("/recruitment-details-page");
+  };
+
+  const handleViewTeamMembers = () => {
+    navigate("/view-team-members");
+  };
+
+  const handleAllocateTeamLeads = () => {
+    // Implement logic to allocate team leads
+    // This might involve navigating to a new page or opening a modal
+  };
+
+  const handleBack = () => {
+    navigate("/dashboard");
   };
 
   return (
     <div style={styles.recruitmentRoundPage}>
       <main>
-        <Typography variant="h4" style={styles.studentTeam}>
-          Recruitment Rounds
-        </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
+          <Box display="flex" alignItems="baseline">
+            <IconButton onClick={handleBack} sx={{ mr: 2 }}>
+              <BackIcon />
+            </IconButton>
+            <Typography variant="h4" style={styles.studentTeam}>
+              Recruitment Rounds
+            </Typography>
+          </Box>
+          <Box>
+            <Button
+              variant="outlined"
+              color="primary"
+              style={{ marginRight: "10px" }}
+              onClick={handleViewTeamMembers}
+            >
+              View Team Members
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAllocateTeamLeads}
+            >
+              Allocate Team Leads
+            </Button>
+          </Box>
+        </Box>
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <div></div>
-            {Array.isArray(data) &&
-              data
-                .map((item: any) =>
-                  item.student_team_name.length > 0 ? (
-                    <h3>{item.student_team_name}</h3>
-                  ) : (
-                    <h3>Name Not Found</h3>
-                  )
-                )
-                .at(0)}
+            <h3>{authStore.team_name}</h3>
           </Grid>
         </Grid>
         <section style={styles.section}>
@@ -157,7 +203,7 @@ const ViewRecruitmentRoundPage = () => {
                 Current Recruitment Rounds: Showing{" "}
                 {
                   data.filter(
-                    (item: any) => item.status == "I" || item.status == "R"
+                    (item: any) => item.status == "I" || item.status == "A"
                   ).length
                 }
               </h4>
@@ -238,7 +284,7 @@ const ViewRecruitmentRoundPage = () => {
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {item.student_team_name + " " + item.id}
+                              {authStore.team_name + " " + item.id}
                             </TableCell>
                             <TableCell>{formattedDeadline}</TableCell>
                             <TableCell>
@@ -268,7 +314,7 @@ const ViewRecruitmentRoundPage = () => {
         </section>
         <section style={styles.section}>
           <h4>
-            Archived Recruitment Rounds: Showing {SHOW_ARCHIVED_AMOUNT} of{" "}
+            Archived Recruitment Rounds: Showing {data.filter((item: any) => item.status == "R").length < 3 ? data.filter((item: any) => item.status == "R").length  : SHOW_ARCHIVED_AMOUNT} of{" "}
             {data.filter((item: any) => item.status == "R").length}
           </h4>
           <TableContainer component={Paper}>

@@ -13,10 +13,13 @@ import ApplicantOpenings from "./screens/ApplicantOpenings";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TaskEmailFormatPage from "./screens/TaskEmailFormatPage";
 import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
-// import CreateStudentTeam from "./screens/CreateStudentTeamModal";
+import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
 import theme from "./assets/Theme";
+import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
+import Feedbacknote from "./screens/FeedbackNote";
 
 function App() {
 	return (
@@ -37,10 +40,16 @@ function App() {
 						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
 						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
-						<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+						<Route path="/feedbacknote" element={<Feedbacknote />} />
+						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
 					</Route>
+					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+
+
 				</Routes>
+        
 			</Box>
 		</ThemeProvider>
 	);

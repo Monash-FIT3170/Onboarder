@@ -31,8 +31,6 @@ const generateTableRows = (results: SingleRoundResultProps[]) => {
       <TableCell>{formatDeadline(result.deadline)}</TableCell>
       <TableCell>{getStatusText(result.status)}</TableCell>
       <TableCell align="center">{result.openings_count}</TableCell>
-      {/* <TableCell align="center">{entry.applicationsReceived}</TableCell> */}
-      <TableCell align="center">10</TableCell>
     </TableRow>
   ));
 };
@@ -49,7 +47,6 @@ export const SingleRoundTable: React.FC<SingleRoundTableProps> = (
               <TableCell>Deadline</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="center">Openings</TableCell>
-              <TableCell align="center">Applications Received</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{generateTableRows(props.results)}</TableBody>

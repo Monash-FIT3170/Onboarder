@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,13 +10,15 @@ import {
 } from "@mui/material";
 import {
   DashboardTable,
-  DashboardTableProps,
   StudentTeamResultProps,
 } from "../components/DashboardTable";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import JobInterviewIcon from "../assets/JobInterview.jpg";
-import AddTeamModal from "./AddTeamModal"; // Import the new modal component
+import AddTeamModal from "./AddTeamModal";
+import { useAuthStore } from "../util/stores/authStore";
+import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import axios from "axios";
 
 const TitleWrap = styled.div`
   margin: auto;
@@ -53,19 +55,61 @@ const ButtonStyle = styled.div`
   margin-bottom: 20px;
 `;
 
-const data1: StudentTeamResultProps = {
-  team_name: "Monash Rova",
-  role: "Owner",
-  owner_info: "You",
-};
-
-const mockData: DashboardTableProps = {
-  results: [data1, data1, data1, data1, data1],
-};
-
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const authStore = useAuthStore();
+  const { studentTeams, setStudentTeams } = useStudentTeamStore();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let profile_id = 1; // Replace with actual profile_id fetching logic
+
+        if (!profile_id) {
+          profile_id = await authStore.fetchProfile();
+        }
+
+        const rolesResponse = await axios.get(
+          `http://127.0.0.1:3000/studentTeams/${profile_id}`
+        );
+
+        let tableData = rolesResponse.data
+          .map((role: any) => ({
+            id: role.id, // Assuming the API returns a user id
+            student_team_id: role.student_team_id,
+            student_team_name: role.student_team_name,
+            user_team_role:
+              role.your_role === "O"
+                ? "Owner"
+                : role.your_role === "A"
+                ? "Admin"
+                : "Team Lead",
+            student_team_owner: role.owner_email,
+          }))
+          .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
+            const roleRanking: { [key: string]: number } = {
+              Owner: 0,
+              Admin: 1,
+              "Team Lead": 2,
+            };
+            return (
+              roleRanking[a.user_team_role] - roleRanking[b.user_team_role]
+            );
+          });
+
+        setStudentTeams(tableData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [setStudentTeams, authStore]);
 
   const handleInterviewCardClick = () => {
     navigate("/interviews");
@@ -82,7 +126,7 @@ const Dashboard = () => {
   const handleSubmitTeam = (teamName: string, teamDescription: string) => {
     // TODO: Implement team creation logic
     console.log("Team created:", { teamName, teamDescription });
-    // You might want to update the mockData or fetch new data here
+    // You might want to update the studentTeams or fetch new data here
   };
 
   return (
@@ -98,7 +142,7 @@ const Dashboard = () => {
           Add Team
         </Button>
       </ButtonStyle>
-      <DashboardTable results={mockData.results} />
+      <DashboardTable results={studentTeams} />
       <CardContainer>
         <StyledCard>
           <CardActionArea onClick={handleInterviewCardClick}>

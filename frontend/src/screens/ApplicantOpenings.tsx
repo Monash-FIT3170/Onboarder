@@ -21,6 +21,7 @@ import {
   applicantOpeningResultProps,
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
+import { useAuthStore } from "../util/stores/authStore";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -148,7 +149,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  {/* <TableCell>Deadline</TableCell> */}
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
