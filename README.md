@@ -50,7 +50,6 @@ Below are the details of our team members, including their roles and Monash emai
 | Ahmed Hafiz (PO)                 | abin0036@student.monash.edu    |
 | Jesse Cruickshank (PO)           | jcru0005@student.monash.edu    |
 | Brendon Perera (PO)              | bper0009@student.monash.edu    |
-| Zilei Chen (PO)                  | zche0160@student.monash.edu    |
 
 ## Prerequisites
 
