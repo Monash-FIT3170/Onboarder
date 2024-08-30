@@ -27,6 +27,11 @@ Recruitment platform for Monash University student teams
       - [Encryption Key](#encryption-key)
   - [Additional Notes](#additional-notes)
   - [Common Issues](#common-issues)
+  - [Git Management](#git-management)
+    - [Repository Structure](#repository-structure)
+    - [Commit Guidelines](#commit-guidelines)
+    - [Branch Management](#branch-management)
+    - [Merge Requests](#merge-requests)
 
 
 ## Team Members
@@ -189,6 +194,34 @@ Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure.
 ## Common Issues
 
 [Any additional notes or common issues that future developers might benefit from knowing]
+
+## Git Management
+
+![Git Strategy Illustrated](https://github.com/user-attachments/assets/bf57a185-7ceb-4f29-8c4e-3f7510242a2c)
+
+### Repository Structure
+- Main branch: Stable, deployment-ready code
+- Development branches: Isolated for active development
+
+### Commit Guidelines
+- Frequent commits to prevent data loss
+- Clear, concise commit messages with descriptive keywords
+- Important commits tagged and tied to milestones
+- Semantic versioning system for version tags
+
+### Branch Management
+- Locked main branch to enforce code standards
+- Branch naming conventions:
+  - Feature branches: 'feature/[description]'
+  - Fix branches: 'fix/[description]'
+- Maximum two levels of branching from main
+- Temporary branches allowed for experimentation (to be cleaned up)
+
+### Merge Requests
+- Required for merging into main branch
+- Approval needed from at least two team members (one from each other agile team)
+- CI/CD pipeline runs automated tests post-approval
+- Merge only possible after passing all pipeline checks
 
 ## Contributors
 
