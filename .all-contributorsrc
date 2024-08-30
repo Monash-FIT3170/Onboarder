@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "FahadAssadi",
+      "name": "Fahad Assadi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91127049?v=4",
+      "profile": "https://github.com/FahadAssadi",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "Onboarder",
+  "projectOwner": "Monash-FIT3170"
+}
