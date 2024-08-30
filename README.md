@@ -193,7 +193,15 @@ Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure.
 
 ## Common Issues
 
-[Any additional notes or common issues that future developers might benefit from knowing]
+#### CORS  Error
+- This may sometimes occur when trying to make API requests to backend
+- To resolve this, ensure you have followed the correct steps above regarding configuration files.
+- If this does not work, make sure to have an HTTP Options method alongside every POST request method in the code.
+#### Front End Crash (Blank Screen)
+- Follow above steps, ensuring .env and env.json are correct and in the right place
+#### SAM cannot find Docker
+- Ensure that default Docker Socket is enabled.
+- Sometimes you may need to disable this in Docker Advanced Settings, restart and the enable it again.
 
 ## Git Management
 
