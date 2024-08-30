@@ -28,9 +28,6 @@
   ],
   "projectName": "Onboarder",
   "projectOwner": "Monash-FIT3170",
-  "files": [
-    "README.md"
-  ],
   "contributorsPerLine": 7,
   "skipCi": true,
   "repoType": "github",
