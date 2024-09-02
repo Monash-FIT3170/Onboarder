@@ -75,11 +75,59 @@ def options_handler(_={}, __={}, ___={}):
         }
     }
 
+# ------------------ PROFILE ------------------
 
-@route('/profile/{profileId}', ['GET'])
-def get_profile(path_params={}, _={}, __={}):
-    profile_id = path_params.get('profileId')
-    data = controller.get_profile(profile_id)
+@route('/profile', ['POST'])
+def create_profile(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['user_id', 'email']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        user_id = data['user_id']
+        email = data['email']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_profile(user_id, email)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/profile', ['GET'])
+def get_all_profiles(path_params={}, _={}, __={}):
+    data = controller.get_all_profiles()
     data = json.dumps(data)
 
     response = {
@@ -90,23 +138,8 @@ def get_profile(path_params={}, _={}, __={}):
 
     return response
 
-
-@route('/profile/{profileId}/availability', ['GET'])
-def get_availability(path_params={}, _={}, __={}):
-    profile_id = path_params.get('profileId')
-    data = controller.get_availability(profile_id)
-    data = json.dumps(data)
-
-    response = {
-        'statusCode': 200,
-        'body': data,
-        'headers': HEADERS
-    }
-
-    return response
-
-@route('/profile/{profileId}/availability', ['POST'])
-def update_availability(path_params={}, _={}, body={}):
+@route('/profile/{profileId}', ['PATCH'])
+def update_profile(path_params={}, _={}, body={}):
     profile_id = path_params.get('profileId')
     if not body:
         return {
@@ -124,7 +157,66 @@ def update_availability(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['availability']
+    response = controller.update_profile(profile_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }   
+
+@route('/profile/{profileId}', ['GET'])
+def get_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/profile/{profileId}', ['DELETE'])
+def delete_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.delete_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+# ------------------ STUDENT TEAMS ------------------
+
+@route('/student-team', ['POST'])
+def create_student_team(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['team_name', 'team_description']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -134,7 +226,8 @@ def update_availability(path_params={}, _={}, body={}):
         }
     
     try:
-        availability = data['availability']
+        team_name = data['team_name']
+        team_description = data['team_description']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -142,7 +235,7 @@ def update_availability(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.update_availability(profile_id, availability)
+    response = controller.create_student_team(team_name, team_description)
     
     return {
         'statusCode': 201,
@@ -152,6 +245,141 @@ def update_availability(path_params={}, _={}, body={}):
         }),
         'headers': HEADERS
     }
+
+@route('/student-team', ['GET'])
+def get_all_student_teams(path_params={}, _={}, __={}):
+    data = controller.get_all_student_teams()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}', ['PATCH'])
+def update_student_team(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_student_team(student_team_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/student-team/{studentTeamId}', ['GET'])
+def get_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}', ['DELETE'])
+def delete_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.delete_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}/members', ['GET'])
+def get_all_members_of_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_all_members_of_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}/members', ['POST'])
+def add_member_to_student_team(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['email', 'role']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        email = data['email']
+        role = data['role']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.add_member_to_student_team(email, student_team_id, role)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
 
 # STUDENT TEAMS
 
