@@ -62,11 +62,11 @@ function Feedbacknote() {
     };
     const handleCloseAccpet = () => {
         setOpenAccept(false);
-        navigate("");
+        handleUpdate();
     };
     const handleCloseReject = () => {
         setOpenReject(false);
-        navigate("");
+        handleUpdate();
     };
     const authStore = useAuthStore();
     const handleBack = () => {
