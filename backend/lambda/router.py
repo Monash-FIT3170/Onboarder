@@ -566,6 +566,132 @@ def delete_recruitment_round(path_params={}, _={}, __={}):
 
     return response
 
+# ------------------ OPENINGS ------------------
+
+@route('/recruitment-round/{roundId}/opening', ['POST'])
+def create_opening(path_params={}, _={}, body={}):
+    round_id = path_params.get('roundId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['opening_name', 'opening_description', 'start_date', 'end_date']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        opening_name = data['opening_name']
+        opening_description = data['opening_description']
+        start_date = data['start_date']
+        end_date = data['end_date']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_opening(round_id, opening_name, opening_description, start_date, end_date)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/recruitment-round/{roundId}/opening', ['GET'])
+def get_all_openings(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.get_all_openings(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}', ['PATCH'])
+def update_opening(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_opening(opening_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/opening/{openingId}', ['GET'])
+def get_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.get_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}', ['DELETE'])
+def delete_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.delete_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
 
 
 
