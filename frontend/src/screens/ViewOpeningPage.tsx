@@ -95,7 +95,7 @@ function ViewOpenPage() {
                 <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
                     <div>
-                        {application.status == "A" ? (
+                        {application.status == "C" ? (
                             <Button
                                 variant="outlined"
                                 onClick={() => handleViewInterviewNotes(application.id)}
