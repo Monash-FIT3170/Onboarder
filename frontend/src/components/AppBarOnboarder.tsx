@@ -97,7 +97,7 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								Account
+								Sign Out
 							</Button>
 							<StyledMenu
 								id="demo-customized-menu"
