@@ -16,6 +16,7 @@ import {
 	Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { useAuthStore } from "../util/stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
 	<Menu
@@ -58,6 +59,7 @@ function AppBarOnBoarder() {
 	const { user, signOut } = useAuthStore();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
+	const navigate = useNavigate(); 
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -65,6 +67,11 @@ function AppBarOnBoarder() {
 
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleViewAvailability = () => {
+		//redirect to the view availability page once created
+		navigate('/');
 	};
 
 	return (
@@ -78,6 +85,26 @@ function AppBarOnBoarder() {
 
 					{user && (
 						<>
+							<Button
+								id="demo-customized-button"
+								aria-controls={open ? "demo-customized-menu" : undefined}
+								aria-haspopup="true"
+								aria-expanded={open ? "true" : undefined}
+								variant="outlined"
+								disableElevation
+								onClick={handleViewAvailability}
+								sx={{
+									color: "white",
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
+								}}
+							>
+								View Availability
+							</Button>
 							<Button
 								id="demo-customized-button"
 								aria-controls={open ? "demo-customized-menu" : undefined}
