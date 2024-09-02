@@ -261,7 +261,7 @@ function Feedbacknote() {
                             open={openAccept}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Accepted!
+                                Candidate {`${applicantInformation[0]?.name}`} Accepted!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>
@@ -293,7 +293,7 @@ function Feedbacknote() {
                             open={openReject}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Rejected!
+                                Candidate {`${applicantInformation[0]?.name}`} Rejected!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>
