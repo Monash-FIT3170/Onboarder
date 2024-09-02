@@ -49,21 +49,25 @@ def route(path: str, methods: list[str]) -> Callable:
 
 
 # OPTIONS HANDLER
+@route('/profile', ['OPTIONS'])
 @route('/profile/{profileId}', ['OPTIONS'])
-@route('/studentTeams', ['OPTIONS'])
-@route('/applications/{applicationId}', ['OPTIONS'])
-@route('/studentTeams/{profileId}', ['OPTIONS'])
-@route('/profile/{profileId}/availability', ['OPTIONS'])
-@route('/profileTeamInfo', ['OPTIONS'])
-@route('/profileTeamInfo/{studentTeamId}', ['OPTIONS'])
-@route('/recruitmentRounds', ['OPTIONS'])
-@route('/recruitmentRounds/{roundId}/openings', ['OPTIONS'])
-@route('/openings', ['OPTIONS'])
-@route('/openings/{openingId}', ['OPTIONS'])
-@route('/openings/{openingId}/applications', ['OPTIONS'])
-@route('/recruitmentRounds/{roundId}/status', ['OPTIONS'])
-@route('/sendInterviewEmails/{openingId}', ['OPTIONS'])
-@route('/updateAvailability/{applicationId}', ['OPTIONS'])
+@route('/student-team', ['OPTIONS'])
+@route('/student-team/{studentTeamId}', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/members', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/members/{profileId}', ['OPTIONS'])
+@route('/recruitment-round', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/recruitment-round', ['OPTIONS'])
+@route('/recruitment-round/{roundId}', ['OPTIONS'])
+@route('/opening', ['OPTIONS'])
+@route('/recruitment-round/{roundId}/opening', ['OPTIONS'])
+@route('/opening/{openingId}', ['OPTIONS'])
+@route('/opening/{openingId}/team-lead-assign', ['OPTIONS'])
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['OPTIONS'])
+@route('/application', ['OPTIONS'])
+@route('/opening/{openingId}/application', ['OPTIONS'])
+@route('/application/{applicationId}', ['OPTIONS'])
+@route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/decrypt/{id}', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -216,7 +220,7 @@ def create_student_team(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['team_name', 'team_description']
+    required_fields = ['name', 'description']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -226,8 +230,8 @@ def create_student_team(path_params={}, _={}, body={}):
         }
     
     try:
-        team_name = data['team_name']
-        team_description = data['team_description']
+        name = data['name']
+        description = data['description']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -235,7 +239,7 @@ def create_student_team(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.create_student_team(team_name, team_description)
+    response = controller.create_student_team(name, description)
     
     return {
         'statusCode': 201,
@@ -355,7 +359,7 @@ def add_member_to_student_team(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.add_member_to_student_team(email, student_team_id, role)
+    response = controller.add_member_to_student_team(student_team_id, email, role)
     
     return {
         'statusCode': 201,
@@ -443,6 +447,19 @@ def remove_member_from_student_team(path_params={}, _={}, __={}):
 
 # ------------------ RECRUITMENT ROUND ------------------
 
+@route('/recruitment-round', ['GET'])
+def get_all_recruitment_rounds(path_params={}, _={}, __={}):
+    data = controller.get_all_recruitment_rounds()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 @route('/student-team/{studentTeamId}/recruitment-round', ['POST'])
 def create_recruitment_round(path_params={}, _={}, body={}):
     student_team_id = path_params.get('studentTeamId')
@@ -462,7 +479,7 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['round_name', 'round_description', 'start_date', 'end_date']
+    required_fields = ['semester', 'year', 'deadline', 'status']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -472,10 +489,10 @@ def create_recruitment_round(path_params={}, _={}, body={}):
         }
     
     try:
-        round_name = data['round_name']
-        round_description = data['round_description']
-        start_date = data['start_date']
-        end_date = data['end_date']
+        semester = data['semester']
+        year = data['year']
+        deadline = data['deadline']
+        status = data['status']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -483,7 +500,7 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.create_recruitment_round(student_team_id, round_name, round_description, start_date, end_date)
+    response = controller.create_recruitment_round(student_team_id, semester, year, deadline, status)
     
     return {
         'statusCode': 201,
@@ -495,9 +512,9 @@ def create_recruitment_round(path_params={}, _={}, body={}):
     }
 
 @route('/student-team/{studentTeamId}/recruitment-round', ['GET'])
-def get_all_recruitment_rounds(path_params={}, _={}, __={}):
+def get_all_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
     student_team_id = path_params.get('studentTeamId')
-    data = controller.get_all_recruitment_rounds(student_team_id)
+    data = controller.get_all_recruitment_rounds_for_student_team(student_team_id)
     data = json.dumps(data)
 
     response = {
@@ -568,6 +585,19 @@ def delete_recruitment_round(path_params={}, _={}, __={}):
 
 # ------------------ OPENINGS ------------------
 
+@route('/opening', ['GET'])
+def get_all_openings(path_params={}, _={}, __={}):
+    data = controller.get_all_openings()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 @route('/recruitment-round/{roundId}/opening', ['POST'])
 def create_opening(path_params={}, _={}, body={}):
     round_id = path_params.get('roundId')
@@ -577,7 +607,7 @@ def create_opening(path_params={}, _={}, body={}):
             'body': json.dumps({'error': 'Request body is missing'}),
             'headers': HEADERS
         }
-    
+
     try:
         data = json.loads(body)
     except ValueError:
@@ -586,8 +616,8 @@ def create_opening(path_params={}, _={}, body={}):
             'body': json.dumps({'error': 'Invalid request body'}),
             'headers': HEADERS
         }
-    
-    required_fields = ['opening_name', 'opening_description', 'start_date', 'end_date']
+
+    required_fields = ['title', 'description', 'status', 'required_skills', 'desired_skills', 'task_email_format', 'task_enabled']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -595,21 +625,24 @@ def create_opening(path_params={}, _={}, body={}):
             'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
             'headers': HEADERS
         }
-    
+
     try:
-        opening_name = data['opening_name']
-        opening_description = data['opening_description']
-        start_date = data['start_date']
-        end_date = data['end_date']
+        title = data['title']
+        description = data['description']
+        status = data['status']
+        required_skills = data['required_skills']
+        desired_skills = data['desired_skills']
+        task_email_format = data['task_email_format']
+        task_enabled = data['task_enabled']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Invalid data types in request body'}),
             'headers': HEADERS
         }
-    
-    response = controller.create_opening(round_id, opening_name, opening_description, start_date, end_date)
-    
+
+    response = controller.create_opening(round_id, title, description, status, required_skills, desired_skills, task_email_format, task_enabled)
+
     return {
         'statusCode': 201,
         'body': json.dumps({
@@ -620,9 +653,9 @@ def create_opening(path_params={}, _={}, body={}):
     }
 
 @route('/recruitment-round/{roundId}/opening', ['GET'])
-def get_all_openings(path_params={}, _={}, __={}):
+def get_all_openings_for_recruitment_round(path_params={}, _={}, __={}):
     round_id = path_params.get('roundId')
-    data = controller.get_all_openings(round_id)
+    data = controller.get_all_openings_for_recruitment_round(round_id)
     data = json.dumps(data)
 
     response = {
@@ -773,6 +806,20 @@ def remove_team_lead_from_opening(path_params={}, _={}, __={}):
 
 # ------------------ APPLICATIONS ------------------
 
+@route('/application', ['GET'])
+def get_all_applications(path_params={}, _={}, __={}):
+    data = controller.get_all_applications()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
 @route('/opening/{openingId}/application', ['POST'])
 def create_application(path_params={}, _={}, body={}):
     opening_id = path_params.get('openingId')
@@ -792,7 +839,12 @@ def create_application(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['profile_id', 'status']
+    required_fields = [
+        'email', 'name', 'phone', 'semesters_until_completion', 
+        'current_semester', 'major_enrolled', 'additional_info', 
+        'skills', 'created_at', 'candidate_availability', 
+        'interview_date', 'interview_notes', 'interview_score', 'status'
+    ]
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -802,7 +854,19 @@ def create_application(path_params={}, _={}, body={}):
         }
     
     try:
-        profile_id = data['profile_id']
+        email = data['email']
+        name = data['name']
+        phone = data['phone']
+        semesters_until_completion = data['semesters_until_completion']
+        current_semester = data['current_semester']
+        major_enrolled = data['major_enrolled']
+        additional_info = data['additional_info']
+        skills = data['skills']
+        created_at = data['created_at']
+        candidate_availability = data['candidate_availability']
+        interview_date = data['interview_date']
+        interview_notes = data['interview_notes']
+        interview_score = data['interview_score']
         status = data['status']
     except (ValueError, KeyError):
         return {
@@ -811,7 +875,12 @@ def create_application(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.create_application(opening_id, profile_id, status)
+    response = controller.create_application(
+        email, name, phone, semesters_until_completion, 
+        current_semester, major_enrolled, additional_info, 
+        skills, created_at, candidate_availability, interview_date, 
+        interview_notes, interview_score, status, opening_id
+    )
     
     return {
         'statusCode': 201,
@@ -823,9 +892,9 @@ def create_application(path_params={}, _={}, body={}):
     }
 
 @route('/opening/{openingId}/application', ['GET'])
-def get_all_applications(path_params={}, _={}, __={}):
+def get_all_applications_for_opening(path_params={}, _={}, __={}):
     opening_id = path_params.get('openingId')
-    data = controller.get_all_applications(opening_id)
+    data = controller.get_all_applications_for_opening(opening_id)
     data = json.dumps(data)
 
     response = {
@@ -895,6 +964,56 @@ def delete_application(path_params={}, _={}, __={}):
     return response
 
 
+# ------------------ MISC ------------------
+
+@route('/send-interview-emails/{openingId}', ['POST'])
+def send_email(path_params={}, querystring_params={}, body={}):
+    try:
+        opening_id = path_params.get('openingId')
+
+        print(opening_id, "opening_id")
+
+        data = controller.send_interview_email(opening_id)
+        print(data, "data")
+        data = json.dumps(data)
+
+        response = {
+            'statusCode': 200,
+            'body': json.dumps({
+                'success': True,
+                'msg': data
+            }),
+            'headers': HEADERS
+        }
+        return response
+    except Exception as e:
+        error_message = f"An error occurred: {str(e)}"
+        response = {
+            'statusCode': 500,
+            'body': json.dumps({
+                'success': False,
+                'error': error_message
+            }),
+            'headers': HEADERS
+        }
+        return response
 
 
+@route('/decrypt/{id}', ['GET'])
+def decrypt_id(path_params={}, _={}, __={}):
+    id = path_params.get('id')
+    result = controller.decrypt_id(id)
+
+    if result is None:
+        raise Exception(f"Could not decrypt ID {id}")
+
+    response = {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': result
+        }),
+        'headers': HEADERS
+    }
+    return response
 
