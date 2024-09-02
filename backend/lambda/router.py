@@ -441,3 +441,131 @@ def remove_member_from_student_team(path_params={}, _={}, __={}):
 
     return response
 
+# ------------------ RECRUITMENT ROUND ------------------
+
+@route('/student-team/{studentTeamId}/recruitment-round', ['POST'])
+def create_recruitment_round(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['round_name', 'round_description', 'start_date', 'end_date']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        round_name = data['round_name']
+        round_description = data['round_description']
+        start_date = data['start_date']
+        end_date = data['end_date']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_recruitment_round(student_team_id, round_name, round_description, start_date, end_date)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/student-team/{studentTeamId}/recruitment-round', ['GET'])
+def get_all_recruitment_rounds(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_all_recruitment_rounds(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/recruitment-round/{roundId}', ['PATCH'])
+def update_recruitment_round(path_params={}, _={}, body={}):
+    round_id = path_params.get('roundId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_recruitment_round(round_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/recruitment-round/{roundId}', ['GET'])
+def get_recruitment_round(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.get_recruitment_round(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/recruitment-round/{roundId}', ['DELETE'])
+def delete_recruitment_round(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.delete_recruitment_round(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
+
+
