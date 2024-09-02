@@ -691,6 +691,129 @@ def delete_opening(path_params={}, _={}, __={}):
 
     return response
 
+# ------------------ APPLICATIONS ------------------
+
+@route('/opening/{openingId}/application', ['POST'])
+def create_application(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id', 'status']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+        status = data['status']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_application(opening_id, profile_id, status)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/opening/{openingId}/application', ['GET'])
+def get_all_applications(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.get_all_applications(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/application/{applicationId}', ['PATCH'])
+def update_application(path_params={}, _={}, body={}):
+    application_id = path_params.get('applicationId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_application(application_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/application/{applicationId}', ['GET'])
+def get_application(path_params={}, _={}, __={}):
+    application_id = path_params.get('applicationId')
+    data = controller.get_application(application_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/application/{applicationId}', ['DELETE'])
+def delete_application(path_params={}, _={}, __={}):
+    application_id = path_params.get('applicationId')
+    data = controller.delete_application(application_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 
 
 
