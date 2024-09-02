@@ -691,6 +691,86 @@ def delete_opening(path_params={}, _={}, __={}):
 
     return response
 
+# ------------------ TEAM LEAD APPLICATION ASSIGNMENT ------------------
+
+@route('/opening/{openingId}/team-lead-assign', ['POST'])
+def assign_team_lead_to_opening(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        profile_id = data['profile_id']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.assign_team_lead_to_opening(opening_id, profile_id)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/opening/{openingId}/team-lead-assign', ['GET'])
+def get_team_lead_for_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.get_team_lead_for_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['DELETE'])
+def remove_team_lead_from_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.remove_team_lead_from_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
+
 # ------------------ APPLICATIONS ------------------
 
 @route('/opening/{openingId}/application', ['POST'])
