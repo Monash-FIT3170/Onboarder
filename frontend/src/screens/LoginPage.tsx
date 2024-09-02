@@ -113,6 +113,9 @@ const LoginPage: React.FC = () => {
 
 		checkUser();
 	}, [navigate]);
+	const handleOpenings = () => {
+		navigate("/applicant-openings");
+	}
 
 	return (
 		<FlexContainer>
@@ -130,7 +133,7 @@ const LoginPage: React.FC = () => {
 				<Typography variant="body2" color="textSecondary" gutterBottom>
 					Want to start your application process? Click below.
 				</Typography>
-				<DarkBlueButton variant="contained" onClick={handleApplicantLogin} >
+				<DarkBlueButton variant="contained" onClick={handleOpenings} >
 					Apply for a position
 				</DarkBlueButton>
 
