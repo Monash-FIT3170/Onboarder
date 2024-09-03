@@ -106,14 +106,9 @@ function AppBarOnBoarder() {
 								View Availability
 							</Button>
 							<Button
-								id="demo-customized-button"
-								aria-controls={open ? "demo-customized-menu" : undefined}
-								aria-haspopup="true"
-								aria-expanded={open ? "true" : undefined}
 								variant="outlined"
 								disableElevation
-								onClick={handleClick}
-								endIcon={<KeyboardArrowDownIcon />}
+								onClick={signOut} // Directly call the signOut function
 								sx={{
 									color: "white",
 									borderColor: "rgba(255, 255, 255, 0.5)",
@@ -122,30 +117,12 @@ function AppBarOnBoarder() {
 										borderColor: "white",
 									},
 									textTransform: "none",
+									marginLeft: 2, // Adds space between the buttons
 								}}
 							>
 								Sign Out
 							</Button>
-							<StyledMenu
-								id="demo-customized-menu"
-								MenuListProps={{
-									"aria-labelledby": "demo-customized-button",
-								}}
-								anchorEl={anchorEl}
-								open={open}
-								onClose={handleClose}
-							>
-								<MenuItem
-									onClick={() => {
-										signOut();
-										handleClose();
-									}}
-									disableRipple
-								>
-									<LogoutIcon />
-									Sign out
-								</MenuItem>
-							</StyledMenu>
+							
 						</>
 					)}
 				</Toolbar>
