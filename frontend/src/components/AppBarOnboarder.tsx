@@ -61,14 +61,6 @@ function AppBarOnBoarder() {
 	const open = Boolean(anchorEl);
 	const navigate = useNavigate(); 
 
-	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
 	const handleViewAvailability = () => {
 		//redirect to the view availability page once created
 		navigate('/');
@@ -103,7 +95,7 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								View Availability
+								View Availability and Interviews
 							</Button>
 							<Button
 								variant="outlined"
