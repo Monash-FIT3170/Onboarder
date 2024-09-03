@@ -74,7 +74,7 @@ const generateRowFunction = (
                           );
                       }}
                   >
-                      VIEW ROUNDS
+                      VIEW
                   </Button>
               </TableCell>
           </TableRow>
