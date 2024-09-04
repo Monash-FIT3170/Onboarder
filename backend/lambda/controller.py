@@ -79,22 +79,27 @@ def remove_member_from_student_team(student_team_id, profile_id):
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
 
 def get_all_recruitment_rounds():
-    raise NotImplementedError
+    response = supabase.table("RECRUITMENT_ROUND").select("*").execute()
+    return response.data
 
 def create_recruitment_round(student_team_id, semester, year, deadline, status):
     raise NotImplementedError
 
 def get_all_recruitment_rounds_for_student_team(student_team_id):
-    raise NotImplementedError
+    response = supabase.table("RECRUITMENT_ROUND").select("*").eq("student_team_id", student_team_id).execute()
+    return response.data
 
 def update_recruitment_round(recruitment_round_id, data):
-    raise NotImplementedError
+    response = supabase.table("RECRUITMENT_ROUND").update(data).eq("id", recruitment_round_id).execute()
+    return response.data
 
 def get_recruitment_round(recruitment_round_id):
-    raise NotImplementedError
+    response = supabase.table("RECRUITMENT_ROUND").select("*").eq("id", recruitment_round_id).execute()
+    return response.data
 
 def delete_recruitment_round(recruitment_round_id):
-    raise NotImplementedError
+    response = supabase.table("RECRUITMENT_ROUND").delete().eq("id", recruitment_round_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL OPENING CONTROLLERS --------------
