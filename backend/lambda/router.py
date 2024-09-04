@@ -61,6 +61,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/opening', ['OPTIONS'])
 @route('/recruitment-round/{roundId}/opening', ['OPTIONS'])
 @route('/opening/{openingId}', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/team-lead-assign', ['OPTIONS'])
 @route('/opening/{openingId}/team-lead-assign', ['OPTIONS'])
 @route('/opening/{openingId}/team-lead-assign/{profileId}', ['OPTIONS'])
 @route('/application', ['OPTIONS'])
@@ -725,6 +726,20 @@ def delete_opening(path_params={}, _={}, __={}):
     return response
 
 # ------------------ TEAM LEAD APPLICATION ASSIGNMENT ------------------
+
+@route('/student-team/{studentTeamId}/team-lead-assign', ['GET'])
+def get_team_lead_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_team_lead_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 @route('/opening/{openingId}/team-lead-assign', ['POST'])
 def assign_team_lead_to_opening(path_params={}, _={}, body={}):
