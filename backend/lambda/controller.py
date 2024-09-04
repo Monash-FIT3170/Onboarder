@@ -60,16 +60,20 @@ def add_member_to_student_team(student_team_id, email, role):
     raise NotImplementedError
 
 def get_all_members_of_student_team(student_team_id):
-    raise NotImplementedError
+    response = supabase.table("PROFILE_TEAM_INFO").select("*").eq("student_team_id", student_team_id).execute()
+    return response.data
 
 def update_student_team_member(student_team_id, profile_id, data):
-    raise NotImplementedError
+    response = supabase.table("PROFILE_TEAM_INFO").update(data).eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    return response.data
 
 def get_student_team_member(student_team_id, profile_id):
-    raise NotImplementedError
+    response = supabase.table("PROFILE_TEAM_INFO").select("*").eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    return response.data
 
 def remove_member_from_student_team(student_team_id, profile_id):
-    raise NotImplementedError
+    response = supabase.table("PROFILE_TEAM_INFO").delete().eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
