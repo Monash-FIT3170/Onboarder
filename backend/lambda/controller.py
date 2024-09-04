@@ -151,7 +151,8 @@ def remove_team_lead_from_opening(opening_id):
 # -------------- ALL APPLICATION CONTROLLERS --------------
 
 def get_all_applications():
-    raise NotImplementedError
+    response = supabase.table("APPLICATION").select("*").execute()
+    return response.data
 
 def create_application(
         email, 
@@ -173,16 +174,20 @@ def create_application(
     raise NotImplementedError
 
 def get_all_applications_for_opening(opening_id):
-    raise NotImplementedError
+    response = supabase.table("APPLICATION").select("*").eq("opening_id", opening_id).execute()
+    return response.data
 
 def update_application(application_id, data):
-    raise NotImplementedError
+    response = supabase.table("APPLICATION").update(data).eq("id", application_id).execute()
+    return response.data
 
 def get_application(application_id):
-    raise NotImplementedError
+    response = supabase.table("APPLICATION").select("*").eq("id", application_id).execute()
+    return response.data
 
 def delete_application(application_id):
-    raise NotImplementedError
+    response = supabase.table("APPLICATION").delete().eq("id", application_id).execute()
+    return {"success": True}
 
 # -------------- MISC CONTROLLERS --------------
 
