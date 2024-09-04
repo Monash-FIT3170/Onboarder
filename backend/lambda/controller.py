@@ -105,7 +105,8 @@ def delete_recruitment_round(recruitment_round_id):
 # -------------- ALL OPENING CONTROLLERS --------------
 
 def get_all_openings():
-    raise NotImplementedError
+    response = supabase.table("OPENING").select("*").execute()
+    return response.data
 
 def create_opening(
         recruitment_round_id, 
@@ -117,16 +118,20 @@ def create_opening(
     raise NotImplementedError
 
 def get_all_openings_for_recruitment_round(round_id):
-    raise NotImplementedError
+    response = supabase.table("OPENING").select("*").eq("recruitment_round_id", round_id).execute()
+    return response.data
 
 def update_opening(opening_id, data):
-    raise NotImplementedError   
+    response = supabase.table("OPENING").update(data).eq("id", opening_id).execute()
+    return response.data
 
 def get_opening(opening_id):
-    raise NotImplementedError
+    response = supabase.table("OPENING").select("*").eq("id", opening_id).execute()
+    return response.data
 
 def delete_opening(opening_id):
-    raise NotImplementedError
+    response = supabase.table("OPENING").delete().eq("id", opening_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL TEAM LEAD APPLICATION ASSIGNMENT CONTROLLERS --------------
