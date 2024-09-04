@@ -38,16 +38,20 @@ def create_student_team(name, description):
     raise NotImplementedError
 
 def get_all_student_teams():
-    raise NotImplementedError
+    response = supabase.table("STUDENT_TEAM").select("*").execute()
+    return response.data
 
 def update_student_team(student_team_id, data):
-    raise NotImplementedError
+    response = supabase.table("STUDENT_TEAM").update(data).eq("id", student_team_id).execute()
+    return response.data
 
 def get_student_team(student_team_id):
-    raise NotImplementedError
+    response = supabase.table("STUDENT_TEAM").select("*").eq("id", student_team_id).execute()
+    return response.data
 
 def delete_student_team(student_team_id):
-    raise NotImplementedError
+    response = supabase.table("STUDENT_TEAM").delete().eq("id", student_team_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL STUDENT TEAM MEMBER CONTROLLERS --------------
