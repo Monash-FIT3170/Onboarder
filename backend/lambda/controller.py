@@ -140,10 +140,12 @@ def assign_team_lead_to_opening(opening_id, profile_id):
     raise NotImplementedError
 
 def get_team_lead_for_opening(opening_id):
-    raise NotImplementedError
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").select("*").eq("opening_id", opening_id).execute()
+    return response.data
 
 def remove_team_lead_from_opening(opening_id):
-    raise NotImplementedError
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq("opening_id", opening_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL APPLICATION CONTROLLERS --------------
