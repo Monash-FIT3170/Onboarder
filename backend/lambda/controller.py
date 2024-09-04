@@ -16,16 +16,20 @@ def create_profile(user_id, email):
     raise NotImplementedError
 
 def get_all_profiles():
-    raise NotImplementedError
+    response = supabase.table("PROFILE").select("*").execute()
+    return response.data
 
 def update_profile(profile_id, data):
-    raise NotImplementedError
+    response = supabase.table("PROFILE").update(data).eq("id", profile_id).execute()
+    return response.data
 
 def get_profile(profile_id):
-    raise NotImplementedError
+    response = supabase.table("PROFILE").select("*").eq("id", profile_id).execute()
+    return response.data
 
 def delete_profile(profile_id):
-    raise NotImplementedError
+    response = supabase.table("PROFILE").delete().eq("id", profile_id).execute()
+    return {"success": True}
 
 
 # -------------- ALL STUDENT TEAM CONTROLLERS --------------
