@@ -136,7 +136,7 @@ const AvailabilityCalendar: React.FC = () => {
 					}}
 				>
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-						<h2>Please fill in your availability for the next two weeks</h2>
+						<h2> Interview Availability Submission</h2>
 						<p style={{ maxWidth: "900px", textAlign: "center" }}>
 							Select your available slots for the interview process in the next two weeks.
 						</p>
@@ -148,7 +148,7 @@ const AvailabilityCalendar: React.FC = () => {
 					events={eventsList}
 					startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
 					endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
-					style={{ height: "100%" }}
+					style={{ height: "80%" }}
 					defaultView="week"
 					views={["week"]}
 					selectable // Allow users to select time slots to create new events

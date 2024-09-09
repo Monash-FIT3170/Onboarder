@@ -148,7 +148,7 @@ const AvailabilityCalendarUser: React.FC = () => {
                     events={eventsList}
                     startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
                     endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
-                    style={{ height: "100%" }}
+                    style={{ height: "80%" }}
                     defaultView="week"
                     views={["week"]}
                     selectable // Allow users to select time slots to create new events
