@@ -124,7 +124,7 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								View Availability
+								View Availability 
 							</Button>
 							
 							<StyledMenu
