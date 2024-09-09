@@ -60,6 +60,13 @@ function AppBarOnBoarder() {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
+	const navigate = useNavigate(); // Use navigate to navigate to different pages
+
+	// Function to handle the view availability button click
+	const handleViewAvailability = () => {
+		navigate("/availability-calendar-user"); // Navigate to the availability calendar page
+	}
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -100,6 +107,26 @@ function AppBarOnBoarder() {
 							>
 								Account
 							</Button>
+							
+							{/* Button to view availability calendar */}
+							<Button
+								variant="contained"
+								disableElevation
+								onClick={handleViewAvailability} // Call the function to handle the view availability button click
+								sx={{
+									color: "white",
+									marginLeft: 2, // Adjust margin for spacing
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
+								}}
+							>
+								View Availability
+							</Button>
+							
 							<StyledMenu
 								id="demo-customized-menu"
 								MenuListProps={{
