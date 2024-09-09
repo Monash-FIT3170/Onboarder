@@ -143,21 +143,7 @@ const Dashboard: React.FC = () => {
         </Button>
       </ButtonStyle>
       <DashboardTable results={studentTeams} />
-      <CardContainer>
-        <StyledCard>
-          <CardActionArea onClick={handleInterviewCardClick}>
-            <StyledCardMedia image={JobInterviewIcon} />
-            <CardContent>
-              <Typography variant="h5" component="div">
-                Interviews
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                View interviews and manage your availability
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </StyledCard>
-      </CardContainer>
+      
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}
