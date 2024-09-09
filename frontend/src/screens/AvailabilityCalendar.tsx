@@ -157,15 +157,7 @@ const AvailabilityCalendar: React.FC = () => {
 					onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
 					titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
 				/>
-				{/* Save Button */}
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => handleSave(eventsList)} // Pass the eventsList to the handleSave function
-            		style={{ marginTop: "20px" }}
-        		 >
-					Save Availability
-				</Button>
+				
 
 			</div>
 		</DndProvider>
