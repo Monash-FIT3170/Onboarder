@@ -1,0 +1,35 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "jcru0005",
+      "name": "Jesse Cruickshank",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62014277?v=4",
+      "profile": "https://github.com/jcru0005",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ahmadhafiz17",
+      "name": "ahmadhafiz17",
+      "avatar_url": "https://avatars.githubusercontent.com/u/140464163?v=4",
+      "profile": "https://github.com/ahmadhafiz17",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "projectName": "Onboarder",
+  "projectOwner": "Monash-FIT3170",
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+}

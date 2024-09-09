@@ -38,7 +38,7 @@ function App() {
 						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
 						<Route path="/create-opening" element={<CreateOpeningPage />} />
 						<Route path="/viewopen" element={<ViewOpenPage />} />
-						<Route path="/applicant-openings" element={<ApplicantOpenings />} />
+				
 						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
 						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
 						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
@@ -46,8 +46,10 @@ function App() {
 						<Route path="/feedbacknote" element={<Feedbacknote />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
 						<Route path="/availability-calendar-user" element={<AvailabilityCalendarUser />} />
+						<Route path="/view-team-members" element={<ViewTeamMemberPage />} />
 					</Route>
 					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+					<Route path="/applicant-openings" element={<ApplicantOpenings />} />
 
 
 				</Routes>
