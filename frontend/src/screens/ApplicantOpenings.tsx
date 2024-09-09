@@ -55,7 +55,25 @@ const generateSkeletonRows = () => {
 };
 
 function RecruitmentRoundDetailsPage() {
-  const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
+  // const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
+  const [openings, setOpening] = useState([
+    {
+      "id": 1,
+      "recruitment_round_id": 101,
+      "recruitment_round_year": 2024,
+      "recruitment_round_semester": "1",
+      "student_team_id": 1,
+      "student_team_name": "Monash Nova Rover",
+      "title": "Events Officer",
+      "description": "Lead and manage event planning for the team.",
+      "status": "Open",
+      "required_skills": ["Communication", "Leadership"],
+      "desired_skills": ["Project Management"],
+      "application_count": 20,
+      "applications_pending_review": 5,
+      "deadline": "2024-04-20"
+    }
+  ])
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
   const [semester, setSemester] = useState("All");
@@ -149,7 +167,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  {/* <TableCell>Deadline</TableCell> */}
+                  <TableCell>Deadline</TableCell>
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>

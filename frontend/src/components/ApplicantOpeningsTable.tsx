@@ -84,13 +84,14 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           <TableCell component="th" scope="row">
             {result.title}
           </TableCell>
-          <TableCell>{`Student Team ${result.id}`}</TableCell>
-          <TableCell>{`Semester 1`}</TableCell>
-          <TableCell>2024</TableCell>
+          <TableCell>{`${result.status}`}</TableCell>
+          <TableCell>{`${result.student_team_name}`}</TableCell>
+          <TableCell>{`Semester ${result.recruitment_round_semester}`}</TableCell>
+          <TableCell>{`${result.recruitment_round_year}`}</TableCell>
           <TableCell>
             <Button
               variant="contained"
-              style={{ marginRight: "10px", padding: 0 }}
+              style={{ marginRight: "10px", padding: 2 }}
               onClick={() => {
                 handleApply(result.id, result.recruitment_round_id);
               }}
@@ -99,10 +100,10 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
             </Button>
             <Button
               variant="outlined"
-              style={{ padding: 0 }}
+              style={{ padding: 2 }}
               onClick={() => handleTeamInfoClick(result)}
             >
-              Team Info
+              View Team Info
             </Button>
           </TableCell>
         </TableRow>
@@ -117,6 +118,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           <TableHead>
             <TableRow>
               <TableCell> Opening Name </TableCell>
+              <TableCell> Deadline </TableCell>
               <TableCell> Student Team </TableCell>
               <TableCell> Semester </TableCell>
               <TableCell> Year </TableCell>
