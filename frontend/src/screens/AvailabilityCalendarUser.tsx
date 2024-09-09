@@ -56,7 +56,7 @@ const AvailabilityCalendarUser: React.FC = () => {
         } else {
             const updatedEvents = [...eventsList, { start, end, title: "Available Slot" }];
             setEventsList(updatedEvents);
-            handleSave(updatedEvents); // Automatically save changes
+            // handleSave(updatedEvents); // Automatically save changes
         }
     };
 
@@ -66,7 +66,7 @@ const AvailabilityCalendarUser: React.FC = () => {
             existingEvent === event ? { ...existingEvent, start, end } : existingEvent
         );
         setEventsList(updatedEvents);
-        handleSave(updatedEvents); // Automatically save changes
+        // handleSave(updatedEvents); // Automatically save changes
     };
 
     // Function to handle dragging (moving) existing events to a new time slot
@@ -75,7 +75,7 @@ const AvailabilityCalendarUser: React.FC = () => {
             existingEvent === event ? { ...existingEvent, start, end } : existingEvent
         );
         setEventsList(updatedEvents);
-        handleSave(updatedEvents); // Automatically save changes
+        // handleSave(updatedEvents); // Automatically save changes
     };
 
     const API_URL = "http://127.0.0.1:3000/";
