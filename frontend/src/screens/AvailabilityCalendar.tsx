@@ -9,6 +9,7 @@ import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the s
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
+import { Button } from "@mui/material";
 import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
 
@@ -156,6 +157,16 @@ const AvailabilityCalendar: React.FC = () => {
 					onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
 					titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
 				/>
+				{/* Save Button */}
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => handleSave(eventsList)} // Pass the eventsList to the handleSave function
+            		style={{ marginTop: "20px" }}
+        		 >
+					Save Availability
+				</Button>
+
 			</div>
 		</DndProvider>
 	);

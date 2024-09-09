@@ -158,6 +158,8 @@ const AvailabilityCalendarUser: React.FC = () => {
                     onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
                     titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
                 />
+
+            
             </div>
         </DndProvider>
     );
