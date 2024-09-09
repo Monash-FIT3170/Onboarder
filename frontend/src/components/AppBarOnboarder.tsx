@@ -17,6 +17,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
 	<Menu
@@ -71,8 +72,9 @@ function AppBarOnBoarder() {
 		setAnchorEl(event.currentTarget);
 	};
 
-	const handleClose = () => {
-		setAnchorEl(null);
+	const handleViewAvailability = () => {
+		//redirect to the view availability page once created
+		navigate('/');
 	};
 
 	return (
@@ -93,8 +95,7 @@ function AppBarOnBoarder() {
 								aria-expanded={open ? "true" : undefined}
 								variant="outlined"
 								disableElevation
-								onClick={handleClick}
-								endIcon={<KeyboardArrowDownIcon />}
+								onClick={handleViewAvailability}
 								sx={{
 									color: "white",
 									borderColor: "rgba(255, 255, 255, 0.5)",
@@ -105,7 +106,7 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								Account
+								View Availability and Interviews
 							</Button>
 							
 							{/* Button to view availability calendar */}
@@ -127,26 +128,24 @@ function AppBarOnBoarder() {
 								View Availability 
 							</Button>
 							
-							<StyledMenu
-								id="demo-customized-menu"
-								MenuListProps={{
-									"aria-labelledby": "demo-customized-button",
+							<Button
+								variant="outlined"
+								disableElevation
+								onClick={signOut} // Directly call the signOut function
+								sx={{
+									color: "white",
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
+									marginLeft: 2, // Adds space between the buttons
 								}}
-								anchorEl={anchorEl}
-								open={open}
-								onClose={handleClose}
 							>
-								<MenuItem
-									onClick={() => {
-										signOut();
-										handleClose();
-									}}
-									disableRipple
-								>
-									<LogoutIcon />
-									Sign out
-								</MenuItem>
-							</StyledMenu>
+								Sign Out
+							</Button>
+							
 						</>
 					)}
 				</Toolbar>

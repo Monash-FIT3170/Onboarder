@@ -2,10 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActionArea,
   Button,
 } from "@mui/material";
 import {
@@ -14,7 +10,6 @@ import {
 } from "../components/DashboardTable";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import JobInterviewIcon from "../assets/JobInterview.jpg";
 import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
@@ -23,29 +18,6 @@ import axios from "axios";
 const TitleWrap = styled.div`
   margin: auto;
   text-align: center;
-`;
-
-const CardContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  width: 100%;
-`;
-
-const StyledCard = styled(Card)`
-  max-width: 250px;
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const StyledCardMedia = styled(CardMedia)`
-  height: 160px;
-  width: 250px;
-  object-fit: contain;
-  padding: 16px;
 `;
 
 const ButtonStyle = styled.div`
@@ -111,10 +83,6 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [setStudentTeams, authStore]);
 
-  const handleInterviewCardClick = () => {
-    navigate("/availability-calendar-user");
-  };
-
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
   };
@@ -143,21 +111,6 @@ const Dashboard: React.FC = () => {
         </Button>
       </ButtonStyle>
       <DashboardTable results={studentTeams} />
-      <CardContainer>
-        <StyledCard>
-          <CardActionArea onClick={handleInterviewCardClick}>
-            <StyledCardMedia image={JobInterviewIcon} />
-            <CardContent>
-              <Typography variant="h5" component="div">
-                Interviews
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                View interviews and manage your availability
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </StyledCard>
-      </CardContainer>
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}

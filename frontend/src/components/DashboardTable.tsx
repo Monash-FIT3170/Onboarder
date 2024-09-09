@@ -52,7 +52,7 @@ const generateRowFunction = (
               <TableCell>
                   <Button
                       variant="contained"
-                      style={{ padding: 0 }}
+                      sx={{ padding: "6px 12px", marginRight: 2}}
                       onClick={() => {
                           handleDeleteOrLeave(
                               result.user_team_role,
@@ -65,7 +65,9 @@ const generateRowFunction = (
                   </Button>
                   <Button
                       variant="contained"
-                      style={{ padding: 0 }}
+                      style={{ 
+                        padding: "6px 12px", 
+                      }}
                       onClick={() => {
                           handleView(
                               result.student_team_id,
@@ -74,7 +76,7 @@ const generateRowFunction = (
                           );
                       }}
                   >
-                      VIEW ROUNDS
+                      VIEW
                   </Button>
               </TableCell>
           </TableRow>
