@@ -15,6 +15,7 @@ import {
 	KeyboardArrowDown as KeyboardArrowDownIcon,
 	Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
 
 const StyledMenu = styled((props: MenuProps) => (
