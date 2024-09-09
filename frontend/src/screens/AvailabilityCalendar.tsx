@@ -7,7 +7,7 @@ import format from "date-fns/format"; // Utility for formatting dates
 import parse from "date-fns/parse"; // Utility for parsing dates
 import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the start of the week
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
-import { Button } from "@mui/icons-material"; // Import the Button component f
+import { Button } from "@mui/material"; // Import the Button component f
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
@@ -136,11 +136,9 @@ const AvailabilityCalendar: React.FC = () => {
 					}}
 				>
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-						<h2>Please fill in your availability for the period: August 20 - August 29, 2023</h2>
+						<h2>Please fill in your availability for the next two weeks</h2>
 						<p style={{ maxWidth: "900px", textAlign: "center" }}>
-							You are required to fill in your availability for the interview process within the
-							date range of August 20 to August 29, 2023. Please select your available slots by
-							clicking on the desired time blocks in the calendar.
+							Select your available slots for the interview process in the next two weeks.
 						</p>
 					</div>
 				</div>
@@ -159,10 +157,22 @@ const AvailabilityCalendar: React.FC = () => {
 					onEventResize={handleEventResize} // Handle resizing of existing events
 					onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
 					titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+					min={today} // Earliest selectable date
+					max={twoWeeksLater} // Latest selectable date (2 weeks from now)
 				/>
+				{/* Save Button */}
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => handleSave(eventsList)} // Pass the eventsList to the handleSave function
+            		style={{ marginTop: "20px" }}
+        		 >
+					Save Availability
+				</Button>
 			</div>
 		</DndProvider>
 	);
 };
 
 export default AvailabilityCalendar;
+
