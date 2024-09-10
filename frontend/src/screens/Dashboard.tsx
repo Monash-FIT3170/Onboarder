@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
         }
 
         const rolesResponse = await axios.get(
-          `http://127.0.0.1:3000/profile/${profileId}/student-teams`
+          `http://127.0.0.1:3000/profile/${profileId}/student-teams` // Working
         );
 
         let tableData = rolesResponse.data

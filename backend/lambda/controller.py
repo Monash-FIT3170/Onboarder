@@ -142,16 +142,24 @@ def get_all_openings():
 def create_opening(
         recruitment_round_id, 
         title, 
-        description, 
-        task_enabled, 
-        task_email_format
+        description,
+        status,
+        required_skills,
+        desired_skills, 
+        task_email_format,
+        task_enabled
+
     ):
     response = supabase.table("OPENING").insert({
         "recruitment_round_id": recruitment_round_id,
         "title": title,
         "description": description,
+        "status": status,
+        "required_skills": required_skills,
+        "desired_skills": desired_skills,
+        "task_email_format": task_email_format,
         "task_enabled": task_enabled,
-        "task_email_format": task_email_format
+        
     }).execute()
 
     return response.data

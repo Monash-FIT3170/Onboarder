@@ -56,7 +56,7 @@ const generateRowFunction = (
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
         <TableCell component="th" scope="row">
-          {result.title}
+          {result.opening_title}
         </TableCell>
         <TableCell>{result.applications_count}</TableCell>
         {/* <TableCell>
@@ -70,7 +70,7 @@ const generateRowFunction = (
                 result.id,
                 result.recruitment_round_id,
                 result.student_team_name,
-                result.title,
+                result.opening_title,
                 result.applications_count
               )
             }

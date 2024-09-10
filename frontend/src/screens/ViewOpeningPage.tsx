@@ -127,8 +127,9 @@ function ViewOpenPage() {
         const fetchData = async () => {
             try {
                 const applicationsResponse = await axios.get(
-                    `http://127.0.0.1:3000/openings/${selectedOpening.id}/applications`
+                    `http://127.0.0.1:3000/opening/${selectedOpening.id}/application` //Fixed not tested
                 );
+                console.log(selectedOpening);
                 setApplications(applicationsResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -158,7 +159,7 @@ function ViewOpenPage() {
     const handleSendEmails = async () => {
         setLoading(true);
         try {
-            // const response = await axios.post(`http://127.0.0.1:3000/sendInterviewEmails/${selectedOpening.id}`);
+            // const response = await axios.post(`http://127.0.0.1:3000/send-interview-emails/${selectedOpening.id}`);
             // console.log(response);
             console.log("Commented out due to email limit");
         } catch (error) {
