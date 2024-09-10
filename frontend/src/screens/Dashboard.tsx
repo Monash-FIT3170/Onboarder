@@ -38,14 +38,14 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profile_id = 1; // Replace with actual profile_id fetching logic
+        let profileId = 1; // Replace with actual profile_id fetching logic
 
-        if (!profile_id) {
-          profile_id = await authStore.fetchProfile();
+        if (!profileId) {
+          profileId = await authStore.fetchProfile();
         }
 
         const rolesResponse = await axios.get(
-          `http://127.0.0.1:3000/studentTeams/${profile_id}`
+          `http://127.0.0.1:3000/profile/${profileId}/student-teams`
         );
 
         let tableData = rolesResponse.data
