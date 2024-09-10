@@ -7,6 +7,7 @@ import format from "date-fns/format"; // Utility for formatting dates
 import parse from "date-fns/parse"; // Utility for parsing dates
 import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the start of the week
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
+import { Button } from "@mui/material"; // Import the Button component 
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
@@ -39,12 +40,15 @@ const AvailabilityCalendar: React.FC = () => {
 	const { id } = useParams();
 	const [applicationId, setApplicationId] = useState(null);
 
+	// Get the current date and calculate two weeks from the current date
+	const today = new Date();
+	const twoWeeksLater = new Date();
+	twoWeeksLater.setDate(today.getDate() + 14);
+
 	// Function to handle the selection of a new time slot in the calendar
 	const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
-		// Check if the selected time slot overlaps with any existing events
 		const overlappingEvent = eventsList.find((event) => start < event.end && end > event.start);
-
-		// If there is an overlap, alert the user; otherwise, add the new event
+		
 		if (overlappingEvent) {
 			alert(
 				"The selected time slot overlaps with an existing event. Please adjust the existing event or select a different time slot."
@@ -52,7 +56,7 @@ const AvailabilityCalendar: React.FC = () => {
 		} else {
 			const updatedEvents = [...eventsList, { start, end, title: "Available Slot" }];
 			setEventsList(updatedEvents);
-			handleSave(updatedEvents); // Automatically save changes
+			// handleSave(updatedEvents); // Automatically save changes
 		}
 	};
 
@@ -62,7 +66,7 @@ const AvailabilityCalendar: React.FC = () => {
 			existingEvent === event ? { ...existingEvent, start, end } : existingEvent
 		);
 		setEventsList(updatedEvents);
-		handleSave(updatedEvents); // Automatically save changes
+		// handleSave(updatedEvents); // Automatically save changes
 	};
 
 	// Function to handle dragging (moving) existing events to a new time slot
@@ -71,7 +75,7 @@ const AvailabilityCalendar: React.FC = () => {
 			existingEvent === event ? { ...existingEvent, start, end } : existingEvent
 		);
 		setEventsList(updatedEvents);
-		handleSave(updatedEvents); // Automatically save changes
+		// handleSave(updatedEvents); // Automatically save changes
 	};
 
 	const API_URL = "http://127.0.0.1:3000/";
@@ -132,11 +136,9 @@ const AvailabilityCalendar: React.FC = () => {
 					}}
 				>
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-						<h2>Please fill in your availability for the period: August 20 - August 29, 2023</h2>
+						<h2> Interview Availability Submission</h2>
 						<p style={{ maxWidth: "900px", textAlign: "center" }}>
-							You are required to fill in your availability for the interview process within the
-							date range of August 20 to August 29, 2023. Please select your available slots by
-							clicking on the desired time blocks in the calendar.
+							Select your available slots for the interview process in the next two weeks.
 						</p>
 					</div>
 				</div>
@@ -146,7 +148,7 @@ const AvailabilityCalendar: React.FC = () => {
 					events={eventsList}
 					startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
 					endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
-					style={{ height: "100%" }}
+					style={{ height: "80%" }}
 					defaultView="week"
 					views={["week"]}
 					selectable // Allow users to select time slots to create new events
@@ -155,10 +157,22 @@ const AvailabilityCalendar: React.FC = () => {
 					onEventResize={handleEventResize} // Handle resizing of existing events
 					onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
 					titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+					min={today} // Earliest selectable date
+					max={twoWeeksLater} // Latest selectable date (2 weeks from now)
 				/>
+				{/* Save Button */}
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => handleSave(eventsList)} // Pass the eventsList to the handleSave function
+            		style={{ marginTop: "20px" }}
+        		 >
+					Save Availability
+				</Button>
 			</div>
 		</DndProvider>
 	);
 };
 
 export default AvailabilityCalendar;
+

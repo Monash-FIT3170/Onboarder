@@ -83,7 +83,6 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [setStudentTeams, authStore]);
 
-
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
   };
