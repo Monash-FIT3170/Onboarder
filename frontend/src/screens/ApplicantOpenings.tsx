@@ -58,6 +58,9 @@ function RecruitmentRoundDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
   const [semester, setSemester] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openingFilter, setOpeningFilter] = useState("");
+  const [teamFilter, setTeamFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +69,7 @@ function RecruitmentRoundDetailsPage() {
           "http://127.0.0.1:3000/openings"
         );
         setOpening(openingsResponse.data);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -75,6 +79,17 @@ function RecruitmentRoundDetailsPage() {
 
     fetchData();
   }, []);
+
+  const filteredOpenings = openings.filter((opening) => {
+    const searchMatch = opening.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        opening.student_team_name.toLowerCase().includes(searchTerm.toLowerCase());
+    const openingMatch = opening.title.toLowerCase().includes(openingFilter.toLowerCase());
+    const teamMatch = opening.student_team_name.toLowerCase().includes(teamFilter.toLowerCase());
+    const semesterMatch = semester === "All" || opening.recruitment_round_semester.toString() === semester;
+    const yearMatch = year === "All" || opening.recruitment_round_year.toString() === year;
+
+    return searchMatch && openingMatch && teamMatch && semesterMatch && yearMatch;
+  });
 
   return (
     <>
@@ -90,7 +105,13 @@ function RecruitmentRoundDetailsPage() {
         marginTop="10px"
       >
         <Grid item xs={3}>
-          <TextField label="Search" variant="outlined" fullWidth />
+          <TextField 
+            label="Search" 
+            variant="outlined" 
+            fullWidth 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </Grid>
 
         <Grid item xs={3}>
@@ -98,6 +119,8 @@ function RecruitmentRoundDetailsPage() {
             label="Filter by opening name"
             variant="outlined"
             fullWidth
+            value={openingFilter}
+            onChange={(e) => setOpeningFilter(e.target.value)}
           />
         </Grid>
         <Grid item xs={2}>
@@ -105,6 +128,8 @@ function RecruitmentRoundDetailsPage() {
             label="Filter by student team"
             variant="outlined"
             fullWidth
+            value={teamFilter}
+            onChange={(e) => setTeamFilter(e.target.value)}
           />
         </Grid>
         <Grid item xs={2}>
@@ -159,7 +184,7 @@ function RecruitmentRoundDetailsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <ApplicantOpeningsTable results={openings}></ApplicantOpeningsTable>
+          <ApplicantOpeningsTable results={filteredOpenings}></ApplicantOpeningsTable>
         )}
       </div>
     </>
