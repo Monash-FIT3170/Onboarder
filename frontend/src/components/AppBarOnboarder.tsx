@@ -17,7 +17,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
-import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
 	<Menu
