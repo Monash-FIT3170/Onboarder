@@ -78,7 +78,7 @@ const AvailabilityCalendar: React.FC = () => {
 
 	const handleSave = async (updatedEvents: Event[]) => {
 		try {
-			const response = await fetch(`${API_URL}/updateAvailability/${applicationId}`, {
+			const response = await fetch(`${API_URL}/application/${applicationId}`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ candidate_availablity: updatedEvents }),

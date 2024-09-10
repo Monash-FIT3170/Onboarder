@@ -873,8 +873,7 @@ def create_application(path_params={}, _={}, body={}):
     required_fields = [
         'email', 'name', 'phone', 'semesters_until_completion', 
         'current_semester', 'major_enrolled', 'additional_info', 
-        'skills', 'created_at', 'candidate_availability', 
-        'interview_date', 'interview_notes', 'interview_score', 'status', 'course_name'
+        'skills', 'course_name' # 'created_at', 'candidate_availability', 'interview_date', 'interview_notes', 'interview_score', 'status',
     ]
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
@@ -893,12 +892,12 @@ def create_application(path_params={}, _={}, body={}):
         major_enrolled = data['major_enrolled']
         additional_info = data['additional_info']
         skills = data['skills']
-        created_at = data['created_at']
-        candidate_availability = data['candidate_availability']
-        interview_date = data['interview_date']
-        interview_notes = data['interview_notes']
-        interview_score = data['interview_score']
-        status = data['status']
+        # created_at = data['created_at']
+        # candidate_availability = data['candidate_availability']
+        # interview_date = data['interview_date']
+        # interview_notes = data['interview_notes']
+        # interview_score = data['interview_score']
+        # status = data['status']
         course_name = data['course_name']
     except (ValueError, KeyError):
         return {
@@ -910,8 +909,8 @@ def create_application(path_params={}, _={}, body={}):
     response = controller.create_application(
         email, name, phone, semesters_until_completion, 
         current_semester, major_enrolled, additional_info, 
-        skills, created_at, candidate_availability, interview_date, 
-        interview_notes, interview_score, status, opening_id, course_name
+        skills, opening_id, course_name
+        # interview_notes, interview_score, created_at, candidate_availability, interview_date, status, 
     )
     
     return {
