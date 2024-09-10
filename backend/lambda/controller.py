@@ -221,7 +221,8 @@ def create_application(
         interview_notes, 
         interview_score, 
         status, 
-        opening_id
+        opening_id,
+        course_name
     ):
     response = supabase.table("APPLICATION").insert({
         "email": email,
@@ -238,7 +239,8 @@ def create_application(
         "interview_notes": interview_notes,
         "interview_score": interview_score,
         "status": status,
-        "opening_id": opening_id
+        "opening_id": opening_id,
+        "course_name": course_name
     }).execute()
 
     return response.data

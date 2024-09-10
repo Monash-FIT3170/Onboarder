@@ -874,7 +874,7 @@ def create_application(path_params={}, _={}, body={}):
         'email', 'name', 'phone', 'semesters_until_completion', 
         'current_semester', 'major_enrolled', 'additional_info', 
         'skills', 'created_at', 'candidate_availability', 
-        'interview_date', 'interview_notes', 'interview_score', 'status'
+        'interview_date', 'interview_notes', 'interview_score', 'status', 'course_name'
     ]
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
@@ -899,6 +899,7 @@ def create_application(path_params={}, _={}, body={}):
         interview_notes = data['interview_notes']
         interview_score = data['interview_score']
         status = data['status']
+        course_name = data['course_name']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -910,7 +911,7 @@ def create_application(path_params={}, _={}, body={}):
         email, name, phone, semesters_until_completion, 
         current_semester, major_enrolled, additional_info, 
         skills, created_at, candidate_availability, interview_date, 
-        interview_notes, interview_score, status, opening_id
+        interview_notes, interview_score, status, opening_id, course_name
     )
     
     return {
