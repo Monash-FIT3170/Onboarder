@@ -17,7 +17,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
-import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
 	<Menu
@@ -68,9 +67,8 @@ function AppBarOnBoarder() {
 		navigate("/availability-calendar-user"); // Navigate to the availability calendar page
 	}
 
-	const handleViewAvailability = () => {
-		//redirect to the view availability page once created
-		navigate('/');
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
 	};
 
 	return (
@@ -121,7 +119,7 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								View Availability
+								View Availability 
 							</Button>
 							
 							<Button
