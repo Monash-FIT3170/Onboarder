@@ -71,11 +71,6 @@ function AppBarOnBoarder() {
 		setAnchorEl(event.currentTarget);
 	};
 
-	const handleViewAvailability = () => {
-		//redirect to the view availability page once created
-		navigate('/');
-	};
-
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<CssBaseline />
