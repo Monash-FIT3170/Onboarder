@@ -201,6 +201,20 @@ def delete_profile(path_params={}, _={}, __={}):
 
     return response
 
+@route('/profile/{profileId}/student-teams', ['GET'])
+def get_student_teams_for_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_student_teams_for_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 # ------------------ STUDENT TEAMS ------------------
 
 @route('/student-team', ['POST'])
@@ -321,6 +335,8 @@ def delete_student_team(path_params={}, _={}, __={}):
     }
 
     return response
+
+# ------------------ STUDENT TEAM MEMEBERS ------------------
 
 @route('/student-team/{studentTeamId}/members', ['POST'])
 def add_member_to_student_team(path_params={}, _={}, body={}):
