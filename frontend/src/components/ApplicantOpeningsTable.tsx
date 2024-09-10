@@ -30,6 +30,7 @@ export interface applicantOpeningResultProps {
   desired_skills: string[];
   application_count: number;
   applications_pending_review: number;
+  deadline: string;
 }
 
 interface applicantOpeningTableProps {
@@ -84,7 +85,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           <TableCell component="th" scope="row">
             {result.title}
           </TableCell>
-          <TableCell>{`${result.status}`}</TableCell>
+          <TableCell>{`${result.deadline}`}</TableCell>
           <TableCell>{`${result.student_team_name}`}</TableCell>
           <TableCell>{`Semester ${result.recruitment_round_semester}`}</TableCell>
           <TableCell>{`${result.recruitment_round_year}`}</TableCell>
