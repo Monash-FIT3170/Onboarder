@@ -1,4 +1,3 @@
-
 import controller
 from typing import Callable
 import json
@@ -51,6 +50,7 @@ def route(path: str, methods: list[str]) -> Callable:
 # OPTIONS HANDLER
 @route('/profile', ['OPTIONS'])
 @route('/profile/{profileId}', ['OPTIONS'])
+@route('/profile/{profileId}/student-teams', ['OPTIONS'])
 @route('/student-team', ['OPTIONS'])
 @route('/student-team/{studentTeamId}', ['OPTIONS'])
 @route('/student-team/{studentTeamId}/members', ['OPTIONS'])
