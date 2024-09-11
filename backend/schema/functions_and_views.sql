@@ -47,7 +47,7 @@ BEGIN
         UPDATE public."PROFILE" SET user_id = NEW.id WHERE email = NEW.email;
     ELSE
         INSERT INTO public."PROFILE" (user_id, email)
-        VALUES (NEW.id, NEW.email)
+        VALUES (NEW.id, NEW.email);
     END IF;
 
     RETURN NEW;
