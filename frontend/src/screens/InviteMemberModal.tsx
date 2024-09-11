@@ -75,10 +75,9 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:3000/profileTeamInfo",
+        `http://127.0.0.1:3000/student-team/${teamId}/members`, // Fixed not tested
         {
           email: email,
-          student_team_id: teamId,
           role: role,
         }
       );

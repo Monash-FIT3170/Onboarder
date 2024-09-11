@@ -11,7 +11,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
     const [emailBody, setEmailBody] = useState("");
     // const [loading, setLoading] = useState(true);
     // const [open, setOpen] = useState(false);
-    // const [dialogParam, setDialogParam] = useState("");
+    const [dialogParam, setDialogParam] = useState("");
 
     const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTaskOn(event.target.checked);
@@ -31,16 +31,16 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
             task_email_format: emailBody,
         };
         try {
-            const response = await axios.post(
-                `http://127.0.0.1:3000/openings/${selectedOpening.id}`,
+            const response = await axios.patch(
+                `http://127.0.0.1:3000/opening/${selectedOpening.id}`, // Working
                 submissionData
             );
             if (response.status === 201) {
-                console.log(response);
-                // setDialogParam("Task Updated!");
+                // console.log(response);
+                setDialogParam("Task Updated!");
             } else {
-                console.log(response);
-                // setDialogParam("There was an error updating the email.");
+                // console.log(response);
+                setDialogParam("There was an error updating the email.");
             }
         } catch (error) {
             console.error("There was an error!", error);
@@ -60,9 +60,11 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
             }
             try {
                 const openingResponse = await axios.get(
-                    `http://127.0.0.1:3000/openings/${selectedOpening.id}`
+                    `http://127.0.0.1:3000/opening/${selectedOpening.id}` // Working
                 );
-                setEmailBody(openingResponse.data[0].task_email_format);
+                console.log(openingResponse);
+                setEmailBody(openingResponse.data[0].opening_task_email_format);
+                setTaskOn(openingResponse.data[0].opening_task_enabled);
             } catch (error) {
                 console.error("Error fetching applicant data:", error);
             } finally {
