@@ -64,11 +64,14 @@ function CreateOpeningPage() {
       status: "I",
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
+      task_email_format: "TEMPORARY FIX", // TODO
+      task_enabled: false // TODO
+
     };
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings`,
+        `http://127.0.0.1:3000/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
         openingData
       );
       if (response.status === 201) {
