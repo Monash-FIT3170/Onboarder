@@ -11,11 +11,19 @@ import {
   DialogContentText,
   DialogActions,
   CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import { formatDeadline } from "../util/Util";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { useAuthStore } from "../util/stores/authStore";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 
 function CreateOpeningPage() {
@@ -28,6 +36,7 @@ function CreateOpeningPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { team_name } = useAuthStore();
   const recruitmentDetails = useRecruitmentStore(
     (state) => state.recruitmentDetails
   );
@@ -92,6 +101,37 @@ function CreateOpeningPage() {
         </Typography>
       </Grid>
 
+      {/* Table for For Round and Deadline */}
+   <Grid item xs={12}>
+        <TableContainer component={Paper} elevation={0} style={{ border: 'none' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+                    For Round
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+                    Deadline
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell style={{ borderBottom: 'none' }}>
+                  {team_name} {recruitmentDetails.roundId}
+                </TableCell>
+                <TableCell style={{ borderBottom: 'none' }}>
+                  {formatDeadline(recruitmentDetails.roundDeadline)}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
       <Grid item xs={12} md={6}>
         <Typography variant="body2" fontSize={20}>
           Name:
@@ -115,34 +155,6 @@ function CreateOpeningPage() {
           size="small"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-        />
-      </Grid>
-
-      <Grid item xs={12} md={6}>
-        <Typography variant="body2" fontSize={20}>
-          For Round:
-        </Typography>
-        <TextField
-          fullWidth
-          value={recruitmentDetails.roundId}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled={true}
-        />
-      </Grid>
-
-      <Grid item xs={12} md={6}>
-        <Typography variant="body2" fontSize={20}>
-          Deadline:
-        </Typography>
-        <TextField
-          fullWidth
-          value={formatDeadline(recruitmentDetails.roundDeadline)}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled={true}
         />
       </Grid>
 
