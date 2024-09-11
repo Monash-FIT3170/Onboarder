@@ -105,7 +105,11 @@ SELECT
     o.task_email_format AS opening_task_email_format,
     o.task_enabled AS opening_task_enabled,
     COALESCE(ac.applications_count, 0) AS applications_count,
-    COALESCE(ar.pending_review_count, 0) AS pending_review_count
+    COALESCE(ar.pending_review_count, 0) AS pending_review_count,
+    st.name AS student_team_name,
+    rr.deadline AS recruitment_round_deadline,
+    rr.semester AS recruitment_round_semester,
+    rr.year AS recruitment_round_year
 FROM
     public."OPENING" o
 LEFT JOIN
@@ -129,7 +133,11 @@ LEFT JOIN
             status IN ('A', 'C')
         GROUP BY
             opening_id
-    ) ar ON o.id = ar.opening_id;
+    ) ar ON o.id = ar.opening_id
+JOIN
+    public."RECRUITMENT_ROUND" rr ON o.recruitment_round_id = rr.id
+JOIN
+    public."STUDENT_TEAM" st ON rr.student_team_id = st.id;
 
 
 -- Function to get all student teams with roles and owners
