@@ -23,6 +23,7 @@ import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
 import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
+import ViewTeamLeads from "./screens/ViewTeamLeads";
 
 function App() {
     return (
