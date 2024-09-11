@@ -25,15 +25,11 @@ const AllocateTeamLeads = () => {
     const [loading, setLoading] = useState(true);
     const { teamLeadId } = useParams();
     const navigate = useNavigate();
-    const [data, setData] = useState([]);
     const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
     const selectedMember = useMemberStore((state) => state.selectedMember);
-    const API_URL = "http://127.0.0.1:3000/student-team/{openingId}/team-lead-assign";
+    const { team_id, team_name } = useAuthStore();
 
-    const handleAllocate = (openingId: number) => {
-        // Logic to allocate or deallocate team lead to the opening
-        // navigate("/allocate-team-leads");
-
+    const handleAllocate = async (openingId: number) => {
         if (!teamLeadId || !openingId) {
             alert("Please fill in all fields");
             return;
@@ -41,90 +37,66 @@ const AllocateTeamLeads = () => {
         
         setLoading(true);
         try {
-            axios.post(API_URL, {
+            const API_URL = `http://127.0.0.1:3000/opening/${openingId}/team-lead-assign`;
+            await axios.post(API_URL, {
                 team_lead_id: teamLeadId,
                 opening_id: openingId,
             });
             console.log("Team lead allocated successfully");
+            // Refresh the openings list after allocation
+            fetchTeamOpenings();
         } catch (error) {
             console.error("Error allocating team lead:", error);
         } finally {
             setLoading(false);
-        
-        console.log(`Allocating team lead ${teamLeadId} to opening ${openingId}`);
+        }
     };
-    const { team_id, team_name } = useAuthStore();
+
+    const fetchTeamOpenings = async () => {
+        if (!team_id) {
+            console.error("No team selected");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const profileTeamResponse = await axios.get(
+                `http://127.0.0.1:3000/studentTeams/${team_id}/recruitmentRounds`
+            );
+            const roundInfo = profileTeamResponse.data;
+
+            if (roundInfo.length === 0) {
+                throw new Error("Profile team information not found");
+            }
+
+            const openingPromises = roundInfo.map(async (oneRoundInfo: any) => {
+                try {
+                    const openingsResponse = await axios.get(
+                        `http://127.0.0.1:3000/recruitmentRounds/${oneRoundInfo.id}/openings`
+                    );
+                    return openingsResponse.data.map((opening: any) => ({
+                        ...opening,
+                        round_name: oneRoundInfo.round_name,
+                    }));
+                } catch (error) {
+                    console.error(`Error fetching openings for round ${oneRoundInfo.id}:`, error);
+                    return [];
+                }
+            });
+
+            const resolvedOpenings = await Promise.all(openingPromises);
+            setOpenings(resolvedOpenings.flat());
+        } catch (error) {
+            console.error("Error fetching team openings:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchTeamOpenings = async () => {
-            if (!team_id) {
-                // setError("No team selected");
-                // setIsLoading(false);
-                return;
-            }
-
-            try {
-                // First API call to get rounds
-                const profileTeamResponse = await axios.get(
-                    `http://127.0.0.1:3000/studentTeams/${team_id}/recruitmentRounds`
-                );
-                const roundInfo = profileTeamResponse.data;
-                console.log(roundInfo);
-                if (roundInfo.length === 0) {
-                    throw new Error("Profile team information not found");
-                }
-
-                // Fetch student information for each member
-                const openingPromises = roundInfo.map(async (oneRoundInfo: any) => {
-                    try {
-                        console.log(oneRoundInfo);
-                        const openingsResponse = await axios.get(
-                            `http://127.0.0.1:3000/recruitmentRounds/${oneRoundInfo.id}/openings`
-                        );
-                        // const studentInfo = studentResponse.data.find(
-                        //   (student: any) => student.student_team_id === team_id
-                        // );
-                        const openingInfo = openingsResponse.data;
-                        setOpenings(openingInfo);
-                        console.log(data);
-                        console.log("openingInfo");
-                        console.log(openingInfo);
-
-                        if (openingInfo) {
-                            return {
-                                round_name: oneRoundInfo.round_name,
-                                opening_name: openingInfo.opening_name,
-                                team_leads_allocated: "TODO",
-                            };
-                        }
-                        return null;
-                    } catch (error) {
-                        console.error(
-                            `Error fetching student info for profile ${oneRoundInfo.profile_id}:`,
-                            error
-                        );
-                        return null;
-                    }
-                });
-                // console.log(membersPromises)
-                // const resolvedOpenings = await Promise.all(openingPromises);
-                // console.log("resolvedOpenings")
-                // console.log(resolvedOpenings)
-                // setOpenings(
-                //   resolvedOpenings.filter(
-                //     (opening): opening is any => opening !== null
-                //   )
-                // );
-            } catch (error) {
-                console.error("Error fetching team members:", error);
-                // setError("Failed to fetch team members");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchTeamOpenings();
     }, [team_id]);
+
     return (
         <div style={{ padding: "20px" }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -173,15 +145,15 @@ const AllocateTeamLeads = () => {
                               ))
                             : openings.map((opening) => (
                                   <TableRow key={opening.id}>
-                                      <TableCell>{opening.recruitment_round_id}</TableCell>
+                                      <TableCell>{opening.round_name}</TableCell>
                                       <TableCell>{opening.title}</TableCell>
-                                      <TableCell>{opening.teamLeadsAllocated}</TableCell>
+                                      <TableCell>{opening.team_leads_allocated || 0}</TableCell>
                                       <TableCell>
                                           <Button
                                               variant="contained"
                                               onClick={() => handleAllocate(opening.id)}
                                           >
-                                              {opening.teamLeadsAllocated > 0
+                                              {opening.team_leads_allocated > 0
                                                   ? "De-allocate"
                                                   : "Allocate"}
                                           </Button>
