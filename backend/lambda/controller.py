@@ -349,7 +349,7 @@ def send_bulk_email(recipients, task_enabled, task_email_format):
 
 
 def send_interview_email(opening_id):
-    applicants = get_all_applications(opening_id)
+    applicants = get_all_applications_for_opening(opening_id)
 
     recipients = []
 
@@ -362,8 +362,8 @@ def send_interview_email(opening_id):
     if recipients:
         response = get_opening(opening_id)
 
-        task_enabled = response.data['task_enabled']
-        task_email_format = response.data['task_email_format']
+        task_enabled = response[0]['opening_task_enabled']
+        task_email_format = response[0]['opening_task_email_format']
 
         send_bulk_email(recipients, task_enabled, task_email_format)
 
