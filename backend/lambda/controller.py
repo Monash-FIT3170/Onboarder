@@ -30,7 +30,11 @@ def get_profile(profile_id):
 
 def delete_profile(profile_id):
     response = supabase.table("PROFILE").delete().eq("id", profile_id).execute()
-    return {"success": True}
+    return response.data
+
+def get_student_teams_for_profile(profile_id):
+    response = supabase.table("student_teams_with_roles_and_owners").select("*").eq("profile_id", profile_id).execute()
+    return response.data
 
 
 # -------------- ALL STUDENT TEAM CONTROLLERS --------------
@@ -53,7 +57,7 @@ def get_student_team(student_team_id):
 
 def delete_student_team(student_team_id):
     response = supabase.table("STUDENT_TEAM").delete().eq("id", student_team_id).execute()
-    return {"success": True}
+    return response.data
 
 
 # -------------- ALL STUDENT TEAM MEMBER CONTROLLERS --------------
@@ -92,7 +96,7 @@ def get_student_team_member(student_team_id, profile_id):
 
 def remove_member_from_student_team(student_team_id, profile_id):
     response = supabase.table("PROFILE_TEAM_INFO").delete().eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
-    return {"success": True}
+    return response.data
 
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
@@ -126,7 +130,7 @@ def get_recruitment_round(recruitment_round_id):
 
 def delete_recruitment_round(recruitment_round_id):
     response = supabase.table("RECRUITMENT_ROUND").delete().eq("id", recruitment_round_id).execute()
-    return {"success": True}
+    return response.data
 
 
 # -------------- ALL OPENING CONTROLLERS --------------
@@ -138,16 +142,24 @@ def get_all_openings():
 def create_opening(
         recruitment_round_id, 
         title, 
-        description, 
-        task_enabled, 
-        task_email_format
+        description,
+        status,
+        required_skills,
+        desired_skills, 
+        task_email_format,
+        task_enabled
+
     ):
     response = supabase.table("OPENING").insert({
         "recruitment_round_id": recruitment_round_id,
         "title": title,
         "description": description,
+        "status": status,
+        "required_skills": required_skills,
+        "desired_skills": desired_skills,
+        "task_email_format": task_email_format,
         "task_enabled": task_enabled,
-        "task_email_format": task_email_format
+        
     }).execute()
 
     return response.data
@@ -185,7 +197,7 @@ def get_team_lead_for_opening(opening_id):
 
 def remove_team_lead_from_opening(opening_id):
     response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq("opening_id", opening_id).execute()
-    return {"success": True}
+    return response.data
 
 
 # -------------- ALL APPLICATION CONTROLLERS --------------
@@ -203,13 +215,14 @@ def create_application(
         major_enrolled, 
         additional_info, 
         skills, 
-        created_at, 
-        candidate_availability, 
-        interview_date, 
-        interview_notes, 
-        interview_score, 
-        status, 
-        opening_id
+        # created_at, 
+        # candidate_availability, 
+        # interview_date, 
+        # interview_notes, 
+        # interview_score, 
+        # status, 
+        opening_id,
+        course_name
     ):
     response = supabase.table("APPLICATION").insert({
         "email": email,
@@ -220,13 +233,14 @@ def create_application(
         "major_enrolled": major_enrolled,
         "additional_info": additional_info,
         "skills": skills,
-        "created_at": created_at,
-        "candidate_availability": candidate_availability,
-        "interview_date": interview_date,
-        "interview_notes": interview_notes,
-        "interview_score": interview_score,
-        "status": status,
-        "opening_id": opening_id
+        # "created_at": created_at,
+        # "candidate_availability": candidate_availability,
+        # "interview_date": interview_date,
+        # "interview_notes": interview_notes,
+        # "interview_score": interview_score,
+        # "status": status,
+        "opening_id": opening_id,
+        "course_name": course_name
     }).execute()
 
     return response.data
@@ -245,7 +259,7 @@ def get_application(application_id):
 
 def delete_application(application_id):
     response = supabase.table("APPLICATION").delete().eq("id", application_id).execute()
-    return {"success": True}
+    return response.data
 
 # -------------- MISC CONTROLLERS --------------
 

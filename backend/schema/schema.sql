@@ -16,9 +16,6 @@ DROP TABLE IF EXISTS public."PROFILE_TEAM_INFO" CASCADE;
 -- Drop STUDENT_TEAM table
 DROP TABLE IF EXISTS public."STUDENT_TEAM" CASCADE;
 
--- Drop PROFILE_TEMP table
-DROP TABLE IF EXISTS public."PROFILE_TEMP" CASCADE;
-
 -- Drop PROFILE table
 DROP TABLE IF EXISTS public."PROFILE" CASCADE;
 
@@ -111,7 +108,7 @@ CREATE TABLE public."APPLICATION" (
     interview_date TIMESTAMP WITH TIME ZONE,
     interview_notes VARCHAR,
     interview_score INTEGER,
-    status VARCHAR(1) NOT NULL DEFAULT 'I' CHECK (status IN ('A', 'C', 'R', 'X')),
+    status VARCHAR(1) DEFAULT 'A' CHECK (status IN ('A', 'C', 'R', 'X')),
     profile_id BIGINT,
     CONSTRAINT APPLICATION_pkey PRIMARY KEY (id),
     CONSTRAINT APPLICATION_email_opening_id_key UNIQUE (opening_id, email),

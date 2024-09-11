@@ -22,7 +22,7 @@ import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
 import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
-import ViewTeamLeads  from "./screens/ViewTeamLeads";
+import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
 
 function App() {
     return (
@@ -51,6 +51,7 @@ function App() {
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
 						<Route path="/feedbacknote" element={<Feedbacknote />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
+						<Route path="/availability-calendar-user" element={<AvailabilityCalendarUser />} />
 						<Route path="/view-team-members" element={<ViewTeamMemberPage />} />
 					</Route>
 					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />

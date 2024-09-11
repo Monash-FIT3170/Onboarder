@@ -32,13 +32,14 @@ const SectionTitle = styled.div`
 `;
 
 function ApplicationSubmissionPage() {
-  const [studentTeam, setStudentTeam] = useState([]);
+  const [opening, setOpening] = useState([]);
+  const [round, setRound] = useState([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
-    coverLetter: "",
+    additionalInfo: "",
     courseName: "",
     major: "",
     skills: [],
@@ -49,22 +50,34 @@ function ApplicationSubmissionPage() {
   const [dialogParam, setIsSuccessful] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { round_id, opening_id } = useOpeningStore();
+  const { round_id: roundId, opening_id: openingId } = useOpeningStore();
 
   useEffect(() => {
-    if (round_id !== null && opening_id !== null) {
+    if (roundId !== null && openingId !== null) {
       axios
         .get(
-          `http://127.0.0.1:3000/recruitmentRounds/${round_id}/openings/${opening_id}`
+          `http://127.0.0.1:3000/opening/${openingId}/` // Working
         )
         .then((res) => {
-          setStudentTeam(res.data);
+          console.log(res.data)
+          setOpening(res.data);
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+        axios
+        .get(
+          `http://127.0.0.1:3000/recruitment-round/${roundId}/` // Working
+        )
+        .then((res) => {
+          console.log(res.data)
+          setRound(res.data);
         })
         .catch((error) => {
           console.error("There was an error!", error);
         });
     }
-  }, [round_id, opening_id]);
+  }, [roundId, openingId]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
@@ -81,7 +94,7 @@ function ApplicationSubmissionPage() {
       "skills",
       "currentSemester",
       "semesterRemaining",
-      "coverLetter",
+      "additionalInfo",
     ];
     const isAnyFieldEmpty = requiredFields.some((field) => {
       if (Array.isArray(formData[field])) {
@@ -99,9 +112,9 @@ function ApplicationSubmissionPage() {
         email: formData.email,
         semesters_until_completion: formData.semesterRemaining,
         current_semester: formData.currentSemester,
-        course_enrolled: formData.courseName,
+        course_name: formData.courseName,
         major_enrolled: formData.major,
-        cover_letter: formData.coverLetter,
+        additional_info: formData.additionalInfo,
         skills: formData.skills,
       };
 
@@ -109,7 +122,7 @@ function ApplicationSubmissionPage() {
 
       axios
         .post(
-          `http://127.0.0.1:3000/openings/${opening_id}/applications`,
+          `http://127.0.0.1:3000/opening/${openingId}/application`, // Working
           submissionData
         )
         .then((response) => {
@@ -130,19 +143,15 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-      {studentTeam.map((row, index) => (
-        <div key={index}>
-          <Typography variant="h5" color="inherit" component="div">
-            <IconButton onClick={() => navigate("/applicant-openings")}>
+                  <IconButton onClick={() => navigate("/applicant-openings")}>
               <BackIcon />
             </IconButton>
-            {row.title}
+          <Typography variant="h5" component="div">
+            {opening[0]?.opening_title}
           </Typography>
-          <Typography variant="body1" color="inherit" component="div">
-            Description: {row.description}
+          <Typography variant="body1" component="div">
+            Description: {opening[0]?.opening_description}
           </Typography>
-        </div>
-      ))}
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -154,17 +163,15 @@ function ApplicationSubmissionPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {studentTeam.map((row, index) => (
-              <TableRow key={index}>
+              <TableRow>
                 <TableCell>
-                  {new Date(row.deadline).toLocaleDateString("en-GB")}
+                  {new Date(round[0]?.deadline).toLocaleDateString("en-GB")}
                 </TableCell>
-                <TableCell align="center">{row.student_team_name}</TableCell>
+                <TableCell align="center">{round[0]?.student_team_id}</TableCell>
                 <TableCell align="center">
-                  Semester {row.recruitment_round_semester}
+                  {round[0]?.semester}
                 </TableCell>
               </TableRow>
-            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -214,7 +221,7 @@ function ApplicationSubmissionPage() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id="coverLetter"
+            id="additionalInfo"
             label="Cover Letter"
             variant="outlined"
             multiline

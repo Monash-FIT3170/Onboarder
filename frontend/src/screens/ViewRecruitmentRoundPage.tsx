@@ -113,9 +113,9 @@ const ViewRecruitmentRoundPage = () => {
     );
   };
 
-  let student_team_id = authStore.team_id;
+  const studentTeamId = authStore.team_id;
 
-  const API_URL = `http://127.0.0.1:3000/studentTeams/${student_team_id}/recruitmentRounds`;
+  const API_URL = `http://127.0.0.1:3000/student-team/${studentTeamId}/recruitment-round`; // Working
 
   useEffect(() => {
     const fetchData = async () => {

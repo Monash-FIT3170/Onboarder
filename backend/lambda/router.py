@@ -1,4 +1,3 @@
-
 import controller
 from typing import Callable
 import json
@@ -51,6 +50,7 @@ def route(path: str, methods: list[str]) -> Callable:
 # OPTIONS HANDLER
 @route('/profile', ['OPTIONS'])
 @route('/profile/{profileId}', ['OPTIONS'])
+@route('/profile/{profileId}/student-teams', ['OPTIONS'])
 @route('/student-team', ['OPTIONS'])
 @route('/student-team/{studentTeamId}', ['OPTIONS'])
 @route('/student-team/{studentTeamId}/members', ['OPTIONS'])
@@ -201,6 +201,20 @@ def delete_profile(path_params={}, _={}, __={}):
 
     return response
 
+@route('/profile/{profileId}/student-teams', ['GET'])
+def get_student_teams_for_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_student_teams_for_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 # ------------------ STUDENT TEAMS ------------------
 
 @route('/student-team', ['POST'])
@@ -321,6 +335,8 @@ def delete_student_team(path_params={}, _={}, __={}):
     }
 
     return response
+
+# ------------------ STUDENT TEAM MEMEBERS ------------------
 
 @route('/student-team/{studentTeamId}/members', ['POST'])
 def add_member_to_student_team(path_params={}, _={}, body={}):
@@ -857,8 +873,7 @@ def create_application(path_params={}, _={}, body={}):
     required_fields = [
         'email', 'name', 'phone', 'semesters_until_completion', 
         'current_semester', 'major_enrolled', 'additional_info', 
-        'skills', 'created_at', 'candidate_availability', 
-        'interview_date', 'interview_notes', 'interview_score', 'status'
+        'skills', 'course_name' # 'created_at', 'candidate_availability', 'interview_date', 'interview_notes', 'interview_score', 'status',
     ]
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
@@ -877,12 +892,13 @@ def create_application(path_params={}, _={}, body={}):
         major_enrolled = data['major_enrolled']
         additional_info = data['additional_info']
         skills = data['skills']
-        created_at = data['created_at']
-        candidate_availability = data['candidate_availability']
-        interview_date = data['interview_date']
-        interview_notes = data['interview_notes']
-        interview_score = data['interview_score']
-        status = data['status']
+        # created_at = data['created_at']
+        # candidate_availability = data['candidate_availability']
+        # interview_date = data['interview_date']
+        # interview_notes = data['interview_notes']
+        # interview_score = data['interview_score']
+        # status = data['status']
+        course_name = data['course_name']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -893,8 +909,8 @@ def create_application(path_params={}, _={}, body={}):
     response = controller.create_application(
         email, name, phone, semesters_until_completion, 
         current_semester, major_enrolled, additional_info, 
-        skills, created_at, candidate_availability, interview_date, 
-        interview_notes, interview_score, status, opening_id
+        skills, opening_id, course_name
+        # interview_notes, interview_score, created_at, candidate_availability, interview_date, status, 
     )
     
     return {

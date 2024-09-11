@@ -2,10 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActionArea,
   Button,
 } from "@mui/material";
 import {
@@ -14,7 +10,6 @@ import {
 } from "../components/DashboardTable";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import JobInterviewIcon from "../assets/JobInterview.jpg";
 import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
@@ -25,29 +20,6 @@ const TitleWrap = styled.div`
   text-align: center;
 `;
 
-const CardContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  width: 100%;
-`;
-
-const StyledCard = styled(Card)`
-  max-width: 250px;
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const StyledCardMedia = styled(CardMedia)`
-  height: 160px;
-  width: 250px;
-  object-fit: contain;
-  padding: 16px;
-`;
-
 const ButtonStyle = styled.div`
   display: flex;
   justify-content: space-between;
@@ -56,7 +28,6 @@ const ButtonStyle = styled.div`
 `;
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -66,17 +37,17 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profile_id = 1; // Replace with actual profile_id fetching logic
+        let profileId = 1; // Replace with actual profile_id fetching logic
 
-        if (!profile_id) {
-          profile_id = await authStore.fetchProfile();
+        if (!profileId) {
+          profileId = await authStore.fetchProfile();
         }
 
         const rolesResponse = await axios.get(
-          `http://127.0.0.1:3000/studentTeams/${profile_id}`
+          `http://127.0.0.1:3000/profile/${profileId}/student-teams` // Working
         );
 
-        let tableData = rolesResponse.data
+        const tableData = rolesResponse.data
           .map((role: any) => ({
             id: role.id, // Assuming the API returns a user id
             student_team_id: role.student_team_id,
@@ -111,10 +82,6 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [setStudentTeams, authStore]);
 
-  const handleInterviewCardClick = () => {
-    navigate("/interviews");
-  };
-
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
   };
@@ -143,21 +110,6 @@ const Dashboard: React.FC = () => {
         </Button>
       </ButtonStyle>
       <DashboardTable results={studentTeams} />
-      <CardContainer>
-        <StyledCard>
-          <CardActionArea onClick={handleInterviewCardClick}>
-            <StyledCardMedia image={JobInterviewIcon} />
-            <CardContent>
-              <Typography variant="h5" component="div">
-                Interviews
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                View interviews and manage your availability
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </StyledCard>
-      </CardContainer>
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}
