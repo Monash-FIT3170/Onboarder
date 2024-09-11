@@ -64,7 +64,7 @@ function RecruitmentRoundDetailsPage() {
     const fetchData = async () => {
       try {
         const openingsResponse = await axios.get(
-          "http://127.0.0.1:3000/openings"
+          "http://127.0.0.1:3000/opening" // Fixed not tested
         );
         setOpening(openingsResponse.data);
       } catch (error) {
@@ -93,47 +93,8 @@ function RecruitmentRoundDetailsPage() {
         <Grid item xs={3}>
           <TextField label="Search" variant="outlined" fullWidth />
         </Grid>
-
-        <Grid item xs={3}>
-          <TextField
-            label="Filter by opening name"
-            variant="outlined"
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <TextField
-            label="Filter by student team"
-            variant="outlined"
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Select
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
-            fullWidth
-            variant="outlined"
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="1">1</MenuItem>
-            <MenuItem value="2">2</MenuItem>
-          </Select>
-        </Grid>
-        <Grid item xs={2}>
-          <Select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            fullWidth
-            variant="outlined"
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="2024">2024</MenuItem>
-            <MenuItem value="2025">2025</MenuItem>
-            <MenuItem value="2026">2026</MenuItem>
-            <MenuItem value="2027">2027</MenuItem>
-          </Select>
-        </Grid>
+        <Grid item xs={9}>
+        </Grid> 
       </Grid>
       <div
         style={{

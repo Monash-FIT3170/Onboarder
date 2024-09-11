@@ -28,6 +28,8 @@ export const getAppStatusText = (status: string): string => {
 			return "Candidate";
 		case "R":
 			return "Recruit";
+		case "X":
+			return "Rejected";
 		default:
 			return "Unknown";
 	}

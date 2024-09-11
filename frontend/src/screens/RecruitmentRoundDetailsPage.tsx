@@ -49,6 +49,7 @@ function RecruitmentRoundDetailsPage() {
     const [openings, setOpening] = useState<openingsResultProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [status, setStatus] = useState('');
     const navigate = useNavigate();
 
     const setRecruitmentDetails = useRecruitmentStore((state) => state.setRecruitmentDetails);
@@ -70,13 +71,14 @@ function RecruitmentRoundDetailsPage() {
 
             try {
                 const roundsResponse = await axios.get(
-                    `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}`
+                    `http://127.0.0.1:3000/recruitment-round/${recruitmentDetails.roundId}` // Working
                 );
                 const openingsResponse = await axios.get(
-                    `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/openings` // TODO THIS NEEDS TO GIVE MORE INFO
+                    `http://127.0.0.1:3000/recruitment-round/${recruitmentDetails.roundId}/opening` // Working
                 );
                 setRounds(roundsResponse.data);
                 setOpening(openingsResponse.data);
+                setStatus(roundsResponse.data[0].status);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -94,9 +96,10 @@ function RecruitmentRoundDetailsPage() {
         };
         try {
             await axios.patch(
-                `http://127.0.0.1:3000/recruitmentRounds/${recruitmentDetails.roundId}/status`,
+                `http://127.0.0.1:3000/recruitment-round/${recruitmentDetails.roundId}/`, // Working
                 data
             );
+            setStatus(statusChange);
             alert("Status updated successfully!");
         } catch (error) {
             console.error("Error archiving round:", error);
@@ -158,7 +161,7 @@ function RecruitmentRoundDetailsPage() {
                 </TitleWrapper>
                 {loading ? (
                     <Skeleton variant="rectangular" width={150} height={40} />
-                ) : rounds[0]?.status === "A" ? (
+                ) : status === "A" ? (
                     <Button
                         variant="contained"
                         style={{
@@ -192,7 +195,7 @@ function RecruitmentRoundDetailsPage() {
                             {isUpdating ? <CircularProgress size={24} /> : "Archive Round"}
                         </Button>
                         <Button
-                            disabled={rounds[0]?.status === "R"}
+                            disabled={status === "R"}
                             variant="contained"
                             onClick={() => {
                                 updateStatus("A");

@@ -12,6 +12,7 @@ import {
     IconButton,
     Skeleton,
     TextField,
+    Box,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
@@ -94,25 +95,30 @@ function ViewOpenPage() {
                 <TableCell>{getAppStatusText(application.status)}</TableCell>
                 <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
-                    <div>
-                        {application.status == "C" ? (
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
+                        {application.status == "A" && (
                             <Button
                                 variant="outlined"
                                 onClick={() => handleViewInterviewNotes(application.id)}
                             >
                                 INTERVIEW NOTES
                             </Button>
-                        ) : (
-                            <div></div>
                         )}
+                        <Box sx={{ flexGrow: 1 }} />{" "}
+                        {/* Spacer to push the VIEW button to the right */}
                         <Button
-                            sx={{ ml: 2 }}
                             variant="contained"
                             onClick={() => handleViewApplication(application.id)}
                         >
                             VIEW
                         </Button>
-                    </div>
+                    </Box>
                 </TableCell>
             </TableRow>
         ));
@@ -127,7 +133,7 @@ function ViewOpenPage() {
         const fetchData = async () => {
             try {
                 const applicationsResponse = await axios.get(
-                    `http://127.0.0.1:3000/openings/${selectedOpening.id}/applications`
+                    `http://127.0.0.1:3000/opening/${selectedOpening.id}/application` // Working
                 );
                 setApplications(applicationsResponse.data);
             } catch (error) {
@@ -151,14 +157,14 @@ function ViewOpenPage() {
     };
 
     const respond2 = () => {
-      // clearSelectedOpening();
-      navigate("/task-email-format");
-  };
+        // clearSelectedOpening();
+        navigate("/task-email-format");
+    };
 
     const handleSendEmails = async () => {
         setLoading(true);
         try {
-            // const response = await axios.post(`http://127.0.0.1:3000/sendInterviewEmails/${selectedOpening.id}`);
+            // const response = await axios.post(`http://127.0.0.1:3000/send-interview-emails/${selectedOpening.id}`); // Fixed but not tested
             // console.log(response);
             console.log("Commented out due to email limit");
         } catch (error) {
