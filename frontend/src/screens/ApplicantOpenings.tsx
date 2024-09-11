@@ -66,7 +66,7 @@ function RecruitmentRoundDetailsPage() {
     const fetchData = async () => {
       try {
         const openingsResponse = await axios.get(
-          "http://127.0.0.1:3000/openings"
+          `http://127.0.0.1:3000/opening`
         );
         setOpening(openingsResponse.data);
         
