@@ -28,11 +28,28 @@ const AllocateTeamLeads = () => {
     const [data, setData] = useState([]);
     const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
     const selectedMember = useMemberStore((state) => state.selectedMember);
+    const API_URL = "http://127.0.0.1:3000/student-team/{openingId}/team-lead-assign";
 
-    const authStore = useAuthStore();
     const handleAllocate = (openingId: number) => {
         // Logic to allocate or deallocate team lead to the opening
         // navigate("/allocate-team-leads");
+
+        if (!teamLeadId || !openingId) {
+            alert("Please fill in all fields");
+            return;
+        }
+        
+        setLoading(true);
+        try {
+            axios.post(API_URL, {
+                team_lead_id: teamLeadId,
+                opening_id: openingId,
+            });
+            console.log("Team lead allocated successfully");
+        } catch (error) {
+            console.error("Error allocating team lead:", error);
+        } finally {
+            setLoading(false);
         
         console.log(`Allocating team lead ${teamLeadId} to opening ${openingId}`);
     };
