@@ -54,10 +54,34 @@ function Feedbacknote() {
     const [loading, setLoading] = useState(true);
     const [openAccept, setOpenAccept] = React.useState(false);
     const [openReject, setOpenReject] = React.useState(false);
+    
+
+    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
+    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
+    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
+
+    const APPLICATION_URL = `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`;
+
     const handleAccept = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "R",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenAccept(true);
     };
     const handleReject = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "X",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenReject(true);
     };
     const handleCloseAccpet = () => {
@@ -69,15 +93,12 @@ function Feedbacknote() {
         handleUpdate();
     };
     const authStore = useAuthStore();
+    
     const handleBack = () => {
         handleUpdate();
         clearSelectedApplicant();
         navigate("/viewopen");
     };
-
-    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
-    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
-    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
 
     const handleUpdate = () => {
         const submissionData = {
