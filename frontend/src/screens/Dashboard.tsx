@@ -34,7 +34,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profileId = profile; // Replace with actual profile_id fetching logic
+        let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
+        // let profileId = profile;
 
         if (!profileId) {
           profileId = await authStore.fetchProfile();
