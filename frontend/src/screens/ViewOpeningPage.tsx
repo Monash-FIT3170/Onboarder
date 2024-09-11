@@ -102,7 +102,7 @@ function ViewOpenPage() {
                             alignItems: "center",
                         }}
                     >
-                        {application.status == "A" && (
+                        {application.status == "C" && (
                             <Button
                                 variant="outlined"
                                 onClick={() => handleViewInterviewNotes(application.id)}
