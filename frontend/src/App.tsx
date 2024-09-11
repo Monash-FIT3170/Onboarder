@@ -39,21 +39,22 @@ function App() {
 						<Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
 						<Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
 						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
-                        <Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
-                        <Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
-                        <Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
-                        <Route path="/create-opening" element={<CreateOpeningPage />} />
-                        <Route path="/viewopen" element={<ViewOpenPage />} />
-                        <Route path="/applicant-openings" element={<ApplicantOpenings />} />
-                        <Route path="/application-submission" element={<ApplicationSubmissionPage />} />
-                        <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
+						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
+						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
+						<Route path="/create-opening" element={<CreateOpeningPage />} />
+						<Route path="/viewopen" element={<ViewOpenPage />} />
+				
+						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
+						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
 						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
 						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
 						<Route path="/feedbacknote" element={<Feedbacknote />} />
 						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
 						<Route path="/view-team-members" element={<ViewTeamMemberPage />} />
-                    </Route>
+					</Route>
 					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
+					<Route path="/applicant-openings" element={<ApplicantOpenings />} />
 
 
                 </Routes>
