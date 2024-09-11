@@ -60,7 +60,7 @@ function Feedbacknote() {
     const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
     const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
 
-    const APPLICATION_URL = `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`;
+    const APPLICATION_URL = `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`;
 
     const handleAccept = async () => {
         try {
@@ -107,7 +107,7 @@ function Feedbacknote() {
         };
 
         axios
-            .post(`http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`, submissionData)
+            .patch(`http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`, submissionData)
             .then((response) => {
                 console.log(response);
                 // setOpen(true);
@@ -132,7 +132,7 @@ function Feedbacknote() {
             }
             try {
                 const applicantResponse = await axios.get(
-                    `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`
+                    `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`
                 );
                 setApplicantInformation(applicantResponse.data);
             } catch (error) {
@@ -166,7 +166,7 @@ function Feedbacknote() {
                 </Grid>
             </Grid>
             <Typography variant="body2" fontSize={20}>
-                Application Info
+                Candidate Info
             </Typography>
             <Grid container spacing={0} justifyContent="left">
                 <Grid item xs={12} md={6}>
