@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-  }, [setStudentTeams, authStore]);
+  }, []);
 
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
@@ -106,6 +106,16 @@ const Dashboard: React.FC = () => {
           role: "O",
         }
       );
+
+      const newStudentTeam = {
+        id: newTeamId,
+        student_team_id: newTeamId,
+        student_team_name: teamName,
+        user_team_role: "Owner",
+        student_team_owner: user.email,
+      };
+
+      setStudentTeams([...studentTeams, newStudentTeam]);
     } catch (error) {
       console.error("Error submitting team:", error);
     }

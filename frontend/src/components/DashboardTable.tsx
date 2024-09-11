@@ -31,7 +31,9 @@ const generateRowFunction = (
 
   const handleDeleteOrLeave = (u_role: string, u_id: number, t_id: number) => {
     if (u_role === "Owner") {
+      alert("Feature coming soon!");
     } else {
+      alert("Woah there, you can't delete me");
     }
   };
 
