@@ -76,34 +76,36 @@ const ViewRecruitmentRoundPage = () => {
     (state) => state.setRecruitmentDetails
   );
 
-  const formatDeadline = (deadline: Date) => {
-    return `${deadline.getDate().toString().padStart(2, "0")}/${(
-      deadline.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`;
-  };
+  // const formatDeadline = (deadline: Date) => {
+  //   return `${deadline.getDate().toString().padStart(2, "0")}/${(
+  //     deadline.getMonth() + 1
+  //   )
+  //     .toString()
+  //     .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
+  //     .getHours()
+  //     .toString()
+  //     .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`;
+  // };
 
   const filterData = (round: any) => {
     const {
       student_team_name,
       id,
-      deadline,
+      
+      // deadline,
       status,
       semester,
       year,
       openings_count,
     } = round;
-    const formattedDeadline = formatDeadline(new Date(deadline));
+    // const formattedDeadline = formatDeadline(new Date(deadline));
     const statusText =
       Status[status as keyof typeof Status] || "Unknown Status";
 
     return [
       `${student_team_name} ${id}`,
-      formattedDeadline,
+  
+      // formattedDeadline,
       statusText,
       semester,
       year,
@@ -233,10 +235,10 @@ const ViewRecruitmentRoundPage = () => {
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     Deadline
                     <TableSortLabel></TableSortLabel>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
@@ -251,9 +253,9 @@ const ViewRecruitmentRoundPage = () => {
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <Skeleton variant="text" />
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
@@ -279,14 +281,14 @@ const ViewRecruitmentRoundPage = () => {
                       .filter((item: any) => item.status != "R")
                       .filter(filterData)
                       .map((item: any) => {
-                        const deadline = new Date(item.deadline);
-                        const formattedDeadline = formatDeadline(deadline);
+                        // const deadline = new Date(item.deadline);
+                        // const formattedDeadline = formatDeadline(deadline);
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {authStore.team_name + " " + item.id}
+                              {authStore.team_name + " " + item.id + " \n"+item.description}
                             </TableCell>
-                            <TableCell>{formattedDeadline}</TableCell>
+                           
                             <TableCell>
                               {Status[item.status as keyof typeof Status] ||
                                 "Unknown Status"}
@@ -322,7 +324,7 @@ const ViewRecruitmentRoundPage = () => {
               <TableHead style={styles.tableHeader}>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  {/* <TableCell>Deadline</TableCell> */}
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
@@ -336,9 +338,9 @@ const ViewRecruitmentRoundPage = () => {
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <Skeleton variant="text" />
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
@@ -357,14 +359,14 @@ const ViewRecruitmentRoundPage = () => {
                       .filter((item: any) => item.status == "R")
                       .slice(0, SHOW_ARCHIVED_AMOUNT)
                       .map((item: any) => {
-                        const deadline = new Date(item.deadline);
-                        const formattedDeadline = formatDeadline(deadline);
+                        // const deadline = new Date(item.deadline);
+                        // const formattedDeadline = formatDeadline(deadline);
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
                               {item.student_team_name + " " + item.id}
                             </TableCell>
-                            <TableCell>{formattedDeadline}</TableCell>
+                            {/* <TableCell>{formattedDeadline}</TableCell> */}
                             <TableCell>
                               {Status[item.status as keyof typeof Status] ||
                                 "Unknown Status"}
