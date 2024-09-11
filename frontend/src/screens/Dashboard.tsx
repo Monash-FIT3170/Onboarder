@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import {
   DashboardTable,
   StudentTeamResultProps,
 } from "../components/DashboardTable";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
@@ -34,10 +29,12 @@ const Dashboard: React.FC = () => {
   const authStore = useAuthStore();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
 
+  const { user, profile } = useAuthStore();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profileId = 1; // Replace with actual profile_id fetching logic
+        let profileId = profile; // Replace with actual profile_id fetching logic
 
         if (!profileId) {
           profileId = await authStore.fetchProfile();
@@ -90,10 +87,28 @@ const Dashboard: React.FC = () => {
     setIsAddTeamModalOpen(false);
   };
 
-  const handleSubmitTeam = (teamName: string, teamDescription: string) => {
-    // TODO: Implement team creation logic
-    console.log("Team created:", { teamName, teamDescription });
-    // You might want to update the studentTeams or fetch new data here
+  const handleSubmitTeam = async (
+    teamName: string,
+    teamDescription: string
+  ) => {
+    try {
+      const response = await axios.post("http://127.0.0.1:3000/student-team", {
+        name: teamName,
+        description: teamDescription,
+      });
+
+      const newTeamId = response.data.data[0].id;
+
+      await axios.post(
+        `http://127.0.0.1:3000/student-team/${newTeamId}/members`,
+        {
+          email: user.email,
+          role: "O",
+        }
+      );
+    } catch (error) {
+      console.error("Error submitting team:", error);
+    }
   };
 
   return (
