@@ -15,8 +15,8 @@ import {
 	KeyboardArrowDown as KeyboardArrowDownIcon,
 	Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
-import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props: MenuProps) => (
 	<Menu
@@ -59,11 +59,16 @@ function AppBarOnBoarder() {
 	const { user, signOut } = useAuthStore();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
-	const navigate = useNavigate(); 
 
+	const navigate = useNavigate(); // Use navigate to navigate to different pages
+
+	// Function to handle the view availability button click
 	const handleViewAvailability = () => {
-		//redirect to the view availability page once created
-		navigate('/');
+		navigate("/availability-calendar-user"); // Navigate to the availability calendar page
+	}
+
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
 	};
 
 	return (
@@ -97,6 +102,26 @@ function AppBarOnBoarder() {
 							>
 								View Availability and Interviews
 							</Button>
+							
+							{/* Button to view availability calendar */}
+							<Button
+								variant="contained"
+								disableElevation
+								onClick={handleViewAvailability} // Call the function to handle the view availability button click
+								sx={{
+									color: "white",
+									marginLeft: 2, // Adjust margin for spacing
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
+								}}
+							>
+								View Availability 
+							</Button>
+							
 							<Button
 								variant="outlined"
 								disableElevation

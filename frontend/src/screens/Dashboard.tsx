@@ -28,7 +28,6 @@ const ButtonStyle = styled.div`
 `;
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +47,7 @@ const Dashboard: React.FC = () => {
           `http://127.0.0.1:3000/profile/${profileId}/student-teams` // Working
         );
 
-        let tableData = rolesResponse.data
+        const tableData = rolesResponse.data
           .map((role: any) => ({
             id: role.id, // Assuming the API returns a user id
             student_team_id: role.student_team_id,
@@ -82,7 +81,6 @@ const Dashboard: React.FC = () => {
 
     fetchData();
   }, [setStudentTeams, authStore]);
-
 
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
