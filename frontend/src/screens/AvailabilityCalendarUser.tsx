@@ -14,6 +14,7 @@ import { Button, Grid, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
+import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -98,13 +99,13 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}/profile/${profileId}`, {
+      await axios(`${API_URL}/profile/${profileId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interview_availability: eventsList }),
+        data: JSON.stringify({ interview_availability: eventsList }),
       });
 
-      await response.json();
+      
     } catch (error) {
       console.error(`Error saving availability data: ${error}`);
     }
@@ -117,8 +118,8 @@ const AvailabilityCalendarUser: React.FC = () => {
       profileID = await fetchProfile();
     }
 
-    const response = await fetch(`${API_URL}/profile/${profileID}`);
-    const data = await response.json();
+    const response = await axios(`${API_URL}/profile/${profileID}`);
+    const data = await response.data;
 
     const parsedData = data[0].interview_availability.map((event: Event) => {
       const parsedEvent = JSON.parse(event as unknown as string);

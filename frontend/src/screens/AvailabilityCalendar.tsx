@@ -12,6 +12,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base style
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -103,13 +104,11 @@ const AvailabilityCalendar: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}/application/${applicationId}`, {
+      await axios(`${API_URL}/application/${applicationId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ candidate_availablity: eventsList }),
+        data: JSON.stringify({ candidate_availablity: eventsList }),
       });
-
-      await response.json();
     } catch (error) {
       console.error("Error saving availability data:");
     }
