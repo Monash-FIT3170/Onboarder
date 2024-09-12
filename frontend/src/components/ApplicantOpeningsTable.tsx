@@ -31,6 +31,8 @@ export interface applicantOpeningResultProps {
   application_count: number;
   applications_pending_review: number;
   recruitment_round_deadline: string;
+  student_team_description: string;
+  owner_email: string;
 }
 
 interface applicantOpeningTableProps {
@@ -56,7 +58,6 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] =
     useState<applicantOpeningResultProps | null>(null);
-
   const handleApply = (id: number, r_id: number) => {
     setOpeningDetails(r_id, id);
     navigate("/application-submission");
@@ -150,7 +151,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
         <Box sx={modalStyle}>
           <Typography
             id="team-info-modal"
-            variant="h4"
+            variant="h5"
             component="h2"
             gutterBottom
           >
@@ -161,10 +162,12 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
             {selectedTeam?.student_team_name}
           </Typography>
           <Typography variant="body1" paragraph>
-            Team Description: {selectedTeam?.description}
+            Team Description: <br></br>
+            {selectedTeam?.student_team_description}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-            Opening: {selectedTeam?.opening_title}
+          <Typography variant="body1" paragraph>
+            Team Owner: <br></br>
+            {selectedTeam?.owner_email}
           </Typography>
           <Button variant="contained" onClick={handleCloseModal} sx={{ mt: 2 }}>
             Close
