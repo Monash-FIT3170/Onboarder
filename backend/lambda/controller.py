@@ -371,7 +371,7 @@ def generate_email_body(application_id, task_enabled=False, task_email_format=""
     return body
 
 
-def send_bulk_email(recipients, task_enabled, task_email_format):
+def send_email(recipient_email, subject, body):
     email_sender = os.environ.get('EMAIL_SENDER')
     smtp_host = os.environ.get('SMTP_HOST')
     smtp_port = os.environ.get('SMTP_PORT')
@@ -380,32 +380,37 @@ def send_bulk_email(recipients, task_enabled, task_email_format):
 
     context = ssl.create_default_context()
 
-    subject = "Next Steps in Your Application Process - Action Required"
-
     try:
         with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context) as smtp:
             smtp.login(smtp_username, smtp_password)
 
-            for recipient in recipients:
-                em = EmailMessage()
-                em['From'] = email_sender
-                em['To'] = recipient['email']
-                em['Subject'] = subject
+            em = EmailMessage()
+            em['From'] = email_sender
+            em['To'] = recipient_email
+            em['Subject'] = subject
+            em.add_alternative(body, subtype='html')
 
-                body = generate_email_body(
-                    recipient['application_id'], task_enabled, task_email_format)
-                em.add_alternative(body, subtype='html')
-
-                smtp.send_message(em)
-                print(f"Email sent successfully to {recipient}")
-
-        print("All emails sent successfully")
+            smtp.send_message(em)
+            print(f"Email sent successfully to {recipient_email}")
+            return True
     except smtplib.SMTPAuthenticationError:
         print("Authentication failed. Please check your email and password.")
     except smtplib.SMTPException as e:
         print(f"SMTP error occurred: {str(e)}")
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+    return False
+
+
+def send_bulk_email(recipients, task_enabled, task_email_format):
+    subject = "Next Steps in Your Application Process - Action Required"
+
+    for recipient in recipients:
+        body = generate_email_body(
+            recipient['application_id'], task_enabled, task_email_format)
+        send_email(recipient['email'], subject, body)
+
+    print("All emails sent successfully")
 
 
 def send_interview_email(opening_id):
