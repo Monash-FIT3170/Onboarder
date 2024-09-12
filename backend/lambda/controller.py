@@ -85,8 +85,13 @@ def get_team_lead_for_opening(opening_id):
     response = supabase.table("allocated_members_for_student_team").select("*").eq("opening_id", opening_id).execute()
     return response.data
 
-def remove_team_lead_from_opening(opening_id):
-    response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq("opening_id", opening_id).execute()
+def get_team_lead_opening_assignment_status(opening_id, profile_id):
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").select("*").eq("opening_id", opening_id).eq("profile_id", profile_id).execute()
+    # return len(response.data) > 0
+    return response.data
+
+def remove_team_lead_from_opening(opening_id, profile_id):
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq("opening_id", opening_id).eq("profile_id", profile_id).execute()
     return response.data
 
 

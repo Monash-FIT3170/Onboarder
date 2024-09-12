@@ -3,6 +3,8 @@ import { Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import AppBarOnBoarder from "./components/AppBarOnboarder";
 
+// Import the necessary screens
+import AllocateTeamLeads from "./screens/AllocateTeamLeads";
 import LoginPage from "../src/screens/LoginPage";
 import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
 import CreateOpeningPage from "../src/screens/CreateOpeningPage";
@@ -21,17 +23,22 @@ import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
 import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
+import ViewTeamLeads from "./screens/ViewTeamLeads";
 
 function App() {
-	return (
-		<ThemeProvider theme={theme}>
-			<AppBarOnBoarder />
-			<Box component={"section"} sx={{ padding: "20px" }}>
-				<Routes>
-					<Route path="/" element={<LoginPage />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route element={<ProtectedRoute />}>
+    return (
+        <ThemeProvider theme={theme}>
+            <AppBarOnBoarder />
+            <Box component={"section"} sx={{ padding: "20px" }}>
+                <Routes>
+                    {/* Set the default route to AllocateTeamLeads */}
+                    <Route path="/" element={<AllocateTeamLeads />} />
+
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route element={<ProtectedRoute />}>
 						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
+						<Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
 						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
 						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
 						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
@@ -52,11 +59,11 @@ function App() {
 					<Route path="/applicant-openings" element={<ApplicantOpenings />} />
 
 
-				</Routes>
+                </Routes>
         
-			</Box>
-		</ThemeProvider>
-	);
+            </Box>
+        </ThemeProvider>
+    );
 }
 
 export default App;
