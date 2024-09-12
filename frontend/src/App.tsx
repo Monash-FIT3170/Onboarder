@@ -32,7 +32,7 @@ function App() {
             <Box component={"section"} sx={{ padding: "20px" }}>
                 <Routes>
                     {/* Set the default route to AllocateTeamLeads */}
-                    <Route path="/" element={<AllocateTeamLeads />} />
+                    <Route path="/" element={<Dashboard />} />
 
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<ProtectedRoute />}>

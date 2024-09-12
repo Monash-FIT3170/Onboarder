@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
         };
 
         fetchData();
-    }, []);
+    }, [isAddTeamModalOpen]);
 
     const handleAddTeamClick = () => {
         setIsAddTeamModalOpen(true);

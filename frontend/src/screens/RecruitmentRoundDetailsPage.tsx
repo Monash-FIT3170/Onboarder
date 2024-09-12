@@ -359,8 +359,8 @@ function RecruitmentRoundDetailsPage() {
             <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
-                aria-labelledby="team-info-modal"
-                aria-describedby="team-description"
+                // aria-labelledby="archive-round-modal"
+                // aria-describedby="team-description"
             >
                 <Box sx={modalStyle}>
                     <Typography id="team-info-modal" variant="h5" component="h2" gutterBottom>
