@@ -168,7 +168,8 @@ SELECT
     rr.semester || ' ' || rr.year AS round_name,
     o.title AS opening_name,
     COUNT(tla.id) AS team_leads_allocated,
-    rr.student_team_id
+    rr.student_team_id,
+    o.id AS opening_id
 FROM
     public."RECRUITMENT_ROUND" rr
 JOIN
@@ -178,4 +179,5 @@ LEFT JOIN
 GROUP BY
     rr.semester || ' ' || rr.year,
     o.title,
-    rr.student_team_id;
+    rr.student_team_id,
+    o.id;
