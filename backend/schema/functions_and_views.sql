@@ -107,6 +107,8 @@ SELECT
     COALESCE(ac.applications_count, 0) AS applications_count,
     COALESCE(ar.pending_review_count, 0) AS pending_review_count,
     st.name AS student_team_name,
+    st.description AS student_team_description,
+    p.email AS owner_email,
     rr.deadline AS recruitment_round_deadline,
     rr.semester AS recruitment_round_semester,
     rr.year AS recruitment_round_year
@@ -137,7 +139,24 @@ LEFT JOIN
 JOIN
     public."RECRUITMENT_ROUND" rr ON o.recruitment_round_id = rr.id
 JOIN
-    public."STUDENT_TEAM" st ON rr.student_team_id = st.id;
+    public."STUDENT_TEAM" st ON rr.student_team_id = st.id
+JOIN 
+    (
+    SELECT
+        profile_id,
+        student_team_id,
+        role
+    FROM
+        public."PROFILE_TEAM_INFO"
+    ) pti ON st.id = pti.student_team_id AND pti.role = 'O'
+JOIN 
+    (
+        SELECT
+            email,
+            id
+        FROM
+            public."PROFILE"
+    ) p ON pti.profile_id = p.id;
 
 
 -- Function to get all student teams with roles and owners

@@ -23,13 +23,16 @@ export interface applicantOpeningResultProps {
   recruitment_round_semester: string;
   student_team_id: number;
   student_team_name: string;
-  title: string;
+  opening_title: string;
   description: string;
   status: string;
   required_skills: string[];
   desired_skills: string[];
   application_count: number;
   applications_pending_review: number;
+  recruitment_round_deadline: string;
+  student_team_description: string;
+  owner_email: string;
 }
 
 interface applicantOpeningTableProps {
@@ -51,10 +54,10 @@ const modalStyle = {
 export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   const navigate = useNavigate();
   const setOpeningDetails = useOpeningStore((state) => state.setOpeningDetails);
+  
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] =
     useState<applicantOpeningResultProps | null>(null);
-
   const handleApply = (id: number, r_id: number) => {
     setOpeningDetails(r_id, id);
     navigate("/application-submission");
@@ -76,21 +79,30 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
     setOpeningDetails: (round_id: number, opening_id: number) => void
   ) => {
     return results.map((result) => {
+      const formattedDeadline = (() => {
+        const date = new Date(result.recruitment_round_deadline);
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      })();
+
       return (
         <TableRow
           key={result.id}
           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
         >
           <TableCell component="th" scope="row">
-            {result.title}
+            {result.opening_title}
           </TableCell>
-          <TableCell>{`Student Team ${result.id}`}</TableCell>
-          <TableCell>{`Semester 1`}</TableCell>
-          <TableCell>2024</TableCell>
+          <TableCell>{`${formattedDeadline}`}</TableCell>
+          <TableCell>{`${result.student_team_name}`}</TableCell>
+          <TableCell>{`Semester ${result.recruitment_round_semester}`}</TableCell>
+          <TableCell>{`${result.recruitment_round_year}`}</TableCell>
           <TableCell>
             <Button
               variant="contained"
-              style={{ marginRight: "10px", padding: 0 }}
+              style={{ marginRight: "10px", padding: 2 }}
               onClick={() => {
                 handleApply(result.id, result.recruitment_round_id);
               }}
@@ -99,10 +111,10 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
             </Button>
             <Button
               variant="outlined"
-              style={{ padding: 0 }}
+              style={{ padding: 2 }}
               onClick={() => handleTeamInfoClick(result)}
             >
-              Team Info
+              View Team Info
             </Button>
           </TableCell>
         </TableRow>
@@ -117,6 +129,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           <TableHead>
             <TableRow>
               <TableCell> Opening Name </TableCell>
+              <TableCell> Deadline </TableCell>
               <TableCell> Student Team </TableCell>
               <TableCell> Semester </TableCell>
               <TableCell> Year </TableCell>
@@ -138,7 +151,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
         <Box sx={modalStyle}>
           <Typography
             id="team-info-modal"
-            variant="h4"
+            variant="h5"
             component="h2"
             gutterBottom
           >
@@ -149,10 +162,12 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
             {selectedTeam?.student_team_name}
           </Typography>
           <Typography variant="body1" paragraph>
-            Team Description: {selectedTeam?.description}
+            Team Description: <br></br>
+            {selectedTeam?.student_team_description}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-            Opening: {selectedTeam?.title}
+          <Typography variant="body1" paragraph>
+            Team Owner: <br></br>
+            {selectedTeam?.owner_email}
           </Typography>
           <Button variant="contained" onClick={handleCloseModal} sx={{ mt: 2 }}>
             Close
