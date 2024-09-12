@@ -182,12 +182,13 @@ function RecruitmentRoundDetailsPage() {
                         <Button
                             variant="outlined"
                             style={{
-                                color: "black",
-                                backgroundColor: "white",
-                                borderColor: "black",
-                                borderWidth: "1px",
+                                // color: "black",
+                                // backgroundColor: "white",
+                                // borderColor: "black",
+                                // borderWidth: "1px",
+                                marginRight: "10px",
                             }}
-                            disabled={isUpdating}
+                            disabled={status === "R"}
                             onClick={() => {
                                 updateStatus("R");
                             }}
