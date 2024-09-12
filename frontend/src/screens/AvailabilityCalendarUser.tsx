@@ -99,11 +99,9 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios(`${API_URL}/profile/${profileId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        data: JSON.stringify({ interview_availability: eventsList }),
-      });
+      await axios.patch(`${API_URL}/profile/${profileId}`, 
+        {interview_availability: eventsList}
+      );
 
       
     } catch (error) {
@@ -118,8 +116,8 @@ const AvailabilityCalendarUser: React.FC = () => {
       profileID = await fetchProfile();
     }
 
-    const response = await axios(`${API_URL}/profile/${profileID}`);
-    const data = await response.data;
+    const response = await axios.get(`${API_URL}/profile/${profileID}`);
+    const data = response.data;
 
     const parsedData = data[0].interview_availability.map((event: Event) => {
       const parsedEvent = JSON.parse(event as unknown as string);

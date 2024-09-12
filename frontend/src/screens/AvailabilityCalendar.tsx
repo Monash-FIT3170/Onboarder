@@ -100,28 +100,26 @@ const AvailabilityCalendar: React.FC = () => {
     // handleSave(updatedEvents); // Automatically save changes
   };
 
-  const API_URL = "http://127.0.0.1:3000/";
+  const API_URL = "http://127.0.0.1:3000";
 
   const handleSave = async () => {
     try {
-      await axios(`${API_URL}/application/${applicationId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        data: JSON.stringify({ candidate_availablity: eventsList }),
-      });
+      await axios.post(`${API_URL}/application/${applicationId}`, 
+        {candidate_availability: eventsList}  
+      );
     } catch (error) {
       console.error("Error saving availability data:");
     }
   };
 
   useEffect(() => {
-    const descryptId = async () => {
+    const decryptId = async () => {
       try {
-        const response = await fetch(`${API_URL}decrypt_id/${id}`);
-        const data = await response.json();
-        setApplicationId(data.data.decrypted_id);
+        const response = await axios.get(`${API_URL}/decrypt/${id}`);
 
-        const parsedData = data.data.candidate_availability.map(
+        setApplicationId(response.data.decrypted_id);
+
+        const parsedData = response.data.candidate_availability.map(
           (event: Event) => {
             // Parse the stringified JSON to get the event object
             const parsedEvent = JSON.parse(event as unknown as string);
@@ -141,7 +139,7 @@ const AvailabilityCalendar: React.FC = () => {
       }
     };
 
-    descryptId();
+    decryptId();
   }, [id]);
 
   return (
