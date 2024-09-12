@@ -36,14 +36,14 @@ const AllocateTeamLeads = () => {
             alert("Please fill in all fields " + teamLeadId + " " + openingId);
             return;
         }
-        
+
         setLoading(true);
         try {
             const API_URL = `http://127.0.0.1:3000/opening/${openingId}/team-lead-assign`;
             await axios.post(API_URL, {
-                profile_id: teamLeadId
+                profile_id: teamLeadId,
             });
-            console.log("Team lead allocated successfully");
+            // console.log("Team lead allocated successfully");
             // Refresh the openings list after allocation
             fetchTeamOpenings();
         } catch (error) {
@@ -70,7 +70,6 @@ const AllocateTeamLeads = () => {
             if (roundInfo.length === 0) {
                 throw new Error("Profile team information not found");
             }
-
             const openingPromises = roundInfo.map(async (oneRoundInfo: any) => {
                 try {
                     const openingsResponse = await axios.get(
@@ -86,21 +85,17 @@ const AllocateTeamLeads = () => {
                     return [];
                 }
             });
-            
-            const resolvedOpenings = await Promise.all(openingPromises);
 
-            console.log("Resolved Openings: " + resolvedOpenings.flat());
+            const resolvedOpenings = await Promise.all(openingPromises);
             setOpenings(resolvedOpenings.flat());
 
-            const countPromises = resolvedOpenings.map(async (oneOpeningInfo: any) => {
+            const countPromises = resolvedOpenings.flat().map(async (oneOpeningInfo: any) => {
                 try {
                     const leadCountResponse = await axios.get(
                         `http://127.0.0.1:3000/opening/${oneOpeningInfo.id}/team-lead-assign`
                     );
-                    
-                    return leadCountResponse.data.map((count: any) => ({
-                        ...count,
-                        // round_name: oneOpeningInfo.round_name,
+                    return leadCountResponse.data.map((allocatedMembers: any) => ({
+                        ...allocatedMembers,
                     }));
                 } catch (error) {
                     console.error(`Error fetching openings for round ${oneOpeningInfo.id}:`, error);
@@ -109,8 +104,7 @@ const AllocateTeamLeads = () => {
             });
 
             const resolvedCounts = await Promise.all(countPromises);
-            
-            console.log("Resolved Counts: " + resolvedCounts.flat());
+
             setCounts(resolvedCounts.flat());
         } catch (error) {
             console.error("Error fetching team openings:", error);
@@ -171,9 +165,16 @@ const AllocateTeamLeads = () => {
                               ))
                             : openings.map((opening) => (
                                   <TableRow key={opening.id}>
-                                      <TableCell>{opening.student_team_name + " " + opening.recruitment_round_id}</TableCell>
+                                      <TableCell>
+                                          {opening.student_team_name +
+                                              " " +
+                                              opening.recruitment_round_id}
+                                      </TableCell>
                                       <TableCell>{opening.opening_title}</TableCell>
-                                      <TableCell>{opening.team_leads_allocated || 0}</TableCell>
+                                      {/* <TableCell>{opening.team_leads_allocated || 0}</TableCell> */}
+                                      <TableCell>
+                                          {counts.find((item) => item.id === opening.id) || 0}
+                                      </TableCell>
                                       <TableCell>
                                           <Button
                                               variant="contained"
