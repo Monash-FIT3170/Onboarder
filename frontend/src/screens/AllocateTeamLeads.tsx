@@ -22,6 +22,7 @@ import { useAuthStore } from "../util/stores/authStore";
 
 const AllocateTeamLeads = () => {
     const [openings, setOpenings] = useState<any[]>([]);
+    const [counts, setCounts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const { teamLeadId } = useParams();
     const navigate = useNavigate();
@@ -75,6 +76,7 @@ const AllocateTeamLeads = () => {
                     const openingsResponse = await axios.get(
                         `http://127.0.0.1:3000/recruitment-round/${oneRoundInfo.id}/opening`
                     );
+
                     return openingsResponse.data.map((opening: any) => ({
                         ...opening,
                         round_name: oneRoundInfo.round_name,
@@ -84,10 +86,32 @@ const AllocateTeamLeads = () => {
                     return [];
                 }
             });
-
+            
             const resolvedOpenings = await Promise.all(openingPromises);
-            console.log(resolvedOpenings.flat());
+
+            console.log("Resolved Openings: " + resolvedOpenings.flat());
             setOpenings(resolvedOpenings.flat());
+
+            const countPromises = resolvedOpenings.map(async (oneOpeningInfo: any) => {
+                try {
+                    const leadCountResponse = await axios.get(
+                        `http://127.0.0.1:3000/opening/${oneOpeningInfo.id}/team-lead-assign`
+                    );
+                    
+                    return leadCountResponse.data.map((count: any) => ({
+                        ...count,
+                        // round_name: oneOpeningInfo.round_name,
+                    }));
+                } catch (error) {
+                    console.error(`Error fetching openings for round ${oneOpeningInfo.id}:`, error);
+                    return [];
+                }
+            });
+
+            const resolvedCounts = await Promise.all(countPromises);
+            
+            console.log("Resolved Counts: " + resolvedCounts.flat());
+            setCounts(resolvedCounts.flat());
         } catch (error) {
             console.error("Error fetching team openings:", error);
         } finally {
