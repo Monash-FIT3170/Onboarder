@@ -7,12 +7,13 @@ import format from "date-fns/format"; // Utility for formatting dates
 import parse from "date-fns/parse"; // Utility for parsing dates
 import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the start of the week
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
+import { Button } from "@mui/material"; // Import the Button component
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
-import { Button } from "@mui/material";
 import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
 import { startOfDay, endOfDay, addWeeks } from 'date-fns';
+import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -99,30 +100,26 @@ const AvailabilityCalendar: React.FC = () => {
     // handleSave(updatedEvents); // Automatically save changes
   };
 
-  const API_URL = "http://127.0.0.1:3000/";
+  const API_URL = "http://127.0.0.1:3000";
 
-  const handleSave = async (updatedEvents: Event[]) => {
+  const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}/application/${applicationId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ candidate_availablity: updatedEvents }),
-      });
-
-      await response.json();
+      await axios.post(`${API_URL}/application/${applicationId}`, 
+        {candidate_availability: eventsList}  
+      );
     } catch (error) {
       console.error("Error saving availability data:");
     }
   };
 
   useEffect(() => {
-    const descryptId = async () => {
+    const decryptId = async () => {
       try {
-        const response = await fetch(`${API_URL}decrypt_id/${id}`);
-        const data = await response.json();
-        setApplicationId(data.data.decrypted_id);
+        const response = await axios.get(`${API_URL}/decrypt/${id}`);
 
-        const parsedData = data.data.candidate_availability.map(
+        setApplicationId(response.data.decrypted_id);
+
+        const parsedData = response.data.candidate_availability.map(
           (event: Event) => {
             // Parse the stringified JSON to get the event object
             const parsedEvent = JSON.parse(event as unknown as string);
@@ -142,7 +139,7 @@ const AvailabilityCalendar: React.FC = () => {
       }
     };
 
-    descryptId();
+    decryptId();
   }, [id]);
 
   return (
@@ -196,7 +193,7 @@ const AvailabilityCalendar: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleSave(eventsList)} // Pass the eventsList to the handleSave function
+          onClick={handleSave}
           style={{ marginTop: "20px" }}
         >
           Save Availability

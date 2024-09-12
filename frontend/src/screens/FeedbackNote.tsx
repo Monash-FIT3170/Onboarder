@@ -54,30 +54,51 @@ function Feedbacknote() {
     const [loading, setLoading] = useState(true);
     const [openAccept, setOpenAccept] = React.useState(false);
     const [openReject, setOpenReject] = React.useState(false);
+    
+
+    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
+    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
+    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
+
+    const APPLICATION_URL = `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`;
+
     const handleAccept = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "R",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenAccept(true);
     };
     const handleReject = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "X",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenReject(true);
     };
     const handleCloseAccpet = () => {
         setOpenAccept(false);
-        navigate("");
+        handleUpdate();
     };
     const handleCloseReject = () => {
         setOpenReject(false);
-        navigate("");
+        handleUpdate();
     };
     const authStore = useAuthStore();
+    
     const handleBack = () => {
         handleUpdate();
         clearSelectedApplicant();
         navigate("/viewopen");
     };
-
-    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
-    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
-    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
 
     const handleUpdate = () => {
         const submissionData = {
@@ -86,7 +107,7 @@ function Feedbacknote() {
         };
 
         axios
-            .post(`http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`, submissionData)
+            .patch(`http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`, submissionData)
             .then((response) => {
                 console.log(response);
                 // setOpen(true);
@@ -111,7 +132,7 @@ function Feedbacknote() {
             }
             try {
                 const applicantResponse = await axios.get(
-                    `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`
+                    `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`
                 );
                 setApplicantInformation(applicantResponse.data);
             } catch (error) {
@@ -145,7 +166,7 @@ function Feedbacknote() {
                 </Grid>
             </Grid>
             <Typography variant="body2" fontSize={20}>
-                Application Info
+                Candidate Info
             </Typography>
             <Grid container spacing={0} justifyContent="left">
                 <Grid item xs={12} md={6}>
@@ -261,7 +282,7 @@ function Feedbacknote() {
                             open={openAccept}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Accepted!
+                                Candidate {`${applicantInformation[0]?.name}`} Accepted!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>
@@ -293,7 +314,7 @@ function Feedbacknote() {
                             open={openReject}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Rejected!
+                                Candidate {`${applicantInformation[0]?.name}`} Rejected!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>
