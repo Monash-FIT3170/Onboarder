@@ -30,8 +30,9 @@ const AllocateTeamLeads = () => {
     const { team_id, team_name } = useAuthStore();
 
     const handleAllocate = async (openingId: number) => {
+        const teamLeadId = selectedMember?.id;
         if (!teamLeadId || !openingId) {
-            alert("Please fill in all fields");
+            alert("Please fill in all fields " + teamLeadId + " " + openingId);
             return;
         }
         
@@ -39,8 +40,7 @@ const AllocateTeamLeads = () => {
         try {
             const API_URL = `http://127.0.0.1:3000/opening/${openingId}/team-lead-assign`;
             await axios.post(API_URL, {
-                team_lead_id: teamLeadId,
-                opening_id: openingId,
+                profile_id: teamLeadId
             });
             console.log("Team lead allocated successfully");
             // Refresh the openings list after allocation
@@ -48,6 +48,7 @@ const AllocateTeamLeads = () => {
         } catch (error) {
             console.error("Error allocating team lead:", error);
         } finally {
+            fetchTeamOpenings();
             setLoading(false);
         }
     };
@@ -61,7 +62,7 @@ const AllocateTeamLeads = () => {
 
         try {
             const profileTeamResponse = await axios.get(
-                `http://127.0.0.1:3000/studentTeams/${team_id}/recruitmentRounds`
+                `http://127.0.0.1:3000/student-team/${team_id}/recruitment-round`
             );
             const roundInfo = profileTeamResponse.data;
 
@@ -72,7 +73,7 @@ const AllocateTeamLeads = () => {
             const openingPromises = roundInfo.map(async (oneRoundInfo: any) => {
                 try {
                     const openingsResponse = await axios.get(
-                        `http://127.0.0.1:3000/recruitmentRounds/${oneRoundInfo.id}/openings`
+                        `http://127.0.0.1:3000/recruitment-round/${oneRoundInfo.id}/opening`
                     );
                     return openingsResponse.data.map((opening: any) => ({
                         ...opening,
@@ -85,6 +86,7 @@ const AllocateTeamLeads = () => {
             });
 
             const resolvedOpenings = await Promise.all(openingPromises);
+            console.log(resolvedOpenings.flat());
             setOpenings(resolvedOpenings.flat());
         } catch (error) {
             console.error("Error fetching team openings:", error);
@@ -145,8 +147,8 @@ const AllocateTeamLeads = () => {
                               ))
                             : openings.map((opening) => (
                                   <TableRow key={opening.id}>
-                                      <TableCell>{opening.round_name}</TableCell>
-                                      <TableCell>{opening.title}</TableCell>
+                                      <TableCell>{opening.student_team_name + " " + opening.recruitment_round_id}</TableCell>
+                                      <TableCell>{opening.opening_title}</TableCell>
                                       <TableCell>{opening.team_leads_allocated || 0}</TableCell>
                                       <TableCell>
                                           <Button

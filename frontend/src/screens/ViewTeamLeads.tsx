@@ -35,7 +35,7 @@ function ViewTeamLeads() {
       try {
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/profileTeamInfo/${team_id}`
+          `http://127.0.0.1:3000/student-team/${team_id}/members`
         );
         const profileTeamInfo = profileTeamResponse.data;
         console.log(profileTeamInfo)
