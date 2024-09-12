@@ -87,7 +87,7 @@ const ViewTeamMembersPage: React.FC = () => {
     };
 
     fetchTeamMembers();
-  }, [studentTeamId]);
+  }, [studentTeamId, isInviteModalOpen]);
 
   const getRoleText = (role: string) => {
     switch (role) {
