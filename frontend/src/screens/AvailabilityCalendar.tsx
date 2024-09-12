@@ -12,7 +12,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base style
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
-import { startOfDay, endOfDay, addWeeks } from 'date-fns';
+import { startOfDay, endOfDay, addWeeks } from "date-fns";
 import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
@@ -104,9 +104,9 @@ const AvailabilityCalendar: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios.post(`${API_URL}/application/${applicationId}`, 
-        {candidate_availability: eventsList}  
-      );
+      await axios.patch(`${API_URL}/application/${applicationId}`, {
+        candidate_availability: eventsList,
+      });
     } catch (error) {
       console.error("Error saving availability data:");
     }
@@ -117,21 +117,20 @@ const AvailabilityCalendar: React.FC = () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
 
-        setApplicationId(response.data.decrypted_id);
+        const { candidate_availability, decrypted_id } = response.data.data;
+        setApplicationId(decrypted_id);
 
-        const parsedData = response.data.candidate_availability.map(
-          (event: Event) => {
-            // Parse the stringified JSON to get the event object
-            const parsedEvent = JSON.parse(event as unknown as string);
+        const parsedData = candidate_availability.map((event: Event) => {
+          // Parse the stringified JSON to get the event object
+          const parsedEvent = JSON.parse(event as unknown as string);
 
-            // Convert the start and end strings to Date objects
-            return {
-              ...parsedEvent,
-              start: new Date(parsedEvent.start),
-              end: new Date(parsedEvent.end),
-            };
-          }
-        );
+          // Convert the start and end strings to Date objects
+          return {
+            ...parsedEvent,
+            start: new Date(parsedEvent.start),
+            end: new Date(parsedEvent.end),
+          };
+        });
 
         setEventsList(parsedData);
       } catch (error) {
