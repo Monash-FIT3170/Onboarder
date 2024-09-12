@@ -85,22 +85,22 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
       if (response.status === 201) {
         setSnackbar({
           open: true,
-          message: "Team member invited successfully!",
+          message: "Team member added successfully!",
           severity: "success",
         });
         onClose();
       } else {
         setSnackbar({
           open: true,
-          message: "Failed to invite team member.",
+          message: "Failed to added team member.",
           severity: "error",
         });
       }
     } catch (error) {
-      console.error("Error inviting team member:", error);
+      console.error("Error adding team member:", error);
       setSnackbar({
         open: true,
-        message: "There was an error inviting the team member.",
+        message: "There was an error adding the team member.",
         severity: "error",
       });
     } finally {
@@ -116,7 +116,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <Typography variant="h6">Invite Team Member</Typography>
+          <Typography variant="h6">Add Team Member</Typography>
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
@@ -153,7 +153,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
               color="primary"
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : "Invite Member"}
+              {isLoading ? <CircularProgress size={24} /> : "Add Member"}
             </Button>
           </DialogActions>
         </form>

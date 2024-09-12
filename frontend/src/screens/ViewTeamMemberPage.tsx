@@ -142,7 +142,7 @@ const ViewTeamMembersPage: React.FC = () => {
           color="primary"
           onClick={handleOpenInviteModal}
         >
-          INVITE MEMBER
+          ADD MEMBER
         </Button>
       </Box>
       <TeamMembersTable members={members} onRemove={handleRemove} />
