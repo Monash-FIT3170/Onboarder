@@ -28,6 +28,7 @@ Resources:
           SUPABASE_URL: ${env:SUPABASE_URL}
           SUPABASE_KEY: ${env:SUPABASE_KEY}
           ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
