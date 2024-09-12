@@ -12,6 +12,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base style
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
+import { startOfDay, endOfDay, addWeeks } from 'date-fns';
 import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
@@ -43,8 +44,7 @@ const AvailabilityCalendar: React.FC = () => {
 
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
-  const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(today.getDate() + 14);
+  const twoWeeksLater = addWeeks(today, 2);
 
   // Function to handle the selection of a new time slot in the calendar
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
@@ -184,8 +184,10 @@ const AvailabilityCalendar: React.FC = () => {
           onEventResize={handleEventResize} // Handle resizing of existing events
           onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
           titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
-          min={today} // Earliest selectable date
-          max={twoWeeksLater} // Latest selectable date (2 weeks from now)
+          min={startOfDay(today)} // Earliest selectable date
+          max={endOfDay(twoWeeksLater)} // Latest selectable date (2 weeks from now)
+          step={30}
+          timeslots={2}
         />
         {/* Save Button */}
         <Button
