@@ -103,7 +103,7 @@ function AppBarOnBoarder() {
 								View Availability and Interviews
 							</Button>
 							
-							{/* Button to view availability calendar */}
+							{/* Button to view availability calendar
 							<Button
 								variant="contained"
 								disableElevation
@@ -120,7 +120,7 @@ function AppBarOnBoarder() {
 								}}
 							>
 								View Availability 
-							</Button>
+							</Button> */}
 							
 							<Button
 								variant="outlined"
