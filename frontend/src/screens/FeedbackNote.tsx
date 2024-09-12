@@ -11,6 +11,12 @@ import {
     DialogActions,
     CircularProgress,
     IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -84,7 +90,7 @@ function Feedbacknote() {
         }
         setOpenReject(true);
     };
-    const handleCloseAccpet = () => {
+    const handleCloseAccept = () => {
         setOpenAccept(false);
         handleUpdate();
     };
@@ -151,6 +157,7 @@ function Feedbacknote() {
     if (loading) {
         return <LoadingSpinner />;
     }
+
     return (
         <>
             <Grid container spacing={4} justifyContent="left">
@@ -165,71 +172,35 @@ function Feedbacknote() {
                     </div>
                 </Grid>
             </Grid>
-            <Typography variant="body2" fontSize={20}>
-                Candidate Info
-            </Typography>
-            <Grid container spacing={0} justifyContent="left">
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Applicant Name"
-                            defaultValue={`${applicantInformation[0]?.name}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Interviewer"
-                            defaultValue={`${applicantInformation[0]?.profile_email}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Student team"
-                            defaultValue={`${authStore.team_name}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Date of Interview"
-                            defaultValue={`${applicantInformation[0]?.interview_date}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Position"
-                            defaultValue={selectedApplicant?.recruitment_round_name}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-            </Grid>
+
+            {/* Applicant Info in Table Format */}
+            <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Applicant Name</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Interviewer</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.profile_email}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Student Team</Typography></TableCell>
+                            <TableCell>{authStore.team_name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Date of Interview</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.interview_date}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Position</Typography></TableCell>
+                            <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
             <Typography variant="body2" fontSize={20} margin={1}>
                 Score (Auto Saved)
             </Typography>
@@ -246,6 +217,7 @@ function Feedbacknote() {
                     </div>
                 </Grid>
             </Grid>
+
             <Typography variant="body2" fontSize={20}>
                 Interview Notes (Auto Saved)
             </Typography>
@@ -255,7 +227,7 @@ function Feedbacknote() {
                         <TextField
                             fullWidth
                             label="Feedback note"
-                            defaultValue = {applicantInformation[0]?.interview_notes}
+                            defaultValue={applicantInformation[0]?.interview_notes}
                             variant="filled"
                             multiline
                             rows={5}
@@ -277,7 +249,7 @@ function Feedbacknote() {
                             {loading ? <CircularProgress size={24} /> : "Accept"}
                         </Button>
                         <BootstrapDialog
-                            onClose={handleCloseAccpet}
+                            onClose={handleCloseAccept}
                             aria-labelledby="customized-dialog-title"
                             open={openAccept}
                         >
@@ -290,7 +262,7 @@ function Feedbacknote() {
                                 </Typography>
                             </DialogContent>
                             <DialogActions>
-                                <Button autoFocus onClick={handleCloseAccpet}>
+                                <Button autoFocus onClick={handleCloseAccept}>
                                     Close
                                 </Button>
                             </DialogActions>
