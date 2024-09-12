@@ -60,7 +60,8 @@ function Feedbacknote() {
     const [loading, setLoading] = useState(true);
     const [openAccept, setOpenAccept] = React.useState(false);
     const [openReject, setOpenReject] = React.useState(false);
-    
+    const [isDisabledAccept, setIsDisabledAccept] = useState(true);
+    const [isDisabledReject, setIsDisabledReject] = useState(true);
 
     const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
     const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
@@ -93,10 +94,12 @@ function Feedbacknote() {
     const handleCloseAccept = () => {
         setOpenAccept(false);
         handleUpdate();
+        navigate("/viewopen");
     };
     const handleCloseReject = () => {
         setOpenReject(false);
         handleUpdate();
+        navigate("/viewopen");
     };
     const authStore = useAuthStore();
     
@@ -128,6 +131,21 @@ function Feedbacknote() {
                 // setIsSubmitting(false);
             });
     };
+
+    useEffect(() => {
+        if (applicantInformation.length > 0) {
+            const status = applicantInformation[0]?.status;
+            if (status === "C") {
+                setIsDisabledAccept(false);
+                setIsDisabledReject(false);
+            } else if (status === "R" || status === "A" || status === "X") {
+                setIsDisabledAccept(true);
+                setIsDisabledReject(true);
+            } else {
+                console.log("Invalid User Status: ", status);
+            }
+        }
+    }, [applicantInformation, openAccept, openReject]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -243,10 +261,10 @@ function Feedbacknote() {
                         <Button
                             variant="contained"
                             color="primary"
-                            disabled={loading}
+                            disabled={isDisabledAccept || loading}
                             onClick={handleAccept}
                         >
-                            {loading ? <CircularProgress size={24} /> : "Accept"}
+                            {loading ? <CircularProgress size={24} /> : "Accept Candidate"}
                         </Button>
                         <BootstrapDialog
                             onClose={handleCloseAccept}
@@ -275,10 +293,10 @@ function Feedbacknote() {
                         <Button
                             variant="contained"
                             color="warning"
-                            disabled={loading}
+                            disabled={isDisabledReject || loading}
                             onClick={handleReject}
                         >
-                            {loading ? <CircularProgress size={24} /> : "Reject"}
+                            {loading ? <CircularProgress size={24} /> : "Reject Candidate"}
                         </Button>
                         <BootstrapDialog
                             onClose={handleCloseReject}
