@@ -15,6 +15,7 @@ import {
 	KeyboardArrowDown as KeyboardArrowDownIcon,
 	Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -59,12 +60,15 @@ function AppBarOnBoarder() {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
+	const navigate = useNavigate(); // Use navigate to navigate to different pages
+
+	// Function to handle the view availability button click
+	const handleViewAvailability = () => {
+		navigate("/availability-calendar-user"); // Navigate to the availability calendar page
+	}
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
 	};
 
 	return (
@@ -85,8 +89,7 @@ function AppBarOnBoarder() {
 								aria-expanded={open ? "true" : undefined}
 								variant="outlined"
 								disableElevation
-								onClick={handleClick}
-								endIcon={<KeyboardArrowDownIcon />}
+								onClick={handleViewAvailability}
 								sx={{
 									color: "white",
 									borderColor: "rgba(255, 255, 255, 0.5)",
@@ -97,28 +100,46 @@ function AppBarOnBoarder() {
 									textTransform: "none",
 								}}
 							>
-								Account
+								View Availability and Interviews
 							</Button>
-							<StyledMenu
-								id="demo-customized-menu"
-								MenuListProps={{
-									"aria-labelledby": "demo-customized-button",
+							
+							{/* Button to view availability calendar */}
+							<Button
+								variant="contained"
+								disableElevation
+								onClick={handleViewAvailability} // Call the function to handle the view availability button click
+								sx={{
+									color: "white",
+									marginLeft: 2, // Adjust margin for spacing
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
 								}}
-								anchorEl={anchorEl}
-								open={open}
-								onClose={handleClose}
 							>
-								<MenuItem
-									onClick={() => {
-										signOut();
-										handleClose();
-									}}
-									disableRipple
-								>
-									<LogoutIcon />
-									Sign out
-								</MenuItem>
-							</StyledMenu>
+								View Availability 
+							</Button>
+							
+							<Button
+								variant="outlined"
+								disableElevation
+								onClick={signOut} // Directly call the signOut function
+								sx={{
+									color: "white",
+									borderColor: "rgba(255, 255, 255, 0.5)",
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.2)",
+										borderColor: "white",
+									},
+									textTransform: "none",
+									marginLeft: 2, // Adds space between the buttons
+								}}
+							>
+								Sign Out
+							</Button>
+							
 						</>
 					)}
 				</Toolbar>

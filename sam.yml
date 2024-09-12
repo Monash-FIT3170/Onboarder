@@ -74,6 +74,20 @@ Resources:
                   payloadFormatVersion: "2.0"
                   type: aws_proxy
                   uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            
+            /profile/{profileId}/student-teams:
+              get:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+              options:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
 
             /student-team:
               get:
