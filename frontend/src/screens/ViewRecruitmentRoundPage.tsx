@@ -179,20 +179,27 @@ const ViewRecruitmentRoundPage = () => {
             </p>
           </Grid>
         </Grid>
-        <Typography variant="h5">
-              Recruitment Rounds
-            </Typography>
+        <Typography variant="h5">Recruitment Rounds</Typography>
         <section style={styles.section}>
+          <h4>
+            Current Recruitment Rounds: Showing{" "}
+            {
+              data.filter(
+                (item: any) => item.status == "I" || item.status == "A"
+              ).length
+            }
+          </h4>
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
-              <h4>
-                Current Recruitment Rounds: Showing{" "}
-                {
-                  data.filter(
-                    (item: any) => item.status == "I" || item.status == "A"
-                  ).length
-                }
-              </h4>
+            <Grid item xs={6}>
+              <TextField
+                style={{ marginBottom: "1rem", width: "25%" }}
+                variant="outlined"
+                placeholder="Round Name, Deadline, etc..."
+                size="small"
+                label="Search"
+                fullWidth
+                onChange={(e) => setFilter(e.target.value)}
+              />
             </Grid>
             <Grid item>
               <Link
@@ -205,15 +212,7 @@ const ViewRecruitmentRoundPage = () => {
               </Link>
             </Grid>
           </Grid>
-          <TextField
-            style={{ marginBottom: "1rem", width: "25%" }}
-            variant="outlined"
-            placeholder="Round Name, Deadline, etc..."
-            size="small"
-            label="Filter"
-            fullWidth
-            onChange={(e) => setFilter(e.target.value)}
-          />
+
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
             <Table style={styles.table} stickyHeader>
               <TableHead style={styles.tableHeader}>
