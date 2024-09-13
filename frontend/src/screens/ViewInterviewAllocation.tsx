@@ -127,8 +127,23 @@ const ViewInterviewAllocation = () => {
   }
 
   const handleScheduleInterview = async () => {
+//  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
+//    setLoading(true);
+//     setError(null);
+//     setResponse(null);
+
+//     try {
+//         const res = await axios.post(`http://127.0.0.1:3000/opening/${selectedOpening.id}/schedule-interviews`, {
+//             // Add data
+//         });
+//         setResponse(res.data);
+//         // setApplications(res.data.updatedApplications);
+//     } catch (err) {
+//         setError(err.message || "An error occurred while scheduling interviews");
+//     } 
   }
 
+  // NEXT SPRINT BUTTON
   const handleSendInvite = async () => {}
 
   return (
@@ -177,11 +192,12 @@ const ViewInterviewAllocation = () => {
                 <PaddingBox></PaddingBox>
                 <TextField
                     id="outlined-search"
-                    label="Search Applicants"
+                    label="Search Applicants Name"
                     type="search"
-                    value={searchTerm} // Bind input value to state
+                    value={searchTerm} // 
                     onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
                 />
+
         {/* <Button
           variant="contained"
           onClick={handleSendInvite}
@@ -229,7 +245,7 @@ const ViewInterviewAllocation = () => {
                                   </TableRow>
                               ))
                                              
-                            : generateRowFunction(filteredApplications)
+                            : generateRowFunction(filteredApplications) // puts student info into table
 }
                     </TableBody>
                 </Table>
