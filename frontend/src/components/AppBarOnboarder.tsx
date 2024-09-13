@@ -8,13 +8,8 @@ import {
     CssBaseline,
     Button,
     Menu,
-    MenuItem,
     MenuProps,
 } from "@mui/material";
-import {
-    KeyboardArrowDown as KeyboardArrowDownIcon,
-    Logout as LogoutIcon,
-} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { useAuthStore } from "../util/stores/authStore";
 
@@ -59,7 +54,7 @@ const StyledMenu = styled((props: MenuProps) => (
 }));
 
 function AppBarOnBoarder() {
-    const { user, signOut } = useAuthStore();
+    const { user, team_name, role, signOut } = useAuthStore();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -82,7 +77,9 @@ function AppBarOnBoarder() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Onboarding: Recruitment Platform
                     </Typography>
-
+                    <Typography variant="body2" component="div" sx={{ marginRight: 2}}>
+                        Viewing Team {team_name} as: {role}
+                    </Typography>
                     {user && (
                         <>
                             <Button

@@ -167,6 +167,7 @@ CREATE OR REPLACE VIEW student_teams_with_roles_and_owners AS
 SELECT 
     st.id AS student_team_id,
     st.name AS student_team_name,
+    st.description AS student_team_description,
     pti.role AS your_role,
     pti.profile_id,
     (SELECT u.email
