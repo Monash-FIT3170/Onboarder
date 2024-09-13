@@ -12,6 +12,9 @@ import {
     TableHead,
     TableRow,
     Skeleton,
+    Box,
+    Divider,
+    Modal,
 } from "@mui/material";
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
@@ -44,12 +47,26 @@ const OpeningsWrapper = styled.div`
     top: 10px;
 `;
 
+const modalStyle = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+};
+
 function RecruitmentRoundDetailsPage() {
     const [rounds, setRounds] = useState<SingleRoundResultProps[]>([]);
     const [openings, setOpening] = useState<openingsResultProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [status, setStatus] = useState('');
+    const [isArchiving, setIsArchiving] = useState(false);
+    const [status, setStatus] = useState("");
+    const [modalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const setRecruitmentDetails = useRecruitmentStore((state) => state.setRecruitmentDetails);
@@ -90,7 +107,12 @@ function RecruitmentRoundDetailsPage() {
     }, [recruitmentDetails]);
 
     const updateStatus = async (statusChange: string) => {
-        setIsUpdating(true);
+        // Don't show loading for both buttons at once
+        if (statusChange === "R") {
+            setIsArchiving(true);
+        } else {
+            setIsUpdating(true);
+        }
         const data = {
             status: statusChange,
         };
@@ -106,6 +128,7 @@ function RecruitmentRoundDetailsPage() {
             alert("Failed to update status");
         } finally {
             setIsUpdating(false);
+            setIsArchiving(false);
         }
     };
 
@@ -135,6 +158,15 @@ function RecruitmentRoundDetailsPage() {
         navigate("/viewopen");
     };
 
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
+    const handleConfirm = () => {
+        updateStatus("R");
+        handleCloseModal();
+    };
+
     const handleBack = () => {
         clearRecruitmentDetails();
         navigate("/viewrecruitmentround");
@@ -162,6 +194,7 @@ function RecruitmentRoundDetailsPage() {
                 {loading ? (
                     <Skeleton variant="rectangular" width={150} height={40} />
                 ) : status === "A" ? (
+                    /* Close Round button */
                     <Button
                         variant="contained"
                         style={{
@@ -179,6 +212,7 @@ function RecruitmentRoundDetailsPage() {
                     </Button>
                 ) : (
                     <div>
+                        {/* Archive Round Button */}
                         <Button
                             variant="outlined"
                             style={{
@@ -190,11 +224,12 @@ function RecruitmentRoundDetailsPage() {
                             }}
                             disabled={status === "R"}
                             onClick={() => {
-                                updateStatus("R");
+                                setModalOpen(true);
                             }}
                         >
-                            {isUpdating ? <CircularProgress size={24} /> : "Archive Round"}
+                            {isArchiving ? <CircularProgress size={24} /> : "Archive Round"}
                         </Button>
+                        {/* Activate Round Button */}
                         <Button
                             disabled={status === "R"}
                             variant="contained"
@@ -317,9 +352,40 @@ function RecruitmentRoundDetailsPage() {
                         </Table>
                     </TableContainer>
                 ) : (
+                    /* Openings Table Component */
                     <OpeningsTable results={openings} viewHandler={handleView} />
                 )}
             </div>
+            <Modal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                // aria-labelledby="archive-round-modal"
+                // aria-describedby="team-description"
+            >
+                <Box sx={modalStyle}>
+                    <Typography id="team-info-modal" variant="h5" component="h2" gutterBottom>
+                        Warning
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                    {/* <Typography variant="h6" gutterBottom>
+                        {selectedTeam?.student_team_name}
+                    </Typography> */}
+                    <Typography variant="body1" paragraph>
+                        Are you sure you want to archive this round? <br></br>You will not be able
+                        to undo this action.
+                    </Typography>
+                    {/* <Typography variant="body1" paragraph>
+                        Team Owner: <br></br>
+                        {selectedTeam?.owner_email}
+                    </Typography> */}
+                    <Button variant="outlined" onClick={handleCloseModal} sx={{ mt: 2, mr: 1 }}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={handleConfirm} sx={{ mt: 2 }}>
+                        Confirm
+                    </Button>
+                </Box>
+            </Modal>
         </>
     );
 }

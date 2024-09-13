@@ -33,6 +33,7 @@ export interface applicantOpeningResultProps {
   recruitment_round_deadline: string;
   student_team_description: string;
   owner_email: string;
+  opening_status: string;
 }
 
 interface applicantOpeningTableProps {

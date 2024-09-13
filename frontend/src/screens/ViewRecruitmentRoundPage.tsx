@@ -53,6 +53,7 @@ const styles = {
   },
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
+    minHeight: "200px",
     overflowY: "auto",
     display: "block",
   },
@@ -295,12 +296,11 @@ const ViewRecruitmentRoundPage = () => {
                             <TableCell>
                               <Button
                                 variant="contained"
-                                style={{ padding: 0 }}
                                 onClick={() => {
                                   handleViewRound(item.id);
                                 }}
                               >
-                                VIEW
+                                VIEW ROUND
                               </Button>
                             </TableCell>
                           </TableRow>

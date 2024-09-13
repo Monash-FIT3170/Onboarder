@@ -378,7 +378,7 @@ export default function RecruitmentPlatform() {
                     onClick={handleAccept}
                     disabled={isDisabledAccept || loadingAccept}
                 >
-                    {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT"}
+                    {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT APPLICANT"}
                 </Button>
                 <Button
                     variant="contained"
@@ -387,7 +387,7 @@ export default function RecruitmentPlatform() {
                     onClick={handleReject}
                     disabled={isDisabledReject || loadingReject}
                 >
-                    {loadingReject ? <CircularProgress size={24} /> : "REJECT"}
+                    {loadingReject ? <CircularProgress size={24} /> : "REJECT APPLICANT"}
                 </Button>
                 <Dialog open={open} onClose={() => setOpen(false)}>
                     <DialogTitle>{dialogParam}</DialogTitle>

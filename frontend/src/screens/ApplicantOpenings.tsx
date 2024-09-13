@@ -80,18 +80,23 @@ function RecruitmentRoundDetailsPage() {
     fetchData();
   }, []);
 
+
+
   const filteredOpenings = openings.filter((opening) => {
     console.log(opening);
     if (openings.length != 0)
     {
+      // filter active
       const searchMatch = opening.opening_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opening.student_team_name.toLowerCase().includes(searchTerm.toLowerCase());
       const openingMatch = opening.opening_title.toLowerCase().includes(openingFilter.toLowerCase());
       const teamMatch = opening.student_team_name.toLowerCase().includes(teamFilter.toLowerCase());
       const semesterMatch = semester === "All" || opening.recruitment_round_semester.toString() === semester;
       const yearMatch = year === "All" || opening.recruitment_round_year.toString() === year;
+      // Only show openings for active rounds
+      const statusMatch = opening.opening_status === "A";
 
-      return searchMatch && openingMatch && teamMatch && semesterMatch && yearMatch;
+      return searchMatch && openingMatch && teamMatch && semesterMatch && yearMatch && statusMatch;
     }
 
   });

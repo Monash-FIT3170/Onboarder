@@ -75,7 +75,7 @@ const generateRowFunction = (
               )
             }
           >
-            View
+            View Opening
           </Button>
         </TableCell>
       </TableRow>
@@ -91,6 +91,7 @@ export function OpeningsTable(props: OpeningsTableProps) {
           <TableHead>
             <TableCell> Opening Name </TableCell>
             <TableCell> Applications Received </TableCell>
+            <TableCell></TableCell>
             {/* <TableCell> Status of Applications </TableCell> */}
           </TableHead>
           <TableBody>
