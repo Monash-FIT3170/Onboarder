@@ -21,11 +21,11 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { team_id, team_name } = useAuthStore();
+  const { team_id: studentTeamId, team_name } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
-      if (!team_id) {
+      if (!studentTeamId) {
         setError("No team selected");
         setIsLoading(false);
         return;
@@ -34,7 +34,7 @@ const ViewTeamMembersPage: React.FC = () => {
       try {
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/profileTeamInfo/${team_id}`
+          `http://127.0.0.1:3000/student-team/${studentTeamId}/members` // Working
         );
         const profileTeamInfo = profileTeamResponse.data;
         console.log(profileTeamInfo)
@@ -47,7 +47,7 @@ const ViewTeamMembersPage: React.FC = () => {
           try {
             console.log(memberInfo)
             const studentResponse = await axios.get(
-              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}`
+              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}` // Working
             );
             // const studentInfo = studentResponse.data.find(
             //   (student: any) => student.student_team_id === team_id
@@ -87,7 +87,7 @@ const ViewTeamMembersPage: React.FC = () => {
     };
 
     fetchTeamMembers();
-  }, [team_id]);
+  }, [studentTeamId, isInviteModalOpen]);
 
   const getRoleText = (role: string) => {
     switch (role) {
@@ -142,14 +142,14 @@ const ViewTeamMembersPage: React.FC = () => {
           color="primary"
           onClick={handleOpenInviteModal}
         >
-          INVITE MEMBER
+          ADD MEMBER
         </Button>
       </Box>
       <TeamMembersTable members={members} onRemove={handleRemove} />
       <InviteMemberModal
         open={isInviteModalOpen}
         onClose={handleCloseInviteModal}
-        teamId={team_id}
+        teamId={studentTeamId}
       />
     </Box>
   );

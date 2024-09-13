@@ -47,7 +47,7 @@ BEGIN
         UPDATE public."PROFILE" SET user_id = NEW.id WHERE email = NEW.email;
     ELSE
         INSERT INTO public."PROFILE" (user_id, email)
-        VALUES (NEW.id, NEW.email)
+        VALUES (NEW.id, NEW.email);
     END IF;
 
     RETURN NEW;
@@ -105,7 +105,13 @@ SELECT
     o.task_email_format AS opening_task_email_format,
     o.task_enabled AS opening_task_enabled,
     COALESCE(ac.applications_count, 0) AS applications_count,
-    COALESCE(ar.pending_review_count, 0) AS pending_review_count
+    COALESCE(ar.pending_review_count, 0) AS pending_review_count,
+    st.name AS student_team_name,
+    st.description AS student_team_description,
+    p.email AS owner_email,
+    rr.deadline AS recruitment_round_deadline,
+    rr.semester AS recruitment_round_semester,
+    rr.year AS recruitment_round_year
 FROM
     public."OPENING" o
 LEFT JOIN
@@ -129,7 +135,28 @@ LEFT JOIN
             status IN ('A', 'C')
         GROUP BY
             opening_id
-    ) ar ON o.id = ar.opening_id;
+    ) ar ON o.id = ar.opening_id
+JOIN
+    public."RECRUITMENT_ROUND" rr ON o.recruitment_round_id = rr.id
+JOIN
+    public."STUDENT_TEAM" st ON rr.student_team_id = st.id
+JOIN 
+    (
+    SELECT
+        profile_id,
+        student_team_id,
+        role
+    FROM
+        public."PROFILE_TEAM_INFO"
+    ) pti ON st.id = pti.student_team_id AND pti.role = 'O'
+JOIN 
+    (
+        SELECT
+            email,
+            id
+        FROM
+            public."PROFILE"
+    ) p ON pti.profile_id = p.id;
 
 
 -- Function to get all student teams with roles and owners
@@ -160,7 +187,8 @@ SELECT
     rr.semester || ' ' || rr.year AS round_name,
     o.title AS opening_name,
     COUNT(tla.id) AS team_leads_allocated,
-    rr.student_team_id
+    rr.student_team_id,
+    o.id AS opening_id
 FROM
     public."RECRUITMENT_ROUND" rr
 JOIN
@@ -170,4 +198,5 @@ LEFT JOIN
 GROUP BY
     rr.semester || ' ' || rr.year,
     o.title,
-    rr.student_team_id;
+    rr.student_team_id,
+    o.id;

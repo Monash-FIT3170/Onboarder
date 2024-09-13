@@ -28,6 +28,7 @@ Resources:
           SUPABASE_URL: ${env:SUPABASE_URL}
           SUPABASE_KEY: ${env:SUPABASE_KEY}
           ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -326,6 +327,12 @@ Resources:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
 
           /opening/{openingId}/team-lead-assign:
+            get:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -340,6 +347,12 @@ Resources:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           
           /opening/{openingId}/team-lead-assign/{profileId}:
+            get:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             delete:
               x-amazon-apigateway-integration:
                 httpMethod: POST

@@ -204,42 +204,53 @@ export default function RecruitmentPlatform() {
             <Grid container item xs={12} spacing={2}>
                 <Grid item xs={12}>
                     <TextField
-                        disabled={true}
-                        required
                         id="name"
                         label="Name"
                         defaultValue={`${applicantInformation[0]?.name}`}
                         fullWidth
+                        disabled
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
-                {/* <Grid item xs={6}>
-          <TextField
-            required
-            id="last-name"
-            label="Last Name"
-            defaultValue={`${applicantInformation[0]?.name}`}
-            fullWidth
-            disabled={true}
-          />
-        </Grid> */}
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="email"
                         label="Email"
                         defaultValue={`${applicantInformation[0]?.email}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="phone-number"
                         label="Phone Number"
                         defaultValue={`${applicantInformation[0]?.phone}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -247,8 +258,16 @@ export default function RecruitmentPlatform() {
                         id="Additional-information"
                         label="Additional Information"
                         defaultValue={`${applicantInformation[0]?.additional_info}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
             </Grid>
@@ -264,52 +283,87 @@ export default function RecruitmentPlatform() {
             <Grid container item xs={12} spacing={2}>
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="Course-name"
                         label="Course Name"
                         defaultValue={`${applicantInformation[0]?.course_name}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="Specialisation"
                         label="Major"
                         defaultValue={`${applicantInformation[0]?.major_enrolled}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="Skills"
                         label="Skills"
                         defaultValue={`${applicantInformation[0]?.skills}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        required
                         id="Semesters remaining"
                         label="Semesters Remaining"
                         defaultValue={`${applicantInformation[0]?.semesters_until_completion}`}
-                        disabled={true}
+                        disabled
                         fullWidth
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
-                        required
                         id="Current semester"
                         label="Current Semester"
                         defaultValue={`${applicantInformation[0]?.current_semester}`}
-                        disabled={true}
+                        disabled
+                        sx={{
+                            '& .MuiInputBase-input.Mui-disabled': {
+                              WebkitTextFillColor: 'black',
+                              color: 'black',
+                            },
+                            '& .MuiInputLabel-root.Mui-disabled': {
+                              color: 'rgba(0, 0, 0, 0.6)', // Slightly dimmed label
+                            }}}
                     />
                 </Grid>
             </Grid>
@@ -324,7 +378,7 @@ export default function RecruitmentPlatform() {
                     onClick={handleAccept}
                     disabled={isDisabledAccept || loadingAccept}
                 >
-                    {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT"}
+                    {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT APPLICANT"}
                 </Button>
                 <Button
                     variant="contained"
@@ -333,7 +387,7 @@ export default function RecruitmentPlatform() {
                     onClick={handleReject}
                     disabled={isDisabledReject || loadingReject}
                 >
-                    {loadingReject ? <CircularProgress size={24} /> : "REJECT"}
+                    {loadingReject ? <CircularProgress size={24} /> : "REJECT APPLICANT"}
                 </Button>
                 <Dialog open={open} onClose={() => setOpen(false)}>
                     <DialogTitle>{dialogParam}</DialogTitle>

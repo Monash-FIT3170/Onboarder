@@ -11,6 +11,12 @@ import {
     DialogActions,
     CircularProgress,
     IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -54,30 +60,54 @@ function Feedbacknote() {
     const [loading, setLoading] = useState(true);
     const [openAccept, setOpenAccept] = React.useState(false);
     const [openReject, setOpenReject] = React.useState(false);
+    const [isDisabledAccept, setIsDisabledAccept] = useState(true);
+    const [isDisabledReject, setIsDisabledReject] = useState(true);
+
+    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
+    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
+    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
+
+    const APPLICATION_URL = `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`;
+
     const handleAccept = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "R",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenAccept(true);
     };
     const handleReject = async () => {
+        try {
+            await axios.patch(APPLICATION_URL, {
+              status: "X",
+            });
+
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
         setOpenReject(true);
     };
-    const handleCloseAccpet = () => {
+    const handleCloseAccept = () => {
         setOpenAccept(false);
-        navigate("");
+        handleUpdate();
+        navigate("/viewopen");
     };
     const handleCloseReject = () => {
         setOpenReject(false);
-        navigate("");
+        handleUpdate();
+        navigate("/viewopen");
     };
     const authStore = useAuthStore();
+    
     const handleBack = () => {
         handleUpdate();
         clearSelectedApplicant();
         navigate("/viewopen");
     };
-
-    const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
-    const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
-    const [applicantInformation, setApplicantInformation] = useState<ResultProps[]>([]);
 
     const handleUpdate = () => {
         const submissionData = {
@@ -86,7 +116,7 @@ function Feedbacknote() {
         };
 
         axios
-            .post(`http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`, submissionData)
+            .patch(`http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`, submissionData)
             .then((response) => {
                 console.log(response);
                 // setOpen(true);
@@ -103,6 +133,21 @@ function Feedbacknote() {
     };
 
     useEffect(() => {
+        if (applicantInformation.length > 0) {
+            const status = applicantInformation[0]?.status;
+            if (status === "C") {
+                setIsDisabledAccept(false);
+                setIsDisabledReject(false);
+            } else if (status === "R" || status === "A" || status === "X") {
+                setIsDisabledAccept(true);
+                setIsDisabledReject(true);
+            } else {
+                console.log("Invalid User Status: ", status);
+            }
+        }
+    }, [applicantInformation, openAccept, openReject]);
+
+    useEffect(() => {
         const fetchData = async () => {
             if (!selectedApplicant?.application_id) {
                 console.error("No application ID selected");
@@ -111,7 +156,7 @@ function Feedbacknote() {
             }
             try {
                 const applicantResponse = await axios.get(
-                    `http://127.0.0.1:3000/applications/${selectedApplicant?.application_id}`
+                    `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}`
                 );
                 setApplicantInformation(applicantResponse.data);
             } catch (error) {
@@ -130,6 +175,7 @@ function Feedbacknote() {
     if (loading) {
         return <LoadingSpinner />;
     }
+
     return (
         <>
             <Grid container spacing={4} justifyContent="left">
@@ -144,71 +190,35 @@ function Feedbacknote() {
                     </div>
                 </Grid>
             </Grid>
-            <Typography variant="body2" fontSize={20}>
-                Application Info
-            </Typography>
-            <Grid container spacing={0} justifyContent="left">
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Applicant Name"
-                            defaultValue={`${applicantInformation[0]?.name}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Interviewer"
-                            defaultValue={`${applicantInformation[0]?.profile_email}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Student team"
-                            defaultValue={`${authStore.team_name}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Date of Interview"
-                            defaultValue={`${applicantInformation[0]?.interview_date}`}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "10px 3px" }}>
-                        <TextField
-                            disabled
-                            id="outlined-disabled"
-                            label="Position"
-                            defaultValue={selectedApplicant?.recruitment_round_name}
-                            variant="filled"
-                            fullWidth
-                        />
-                    </div>
-                </Grid>
-            </Grid>
+
+            {/* Applicant Info in Table Format */}
+            <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Applicant Name</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Interviewer</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.profile_email}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Student Team</Typography></TableCell>
+                            <TableCell>{authStore.team_name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Date of Interview</Typography></TableCell>
+                            <TableCell>{applicantInformation[0]?.interview_date}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell><Typography variant="body2" fontWeight="bold">Position</Typography></TableCell>
+                            <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
             <Typography variant="body2" fontSize={20} margin={1}>
                 Score (Auto Saved)
             </Typography>
@@ -225,6 +235,7 @@ function Feedbacknote() {
                     </div>
                 </Grid>
             </Grid>
+
             <Typography variant="body2" fontSize={20}>
                 Interview Notes (Auto Saved)
             </Typography>
@@ -234,7 +245,7 @@ function Feedbacknote() {
                         <TextField
                             fullWidth
                             label="Feedback note"
-                            defaultValue = {applicantInformation[0]?.interview_notes}
+                            defaultValue={applicantInformation[0]?.interview_notes}
                             variant="filled"
                             multiline
                             rows={5}
@@ -250,18 +261,18 @@ function Feedbacknote() {
                         <Button
                             variant="contained"
                             color="primary"
-                            disabled={loading}
+                            disabled={isDisabledAccept || loading}
                             onClick={handleAccept}
                         >
-                            {loading ? <CircularProgress size={24} /> : "Accept"}
+                            {loading ? <CircularProgress size={24} /> : "Accept Candidate"}
                         </Button>
                         <BootstrapDialog
-                            onClose={handleCloseAccpet}
+                            onClose={handleCloseAccept}
                             aria-labelledby="customized-dialog-title"
                             open={openAccept}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Accepted!
+                                Candidate {`${applicantInformation[0]?.name}`} Accepted!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>
@@ -269,7 +280,7 @@ function Feedbacknote() {
                                 </Typography>
                             </DialogContent>
                             <DialogActions>
-                                <Button autoFocus onClick={handleCloseAccpet}>
+                                <Button autoFocus onClick={handleCloseAccept}>
                                     Close
                                 </Button>
                             </DialogActions>
@@ -282,10 +293,10 @@ function Feedbacknote() {
                         <Button
                             variant="contained"
                             color="warning"
-                            disabled={loading}
+                            disabled={isDisabledReject || loading}
                             onClick={handleReject}
                         >
-                            {loading ? <CircularProgress size={24} /> : "Reject"}
+                            {loading ? <CircularProgress size={24} /> : "Reject Candidate"}
                         </Button>
                         <BootstrapDialog
                             onClose={handleCloseReject}
@@ -293,7 +304,7 @@ function Feedbacknote() {
                             open={openReject}
                         >
                             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                                Candidate [Name] Rejected!
+                                Candidate {`${applicantInformation[0]?.name}`} Rejected!
                             </DialogTitle>
                             <DialogContent dividers>
                                 <Typography gutterBottom>

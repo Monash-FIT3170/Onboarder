@@ -99,6 +99,7 @@ CREATE TABLE public."APPLICATION" (
     name VARCHAR NOT NULL,
     phone VARCHAR NOT NULL,
     semesters_until_completion INTEGER NOT NULL,
+    course_name VARCHAR NOT NULL,
     current_semester INTEGER NOT NULL,
     major_enrolled VARCHAR,
     additional_info TEXT,

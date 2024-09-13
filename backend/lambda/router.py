@@ -822,7 +822,8 @@ def get_team_lead_for_opening(path_params={}, _={}, __={}):
 @route('/opening/{openingId}/team-lead-assign/{profileId}', ['DELETE'])
 def remove_team_lead_from_opening(path_params={}, _={}, __={}):
     opening_id = path_params.get('openingId')
-    data = controller.remove_team_lead_from_opening(opening_id)
+    profile_id = path_params.get('profileId')
+    data = controller.remove_team_lead_from_opening(opening_id, profile_id)
     data = json.dumps(data)
 
     response = {
@@ -833,6 +834,20 @@ def remove_team_lead_from_opening(path_params={}, _={}, __={}):
 
     return response
 
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['GET'])
+def get_team_lead_opening_assignment_status(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    profile_id = path_params.get('profileId')
+    data = controller.get_team_lead_opening_assignment_status(opening_id, profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
 
 
 # ------------------ APPLICATIONS ------------------

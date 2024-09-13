@@ -21,7 +21,6 @@ import {
   applicantOpeningResultProps,
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
-import { useAuthStore } from "../util/stores/authStore";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -59,14 +58,18 @@ function RecruitmentRoundDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
   const [semester, setSemester] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openingFilter, setOpeningFilter] = useState("");
+  const [teamFilter, setTeamFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const openingsResponse = await axios.get(
-          "http://127.0.0.1:3000/opening" // Fixed not tested
+          `http://127.0.0.1:3000/opening`
         );
         setOpening(openingsResponse.data);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -76,6 +79,27 @@ function RecruitmentRoundDetailsPage() {
 
     fetchData();
   }, []);
+
+
+
+  const filteredOpenings = openings.filter((opening) => {
+    console.log(opening);
+    if (openings.length != 0)
+    {
+      // filter active
+      const searchMatch = opening.opening_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      opening.student_team_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const openingMatch = opening.opening_title.toLowerCase().includes(openingFilter.toLowerCase());
+      const teamMatch = opening.student_team_name.toLowerCase().includes(teamFilter.toLowerCase());
+      const semesterMatch = semester === "All" || opening.recruitment_round_semester.toString() === semester;
+      const yearMatch = year === "All" || opening.recruitment_round_year.toString() === year;
+      // Only show openings for active rounds
+      const statusMatch = opening.opening_status === "A";
+
+      return searchMatch && openingMatch && teamMatch && semesterMatch && yearMatch && statusMatch;
+    }
+
+  });
 
   return (
     <>
@@ -91,10 +115,16 @@ function RecruitmentRoundDetailsPage() {
         marginTop="10px"
       >
         <Grid item xs={3}>
-          <TextField label="Search" variant="outlined" fullWidth />
+          <TextField 
+            label="Search" 
+            variant="outlined" 
+            fullWidth 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </Grid>
         <Grid item xs={9}>
-        </Grid> 
+          </Grid>
       </Grid>
       <div
         style={{
@@ -110,7 +140,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  {/* <TableCell>Deadline</TableCell> */}
+                  <TableCell>Deadline</TableCell>
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
@@ -121,7 +151,7 @@ function RecruitmentRoundDetailsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <ApplicantOpeningsTable results={openings}></ApplicantOpeningsTable>
+          <ApplicantOpeningsTable results={filteredOpenings}></ApplicantOpeningsTable>
         )}
       </div>
     </>

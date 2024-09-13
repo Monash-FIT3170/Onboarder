@@ -22,6 +22,7 @@ import axios from "axios";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
+import React from "react";
 
 export interface SingleApplicationProps {
     id: number;
@@ -42,11 +43,7 @@ export interface SingleApplicationProps {
 function ViewOpenPage() {
     // State to manage the sorting direction
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-
-    // Placeholder function for handling the sort
-    const handleSort = () => {
-        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    };
+    const [sortColumn, setSortColumn] = useState(null);
 
     const navigate = useNavigate();
     const [applications, setApplications] = useState<SingleApplicationProps[]>([]);
@@ -57,6 +54,28 @@ function ViewOpenPage() {
     const clearSelectedOpening = useOpeningStore((state) => state.clearSelectedOpening);
     const setSelectedApplicant = useApplicantStore((state) => state.setSelectedApplicant);
     const authStore = useAuthStore();
+
+    const sortedApplications = React.useMemo(() => {
+        if (!sortColumn) return applications;
+
+        return [...applications].sort((a, b) => {
+            if (a[sortColumn] < b[sortColumn]) {
+                return sortDirection === "asc" ? -1 : 1;
+            }
+            if (a[sortColumn] > b[sortColumn]) {
+                return sortDirection === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+    }, [applications, sortColumn, sortDirection]);
+
+    // Placeholder function for handling the sort
+    const handleSort = (column) => {
+        const isAsc = sortColumn === column && sortDirection === "asc";
+        setSortDirection(isAsc ? "desc" : "asc");
+        setSortColumn(column);
+    };
+
     const handleViewApplication = (applicationId: number) => {
         setSelectedApplicant({
             opening_name: selectedOpening?.title ?? null,
@@ -102,7 +121,7 @@ function ViewOpenPage() {
                             alignItems: "center",
                         }}
                     >
-                        {application.status == "A" && (
+                        {(application.status == "C" || application.status == "R") && (
                             <Button
                                 variant="outlined"
                                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -116,7 +135,7 @@ function ViewOpenPage() {
                             variant="contained"
                             onClick={() => handleViewApplication(application.id)}
                         >
-                            VIEW
+                            VIEW APPLICATION
                         </Button>
                     </Box>
                 </TableCell>
@@ -192,7 +211,7 @@ function ViewOpenPage() {
                             respond2();
                         }}
                     >
-                        CONFIGURE EMAIL
+                        CONFIGURE INTERVIEW SCHEDULING EMAIL
                     </Button>
                     <Button
                         variant="contained"
@@ -202,7 +221,7 @@ function ViewOpenPage() {
                             respond();
                         }}
                     >
-                        VIEW CANDIDATE SUBMISSION STATUS
+                        INTERVIEW SCHEDULE
                     </Button>
                 </div>
             </div>
@@ -254,7 +273,7 @@ function ViewOpenPage() {
                     disabled={loading}
                     style={{ marginLeft: "1rem" }}
                 >
-                    {loading ? <Skeleton width={100} /> : "Send Availability Submission Emails"}
+                    {loading ? <Skeleton width={100} /> : "Send Interview Scheduling Emails"}
                 </Button>
             </div>
             <TableContainer component={Paper}>
@@ -262,19 +281,56 @@ function ViewOpenPage() {
                     <TableHead>
                         <TableRow>
                             <TableCell>Student Name</TableCell>
-                            <TableCell>Student Email</TableCell>
-                            <TableCell>Status</TableCell>
                             <TableCell>
-                                Date of Submission
+                                Student Email
                                 <Button
-                                    onClick={handleSort}
+                                    onClick={() => handleSort("email")}
                                     style={{
                                         minWidth: "30px",
                                         padding: "6px",
                                         marginLeft: "5px",
                                     }}
                                 >
-                                    {sortDirection === "asc" ? "↓" : "↑"}
+                                    {sortColumn === "email"
+                                        ? sortDirection === "asc"
+                                            ? "↓"
+                                            : "↑"
+                                        : "↓"}
+                                </Button>
+                            </TableCell>
+
+                            <TableCell>
+                                Status
+                                <Button
+                                    onClick={() => handleSort("status")}
+                                    style={{
+                                        minWidth: "30px",
+                                        padding: "6px",
+                                        marginLeft: "5px",
+                                    }}
+                                >
+                                    {sortColumn === "status"
+                                        ? sortDirection === "asc"
+                                            ? "↓"
+                                            : "↑"
+                                        : "↓"}
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                Date of Submission
+                                <Button
+                                    onClick={() => handleSort("date")}
+                                    style={{
+                                        minWidth: "30px",
+                                        padding: "6px",
+                                        marginLeft: "5px",
+                                    }}
+                                >
+                                    {sortColumn === "date"
+                                        ? sortDirection === "asc"
+                                            ? "↓"
+                                            : "↑"
+                                        : "↓"}
                                 </Button>
                             </TableCell>
                             <TableCell>Actions</TableCell>
@@ -301,7 +357,7 @@ function ViewOpenPage() {
                                       </TableCell>
                                   </TableRow>
                               ))
-                            : generateRowFunction(applications)}
+                            : generateRowFunction(sortedApplications)}
                     </TableBody>
                 </Table>
             </TableContainer>

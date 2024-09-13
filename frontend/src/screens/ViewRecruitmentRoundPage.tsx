@@ -53,6 +53,7 @@ const styles = {
   },
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
+    minHeight: "200px",
     overflowY: "auto",
     display: "block",
   },
@@ -143,14 +144,12 @@ const ViewRecruitmentRoundPage = () => {
     });
     navigate("/recruitment-details-page");
   };
+  const handleAllocateTeamLeads = () => {
+    navigate("/viewTeamLeads");
+  };
 
   const handleViewTeamMembers = () => {
     navigate("/view-team-members");
-  };
-
-  const handleAllocateTeamLeads = () => {
-    // Implement logic to allocate team leads
-    // This might involve navigating to a new page or opening a modal
   };
 
   const handleBack = () => {
@@ -299,12 +298,11 @@ const ViewRecruitmentRoundPage = () => {
                             <TableCell>
                               <Button
                                 variant="contained"
-                                style={{ padding: 0 }}
                                 onClick={() => {
                                   handleViewRound(item.id);
                                 }}
                               >
-                                VIEW
+                                VIEW ROUND
                               </Button>
                             </TableCell>
                           </TableRow>
