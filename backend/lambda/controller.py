@@ -214,6 +214,12 @@ def add_member_to_student_team(student_team_id, email, role):
     
     response = supabase.table("PROFILE_TEAM_INFO").insert({"student_team_id": student_team_id, "profile_id": profile_id, "role": role}).execute()
 
+    # Send welcome email
+    team_response = supabase.table("STUDENT_TEAM").select("name").eq("id", student_team_id).execute()
+    team_name = team_response.data[0]["name"]
+
+    send_welcome_email(email, team_name, role)
+
     return response.data
 
 def get_all_members_of_student_team(student_team_id):
@@ -321,7 +327,7 @@ def get_student_teams_for_profile(profile_id):
     return response.data
 
 
-# -------------- MISC CONTROLLERS --------------
+# -------------- EMAIL CONTROLLERS --------------
 
 encryption_key = os.environ.get('ENCRYPTION_KEY')
 fernet = Fernet(encryption_key)
@@ -371,7 +377,7 @@ def generate_email_body(application_id, task_enabled=False, task_email_format=""
     return body
 
 
-def send_bulk_email(recipients, task_enabled, task_email_format):
+def send_email(recipient_email, subject, body):
     email_sender = os.environ.get('EMAIL_SENDER')
     smtp_host = os.environ.get('SMTP_HOST')
     smtp_port = os.environ.get('SMTP_PORT')
@@ -380,32 +386,37 @@ def send_bulk_email(recipients, task_enabled, task_email_format):
 
     context = ssl.create_default_context()
 
-    subject = "Next Steps in Your Application Process - Action Required"
-
     try:
         with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context) as smtp:
             smtp.login(smtp_username, smtp_password)
 
-            for recipient in recipients:
-                em = EmailMessage()
-                em['From'] = email_sender
-                em['To'] = recipient['email']
-                em['Subject'] = subject
+            em = EmailMessage()
+            em['From'] = email_sender
+            em['To'] = recipient_email
+            em['Subject'] = subject
+            em.add_alternative(body, subtype='html')
 
-                body = generate_email_body(
-                    recipient['application_id'], task_enabled, task_email_format)
-                em.add_alternative(body, subtype='html')
-
-                smtp.send_message(em)
-                print(f"Email sent successfully to {recipient}")
-
-        print("All emails sent successfully")
+            smtp.send_message(em)
+            print(f"Email sent successfully to {recipient_email}")
+            return True
     except smtplib.SMTPAuthenticationError:
         print("Authentication failed. Please check your email and password.")
     except smtplib.SMTPException as e:
         print(f"SMTP error occurred: {str(e)}")
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+    return False
+
+
+def send_bulk_email(recipients, task_enabled, task_email_format):
+    subject = "Next Steps in Your Application Process - Action Required"
+
+    for recipient in recipients:
+        body = generate_email_body(
+            recipient['application_id'], task_enabled, task_email_format)
+        send_email(recipient['email'], subject, body)
+
+    print("All emails sent successfully")
 
 
 def send_interview_email(opening_id):
@@ -443,3 +454,36 @@ def decrypt_id(encrypted_id):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return None
+
+def send_welcome_email(email, team_name, role):
+    role_mapping = {
+        'O': 'Owner',
+        'A': 'Admin',
+        'T': 'Team Lead'
+    }
+    new_role = role_mapping.get(role, 'Team Member')
+    website_url = os.environ.get('WEBSITE_URL')
+    
+    subject = f"Welcome to {team_name}! 🎉"
+    body = f"""
+    <html>
+    <body>
+    <p>Hello and welcome!</p>
+    <p>We're thrilled to have you join our amazing student team "{team_name}" as our new {new_role}! 🌟</p>
+    <p>If you have any questions or ideas, please don't hesitate to reach out to your admin.</p>
+    <p>To get started, please log in using your Monash email:</p>
+    <p><a href="{website_url}/login">Log in with Monash Email</a></p>
+    <p>Once again, welcome aboard! Let's make some magic happen! ✨</p>
+    <p>Warm regards,<br>{team_name}</p>
+    </body>
+    </html>
+    """
+
+    email_sent = send_email(email, subject, body)
+
+    if email_sent:
+        print(f"Notification email sent to {email}")
+    else:
+        print(f"Failed to send notification email to {email}")
+
+    return email_sent
