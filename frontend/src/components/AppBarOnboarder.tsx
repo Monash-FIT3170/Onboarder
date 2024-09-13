@@ -78,7 +78,7 @@ function AppBarOnBoarder() {
                         Onboarding: Recruitment Platform
                     </Typography>
                     <Typography variant="body2" component="div" sx={{ marginRight: 2}}>
-                        Viewing Team {team_name} as: {role}
+                        Viewing Team: {team_name} as: {role}
                     </Typography>
                     {user && (
                         <>
