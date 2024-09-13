@@ -63,6 +63,9 @@ const ViewInterviewAllocation = () => {
     const clearSelectedOpening = useOpeningStore((state) => state.clearSelectedOpening);
     const [applications, setApplications] = useState<SingleApplicationProps[]>([]);
     const authStore = useAuthStore();
+    const filteredApplications = applications.filter((application) =>
+        application.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     const generateRowFunction = (applications: SingleApplicationProps[]) => {
         return applications.map((application) => (
             <TableRow key={application.id}>
@@ -95,8 +98,9 @@ const ViewInterviewAllocation = () => {
         const fetchData = async () => {
             try {
                 const applicationsResponse = await axios.get(
-                    `http://127.0.0.1:3000/openings/${selectedOpening.id}/applications`
+                    `http://127.0.0.1:3000/opening/${selectedOpening.id}/application`
                 );
+                console.log(applicationsResponse);
                 setApplications(applicationsResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -123,7 +127,24 @@ const ViewInterviewAllocation = () => {
   }
 
   const handleScheduleInterview = async () => {
+//  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
+//    setLoading(true);
+//     setError(null);
+//     setResponse(null);
+
+//     try {
+//         const res = await axios.post(`http://127.0.0.1:3000/opening/${selectedOpening.id}/schedule-interviews`, {
+//             // Add data
+//         });
+//         setResponse(res.data);
+//         // setApplications(res.data.updatedApplications);
+//     } catch (err) {
+//         setError(err.message || "An error occurred while scheduling interviews");
+//     } 
   }
+
+  // NEXT SPRINT BUTTON
+  const handleSendInvite = async () => {}
 
   return (
     <>
@@ -140,7 +161,7 @@ const ViewInterviewAllocation = () => {
         </Box>
         <Button
           variant="contained"
-          onClick={handleScheduleInterview}
+          onClick={handleSendInvite}
           disabled={loading}
           style={{ marginLeft: "1rem" }}
         >
@@ -148,6 +169,8 @@ const ViewInterviewAllocation = () => {
         </Button>
       </Box>
       <PaddingBox>
+    
+
       <PaddingBox></PaddingBox>
 
                 <TableContainer>
@@ -169,12 +192,30 @@ const ViewInterviewAllocation = () => {
                 <PaddingBox></PaddingBox>
                 <TextField
                     id="outlined-search"
-                    label="Search Applicants"
+                    label="Search Applicants Name"
                     type="search"
-                    value={searchTerm} // Bind input value to state
+                    value={searchTerm} // 
                     onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
                 />
+
+        {/* <Button
+          variant="contained"
+          onClick={handleSendInvite}
+          disabled={loading}
+          style={{ marginLeft: "1rem" }}
+        >
+          {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleScheduleInterview}
+          disabled={loading}
+          style={{ marginLeft: "1rem" }}
+        >
+          {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
+        </Button> */}
             </PaddingBox>
+         
             <TableContainer component={Paper}>
                 <Table aria-label="simple table">
                     <TableHead>
@@ -203,7 +244,9 @@ const ViewInterviewAllocation = () => {
                                       </TableCell>
                                   </TableRow>
                               ))
-                            : generateRowFunction(applications)}
+                                             
+                            : generateRowFunction(filteredApplications) // puts student info into table
+}
                     </TableBody>
                 </Table>
             </TableContainer>
