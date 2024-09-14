@@ -26,44 +26,67 @@ import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
 import ViewTeamLeads from "./screens/ViewTeamLeads";
 
 function App() {
-    return (
-        <ThemeProvider theme={theme}>
-            <AppBarOnBoarder />
-            <Box component={"section"} sx={{ padding: "20px" }}>
-                <Routes>
-                    {/* Set the default route to AllocateTeamLeads */}
-                    <Route path="/" element={<Dashboard />} />
+  return (
+    <ThemeProvider theme={theme}>
+      <AppBarOnBoarder />
+      <Box component={"section"} sx={{ padding: "20px" }}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
 
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route element={<ProtectedRoute />}>
-						<Route path="/dashboard" element={<Dashboard />} />
-						<Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
-						<Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
-						{/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
-						<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
-						<Route path="/addrecruitmentround" element={<AddRecruitmentRoundPage />} />
-						<Route path="/recruitment-details-page" element={<RecruitmentRoundDetailsPage />} />
-						<Route path="/create-opening" element={<CreateOpeningPage />} />
-						<Route path="/viewopen" element={<ViewOpenPage />} />
-				
-						<Route path="/application-submission" element={<ApplicationSubmissionPage />} />
-						<Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
-						<Route path="/task-email-format" element={<TaskEmailFormatPage />} />
-						<Route path="/availability-calendar" element={<AvailabilityCalendar />} />
-						<Route path="/feedbacknote" element={<Feedbacknote />} />
-						<Route path="/view-interview-allocation" element={<ViewInterviewAllocation />} />
-						<Route path="/availability-calendar-user" element={<AvailabilityCalendarUser />} />
-						<Route path="/view-team-members" element={<ViewTeamMemberPage />} />
-					</Route>
-					<Route path="/availability-calendar/:id" element={<AvailabilityCalendar />} />
-					<Route path="/applicant-openings" element={<ApplicantOpenings />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
+            <Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
+            {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
+            <Route
+              path="/viewrecruitmentround"
+              element={<ViewRecruitmentRoundPage />}
+            />
+            <Route
+              path="/addrecruitmentround"
+              element={<AddRecruitmentRoundPage />}
+            />
+            <Route
+              path="/recruitment-details-page"
+              element={<RecruitmentRoundDetailsPage />}
+            />
+            <Route path="/create-opening" element={<CreateOpeningPage />} />
+            <Route path="/viewopen" element={<ViewOpenPage />} />
 
-
-                </Routes>
-        
-            </Box>
-        </ThemeProvider>
-    );
+            <Route
+              path="/application-submission"
+              element={<ApplicationSubmissionPage />}
+            />
+            <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+            <Route
+              path="/task-email-format"
+              element={<TaskEmailFormatPage />}
+            />
+            <Route
+              path="/availability-calendar"
+              element={<AvailabilityCalendar />}
+            />
+            <Route path="/feedbacknote" element={<Feedbacknote />} />
+            <Route
+              path="/view-interview-allocation"
+              element={<ViewInterviewAllocation />}
+            />
+            <Route
+              path="/availability-calendar-user"
+              element={<AvailabilityCalendarUser />}
+            />
+            <Route path="/view-team-members" element={<ViewTeamMemberPage />} />
+          </Route>
+          <Route
+            path="/availability-calendar/:id"
+            element={<AvailabilityCalendar />}
+          />
+          <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+        </Routes>
+      </Box>
+    </ThemeProvider>
+  );
 }
 
 export default App;
