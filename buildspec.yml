@@ -16,15 +16,17 @@ phases:
       - cd backend/lambda
       - zip -r ../../dist/function.zip .
       - cd ../..
+      - cp env.json dist/
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
       - sam package --template-file sam.yml --s3-bucket onboarder-test-upload-bucket --output-template-file dist/packaged.yml
-      - sam deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM
+      - sam deploy --template-file dist/packaged.yml --stack-name my-lambda-stack --capabilities CAPABILITY_IAM --parameter-overrides EnvironmentVariables="$(cat env.json | jq -c .)"
 
 artifacts:
   files:
     - function.zip
     - packaged.yml
     - appspec.yml
+    - env.json
   base-directory: dist
