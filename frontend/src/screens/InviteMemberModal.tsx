@@ -17,6 +17,7 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 interface InviteMemberModalProps {
   open: boolean;
@@ -37,6 +38,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     message: "",
     severity: "success" as "success" | "error",
   });
+  const BASE_API_URL = getBaseAPIURL();
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRole(event.target.value);
@@ -75,7 +77,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/student-team/${teamId}/members`, // Fixed not tested
+        `${BASE_API_URL}/student-team/${teamId}/members`, // Fixed not tested
         {
           email: email,
           role: role,

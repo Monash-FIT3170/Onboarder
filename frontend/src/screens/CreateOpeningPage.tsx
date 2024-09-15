@@ -19,7 +19,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { formatDeadline } from "../util/Util";
+import { formatDeadline, getBaseAPIURL } from "../util/Util";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -34,6 +34,7 @@ function CreateOpeningPage() {
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
+  const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
 
   const { team_name } = useAuthStore();
@@ -65,13 +66,12 @@ function CreateOpeningPage() {
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
       task_email_format: "TEMPORARY FIX", // TODO
-      task_enabled: false // TODO
-
+      task_enabled: false, // TODO
     };
 
     try {
       const response = await axios.post(
-        `http://127.0.0.1:3000/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
+        `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
         openingData
       );
       if (response.status === 201) {
@@ -105,18 +105,28 @@ function CreateOpeningPage() {
       </Grid>
 
       {/* Table for For Round and Deadline */}
-   <Grid item xs={12}>
-        <TableContainer component={Paper} elevation={0} style={{ border: 'none' }}>
+      <Grid item xs={12}>
+        <TableContainer
+          component={Paper}
+          elevation={0}
+          style={{ border: "none" }}
+        >
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ fontWeight: "bold" }}
+                  >
                     For Round
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ fontWeight: "bold" }}
+                  >
                     Deadline
                   </Typography>
                 </TableCell>
@@ -124,10 +134,10 @@ function CreateOpeningPage() {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell style={{ borderBottom: 'none' }}>
+                <TableCell style={{ borderBottom: "none" }}>
                   {team_name} {recruitmentDetails.roundId}
                 </TableCell>
-                <TableCell style={{ borderBottom: 'none' }}>
+                <TableCell style={{ borderBottom: "none" }}>
                   {formatDeadline(recruitmentDetails.roundDeadline)}
                 </TableCell>
               </TableRow>

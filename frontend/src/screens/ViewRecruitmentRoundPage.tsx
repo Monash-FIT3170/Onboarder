@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const styles = {
   recruitmentRoundPage: {
@@ -95,8 +96,8 @@ const ViewRecruitmentRoundPage = () => {
   };
 
   const studentTeamId = authStore.team_id;
-
-  const API_URL = `http://127.0.0.1:3000/student-team/${studentTeamId}/recruitment-round`; // Working
+  const BASE_API_URL = getBaseAPIURL();
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round`; // Working
 
   useEffect(() => {
     const fetchData = async () => {

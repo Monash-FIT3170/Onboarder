@@ -18,6 +18,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const styles = {
   recruitmentRoundPage: {
@@ -55,7 +56,8 @@ const AddRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const authStore = useAuthStore();
   const studentTeamId = authStore.team_id;
-  const API_URL = `http://127.0.0.1:3000/student-team/${studentTeamId}/recruitment-round/`; // Working
+  const BASE_API_URL = getBaseAPIURL();
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round/`; // Working
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();

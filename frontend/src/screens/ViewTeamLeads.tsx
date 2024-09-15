@@ -1,11 +1,25 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Typography, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Skeleton, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Skeleton,
+  Button,
+  IconButton,
+} from "@mui/material";
 import { useAuthStore } from "../util/stores/authStore";
 import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
 import { useNavigate } from "react-router-dom";
 import { useMemberStore } from "../util/stores/memberStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { getBaseAPIURL } from "../util/Util";
 // Define the structure of a Team Lead
 export interface TeamLeadProps {
   profile_id: number;
@@ -26,6 +40,7 @@ function ViewTeamLeads() {
   // Fetch the team leads data from the API
   useEffect(() => {
     const fetchTeamMembers = async () => {
+      const BASE_API_URL = getBaseAPIURL();
       if (!team_id) {
         // setError("No team selected");
         // setIsLoading(false);
@@ -35,10 +50,10 @@ function ViewTeamLeads() {
       try {
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/student-team/${team_id}/members`
+          `${BASE_API_URL}/student-team/${team_id}/members`
         );
         const profileTeamInfo = profileTeamResponse.data;
-        console.log(profileTeamInfo)
+        console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -46,15 +61,15 @@ function ViewTeamLeads() {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            console.log(memberInfo)
+            console.log(memberInfo);
             const studentResponse = await axios.get(
-              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}`
+              `${BASE_API_URL}/profile/${memberInfo.profile_id}`
             );
             // const studentInfo = studentResponse.data.find(
             //   (student: any) => student.student_team_id === team_id
             // );
             const studentInfo = studentResponse.data[0];
-            console.log(studentInfo)
+            console.log(studentInfo);
 
             if (studentInfo) {
               return {
@@ -94,23 +109,26 @@ function ViewTeamLeads() {
     setSelectedMember({
       id: id ?? null,
       email: email ?? "",
-  });
+    });
     navigate("/allocateTeamLeads");
-  }
+  };
   return (
     <div style={{ padding: "20px" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-      <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+        <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h4" textAlign="center">
           Team Leads
         </Typography>
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="10px">
-        <Typography variant="h6">
-          List of Team Leads
-        </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom="10px"
+      >
+        <Typography variant="h6">List of Team Leads</Typography>
       </Box>
       <TableContainer component={Paper}>
         <Table aria-label="openings table">
@@ -144,7 +162,9 @@ function ViewTeamLeads() {
                     <TableCell>
                       <Button
                         variant="contained"
-                        onClick={() => handleView(teamLead.profile_id, teamLead.email)}
+                        onClick={() =>
+                          handleView(teamLead.profile_id, teamLead.email)
+                        }
                       >
                         View
                       </Button>

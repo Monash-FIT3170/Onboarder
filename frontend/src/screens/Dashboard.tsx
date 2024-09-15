@@ -9,6 +9,7 @@ import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrap = styled.div`
   margin: auto;
@@ -25,7 +26,7 @@ const ButtonStyle = styled.div`
 const Dashboard: React.FC = () => {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const BASE_API_URL = getBaseAPIURL();
   const authStore = useAuthStore();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
 
@@ -34,15 +35,15 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
-        // let profileId = profile;
+        // let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
+        let profileId = profile;
 
         if (!profileId) {
           profileId = await authStore.fetchProfile();
         }
 
         const rolesResponse = await axios.get(
-          `http://127.0.0.1:3000/profile/${profileId}/student-teams` // Working
+          `${BASE_API_URL}/profile/${profileId}/student-teams` // Working
         );
         console.log(rolesResponse.data);
         const tableData = rolesResponse.data
@@ -54,8 +55,8 @@ const Dashboard: React.FC = () => {
               role.your_role === "O"
                 ? "Owner"
                 : role.your_role === "A"
-                ? "Admin"
-                : "Team Lead",
+                  ? "Admin"
+                  : "Team Lead",
             student_team_owner: role.owner_email,
             student_team_description: role.student_team_description,
           }))
@@ -95,20 +96,17 @@ const Dashboard: React.FC = () => {
     teamDescription: string
   ) => {
     try {
-      const response = await axios.post("http://127.0.0.1:3000/student-team", {
+      const response = await axios.post(`${BASE_API_URL}/student-team`, {
         name: teamName,
         description: teamDescription,
       });
 
       const newTeamId = response.data.data[0].id;
 
-      await axios.post(
-        `http://127.0.0.1:3000/student-team/${newTeamId}/members`,
-        {
-          email: user.email,
-          role: "O",
-        }
-      );
+      await axios.post(`${BASE_API_URL}/student-team/${newTeamId}/members`, {
+        email: user.email,
+        role: "O",
+      });
 
       const newStudentTeam = {
         id: newTeamId,
