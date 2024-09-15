@@ -120,7 +120,7 @@ function RecruitmentRoundDetailsPage() {
     };
 
     fetchData();
-  }, [recruitmentDetails]);
+  }, [recruitmentDetails, status]);
 
   const updateStatus = async (statusChange: string) => {
     // Don't show loading for both buttons at once
@@ -138,6 +138,7 @@ function RecruitmentRoundDetailsPage() {
         data
       );
       setStatus(statusChange);
+
       alert("Status updated successfully!");
     } catch (error) {
       console.error("Error archiving round:", error);
@@ -203,7 +204,7 @@ function RecruitmentRoundDetailsPage() {
             {loading ? (
               <Skeleton width={200} />
             ) : (
-              `${authStore.team_name} ${rounds[0]?.id}`
+              `Recruitment Round: ${authStore.team_name} ${rounds[0]?.id}`
             )}
           </Typography>
         </TitleWrapper>

@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
         student_team_description: teamDescription,
       };
 
-      setStudentTeams([...studentTeams, newStudentTeam]);
+      setStudentTeams([...studentTeams, newStudentTeam])
     } catch (error) {
       console.error("Error submitting team:", error);
     }

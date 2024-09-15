@@ -224,7 +224,7 @@ function Feedbacknote() {
                   Interviewer
                 </Typography>
               </TableCell>
-              <TableCell>{applicantInformation[0]?.profile_email}</TableCell>
+              <TableCell>{applicantInformation[0]?.profile_email || "Interviewer yet to be assigned"}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>

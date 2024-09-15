@@ -236,10 +236,10 @@ def get_student_team_member(student_team_id, profile_id):
 
 def remove_member_from_student_team(student_team_id, profile_id):
     # Remove team lead assignments for the member in the given student team
-    openings = supabase.table("OPENING").select("id").eq("student_team_id", student_team_id).execute()
+    openings = supabase.table("PROFILE_TEAM_INFO").select("id").eq("student_team_id", student_team_id).execute()
 
     for opening in openings.data:
-        remove_team_lead_from_opening(opening["id"])
+        remove_team_lead_from_opening(opening["id"], profile_id)
 
     # Update applications to remove the profile_id
     applications = supabase.table("APPLICATION").select("id").eq("profile_id", profile_id).execute()

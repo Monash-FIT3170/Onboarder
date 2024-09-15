@@ -80,12 +80,15 @@ const generateRowFunction = (
     } else {
       // Leave Team
       try {
+        console.log(user_id, team_id);
         const API_URL = `${BASE_API_URL}/student-team/${team_id}/members/${user_id}`;
-        await axios.post(API_URL);
+        await axios.delete(API_URL);
       } catch (error) {
         console.error("Error removing user from team:", error);
+
       } finally {
         // setLoading(false);
+        navigate("/dashboard");
       }
     }
   };
@@ -201,7 +204,7 @@ const generateRowFunction = (
                   console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
-                    authStore.user,
+                    authStore.profile,
                     modalData.student_team_id
                   );
                   handleCloseModal();
