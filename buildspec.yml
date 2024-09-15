@@ -8,7 +8,7 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - pip install --upgrade pip
-      - pip install -r backend/lambda/requirements.txt --platform manylinux2014_x86_64 -t backend/lambda/ --only-binary=:all:
+      - "pip install -r backend/lambda/requirements.txt --platform manylinux2014_x86_64 -t backend/lambda/ --only-binary=:all:"
   build:
     commands:
       - echo "Building the Lambda function..."
