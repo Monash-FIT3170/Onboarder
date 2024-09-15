@@ -1,4 +1,5 @@
-
+"""Starting point for the lambda
+"""
 import router
 
 
