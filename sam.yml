@@ -18,7 +18,17 @@ Resources:
               Ref: FEApi
             Path: /{proxy+}
             Method: ANY
-
+      Environment:
+        Variables:
+          EMAIL_SENDER: ${env:EMAIL_SENDER}
+          SMTP_HOST: ${env:SMTP_HOST}
+          SMTP_PORT: ${env:SMTP_PORT}
+          SMTP_USERNAME: ${env:SMTP_USERNAME}
+          SMTP_PASSWORD: ${env:SMTP_PASSWORD}
+          SUPABASE_URL: ${env:SUPABASE_URL}
+          SUPABASE_KEY: ${env:SUPABASE_KEY}
+          ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
