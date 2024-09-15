@@ -26,15 +26,15 @@ phases:
           --stack-name $STACK_NAME \
           --capabilities CAPABILITY_IAM \
           --parameter-overrides \
-          EmailSender=$(jq -r '.RouterLambda.EMAIL_SENDER' env.json) \
-          SmtpHost=$(jq -r '.RouterLambda.SMTP_HOST' env.json) \
-          SmtpPort=$(jq -r '.RouterLambda.SMTP_PORT' env.json) \
-          SmtpUsername=$(jq -r '.RouterLambda.SMTP_USERNAME' env.json) \
-          SmtpPassword=$(jq -r '.RouterLambda.SMTP_PASSWORD' env.json) \
-          SupabaseUrl=$(jq -r '.RouterLambda.SUPABASE_URL' env.json) \
-          SupabaseKey=$(jq -r '.RouterLambda.SUPABASE_KEY' env.json) \
-          EncryptionKey=$(jq -r '.RouterLambda.ENCRYPTION_KEY' env.json) \
-          ResendKey=$(jq -r '.RouterLambda.RESEND_KEY' env.json)
+          EmailSender=$(jq -r '.RouterLambda.EMAIL_SENDER' dist/env.json) \
+          SmtpHost=$(jq -r '.RouterLambda.SMTP_HOST' dist/env.json) \
+          SmtpPort=$(jq -r '.RouterLambda.SMTP_PORT' dist/env.json) \
+          SmtpUsername=$(jq -r '.RouterLambda.SMTP_USERNAME' dist/env.json) \
+          SmtpPassword=$(jq -r '.RouterLambda.SMTP_PASSWORD' dist/env.json) \
+          SupabaseUrl=$(jq -r '.RouterLambda.SUPABASE_URL' dist/env.json) \
+          SupabaseKey=$(jq -r '.RouterLambda.SUPABASE_KEY' dist/env.json) \
+          EncryptionKey=$(jq -r '.RouterLambda.ENCRYPTION_KEY' dist/env.json) \
+          ResendKey=$(jq -r '.RouterLambda.RESEND_KEY' dist/env.json)
 
 artifacts:
   files:
