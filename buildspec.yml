@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies..."
-      - pip install -r backend/lambda/requirements.txt
+      - pip install -r backend/lambda/requirements.txt -t backend/lambda/
   build:
     commands:
       - echo "Building the Lambda function..."
