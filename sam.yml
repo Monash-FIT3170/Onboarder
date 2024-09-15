@@ -23,6 +23,8 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      Auth:
+        ApiKeyRequired: true
       DefinitionBody:
         openapi: 3.0.0
         info:
@@ -442,7 +444,43 @@ Resources:
                   payloadFormatVersion: "2.0"
                   type: aws_proxy
                   uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+        components:
+          securitySchemes:
+            api_key:
+              type: apiKey
+              name: x-api-key
+              in: header
+        security:
+          - api_key: []
+
+  ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref FEApi
+          StageName: prod
+
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId: !Ref FEApi
+          Stage: prod
+      Description: Usage plan for this API
+      UsagePlanName: MyApiUsagePlan
+
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref UsagePlan
+
 Outputs:
   ApiUrl:
     Description: API endpoint URL for Prod environment
     Value: !Sub "https://${FEApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+  ApiKeyId:
+    Description: API Key ID
+    Value: !Ref ApiKey
