@@ -41,5 +41,6 @@ artifacts:
     - function.zip
     - packaged.yml
     - appspec.yml
-
+    - env.json
+  
   base-directory: dist
