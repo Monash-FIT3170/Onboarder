@@ -24,7 +24,7 @@ import BackIcon from "../assets/BackIcon";
 import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingApplicantStore";
 import { getBaseAPIURL } from "../util/Util";
 

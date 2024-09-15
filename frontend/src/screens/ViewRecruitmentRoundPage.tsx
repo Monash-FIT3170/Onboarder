@@ -53,7 +53,7 @@ const styles = {
   },
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
-    minHeight: "127px",
+    minHeight: "300px",
     overflowY: "auto",
     display: "block",
   },

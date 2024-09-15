@@ -129,7 +129,7 @@ function ViewOpenPage() {
               alignItems: "center",
             }}
           >
-            {(application.status == "C" || application.status == "R") && (
+            {(application.status == "C" || application.status == "X") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -216,6 +216,7 @@ function ViewOpenPage() {
         <div style={{ marginLeft: "auto" }}>
           <Button
             variant="outlined"
+
             onClick={() => {
               console.log("Navigating to /task-email-format");
               respond2();
@@ -283,7 +284,7 @@ function ViewOpenPage() {
         <Button
           variant="contained"
           onClick={handleSendEmails}
-          disabled={loading}
+          disabled={loading || applications.find((item) => item.status === "C") == undefined}
           style={{ marginLeft: "1rem" }}
         >
           {loading ? (

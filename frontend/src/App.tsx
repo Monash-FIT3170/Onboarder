@@ -31,7 +31,7 @@ function App() {
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<LoginPage/>} />
 
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>

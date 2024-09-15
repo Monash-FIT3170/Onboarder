@@ -41,6 +41,7 @@ const Dashboard: React.FC = () => {
         if (!profileId) {
           profileId = await authStore.fetchProfile();
         }
+        console.log("Profile ID: ", profileId);
 
         const rolesResponse = await axios.get(
           `${BASE_API_URL}/profile/${profileId}/student-teams` // Working

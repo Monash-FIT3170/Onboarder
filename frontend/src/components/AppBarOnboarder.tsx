@@ -86,15 +86,12 @@ function AppBarOnBoarder() {
           </Typography>
           {isProtectedRoute && !isDashboard && team_name && role && (
             <Typography variant="body2" component="div" sx={{ marginRight: 2 }}>
-              <Typography fontWeight={"heavy"} component={"span"}>
-                Viewing Team:
-              </Typography>
-              {team_name}
-              <Typography component={"span"}>&nbsp;</Typography>
-              <Typography fontWeight={"heavy"} component={"span"}>
-                as:
-              </Typography>
-              {role}
+              <Typography variant="body2" component={"span"}>Viewing Team:</Typography>
+              <Typography variant="body2" component={"span"}> {team_name}</Typography>
+              <Typography variant="body2" component={"span"}>&nbsp;</Typography>
+              <Typography variant="body2" component={"span"}>as:</Typography>
+              <Typography variant="body2" component={"span"}> {role}</Typography>
+              
             </Typography>
           )}
           {user && (

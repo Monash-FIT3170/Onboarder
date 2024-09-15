@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Table,
@@ -13,7 +13,6 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -32,7 +31,7 @@ const AllocateTeamLeads = () => {
   const navigate = useNavigate();
   // const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
   const selectedMember = useMemberStore((state) => state.selectedMember);
-  const { team_id, team_name } = useAuthStore();
+  const { team_id } = useAuthStore();
   const teamLeadId = selectedMember?.id;
 
   const handleAllocate = async (openingId: number) => {

@@ -9,6 +9,7 @@ import { styled } from "@mui/system";
 import { supabase } from "../util/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/RegisterPage.jpg";
+import { useAuthStore } from "../util/stores/authStore";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
 	display: "flex",
@@ -27,7 +28,7 @@ const FormSection = styled(Box)(({ theme }) => ({
 	padding: theme.spacing(30),
 	[theme.breakpoints.up("md")]: {
 		maxWidth: "50%",
-		padding: theme.spacing(30),
+		padding: theme.spacing(10),
 	},
 }));
 
@@ -59,6 +60,7 @@ const CoverImage = styled("img")({
 
 const LoginPage: React.FC = () => {
 	const [error, setError] = useState("");
+	const authStore = useAuthStore();
 
 	const navigate = useNavigate();
 
@@ -106,6 +108,8 @@ const LoginPage: React.FC = () => {
 				data: { user },
 			} = await supabase.auth.getUser();
 			if (user) {
+				// authStore
+				authStore.initializeAuth();
 				// Redirecting user to dashboard if user is signed in
 				navigate("/dashboard");
 			}
