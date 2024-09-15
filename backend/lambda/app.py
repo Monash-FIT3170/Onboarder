@@ -1,4 +1,4 @@
-"""Starting point for the lambda function
+"""Starting point for the api lambda function
 """
 import router
 
