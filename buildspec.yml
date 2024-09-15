@@ -17,9 +17,16 @@ phases:
       - zip -r ../../dist/function.zip .
       - cd ../..
       - cp env.json dist/
+      - echo "Contents of dist after copy:"
+      - ls -la dist
   post_build:
     commands:
       - echo "Deploying the Lambda function..."
+      - echo "Current working directory: $(pwd)"
+      - echo "Contents of current directory:"
+      - ls -la
+      - echo "Contents of dist directory:"
+      - ls -la dist
       - sam package --template-file sam.yml --s3-bucket onboarder-test-upload-bucket --output-template-file dist/packaged.yml
       - |
         sam deploy --template-file sam.yml \
