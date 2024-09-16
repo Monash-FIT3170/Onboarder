@@ -31,7 +31,7 @@ function App() {
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<LoginPage/>} />
+          <Route path="/" element={<LoginPage />} />
 
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
@@ -53,11 +53,6 @@ function App() {
             />
             <Route path="/create-opening" element={<CreateOpeningPage />} />
             <Route path="/viewopen" element={<ViewOpenPage />} />
-
-            <Route
-              path="/application-submission"
-              element={<ApplicationSubmissionPage />}
-            />
             <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
             <Route
               path="/task-email-format"
@@ -83,6 +78,10 @@ function App() {
             element={<AvailabilityCalendar />}
           />
           <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+          <Route
+            path="/application-submission"
+            element={<ApplicationSubmissionPage />}
+          />
         </Routes>
       </Box>
     </ThemeProvider>

@@ -176,6 +176,11 @@ def get_all_recruitment_rounds_for_student_team(student_team_id):
 
 def update_recruitment_round(recruitment_round_id, data):
     response = supabase.table("RECRUITMENT_ROUND").update(data).eq("id", recruitment_round_id).execute()
+
+    if "status" in data:
+        # update the status of all openings in the recruitment round
+        supabase.table("OPENING").update({"status": data["status"]}).eq("recruitment_round_id", recruitment_round_id).execute()
+
     return response.data
 
 def get_recruitment_round(recruitment_round_id):

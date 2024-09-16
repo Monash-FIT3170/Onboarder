@@ -62,7 +62,7 @@ function CreateOpeningPage() {
     const openingData = {
       title: openingName,
       description: description,
-      status: "I",
+      status: `${recruitmentDetails.roundStatus}`,
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
       task_email_format: "TEMPORARY FIX", // TODO
