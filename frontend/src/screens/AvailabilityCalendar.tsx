@@ -14,6 +14,7 @@ import { enAU } from "date-fns/locale";
 import { useParams } from "react-router-dom";
 import { startOfDay, endOfDay, addWeeks } from "date-fns";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -41,7 +42,7 @@ const AvailabilityCalendar: React.FC = () => {
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
   const [applicationId, setApplicationId] = useState(null);
-
+  const BASE_API_URL = getBaseAPIURL();
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
@@ -100,7 +101,7 @@ const AvailabilityCalendar: React.FC = () => {
     // handleSave(updatedEvents); // Automatically save changes
   };
 
-  const API_URL = "http://127.0.0.1:3000";
+  const API_URL = `${BASE_API_URL}`;
 
   const handleSave = async () => {
     try {

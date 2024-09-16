@@ -15,6 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -33,8 +34,8 @@ interface Event {
   end: Date;
   title: string;
 }
-
-const API_URL = "http://127.0.0.1:3000";
+const BASE_API_URL = getBaseAPIURL();
+const API_URL = `${BASE_API_URL}`;
 
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -99,11 +100,9 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios.patch(`${API_URL}/profile/${profileId}`, 
-        {interview_availability: eventsList}
-      );
-
-      
+      await axios.patch(`${API_URL}/profile/${profileId}`, {
+        interview_availability: eventsList,
+      });
     } catch (error) {
       console.error(`Error saving availability data: ${error}`);
     }

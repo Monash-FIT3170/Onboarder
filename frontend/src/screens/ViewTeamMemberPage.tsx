@@ -13,6 +13,7 @@ import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
 import InviteMemberModal from "./InviteMemberModal";
 import axios from "axios";
 import { useAuthStore } from "../util/stores/authStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const ViewTeamMembersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,9 +33,10 @@ const ViewTeamMembersPage: React.FC = () => {
       }
 
       try {
+        const BASE_API_URL = getBaseAPIURL();
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/student-team/${studentTeamId}/members` // Working
+          `${BASE_API_URL}/student-team/${studentTeamId}/members` // Working
         );
         const profileTeamInfo = profileTeamResponse.data;
         console.log(profileTeamInfo)
@@ -47,7 +49,7 @@ const ViewTeamMembersPage: React.FC = () => {
           try {
             console.log(memberInfo)
             const studentResponse = await axios.get(
-              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}` // Working
+              `${BASE_API_URL}/profile/${memberInfo.profile_id}` // Working
             );
             // const studentInfo = studentResponse.data.find(
             //   (student: any) => student.student_team_id === team_id

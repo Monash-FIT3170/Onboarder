@@ -8,7 +8,6 @@ import {
   Button,
   Paper,
   Box,
-  Divider,
   Modal,
   Typography,
 } from "@mui/material";
@@ -16,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import axios from "axios";
 import { useState } from "react";
+import { getBaseAPIURL } from "../util/Util";
 
 export interface StudentTeamResultProps {
   id: number; // user id
@@ -30,7 +30,7 @@ export interface DashboardTableProps {
 }
 
 const modalStyle = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -49,6 +49,7 @@ const generateRowFunction = (
   const [modalData, setModalData] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [leaveModalOpen, setLeaveModalOpen] = useState(false);
+  const BASE_API_URL = getBaseAPIURL();
 
   const handleView = (t_id: number, t_name: string, user_role: string) => {
     authStore.updateTeamAndRole(t_id, t_name, user_role);
@@ -69,7 +70,7 @@ const generateRowFunction = (
     if (u_role === "Owner") {
       // Delete Team
       try {
-        const API_URL = `http://127.0.0.1:3000/student-team/${team_id}`;
+        const API_URL = `${BASE_API_URL}/student-team/${team_id}`;
         await axios.delete(API_URL);
       } catch (error) {
         console.error("Error deleting team:", error);
@@ -79,12 +80,15 @@ const generateRowFunction = (
     } else {
       // Leave Team
       try {
-        const API_URL = `http://127.0.0.1:3000/student-team/${team_id}/members/${user_id}`;
-        await axios.post(API_URL);
+        console.log(user_id, team_id);
+        const API_URL = `${BASE_API_URL}/student-team/${team_id}/members/${user_id}`;
+        await axios.delete(API_URL);
       } catch (error) {
         console.error("Error removing user from team:", error);
+
       } finally {
         // setLoading(false);
+        navigate("/dashboard");
       }
     }
   };
@@ -200,7 +204,7 @@ const generateRowFunction = (
                   console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
-                    authStore.user,
+                    authStore.profile,
                     modalData.student_team_id
                   );
                   handleCloseModal();

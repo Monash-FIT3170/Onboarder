@@ -23,10 +23,9 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadSpinner";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
-import { useAuthStore } from "../util/stores/authStore";
 
 import { useApplicantStore } from "../util/stores/applicantStore";
-import { getAppStatusText } from "../util/Util";
+import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 
 interface ResultProps {
     id: number;
@@ -55,8 +54,8 @@ export default function RecruitmentPlatform() {
     const navigate = useNavigate();
     const [isDisabledAccept, setIsDisabledAccept] = useState(true);
     const [isDisabledReject, setIsDisabledReject] = useState(true);
+    const BASE_API_URL = getBaseAPIURL();
 
-    const authStore = useAuthStore();
     const selectedApplicant = useApplicantStore((state) => state.selectedApplicant);
     const clearSelectedApplicant = useApplicantStore((state) => state.clearSelectedApplicant);
 
@@ -70,7 +69,7 @@ export default function RecruitmentPlatform() {
 
             try {
                 const applicantResponse = await axios.get(
-                    `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}` // Working
+                    `${BASE_API_URL}/application/${selectedApplicant?.application_id}` // Working
                 );
                 setApplicantInformation(applicantResponse.data);
             } catch (error) {
@@ -107,7 +106,7 @@ export default function RecruitmentPlatform() {
                 status: "C",
             };
             const response = await axios.patch(
-                `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}/`, // Working
+                `${BASE_API_URL}/application/${selectedApplicant?.application_id}/`, // Working
                 submissionData
             );
             if (response.status === 200) {
@@ -137,7 +136,7 @@ export default function RecruitmentPlatform() {
                 status: "X",
             };
             const response = await axios.patch(
-                `http://127.0.0.1:3000/application/${selectedApplicant?.application_id}/`, // Working
+                `${BASE_API_URL}/application/${selectedApplicant?.application_id}/`, // Working
                 submissionData
             );
             if (response.status === 200) {

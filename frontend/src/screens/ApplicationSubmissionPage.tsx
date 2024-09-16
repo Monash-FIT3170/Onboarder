@@ -24,8 +24,9 @@ import BackIcon from "../assets/BackIcon";
 import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useOpeningStore } from '../util/stores/openingApplicantStore';
+import { useNavigate } from "react-router-dom";
+import { useOpeningStore } from "../util/stores/openingApplicantStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const SectionTitle = styled.div`
   margin-top: 30px;
@@ -46,6 +47,7 @@ function ApplicationSubmissionPage() {
     currentSemester: "",
     semesterRemaining: "",
   });
+  const BASE_API_URL = getBaseAPIURL();
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,21 +58,21 @@ function ApplicationSubmissionPage() {
     if (roundId !== null && openingId !== null) {
       axios
         .get(
-          `http://127.0.0.1:3000/opening/${openingId}/` // Working
+          `${BASE_API_URL}/opening/${openingId}/` // Working
         )
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data);
           setOpening(res.data);
         })
         .catch((error) => {
           console.error("There was an error!", error);
         });
-        axios
+      axios
         .get(
-          `http://127.0.0.1:3000/recruitment-round/${roundId}/` // Working
+          `${BASE_API_URL}/recruitment-round/${roundId}/` // Working
         )
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data);
           setRound(res.data);
         })
         .catch((error) => {
@@ -122,7 +124,7 @@ function ApplicationSubmissionPage() {
 
       axios
         .post(
-          `http://127.0.0.1:3000/opening/${openingId}/application`, // Working
+          `${BASE_API_URL}/opening/${openingId}/application`, // Working
           submissionData
         )
         .then((response) => {
@@ -143,15 +145,15 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-                  <IconButton onClick={() => navigate("/applicant-openings")}>
-              <BackIcon />
-            </IconButton>
-          <Typography variant="h5" component="div">
-            {opening[0]?.opening_title}
-          </Typography>
-          <Typography variant="body1" component="div">
-            Description: {opening[0]?.opening_description}
-          </Typography>
+      <IconButton onClick={() => navigate("/applicant-openings")}>
+        <BackIcon />
+      </IconButton>
+      <Typography variant="h5" component="div">
+        {opening[0]?.opening_title}
+      </Typography>
+      <Typography variant="body1" component="div">
+        Description: {opening[0]?.opening_description}
+      </Typography>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -163,15 +165,13 @@ function ApplicationSubmissionPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-              <TableRow>
-                <TableCell>
-                  {new Date(round[0]?.deadline).toLocaleDateString("en-GB")}
-                </TableCell>
-                <TableCell align="center">{round[0]?.student_team_id}</TableCell>
-                <TableCell align="center">
-                  {round[0]?.semester}
-                </TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell>
+                {new Date(round[0]?.deadline).toLocaleDateString("en-GB")}
+              </TableCell>
+              <TableCell align="center">{round[0]?.student_team_id}</TableCell>
+              <TableCell align="center">{round[0]?.semester}</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>

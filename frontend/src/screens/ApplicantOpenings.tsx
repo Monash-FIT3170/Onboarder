@@ -3,8 +3,6 @@ import {
   Typography,
   Grid,
   TextField,
-  MenuItem,
-  Select,
   Skeleton,
   Table,
   TableBody,
@@ -21,6 +19,7 @@ import {
   applicantOpeningResultProps,
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -61,15 +60,13 @@ function RecruitmentRoundDetailsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [openingFilter, setOpeningFilter] = useState("");
   const [teamFilter, setTeamFilter] = useState("");
+  const BASE_API_URL = getBaseAPIURL();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const openingsResponse = await axios.get(
-          `http://127.0.0.1:3000/opening`
-        );
+        const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
         setOpening(openingsResponse.data);
-        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -80,25 +77,40 @@ function RecruitmentRoundDetailsPage() {
     fetchData();
   }, []);
 
-
-
   const filteredOpenings = openings.filter((opening) => {
     console.log(opening);
-    if (openings.length != 0)
-    {
+    if (openings.length != 0) {
       // filter active
-      const searchMatch = opening.opening_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      opening.student_team_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const openingMatch = opening.opening_title.toLowerCase().includes(openingFilter.toLowerCase());
-      const teamMatch = opening.student_team_name.toLowerCase().includes(teamFilter.toLowerCase());
-      const semesterMatch = semester === "All" || opening.recruitment_round_semester.toString() === semester;
-      const yearMatch = year === "All" || opening.recruitment_round_year.toString() === year;
+      const searchMatch =
+        opening.opening_title
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        opening.student_team_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      const openingMatch = opening.opening_title
+        .toLowerCase()
+        .includes(openingFilter.toLowerCase());
+      const teamMatch = opening.student_team_name
+        .toLowerCase()
+        .includes(teamFilter.toLowerCase());
+      const semesterMatch =
+        semester === "All" ||
+        opening.recruitment_round_semester.toString() === semester;
+      const yearMatch =
+        year === "All" || opening.recruitment_round_year.toString() === year;
       // Only show openings for active rounds
       const statusMatch = opening.opening_status === "A";
 
-      return searchMatch && openingMatch && teamMatch && semesterMatch && yearMatch && statusMatch;
+      return (
+        searchMatch &&
+        openingMatch &&
+        teamMatch &&
+        semesterMatch &&
+        yearMatch &&
+        statusMatch
+      );
     }
-
   });
 
   return (
@@ -115,16 +127,15 @@ function RecruitmentRoundDetailsPage() {
         marginTop="10px"
       >
         <Grid item xs={3}>
-          <TextField 
-            label="Search" 
-            variant="outlined" 
-            fullWidth 
+          <TextField
+            label="Search"
+            variant="outlined"
+            fullWidth
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Grid>
-        <Grid item xs={9}>
-          </Grid>
+        <Grid item xs={9}></Grid>
       </Grid>
       <div
         style={{
@@ -151,7 +162,9 @@ function RecruitmentRoundDetailsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <ApplicantOpeningsTable results={filteredOpenings}></ApplicantOpeningsTable>
+          <ApplicantOpeningsTable
+            results={filteredOpenings}
+          ></ApplicantOpeningsTable>
         )}
       </div>
     </>
