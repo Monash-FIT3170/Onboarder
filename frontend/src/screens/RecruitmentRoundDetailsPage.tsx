@@ -55,7 +55,7 @@ const OpeningsWrapper = styled.div`
 `;
 
 const modalStyle = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -154,6 +154,7 @@ function RecruitmentRoundDetailsPage() {
       roundId: recruitmentDetails.roundId,
       roundDeadline: rounds[0].deadline,
       roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id,
+      roundStatus: rounds[0]?.status,
     });
     navigate("/create-opening");
   };

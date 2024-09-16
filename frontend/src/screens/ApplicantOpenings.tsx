@@ -100,8 +100,8 @@ function RecruitmentRoundDetailsPage() {
       const yearMatch =
         year === "All" || opening.recruitment_round_year.toString() === year;
       // Only show openings for active rounds
-      // const statusMatch = opening.opening_status === "A";
-      const statusMatch = true;
+      const statusMatch = opening.opening_status === "A";
+      // const statusMatch = true;
 
       return (
         searchMatch &&
