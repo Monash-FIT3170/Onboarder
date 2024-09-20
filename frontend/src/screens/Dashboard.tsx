@@ -12,8 +12,8 @@ import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrap = styled.div`
-  margin: auto;
-  text-align: center;
+      margin: auto;
+      text-align: center;
 `;
 
 const ButtonStyle = styled.div`
