@@ -47,13 +47,13 @@ const AvailabilityCalendarUser: React.FC = () => {
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     // Check if the selected time slot overlaps with any existing events
     const overlappingEvent = eventsList.find(
-      (event) => start < event.end && end > event.start
+      (event) => start < event.end && end > event.start,
     );
 
     // If there is an overlap, alert the user; otherwise, add the new event
     if (overlappingEvent) {
       alert(
-        "The selected time slot overlaps with an existing event. Please adjust the existing event or select a different time slot."
+        "The selected time slot overlaps with an existing event. Please adjust the existing event or select a different time slot.",
       );
     } else {
       const updatedEvents = [
@@ -75,7 +75,9 @@ const AvailabilityCalendarUser: React.FC = () => {
     end: Date;
   }) => {
     const updatedEvents = eventsList.map((existingEvent) =>
-      existingEvent === event ? { ...existingEvent, start, end } : existingEvent
+      existingEvent === event
+        ? { ...existingEvent, start, end }
+        : existingEvent,
     );
     setEventsList(updatedEvents);
     // handleSave(updatedEvents); // Automatically save changes
@@ -91,7 +93,9 @@ const AvailabilityCalendarUser: React.FC = () => {
     end: Date;
   }) => {
     const updatedEvents = eventsList.map((existingEvent) =>
-      existingEvent === event ? { ...existingEvent, start, end } : existingEvent
+      existingEvent === event
+        ? { ...existingEvent, start, end }
+        : existingEvent,
     );
     setEventsList(updatedEvents);
   };

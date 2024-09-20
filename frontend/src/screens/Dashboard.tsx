@@ -12,15 +12,15 @@ import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrap = styled.div`
-      margin: auto;
-      text-align: center;
+  margin: auto;
+  text-align: center;
 `;
 
 const ButtonStyle = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Dashboard: React.FC = () => {
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
         console.log("Profile ID: ", profileId);
 
         const rolesResponse = await axios.get(
-          `${BASE_API_URL}/profile/${profileId}/student-teams` // Working
+          `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
         );
         console.log(rolesResponse.data);
         const tableData = rolesResponse.data
@@ -94,7 +94,7 @@ const Dashboard: React.FC = () => {
 
   const handleSubmitTeam = async (
     teamName: string,
-    teamDescription: string
+    teamDescription: string,
   ) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/student-team`, {
@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
         student_team_description: teamDescription,
       };
 
-      setStudentTeams([...studentTeams, newStudentTeam])
+      setStudentTeams([...studentTeams, newStudentTeam]);
     } catch (error) {
       console.error("Error submitting team:", error);
     }
