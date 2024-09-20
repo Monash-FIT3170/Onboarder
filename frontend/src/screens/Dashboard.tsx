@@ -17,10 +17,10 @@ const TitleWrap = styled.div`
 `;
 
 const ButtonStyle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 `;
 
 const Dashboard: React.FC = () => {
