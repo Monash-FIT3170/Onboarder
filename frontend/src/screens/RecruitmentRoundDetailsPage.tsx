@@ -78,19 +78,19 @@ function RecruitmentRoundDetailsPage() {
   const BASE_API_URL = getBaseAPIURL();
 
   const setRecruitmentDetails = useRecruitmentStore(
-    (state) => state.setRecruitmentDetails
+    (state) => state.setRecruitmentDetails,
   );
 
   const recruitmentDetails = useRecruitmentStore(
-    (state) => state.recruitmentDetails
+    (state) => state.recruitmentDetails,
   );
 
   const setSelectedOpening = useOpeningStore(
-    (state) => state.setSelectedOpening
+    (state) => state.setSelectedOpening,
   );
 
   const clearRecruitmentDetails = useRecruitmentStore(
-    (state) => state.clearRecruitmentDetails
+    (state) => state.clearRecruitmentDetails,
   );
   const authStore = useAuthStore();
   useEffect(() => {
@@ -104,10 +104,10 @@ function RecruitmentRoundDetailsPage() {
 
       try {
         const roundsResponse = await axios.get(
-          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}` // Working
+          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}`, // Working
         );
         const openingsResponse = await axios.get(
-          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening` // Working
+          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
         );
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
@@ -135,7 +135,7 @@ function RecruitmentRoundDetailsPage() {
     try {
       await axios.patch(
         `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/`, // Working
-        data
+        data,
       );
       setStatus(statusChange);
 
@@ -164,7 +164,7 @@ function RecruitmentRoundDetailsPage() {
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    application_count: number
+    application_count: number,
   ) => {
     setSelectedOpening({
       id,

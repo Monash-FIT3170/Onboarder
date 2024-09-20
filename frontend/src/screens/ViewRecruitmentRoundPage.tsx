@@ -75,7 +75,7 @@ const ViewRecruitmentRoundPage = () => {
   const studentTeamStore = useStudentTeamStore();
 
   const setRecruitmentDetails = useRecruitmentStore(
-    (state) => state.setRecruitmentDetails
+    (state) => state.setRecruitmentDetails,
   );
 
   const filterData = (round: any) => {
@@ -91,7 +91,7 @@ const ViewRecruitmentRoundPage = () => {
       year,
       openings_count,
     ].some((value: any) =>
-      value.toString().toLowerCase().includes(filter.toLowerCase())
+      value.toString().toLowerCase().includes(filter.toLowerCase()),
     );
   };
 
@@ -175,7 +175,7 @@ const ViewRecruitmentRoundPage = () => {
             <p>
               {"Team Description: " +
                 studentTeamStore.studentTeams.find(
-                  (item) => item.student_team_id === authStore.team_id
+                  (item) => item.student_team_id === authStore.team_id,
                 )?.student_team_description}
             </p>
           </Grid>
@@ -186,7 +186,7 @@ const ViewRecruitmentRoundPage = () => {
             Current Recruitment Rounds: Showing{" "}
             {
               data.filter(
-                (item: any) => item.status == "I" || item.status == "A"
+                (item: any) => item.status == "I" || item.status == "A",
               ).length
             }
           </h4>

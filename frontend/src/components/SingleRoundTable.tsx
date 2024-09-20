@@ -37,7 +37,7 @@ const generateTableRows = (results: SingleRoundResultProps[]) => {
 };
 
 export const SingleRoundTable: React.FC<SingleRoundTableProps> = (
-  props: SingleRoundTableProps
+  props: SingleRoundTableProps,
 ) => {
   return (
     <>

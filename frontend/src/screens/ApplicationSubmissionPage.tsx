@@ -58,7 +58,7 @@ function ApplicationSubmissionPage() {
     if (roundId !== null && openingId !== null) {
       axios
         .get(
-          `${BASE_API_URL}/opening/${openingId}/` // Working
+          `${BASE_API_URL}/opening/${openingId}/`, // Working
         )
         .then((res) => {
           console.log(res.data);
@@ -69,7 +69,7 @@ function ApplicationSubmissionPage() {
         });
       axios
         .get(
-          `${BASE_API_URL}/recruitment-round/${roundId}/` // Working
+          `${BASE_API_URL}/recruitment-round/${roundId}/`, // Working
         )
         .then((res) => {
           console.log(res.data);
@@ -125,7 +125,7 @@ function ApplicationSubmissionPage() {
       axios
         .post(
           `${BASE_API_URL}/opening/${openingId}/application`, // Working
-          submissionData
+          submissionData,
         )
         .then((response) => {
           console.log(response);

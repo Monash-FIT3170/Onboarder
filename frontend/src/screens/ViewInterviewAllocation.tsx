@@ -63,14 +63,14 @@ const ViewInterviewAllocation = () => {
   const [loading, setLoading] = useState(true);
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening
+    (state) => state.clearSelectedOpening,
   );
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
-    []
+    [],
   );
   const authStore = useAuthStore();
   const filteredApplications = applications.filter((application) =>
-    application.name.toLowerCase().includes(searchTerm.toLowerCase())
+    application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
@@ -106,7 +106,7 @@ const ViewInterviewAllocation = () => {
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
         console.log(applicationsResponse);
         setApplications(applicationsResponse.data);
@@ -125,10 +125,10 @@ const ViewInterviewAllocation = () => {
   //     navigate("/viewopen");
   // };
   const interviewScheduledCount = applications.filter(
-    (app) => app.candidate_availability
+    (app) => app.candidate_availability,
   ).length;
   const interviewNotScheduledCount = applications.filter(
-    (app) => !app.candidate_availability
+    (app) => !app.candidate_availability,
   ).length;
 
   const respond = () => {

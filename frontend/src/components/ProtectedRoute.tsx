@@ -8,7 +8,7 @@ import LoadingSpinner from "./LoadSpinner";
 const ProtectedRoute = () => {
   const { user, loading, initializeAuth, checkSession } = useAuthStore();
   const setIsProtectedRoute = useRouteProtectionStore(
-    (state) => state.setIsProtectedRoute
+    (state) => state.setIsProtectedRoute,
   );
   const location = useLocation();
 

@@ -48,8 +48,8 @@ export enum UserRole {
  */
 export const getBaseAPIURL = (): string => {
   // For User Acceptance Testing
-//   const local_supabase_url = "";
-//   return local_supabase_url;
+  //   const local_supabase_url = "";
+  //   return local_supabase_url;
 
   if (import.meta.env.VITE_BACKEND_URL) {
     return import.meta.env.VITE_BACKEND_URL;
