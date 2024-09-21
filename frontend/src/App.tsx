@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Box } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "./util/ThemeContext"; // Import our custom ThemeProvider
+import ThemeToggle from "./components/ThemeToggle"; // Import the ThemeToggle component
 import AppBarOnBoarder from "./components/AppBarOnboarder";
 
 // Import the necessary screens
@@ -19,7 +20,6 @@ import TaskEmailFormatPage from "./screens/TaskEmailFormatPage";
 import AvailabilityCalendar from "./screens/AvailabilityCalendar";
 import Dashboard from "./screens/Dashboard";
 import ViewTeamMemberPage from "./screens/ViewTeamMemberPage";
-import theme from "./assets/Theme";
 import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
 import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
@@ -27,9 +27,10 @@ import ViewTeamLeads from "./screens/ViewTeamLeads";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
+        <ThemeToggle />
         <Routes>
           <Route path="/" element={<LoginPage />} />
 
