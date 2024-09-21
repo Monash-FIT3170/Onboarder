@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { Box } from "@mui/material";
 import { ThemeProvider } from "./util/ThemeContext"; // Import our custom ThemeProvider
-import ThemeToggle from "./components/ThemeToggle"; // Import the ThemeToggle component
 import AppBarOnBoarder from "./components/AppBarOnboarder";
 
 // Import the necessary screens
@@ -30,7 +29,6 @@ function App() {
     <ThemeProvider>
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
-        <ThemeToggle />
         <Routes>
           <Route path="/" element={<LoginPage />} />
 
