@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { styled, alpha, useTheme } from "@mui/material/styles";
 import {
   AppBar,
   Box,
@@ -9,10 +9,13 @@ import {
   Button,
   Menu,
   MenuProps,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
+import { useTheme as useCustomTheme } from "../util/ThemeContext";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -66,6 +69,8 @@ function AppBarOnBoarder() {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const isDashboard = location.pathname === "/dashboard";
+  const theme = useTheme(); // MUI theme
+  const { darkMode, toggleTheme } = useCustomTheme(); // Custom theme hook
 
   const handleViewAvailability = () => {
     navigate("/availability-calendar-user");
@@ -78,7 +83,15 @@ function AppBarOnBoarder() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <CssBaseline />
-      <AppBar position="static" sx={{ margin: 0 }}>
+      <AppBar
+        position="static"
+        sx={{
+          margin: 0,
+          backgroundColor: darkMode
+            ? theme.palette.grey[900]
+            : theme.palette.primary.main,
+        }}
+      >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Onboarding: Recruitment Platform
@@ -107,12 +120,6 @@ function AppBarOnBoarder() {
           {user && (
             <>
               <Button
-                id="demo-customized-button"
-                aria-controls={open ? "demo-customized-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                variant="outlined"
-                disableElevation
                 onClick={handleViewAvailability}
                 sx={{
                   color: "white",
@@ -123,13 +130,11 @@ function AppBarOnBoarder() {
                   },
                   textTransform: "none",
                 }}
+                variant="outlined"
               >
                 Your Interviews and Availability
               </Button>
-
               <Button
-                variant="outlined"
-                disableElevation
                 onClick={signOut}
                 sx={{
                   color: "white",
@@ -140,10 +145,28 @@ function AppBarOnBoarder() {
                   },
                   textTransform: "none",
                   marginLeft: 2,
+                  marginRight: 2,
                 }}
+                variant="outlined"
               >
                 Sign Out
               </Button>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={darkMode}
+                    onChange={toggleTheme}
+                    color="default"
+                  />
+                }
+                label={darkMode ? "Dark Mode" : "Light Mode"}
+                sx={{
+                  color: "white",
+                  "& .MuiSwitch-track": {
+                    backgroundColor: darkMode ? "white" : "grey",
+                  },
+                }}
+              />
             </>
           )}
         </Toolbar>
