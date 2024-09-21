@@ -10,7 +10,7 @@ import {
   Menu,
   MenuProps,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 
@@ -64,12 +64,11 @@ function AppBarOnBoarder() {
   );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate(); // Use navigate to navigate to different pages
+  const navigate = useNavigate();
   const isDashboard = location.pathname === "/dashboard";
 
-  // Function to handle the view availability button click
   const handleViewAvailability = () => {
-    navigate("/availability-calendar-user"); // Navigate to the availability calendar page
+    navigate("/availability-calendar-user");
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -131,7 +130,7 @@ function AppBarOnBoarder() {
               <Button
                 variant="outlined"
                 disableElevation
-                onClick={signOut} // Directly call the signOut function
+                onClick={signOut}
                 sx={{
                   color: "white",
                   borderColor: "rgba(255, 255, 255, 0.5)",
@@ -140,7 +139,7 @@ function AppBarOnBoarder() {
                     borderColor: "white",
                   },
                   textTransform: "none",
-                  marginLeft: 2, // Adds space between the buttons
+                  marginLeft: 2,
                 }}
               >
                 Sign Out
