@@ -43,7 +43,7 @@ const modalStyle = {
 
 const generateRowFunction = (
   results: StudentTeamResultProps[],
-  navigate: ReturnType<typeof useNavigate>
+  navigate: ReturnType<typeof useNavigate>,
 ) => {
   const authStore = useAuthStore();
   const [modalData, setModalData] = useState(null);
@@ -65,7 +65,7 @@ const generateRowFunction = (
   const handleDeleteOrLeave = async (
     u_role: string,
     user_id: number,
-    team_id: number
+    team_id: number,
   ) => {
     if (u_role === "Owner") {
       // Delete Team
@@ -85,7 +85,6 @@ const generateRowFunction = (
         await axios.delete(API_URL);
       } catch (error) {
         console.error("Error removing user from team:", error);
-
       } finally {
         // setLoading(false);
         navigate("/dashboard");
@@ -127,7 +126,7 @@ const generateRowFunction = (
                 handleView(
                   result.student_team_id,
                   result.student_team_name,
-                  result.user_team_role
+                  result.user_team_role,
                 )
               }
             >
@@ -165,7 +164,7 @@ const generateRowFunction = (
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.user,
-                    modalData.student_team_id
+                    modalData.student_team_id,
                   );
                   handleCloseModal();
                 }}
@@ -205,7 +204,7 @@ const generateRowFunction = (
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.profile,
-                    modalData.student_team_id
+                    modalData.student_team_id,
                   );
                   handleCloseModal();
                 }}

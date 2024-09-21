@@ -47,17 +47,17 @@ function ViewOpenPage() {
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
-    []
+    [],
   );
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening
+    (state) => state.clearSelectedOpening,
   );
   const setSelectedApplicant = useApplicantStore(
-    (state) => state.setSelectedApplicant
+    (state) => state.setSelectedApplicant,
   );
   const authStore = useAuthStore();
 
@@ -160,7 +160,7 @@ function ViewOpenPage() {
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application` // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
@@ -216,7 +216,6 @@ function ViewOpenPage() {
         <div style={{ marginLeft: "auto" }}>
           <Button
             variant="outlined"
-
             onClick={() => {
               console.log("Navigating to /task-email-format");
               respond2();
@@ -284,7 +283,10 @@ function ViewOpenPage() {
         <Button
           variant="contained"
           onClick={handleSendEmails}
-          disabled={loading || applications.find((item) => item.status === "C") == undefined}
+          disabled={
+            loading ||
+            applications.find((item) => item.status === "C") == undefined
+          }
           style={{ marginLeft: "1rem" }}
         >
           {loading ? (

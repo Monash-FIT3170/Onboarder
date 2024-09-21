@@ -66,10 +66,10 @@ function Feedbacknote() {
   const BASE_API_URL = getBaseAPIURL();
 
   const selectedApplicant = useApplicantStore(
-    (state) => state.selectedApplicant
+    (state) => state.selectedApplicant,
   );
   const clearSelectedApplicant = useApplicantStore(
-    (state) => state.clearSelectedApplicant
+    (state) => state.clearSelectedApplicant,
   );
   const [applicantInformation, setApplicantInformation] = useState<
     ResultProps[]
@@ -124,7 +124,7 @@ function Feedbacknote() {
     axios
       .patch(
         `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
-        submissionData
+        submissionData,
       )
       .then((response) => {
         console.log(response);
@@ -165,7 +165,7 @@ function Feedbacknote() {
       }
       try {
         const applicantResponse = await axios.get(
-          `${BASE_API_URL}/application/${selectedApplicant?.application_id}`
+          `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
         setApplicantInformation(applicantResponse.data);
       } catch (error) {
@@ -224,7 +224,10 @@ function Feedbacknote() {
                   Interviewer
                 </Typography>
               </TableCell>
-              <TableCell>{applicantInformation[0]?.profile_email || "Interviewer yet to be assigned"}</TableCell>
+              <TableCell>
+                {applicantInformation[0]?.profile_email ||
+                  "Interviewer yet to be assigned"}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>

@@ -35,7 +35,7 @@ interface OpeningsTableProps {
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    applications_count: number
+    applications_count: number,
   ) => void;
 }
 
@@ -46,8 +46,8 @@ const generateRowFunction = (
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    applications_count: number
-  ) => void
+    applications_count: number,
+  ) => void,
 ) => {
   return results.map((result) => {
     return (
@@ -71,7 +71,7 @@ const generateRowFunction = (
                 result.recruitment_round_id,
                 result.student_team_name,
                 result.opening_title,
-                result.applications_count
+                result.applications_count,
               )
             }
           >

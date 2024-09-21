@@ -50,7 +50,7 @@ const StyledMenu = styled((props: MenuProps) => (
       "&:active": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
+          theme.palette.action.selectedOpacity,
         ),
       },
     },
@@ -60,7 +60,7 @@ const StyledMenu = styled((props: MenuProps) => (
 function AppBarOnBoarder() {
   const { user, team_name, role, signOut } = useAuthStore();
   const isProtectedRoute = useRouteProtectionStore(
-    (state) => state.isProtectedRoute
+    (state) => state.isProtectedRoute,
   );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -86,12 +86,23 @@ function AppBarOnBoarder() {
           </Typography>
           {isProtectedRoute && !isDashboard && team_name && role && (
             <Typography variant="body2" component="div" sx={{ marginRight: 2 }}>
-              <Typography variant="body2" component={"span"}>Viewing Team:</Typography>
-              <Typography variant="body2" component={"span"}> {team_name}</Typography>
-              <Typography variant="body2" component={"span"}>&nbsp;</Typography>
-              <Typography variant="body2" component={"span"}>as:</Typography>
-              <Typography variant="body2" component={"span"}> {role}</Typography>
-              
+              <Typography variant="body2" component={"span"}>
+                Viewing Team:
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                {" "}
+                {team_name}
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                &nbsp;
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                as:
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                {" "}
+                {role}
+              </Typography>
             </Typography>
           )}
           {user && (

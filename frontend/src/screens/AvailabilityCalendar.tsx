@@ -16,6 +16,8 @@ import { startOfDay, endOfDay, addWeeks } from "date-fns";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
+// Prettier Test
+
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
 
@@ -50,12 +52,12 @@ const AvailabilityCalendar: React.FC = () => {
   // Function to handle the selection of a new time slot in the calendar
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     const overlappingEvent = eventsList.find(
-      (event) => start < event.end && end > event.start
+      (event) => start < event.end && end > event.start,
     );
 
     if (overlappingEvent) {
       alert(
-        "The selected time slot overlaps with an existing event. Please adjust the existing event or select a different time slot."
+        "The selected time slot overlaps with an existing event. Please adjust the existing event or select a different time slot.",
       );
     } else {
       const updatedEvents = [
@@ -78,7 +80,9 @@ const AvailabilityCalendar: React.FC = () => {
     end: Date;
   }) => {
     const updatedEvents = eventsList.map((existingEvent) =>
-      existingEvent === event ? { ...existingEvent, start, end } : existingEvent
+      existingEvent === event
+        ? { ...existingEvent, start, end }
+        : existingEvent,
     );
     setEventsList(updatedEvents);
     // handleSave(updatedEvents); // Automatically save changes
@@ -95,7 +99,9 @@ const AvailabilityCalendar: React.FC = () => {
     end: Date;
   }) => {
     const updatedEvents = eventsList.map((existingEvent) =>
-      existingEvent === event ? { ...existingEvent, start, end } : existingEvent
+      existingEvent === event
+        ? { ...existingEvent, start, end }
+        : existingEvent,
     );
     setEventsList(updatedEvents);
     // handleSave(updatedEvents); // Automatically save changes

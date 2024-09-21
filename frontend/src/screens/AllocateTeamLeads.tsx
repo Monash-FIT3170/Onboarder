@@ -103,7 +103,7 @@ const AllocateTeamLeads = () => {
 
   const fetchRoundInfo = async (teamId: number): Promise<RoundInfo[]> => {
     const response = await axios.get(
-      `${BASE_API_URL}/student-team/${teamId}/recruitment-round`
+      `${BASE_API_URL}/student-team/${teamId}/recruitment-round`,
     );
     if (response.data.length === 0) {
       throw new Error("Profile team information not found");
@@ -113,16 +113,16 @@ const AllocateTeamLeads = () => {
 
   const fetchOpenings = async (roundId: number): Promise<Opening[]> => {
     const response = await axios.get(
-      `${BASE_API_URL}/recruitment-round/${roundId}/opening`
+      `${BASE_API_URL}/recruitment-round/${roundId}/opening`,
     );
     return response.data;
   };
 
   const fetchLeadCounts = async (
-    openingId: number
+    openingId: number,
   ): Promise<AllocatedMember[]> => {
     const response = await axios.get(
-      `${BASE_API_URL}/opening/${openingId}/team-lead-assign`
+      `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
     );
     console.log("Lead counts response (Allocated Member");
     console.log(response.data);
@@ -131,10 +131,10 @@ const AllocateTeamLeads = () => {
 
   const fetchAssignments = async (
     openingId: number,
-    teamLeadId: number
+    teamLeadId: number,
   ): Promise<Assignment[]> => {
     const response = await axios.get(
-      `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`
+      `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
     );
     console.log("Assignments response");
     console.log(response.data);
@@ -158,39 +158,39 @@ const AllocateTeamLeads = () => {
             ...opening,
             round_name: oneRoundInfo.round_name,
           }));
-        })
+        }),
       );
 
       const allOpenings = openingsResults
         .filter(
           (result): result is PromiseFulfilledResult<Opening[]> =>
-            result.status === "fulfilled"
+            result.status === "fulfilled",
         )
         .flatMap((result) => result.value);
 
       setOpenings(allOpenings);
 
       const countsResults = await Promise.allSettled(
-        allOpenings.map((opening) => fetchLeadCounts(opening.id))
+        allOpenings.map((opening) => fetchLeadCounts(opening.id)),
       );
 
       const allCounts = countsResults
         .filter(
           (result): result is PromiseFulfilledResult<AllocatedMember[]> =>
-            result.status === "fulfilled"
+            result.status === "fulfilled",
         )
         .flatMap((result) => result.value);
 
       setCounts(allCounts);
 
       const assignmentsResults = await Promise.allSettled(
-        allOpenings.map((opening) => fetchAssignments(opening.id, teamLeadId))
+        allOpenings.map((opening) => fetchAssignments(opening.id, teamLeadId)),
       );
 
       const allAssignments = assignmentsResults
         .filter(
           (result): result is PromiseFulfilledResult<Assignment[]> =>
-            result.status === "fulfilled"
+            result.status === "fulfilled",
         )
         .flatMap((result) => result.value);
 
@@ -256,7 +256,7 @@ const AllocateTeamLeads = () => {
                   const userAssigned = assignments.find(
                     (item) =>
                       item.profile_id === teamLeadId &&
-                      item.opening_id === opening.id
+                      item.opening_id === opening.id,
                   );
                   const allocatedCount =
                     counts.find((item) => item.opening_id === opening.id)

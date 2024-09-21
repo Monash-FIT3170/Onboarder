@@ -42,7 +42,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
     try {
       const response = await axios.patch(
         `${BASE_API_URL}/opening/${selectedOpening.id}`, // Working
-        submissionData
+        submissionData,
       );
       if (response.status === 201) {
         // console.log(response);
@@ -69,7 +69,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
       }
       try {
         const openingResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}` // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}`, // Working
         );
         console.log(openingResponse);
         setEmailBody(openingResponse.data[0].opening_task_email_format);

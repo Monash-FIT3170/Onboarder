@@ -39,7 +39,7 @@ function CreateOpeningPage() {
 
   const { team_name } = useAuthStore();
   const recruitmentDetails = useRecruitmentStore(
-    (state) => state.recruitmentDetails
+    (state) => state.recruitmentDetails,
   );
 
   const handleSubmit = async () => {
@@ -72,7 +72,7 @@ function CreateOpeningPage() {
     try {
       const response = await axios.post(
         `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
-        openingData
+        openingData,
       );
       if (response.status === 201) {
         console.log(response);

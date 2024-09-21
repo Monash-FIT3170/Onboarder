@@ -55,7 +55,7 @@ const modalStyle = {
 export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   const navigate = useNavigate();
   const setOpeningDetails = useOpeningStore((state) => state.setOpeningDetails);
-  
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] =
     useState<applicantOpeningResultProps | null>(null);
@@ -77,13 +77,13 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   const generateRowFunction = (
     results: applicantOpeningResultProps[],
     navigate: ReturnType<typeof useNavigate>,
-    setOpeningDetails: (round_id: number, opening_id: number) => void
+    setOpeningDetails: (round_id: number, opening_id: number) => void,
   ) => {
     return results.map((result) => {
       const formattedDeadline = (() => {
         const date = new Date(result.recruitment_round_deadline);
-        const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getDate()).padStart(2, "0"); // Ensure 2 digits
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
       })();

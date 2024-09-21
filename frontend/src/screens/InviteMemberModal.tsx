@@ -81,7 +81,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
         {
           email: email,
           role: role,
-        }
+        },
       );
 
       if (response.status === 201) {

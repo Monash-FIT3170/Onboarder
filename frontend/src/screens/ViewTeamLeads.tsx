@@ -50,7 +50,7 @@ function ViewTeamLeads() {
       try {
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `${BASE_API_URL}/student-team/${team_id}/members`
+          `${BASE_API_URL}/student-team/${team_id}/members`,
         );
         const profileTeamInfo = profileTeamResponse.data;
         console.log(profileTeamInfo);
@@ -63,7 +63,7 @@ function ViewTeamLeads() {
           try {
             console.log(memberInfo);
             const studentResponse = await axios.get(
-              `${BASE_API_URL}/profile/${memberInfo.profile_id}`
+              `${BASE_API_URL}/profile/${memberInfo.profile_id}`,
             );
             // const studentInfo = studentResponse.data.find(
             //   (student: any) => student.student_team_id === team_id
@@ -82,7 +82,7 @@ function ViewTeamLeads() {
           } catch (error) {
             console.error(
               `Error fetching student info for profile ${memberInfo.profile_id}:`,
-              error
+              error,
             );
             return null;
           }
@@ -91,8 +91,8 @@ function ViewTeamLeads() {
         const resolvedMembers = await Promise.all(membersPromises);
         setMembers(
           resolvedMembers.filter(
-            (member): member is TeamMember => member !== null
-          )
+            (member): member is TeamMember => member !== null,
+          ),
         );
       } catch (error) {
         console.error("Error fetching team members:", error);
