@@ -69,8 +69,8 @@ function AppBarOnBoarder() {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const isDashboard = location.pathname === "/dashboard";
-  const theme = useTheme(); // MUI theme
-  const { darkMode, toggleTheme } = useCustomTheme(); // Custom theme hook
+  const theme = useTheme();
+  const { darkMode, toggleTheme } = useCustomTheme();
 
   const handleViewAvailability = () => {
     navigate("/availability-calendar-user");
@@ -96,27 +96,7 @@ function AppBarOnBoarder() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Onboarding: Recruitment Platform
           </Typography>
-          {isProtectedRoute && !isDashboard && team_name && role && (
-            <Typography variant="body2" component="div" sx={{ marginRight: 2 }}>
-              <Typography variant="body2" component={"span"}>
-                Viewing Team:
-              </Typography>
-              <Typography variant="body2" component={"span"}>
-                {" "}
-                {team_name}
-              </Typography>
-              <Typography variant="body2" component={"span"}>
-                &nbsp;
-              </Typography>
-              <Typography variant="body2" component={"span"}>
-                as:
-              </Typography>
-              <Typography variant="body2" component={"span"}>
-                {" "}
-                {role}
-              </Typography>
-            </Typography>
-          )}
+
           {user && (
             <>
               <Button
@@ -151,24 +131,27 @@ function AppBarOnBoarder() {
               >
                 Sign Out
               </Button>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={darkMode}
-                    onChange={toggleTheme}
-                    color="default"
-                  />
-                }
-                label={darkMode ? "Dark Mode" : "Light Mode"}
-                sx={{
-                  color: "white",
-                  "& .MuiSwitch-track": {
-                    backgroundColor: darkMode ? "white" : "grey",
-                  },
-                }}
-              />
             </>
           )}
+
+          <Box sx={{ ml: "auto" }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={darkMode}
+                  onChange={toggleTheme}
+                  color="default"
+                />
+              }
+              label={darkMode ? "Dark Mode" : "Light Mode"}
+              sx={{
+                color: "white",
+                "& .MuiSwitch-track": {
+                  backgroundColor: darkMode ? "white" : "grey",
+                },
+              }}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>
