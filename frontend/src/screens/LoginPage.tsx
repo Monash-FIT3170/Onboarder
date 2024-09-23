@@ -3,7 +3,9 @@ import { Box, Button, Typography, Alert } from "@mui/material";
 import { styled } from "@mui/system";
 import { supabase } from "../util/supabaseClient";
 import { useNavigate } from "react-router-dom";
-import loginImage from "../assets/RegisterPage.jpg";
+import loginImageLight from "../assets/onboarder_white.png";
+import loginImageDark from "../assets/onboarder_black.png";
+import { useTheme as useCustomTheme } from "../util/ThemeContext";
 import { useAuthStore } from "../util/stores/authStore";
 
 const FlexContainer = styled(Box)(({ theme }) => ({
@@ -56,6 +58,7 @@ const CoverImage = styled("img")({
 const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const authStore = useAuthStore();
+  const { darkMode } = useCustomTheme();
 
   const navigate = useNavigate();
 
@@ -150,7 +153,7 @@ const LoginPage: React.FC = () => {
         )}
       </FormSection>
       <ImageSection>
-        <CoverImage src={loginImage} alt="Login illustration" />
+      <CoverImage src={darkMode ? loginImageDark : loginImageLight} alt="Login illustration" />
       </ImageSection>
     </FlexContainer>
   );

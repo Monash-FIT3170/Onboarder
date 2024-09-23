@@ -1,24 +1,28 @@
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import styled from "styled-components";
-import theme from "./Theme";
+import { useTheme as useMuiTheme } from "@mui/material/styles";
+import { useTheme } from "../util/ThemeContext";
 
-const BackIconWrapper = styled.div`
+const BackIconWrapper = styled.div<{ theme: any }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${theme.spacing(1)};
-  width: ${theme.spacing(4)};
-  height: ${theme.spacing(4)};
+  padding: ${(props) => props.theme.spacing(1)};
+  width: ${(props) => props.theme.spacing(4)};
+  height: ${(props) => props.theme.spacing(4)};
   border-radius: 50%;
   border-style: solid;
   border-width: 2px;
-  border-color: ${theme.palette.primary.main};
+  border-color: ${(props) => props.theme.palette.primary.main};
   cursor: pointer;
 `;
 
 function BackIcon() {
+  const { darkMode } = useTheme();
+  const theme = useMuiTheme(); // This gets the current MUI theme
+
   return (
-    <BackIconWrapper>
+    <BackIconWrapper theme={theme}>
       <ArrowBackOutlinedIcon
         color="primary"
         onClick={() => {
