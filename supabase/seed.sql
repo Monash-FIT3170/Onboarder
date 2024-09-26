@@ -1,10 +1,10 @@
-INSERT INTO public."PROFILE" (user_id, email, interview_availability) VALUES
-    ('4942ad29-ead5-4f65-931b-56309d72c742', 'hmoh0035@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('0b33680d-c20b-444f-bacb-628b91930bfd', 'jcru0005@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('c8bdc042-5ba3-40ae-8a64-fedba340e12c', 'sbaj0015@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('67bc20e4-4928-475c-9a65-bd6a0a89498b', 'tsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('9ffd05fa-0d5c-4cfc-a3cd-616da0a74136', 'rsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('72c94e2f-1778-43d0-b62f-c142edab9e68', 'nhuy0018@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']);
+INSERT INTO public."PROFILE" (email, interview_availability) VALUES
+    ('hmoh0035@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '4942ad29-ead5-4f65-931b-56309d72c742',
+    ('jcru0005@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '0b33680d-c20b-444f-bacb-628b91930bfd',
+    ('sbaj0015@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- 'c8bdc042-5ba3-40ae-8a64-fedba340e12c',
+    ('tsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '67bc20e4-4928-475c-9a65-bd6a0a89498b',
+    ('rsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '9ffd05fa-0d5c-4cfc-a3cd-616da0a74136',
+    ('nhuy0018@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']); -- '72c94e2f-1778-43d0-b62f-c142edab9e68',
 
 INSERT INTO public."STUDENT_TEAM" (name, description) VALUES
     ('Team Alpha', 'Software Development Team'),
@@ -12,8 +12,9 @@ INSERT INTO public."STUDENT_TEAM" (name, description) VALUES
     ('Team Charlie', 'Project Management Team'),
     ('Team Delta', 'DevOps Team');
 
+
 INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUES
-    -- fass0001@student.monash.edu
+    -- You
     (1, 1, 'O'),  -- Owner of Team Alpha
     (1, 2, 'A'),  -- Admin of Team Bravo
     (1, 3, 'T'),  -- Team Lead of Team Charlie
