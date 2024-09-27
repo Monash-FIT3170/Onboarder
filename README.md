@@ -69,18 +69,124 @@ To run this project, you'll need the following software and hardware:
 - AWS SAM CLI
 - Python 3.12
 - NodeJS (v20.6.1 recommended if the latest version doesn't work)
-- .env and env.json files (details below)
-- Supabase account
+- .env files and env.json file (details below)
+- Supabase account (If you plan on working with Prod)
+
+We use Supabase for the database and the Supabase JavaScript SDK for frontend authentication and sign-in with Google.
+For development, team members work on local Supabase instances.
+
+## Configuration Files
+
+You need to create these three files in your project to be able to develop. Do not add these files to Git.
+
+#### `.env` (Front-end)
+
+Create `.env` file in `/frontend`
+
+```.env
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_KEY=YeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+```
+
+These are the default keys for local Supabase
+
+#### `.env` (Back-end)
+
+Create `.env` file in root folder
+
+```.env
+SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<your projects client id>
+SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<your projects secret>
+```
+
+If this has been done, ask your team for these keys, otherwise complete "Google Sign-In Setup" later in this document.
+
+#### `env.json` (Back-end)
+
+The `env.json` file in the root folder contains crucial configuration settings for the back-end, including email settings, database connections, and encryption keys. Here's a breakdown of its structure and how to set it up:
+**Sinked FIT3170 Template**
+
+```json
+{
+  "RouterLambda": {
+    "EMAIL_SENDER": "onboarder.recruitment@gmail.com",
+    "SMTP_HOST": "smtp.gmail.com",
+    "SMTP_PORT": 465,
+    "SMTP_USERNAME": "onboarder.recruitment@gmail.com",
+    "SMTP_PASSWORD": "nanzovzroqbybbns",
+    "SUPABASE_URL": "http://host.docker.internal:54321",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
+    "ENCRYPTION_KEY": "ADD_YOUR_ENCRYPTION_KEY",
+    "WEBSITE_URL": "http://localhost:5173"
+  }
+}
+```
+
+**Here is a more general version of the template**
+
+```json
+{
+  // For future developers
+  "RouterLambda": {
+    "EMAIL_SENDER": "YOUR_EMAIL@GMAIL.COM",
+    "SMTP_HOST": "smtp.gmail.com",
+    "SMTP_PORT": 465,
+    "SMTP_USERNAME": "YOUR_EMAIL@GMAIL.COM",
+    "SMTP_PASSWORD": "YOUR_SMTP_PASSWORD",
+    "SUPABASE_URL": "YOUR_SUPABASE_URL",
+    "SUPABASE_KEY": "YOUR_SUPABASE_KEY",
+    "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY",
+    "WEBSITE_URL": "YOUR_WEBSITE_URL"
+  }
+}
+```
+
+##### env.json Email Configuration
+
+- `EMAIL_SENDER`: The email address used to send notifications.
+- `SMTP_HOST`, `SMTP_PORT`: SMTP server settings (example shows Gmail's settings).
+- `SMTP_USERNAME`: Usually the same as `EMAIL_SENDER`.
+- `SMTP_PASSWORD`: For Gmail, use an App Password. [This video guide](https://www.youtube.com/watch?v=g_j6ILT-X0k&t=125s) explains how to generate one.
+
+Note: While we use Gmail as an example, you can configure any SMTP provider by updating these values accordingly.
+
+##### env.json Supabase Configuration
+
+- `SUPABASE_URL`: Your Supabase project URL.
+- `SUPABASE_KEY`: Your Supabase project API key.
+
+These can be found in your Supabase project settings.
+
+##### env.json Encryption Key
+
+The `ENCRYPTION_KEY` is used to encrypt sensitive data, such as application IDs in emails. Generate it once using the Fernet library in Python:
+
+```python
+from cryptography.fernet import Fernet
+
+# Generate a key (do this only once and store it securely)
+key = Fernet.generate_key()
+print(key.decode())  # This prints the key as a string
+```
+
+Run this script once, save the output, and use it as your `ENCRYPTION_KEY` in the `env.json` file.
+
+Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure. Never commit them to version control or share them publicly.
+
+##### env.json Website URL
+
+The `WEBSITE_URL` is used in controller.py
+For development, it is the local URL given by VITE when you run `npm run dev`
 
 ## Setup Instructions
 
 ### Front-end Setup
 
 1. Install NodeJS (v20.6.1 if the latest version doesn't work).
-2. Add the second `.env` file to the front-end folder (see configuration details below).
+2. Ensure the second `.env` file is in frontend folder
 3. Open a terminal in the front-end folder:
    ```
-   cd front-end
+   cd frontend
    ```
 4. Install dependencies:
    ```
@@ -95,8 +201,6 @@ To run this project, you'll need the following software and hardware:
    ```
    npm run dev
    ```
-7. Navigate to `http://127.0.0.1:5173/` in your browser. (**NOT localhost:5173**)
-8. Sign in with your Monash account.
 
 ### Back-end Setup
 
@@ -118,33 +222,34 @@ To run this project, you'll need the following software and hardware:
 
 1. Add the `.env` file to the root folder (see configuration details below).
 2. Keep Docker running in the background.
-3. Ensure Docker is configured as here: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
-3. Open a terminal in the root folder and execute:
-   ```
-   supabase start
-   ```
-   (This may take a while the first time.)
-   You may need to run `npx supabase start` if it does not work
-4. After completion, run:
+3. Ensure Docker is configured for your OS according to the screenshot in this page: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
+4. Open a terminal in the root folder and execute:
+   `supabase start` or `npx supabase start`
+   NOTE: If you need to add npx for this to work, you will need to use `npx` before all `supabase` commands you do
+   This may take a while the first time.
+5. After completion, run:
    ```
    supabase db reset
    ```
    This will populate your local instance of Supabase with testing data
-5. You can access the dashboard for your local setup by pasting this into your browser:
+6. You can access the dashboard for your local setup by pasting this into your browser:
    ```
    http://127.0.0.1:54323
    ```
 
+#### Opening Website in Browser
 
+1. Navigate to `http://127.0.0.1:5173/` in your browser. (**NOT localhost:5173**)
+2. Sign in with your Monash account.
 
-## Database Setup (Supabase)
+## Editing the Database
 
 Source: [Supabase Docs: Local Development](https://supabase.com/docs/guides/cli/local-development)
 
-We use Supabase for the database and the Supabase JavaScript SDK for frontend authentication and sign-in with Google.
+
 
 ##### Project Setup
-
+0. Only do steps 1 and 2 if your team does not have a Supabase project yet.
 1. Sign up for a Supabase account.
 2. Create a new project.
 3. We will upload migrations to this project from local supabase instances (later steps)
@@ -158,7 +263,6 @@ We use Supabase for the database and the Supabase JavaScript SDK for frontend au
   ```
 - You can find this migration in `/supabase/migrations`
 
-
 ##### Dummy Data
 
 - You can edit the SQL for creating dummy data in `/supabase/seed.sql`
@@ -170,126 +274,41 @@ We use Supabase for the database and the Supabase JavaScript SDK for frontend au
 ##### Adding to the Prod Database
 
 - To upload the local migrations to prod Supabase, first:
+
 1. Login to your Supabase account with:
-    ```
-    supabase login
-    ```
+   ```
+   supabase login
+   ```
 1. Associate your project with your remote project
    ```
    supabase link --project-ref <project-id>
    ```
    You can get <`project-id>` from your project's dashboard URL: https://supabase.com/dashboard/project/ `<project-id>`
-2. To deploy migrations to prod, run:
+1. To deploy migrations to prod, run:
    ```
    supabase db push
    ```
+
 - NOTE: We will add process/logic so that it has to be PRed first
+
 ### Google Sign-In Setup
 
 To enable sign-in with Google follow the steps outlined in this [Youtube Video](https://www.youtube.com/watch?v=dE2vtnv83Fc)
 In addition to this, in the Authorised JavaScript origins section for your OAuth Client setup you will need to add:
+
 ```
 http://localhost:5173
 http://localhost:3000
 http://127.0.0.1:3000
 ```
+
 To the Authorised Redirect URIs section you will need to add:
+
 ```
 YOUR_SUPABASE_URL/auth/v1/callback
 http://127.0.0.1:54321/auth/v1/callback
 http://localhost:54321/auth/v1/callback
 ```
-
-## Configuration Files
-
-#### `.env` (Front-end)
-Create this in `/frontend`
-```.env
-VITE_SUPABASE_URL=http://127.0.0.1:54321
-VITE_SUPABASE_KEY=YeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-```
-These are the default keys for local Supabase
-
-#### `.env` (Back-end)
-
-Create this in root folder
-```.env
-SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=YOUR_PROJECTS_GOOGLE_CLIENT_ID
-SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=YOUR_PROJECTS_GOOGLE_SECRET
-```
-These come from the Google Authentication setup (above)
-
-#### `env.json` (Back-end)
-
-The `env.json` file in the root folder contains crucial configuration settings for the back-end, including email settings, database connections, and encryption keys. Here's a breakdown of its structure and how to set it up:
-
-```json
-{
-  "RouterLambda": {
-    "EMAIL_SENDER": "YOUR_EMAIL@GMAIL.COM",
-    "SMTP_HOST": "smtp.gmail.com",
-    "SMTP_PORT": 465,
-    "SMTP_USERNAME": "YOUR_EMAIL@GMAIL.COM",
-    "SMTP_PASSWORD": "YOUR_SMTP_PASSWORD",
-    "SUPABASE_URL": "YOUR_SUPABASE_URL",
-    "SUPABASE_KEY": "YOUR_SUPABASE_KEY",
-    "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY",
-    "WEBSITE_URL": "YOUR_WEBSITE_URL"
-  }
-}
-```
-Our Template for Development
-```json
-{
-  "RouterLambda": {
-    "EMAIL_SENDER": "onboarder.recruitment@gmail.com", 
-    "SMTP_HOST": "smtp.gmail.com",
-    "SMTP_PORT": 465,
-    "SMTP_USERNAME": "onboarder.recruitment@gmail.com",
-    "SMTP_PASSWORD": "nanzovzroqbybbns",
-    "SUPABASE_URL": "http://host.docker.internal:54321",
-    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-    "ENCRYPTION_KEY": "", // Add your encryption key
-    "WEBSITE_URL": "http://localhost:5173"
-  }
-}
-```
-
-#### Email Configuration
-
-- `EMAIL_SENDER`: The email address used to send notifications.
-- `SMTP_HOST`, `SMTP_PORT`: SMTP server settings (example shows Gmail's settings).
-- `SMTP_USERNAME`: Usually the same as `EMAIL_SENDER`.
-- `SMTP_PASSWORD`: For Gmail, use an App Password. [This video guide](https://www.youtube.com/watch?v=g_j6ILT-X0k&t=125s) explains how to generate one.
-
-Note: While we use Gmail as an example, you can configure any SMTP provider by updating these values accordingly.
-
-#### Supabase Configuration
-
-- `SUPABASE_URL`: Your Supabase project URL.
-- `SUPABASE_KEY`: Your Supabase project API key.
-
-These can be found in your Supabase project settings.
-
-#### Encryption Key
-
-The `ENCRYPTION_KEY` is used to encrypt sensitive data, such as application IDs in emails. Generate it once using the Fernet library in Python:
-
-```python
-from cryptography.fernet import Fernet
-
-# Generate a key (do this only once and store it securely)
-key = Fernet.generate_key()
-print(key.decode())  # This prints the key as a string
-```
-
-Run this script once, save the output, and use it as your `ENCRYPTION_KEY` in the `env.json` file.
-
-Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure. Never commit them to version control or share them publicly.
-
-#### Website URL 
-The `WEBSITE_URL` is used in controller.py
-For development, it is the local URL given by VITE when you run `npm run dev`
 
 ## Additional Notes
 
@@ -347,6 +366,7 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 - Merge only possible after passing all pipeline checks
 
 ### Database Updates (Migrations)
+
 - Process for Approving and Pushing Migrations
 - TODO
 
