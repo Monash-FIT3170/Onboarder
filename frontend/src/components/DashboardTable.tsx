@@ -80,7 +80,7 @@ const generateRowFunction = (
     } else {
       // Leave Team
       try {
-        console.log(user_id, team_id);
+        // console.log(user_id, team_id);
         const API_URL = `${BASE_API_URL}/student-team/${team_id}/members/${user_id}`;
         await axios.delete(API_URL);
       } catch (error) {
@@ -160,7 +160,7 @@ const generateRowFunction = (
                 color="error"
                 onClick={() => {
                   // Add your delete logic here
-                  console.log(modalData);
+                  // console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.user,
@@ -200,7 +200,7 @@ const generateRowFunction = (
                 color="error"
                 onClick={() => {
                   // Add your leave logic here
-                  console.log(modalData);
+                  // console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.profile,

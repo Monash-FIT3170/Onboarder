@@ -195,7 +195,7 @@ verify_enabled = true
 
 [auth.external.google]
 enabled = true
-client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+client_id = "184546310560-vnku0uc1nmqcg3k99jcrrqctj7b6q2fd.apps.googleusercontent.com"
 # DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 # Overrides the default auth redirectUrl.
