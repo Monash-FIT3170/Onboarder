@@ -1,6 +1,6 @@
 INSERT INTO public."PROFILE" (email, interview_availability) VALUES
     ('hmoh0035@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
-    ('jcru0005@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
+    ('umoh0005@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
     ('sbaj0015@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
     ('tsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),
     ('rsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']),

@@ -74,41 +74,6 @@ To run this project, you'll need the following software and hardware:
 
 ## Setup Instructions
 
-### Back-end Setup
-
-#### Sam
-
-1. Install Docker, AWS CLI, AWS SAM CLI, and Python 3.12.
-2. Add the `env.json` file to the root folder (see configuration details below).
-3. Keep Docker running in the background.
-4. Open a terminal in the root folder and execute:
-   ```
-   sam build
-   ```
-5. After completion, run:
-   ```
-   sam local start-api --warm-containers EAGER --env-vars env.json
-   ```
-
-#### Supabase Local Development
-
-1. Add the `.env` file to the root folder (see configuration details below).
-2. Keep Docker running in the background.
-3. Open a terminal in the root folder and execute:
-   ```
-   supabase start
-   ```
-   (This may take a while the first time.)
-4. After completion, run:
-   ```
-   supabase db reset
-   ```
-   This will populate your local instance of Supabase with testing data
-5. You can access the dashboard for your local setup by pasting this into your browser:
-   ```
-   http://127.0.0.1:54323
-   ```
-
 ### Front-end Setup
 
 1. Install NodeJS (v20.6.1 if the latest version doesn't work).
@@ -130,8 +95,47 @@ To run this project, you'll need the following software and hardware:
    ```
    npm run dev
    ```
-7. Navigate to `http://localhost:5173/` in your browser.
+7. Navigate to `http://127.0.0.1:5173/` in your browser. (**NOT localhost:5173**)
 8. Sign in with your Monash account.
+
+### Back-end Setup
+
+#### Sam
+
+1. Install Docker, AWS CLI, AWS SAM CLI, and Python 3.12.
+2. Add the `env.json` file to the root folder (see configuration details below).
+3. Keep Docker running in the background.
+4. Open a terminal in the root folder and execute:
+   ```
+   sam build
+   ```
+5. After completion, run:
+   ```
+   sam local start-api --warm-containers EAGER --env-vars env.json
+   ```
+
+#### Supabase Local Development
+
+1. Add the `.env` file to the root folder (see configuration details below).
+2. Keep Docker running in the background.
+3. Ensure Docker is configured as here: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
+3. Open a terminal in the root folder and execute:
+   ```
+   supabase start
+   ```
+   (This may take a while the first time.)
+   You may need to run `npx supabase start` if it does not work
+4. After completion, run:
+   ```
+   supabase db reset
+   ```
+   This will populate your local instance of Supabase with testing data
+5. You can access the dashboard for your local setup by pasting this into your browser:
+   ```
+   http://127.0.0.1:54323
+   ```
+
+
 
 ## Database Setup (Supabase)
 
@@ -245,7 +249,7 @@ Our Template for Development
     "SMTP_PASSWORD": "nanzovzroqbybbns",
     "SUPABASE_URL": "http://host.docker.internal:54321",
     "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-    "ENCRYPTION_KEY": "",
+    "ENCRYPTION_KEY": "", // Add your encryption key
     "WEBSITE_URL": "http://localhost:5173"
   }
 }

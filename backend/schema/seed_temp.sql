@@ -1,10 +1,9 @@
 INSERT INTO public."PROFILE" (email, interview_availability) VALUES
-    ('{{ USER_EMAIL }}', ARRAY['Tuesday 1 PM - 4 PM']); -- '4942ad29-ead5-4f65-931b-56309d72c742',
-    -- ('jcru0005@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '0b33680d-c20b-444f-bacb-628b91930bfd',
-    -- ('sbaj0015@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- 'c8bdc042-5ba3-40ae-8a64-fedba340e12c',
-    -- ('tsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '67bc20e4-4928-475c-9a65-bd6a0a89498b',
-    -- ('rsax0001@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), -- '9ffd05fa-0d5c-4cfc-a3cd-616da0a74136',
-    -- ('nhuy0018@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']); -- '72c94e2f-1778-43d0-b62f-c142edab9e68',
+    ('{{ USER_EMAIL }}', ARRAY['Tuesday 1 PM - 4 PM']); 
+    ('random1@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
+    ('random2@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
+    ('random3@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
+    ('random4@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']);
 
 INSERT INTO public."STUDENT_TEAM" (name, description) VALUES
     ('Team Alpha', 'Software Development Team'),
@@ -20,24 +19,29 @@ INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUE
     (1, 3, 'T'),  -- Team Lead of Team Charlie
     (1, 4, 'A');  -- Admin of Team Delta
 
-    -- -- rsax0001@student.monash.edu
+    -- -- random 1
     -- (2, 1, 'T'),  -- Team Lead of Team Alpha
-    -- (2, 2, 'O'),  -- Owner of Team Bravo
+    -- (2, 2, 'T'),  -- Owner of Team Bravo
     -- (2, 3, 'A'),  -- Admin of Team Charlie
     -- (2, 4, 'T'),  -- Team Lead of Team Delta
 
-    -- -- hmoh0035@student.monash.edu
-    -- (3, 1, 'A'),  -- Admin of Team Alpha
+    -- -- random 2
+    -- (3, 1, 'T'),  -- Admin of Team Alpha
     -- (3, 2, 'T'),  -- Team Lead of Team Bravo
-    -- (3, 3, 'O'),  -- Owner of Team Charlie
+    -- (3, 3, 'T'),  -- Owner of Team Charlie
     -- (3, 4, 'A'),  -- Admin of Team Delta
 
-    -- -- jcru0005@student.monash.edu
+    -- -- random 3
     -- (4, 1, 'T'),  -- Team Lead of Team Alpha
     -- (4, 2, 'A'),  -- Admin of Team Bravo
     -- (4, 3, 'T'),  -- Team Lead of Team Charlie
-    -- (4, 4, 'O');  -- Owner of Team Delta
+    -- (4, 4, 'T');  -- Owner of Team Delta
     
+    -- -- random 34
+    -- (4, 1, 'A'),  -- Team Lead of Team Alpha
+    -- (4, 2, 'T'),  -- Admin of Team Bravo
+    -- (4, 3, 'T'),  -- Team Lead of Team Charlie
+    -- (4, 4, 'T');  -- Owner of Team Delta
 
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, deadline, status) VALUES
     -- Team Alpha (id: 1)
