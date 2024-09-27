@@ -19,24 +19,39 @@ Recruitment platform for Monash University student teams
   - [Table of Contents](#table-of-contents)
   - [Team Members](#team-members)
   - [Prerequisites](#prerequisites)
-  - [Setup Instructions](#setup-instructions)
-    - [Back-end Setup](#back-end-setup)
-    - [Front-end Setup](#front-end-setup)
-  - [Database Setup (Supabase)](#database-setup-supabase)
-    - [Google Sign-In Setup](#google-sign-in-setup)
   - [Configuration Files](#configuration-files)
-    - [`.env` (Front-end)](#env-front-end)
-    - [`env.json` (Back-end)](#envjson-back-end)
-    - [Email Configuration](#email-configuration)
-    - [Supabase Configuration](#supabase-configuration)
-    - [Encryption Key](#encryption-key)
+      - [`.env` (Front-end)](#env-front-end)
+      - [`.env` (Back-end)](#env-back-end)
+      - [`env.json` (Back-end)](#envjson-back-end)
+        - [env.json Email Configuration](#envjson-email-configuration)
+        - [env.json Supabase Configuration](#envjson-supabase-configuration)
+        - [env.json Encryption Key](#envjson-encryption-key)
+        - [env.json Website URL](#envjson-website-url)
+  - [Setup Instructions](#setup-instructions)
+    - [Front-end Setup](#front-end-setup)
+    - [Back-end Setup](#back-end-setup)
+      - [Sam](#sam)
+      - [Supabase Local Development](#supabase-local-development)
+      - [Opening Website in Browser](#opening-website-in-browser)
+  - [Editing the Database](#editing-the-database)
+        - [Project Setup](#project-setup)
+        - [Adding to the Local Database](#adding-to-the-local-database)
+        - [Dummy Data](#dummy-data)
+        - [Initialising Tables and Data](#initialising-tables-and-data)
+        - [Adding to the Prod Database](#adding-to-the-prod-database)
+    - [Google Sign-In Setup](#google-sign-in-setup)
   - [Additional Notes](#additional-notes)
   - [Common Issues](#common-issues)
+      - [CORS Error](#cors-error)
+      - [Front End Crash (Blank Screen)](#front-end-crash-blank-screen)
+      - [SAM cannot find Docker](#sam-cannot-find-docker)
   - [Git Management](#git-management)
     - [Repository Structure](#repository-structure)
     - [Commit Guidelines](#commit-guidelines)
     - [Branch Management](#branch-management)
     - [Merge Requests](#merge-requests)
+    - [Database Updates (Migrations)](#database-updates-migrations)
+  - [Contributors](#contributors)
 
 ## Team Members
 
@@ -116,7 +131,7 @@ The `env.json` file in the root folder contains crucial configuration settings f
     "SMTP_PASSWORD": "nanzovzroqbybbns",
     "SUPABASE_URL": "http://host.docker.internal:54321",
     "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
-    "ENCRYPTION_KEY": "ADD_YOUR_ENCRYPTION_KEY",
+    "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY", // Add your encryption key
     "WEBSITE_URL": "http://localhost:5173"
   }
 }
