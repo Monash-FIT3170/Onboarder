@@ -84,7 +84,8 @@ For development, team members work on local Supabase instances.
 
 ## Configuration Files
 
-You need to create these three files in your project to be able to develop. Do not add these files to Git.
+You need to create these three files in your project to be able to develop. 
+Do not add these files to Git.
 
 #### `.env` (Front-end)
 
@@ -242,7 +243,7 @@ For development, it is the local URL given by VITE when you run `npm run dev`
    supabase db reset
    ```
    This will populate your local instance of Supabase with testing data
-6. You can access the dashboard for your local setup by pasting this into your browser:
+6. You can access the supabase dashboard for your local setup by pasting this into your browser:
    ```
    http://127.0.0.1:54323
    ```
@@ -251,6 +252,7 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 
 1. Navigate to `http://127.0.0.1:5173/` in your browser. (**NOT localhost:5173**)
 2. Sign in with your Monash account.
+3. You are now good to start developing. 
 
 ## Editing the Database
 
