@@ -1,14 +1,6 @@
 # Onboarder
-
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Recruitment platform for Monash University student teams
@@ -21,8 +13,8 @@ Recruitment platform for Monash University student teams
   - [Prerequisites](#prerequisites)
   - [Configuration Files](#configuration-files)
       - [`.env` (Front-end)](#env-front-end)
-      - [`.env` (Back-end)](#env-back-end)
-      - [`env.json` (Back-end)](#envjson-back-end)
+      - [`.env` (Root)](#env-root)
+      - [`env.json` (Root)](#envjson-root)
         - [env.json Email Configuration](#envjson-email-configuration)
         - [env.json Supabase Configuration](#envjson-supabase-configuration)
         - [env.json Encryption Key](#envjson-encryption-key)
@@ -105,7 +97,7 @@ VITE_SUPABASE_KEY=YeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1k
 
 These are the default keys for local Supabase
 
-#### `.env` (Back-end)
+#### `.env` (Root)
 
 Create `.env` file in root folder
 
@@ -116,7 +108,7 @@ SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<your projects secret>
 
 If this has been done, ask your team for these keys, otherwise complete "Google Sign-In Setup" later in this document.
 
-#### `env.json` (Back-end)
+#### `env.json` (Root)
 
 The `env.json` file in the root folder contains crucial configuration settings for the back-end, including email settings, database connections, and encryption keys. Here's a breakdown of its structure and how to set it up:
 **Sinked FIT3170 Template**
@@ -393,9 +385,45 @@ http://localhost:54321/auth/v1/callback
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ahmadhafiz17"><img src="https://avatars.githubusercontent.com/u/140464163?v=4?s=100" width="100px;" alt="ahmadhafiz17"/><br /><sub><b>ahmadhafiz17</b></sub></a><br /><a href="#code-ahmadhafiz17" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AbBaSaMo"><img src="https://avatars.githubusercontent.com/u/95030427?v=4?s=100" width="100px;" alt="AbBaSaMo"/><br /><sub><b>AbBaSaMo</b></sub></a><br /><a href="#projectManagement-AbBaSaMo" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://danielhong.dev/"><img src="https://avatars.githubusercontent.com/u/108613049?v=4?s=100" width="100px;" alt="Daniel"/><br /><sub><b>Daniel</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=windneverstops" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=windneverstops" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/FahadAssadi"><img src="https://avatars.githubusercontent.com/u/91127049?v=4?s=100" width="100px;" alt="Fahad Assadi"/><br /><sub><b>Fahad Assadi</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=FahadAssadi" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=FahadAssadi" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jcru0005"><img src="https://avatars.githubusercontent.com/u/62014277?v=4?s=100" width="100px;" alt="Jesse Cruickshank"/><br /><sub><b>Jesse Cruickshank</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=jcru0005" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=jcru0005" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JesseCr00"><img src="https://avatars.githubusercontent.com/u/167516726?v=4?s=100" width="100px;" alt="Jesse Cruickshank"/><br /><sub><b>Jesse Cruickshank</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=JesseCr00" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=JesseCr00" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Khang0018"><img src="https://avatars.githubusercontent.com/u/162103344?v=4?s=100" width="100px;" alt="Khang0018"/><br /><sub><b>Khang0018</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Khang0018" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Khang0018" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/NgocDuy1234"><img src="https://avatars.githubusercontent.com/u/155885179?v=4?s=100" width="100px;" alt="NgocDuy1234"/><br /><sub><b>NgocDuy1234</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=NgocDuy1234" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=NgocDuy1234" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Rahul-Saxena-1"><img src="https://avatars.githubusercontent.com/u/163801505?v=4?s=100" width="100px;" alt="Rahul-Saxena-1"/><br /><sub><b>Rahul-Saxena-1</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Rahul-Saxena-1" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Rahul-Saxena-1" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Rahuls525"><img src="https://avatars.githubusercontent.com/u/140256502?v=4?s=100" width="100px;" alt="Rahuls525"/><br /><sub><b>Rahuls525</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Rahuls525" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Rahuls525" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sairamishetty"><img src="https://avatars.githubusercontent.com/u/126044967?v=4?s=100" width="100px;" alt="Sai Ashish Ramishetty"/><br /><sub><b>Sai Ashish Ramishetty</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=sairamishetty" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=sairamishetty" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Saxena-Rahul"><img src="https://avatars.githubusercontent.com/u/91989487?v=4?s=100" width="100px;" alt="Saxena-Rahul"/><br /><sub><b>Saxena-Rahul</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Saxena-Rahul" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Saxena-Rahul" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ShubhBajpai25"><img src="https://avatars.githubusercontent.com/u/161799525?v=4?s=100" width="100px;" alt="Shubh Bajpai"/><br /><sub><b>Shubh Bajpai</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ShubhBajpai25" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ShubhBajpai25" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Tavishi11"><img src="https://avatars.githubusercontent.com/u/71335738?v=4?s=100" width="100px;" alt="Tavishi11"/><br /><sub><b>Tavishi11</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Tavishi11" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=Tavishi11" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TavishiSaxena"><img src="https://avatars.githubusercontent.com/u/139798920?v=4?s=100" width="100px;" alt="TavishiSaxena"/><br /><sub><b>TavishiSaxena</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=TavishiSaxena" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=TavishiSaxena" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/umairBinMohammad"><img src="https://avatars.githubusercontent.com/u/127007460?v=4?s=100" width="100px;" alt="Umair Bin Mohammad"/><br /><sub><b>Umair Bin Mohammad</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=umairBinMohammad" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=umairBinMohammad" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ahmadhafiz17"><img src="https://avatars.githubusercontent.com/u/140464163?v=4?s=100" width="100px;" alt="ahmadhafiz17"/><br /><sub><b>ahmadhafiz17</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ahmadhafiz17" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ahmadhafiz17" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/allcontributors"><img src="https://avatars.githubusercontent.com/in/23186?v=4?s=100" width="100px;" alt="allcontributors[bot]"/><br /><sub><b>allcontributors[bot]</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=allcontributors[bot]" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=allcontributors[bot]" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/arazzell"><img src="https://avatars.githubusercontent.com/u/58514489?v=4?s=100" width="100px;" alt="arazzell"/><br /><sub><b>arazzell</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=arazzell" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=arazzell" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/brendonPerera"><img src="https://avatars.githubusercontent.com/u/168376672?v=4?s=100" width="100px;" alt="brendonPerera"/><br /><sub><b>brendonPerera</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=brendonPerera" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=brendonPerera" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/HanifZafari"><img src="https://avatars.githubusercontent.com/u/28986046?v=4?s=100" width="100px;" alt="hanifzafari"/><br /><sub><b>hanifzafari</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=HanifZafari" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=HanifZafari" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ranithsim"><img src="https://avatars.githubusercontent.com/u/126638614?v=4?s=100" width="100px;" alt="ranithsim"/><br /><sub><b>ranithsim</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ranithsim" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=ranithsim" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sai-ramishetty"><img src="https://avatars.githubusercontent.com/u/163802375?v=4?s=100" width="100px;" alt="sai-ramishetty"/><br /><sub><b>sai-ramishetty</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=sai-ramishetty" title="Code">💻</a> <a href="https://github.com/Monash-FIT3170/Onboarder/commits?author=sai-ramishetty" title="Documentation">📖</a></td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
