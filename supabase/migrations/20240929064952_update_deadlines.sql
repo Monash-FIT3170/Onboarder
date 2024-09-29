@@ -1,11 +1,14 @@
 -- Add new attributes
-ALTER TABLE IF EXISTS public."RECRUITMENT_ROUND"
-ADD COLUMN interview_preference_deadline TIMESTAMP WITH TIME ZONE NOT NULL,
-ADD COLUMN interview_period VARCHAR[];
+ALTER TABLE
+    IF EXISTS public."RECRUITMENT_ROUND"
+ADD
+    COLUMN interview_preference_deadline TIMESTAMP WITH TIME ZONE,
+ADD
+    COLUMN interview_period VARCHAR [];
 
 -- Rename an existing attribute
-ALTER TABLE IF EXISTS public."RECRUITMENT_ROUND"
-RENAME COLUMN deadline TO application_deadline;
+ALTER TABLE
+    IF EXISTS public."RECRUITMENT_ROUND" RENAME COLUMN deadline TO application_deadline;
 
 -- Create TEAM_LEAD_ASSIGNMENT table
 CREATE TABLE public."INTERVIEWER_ASSIGNMENT" (
