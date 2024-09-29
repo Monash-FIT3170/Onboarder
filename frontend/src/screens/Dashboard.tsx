@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
         const rolesResponse = await axios.get(
           `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
         );
-        console.log(rolesResponse.data);
+        // console.log(rolesResponse.data);
         const tableData = rolesResponse.data
           .map((role: any) => ({
             id: role.profile_id, // Assuming the API returns a user id
@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
               roleRanking[a.user_team_role] - roleRanking[b.user_team_role]
             );
           });
-        console.log(tableData);
+        // console.log(tableData);
 
         setStudentTeams(tableData);
       } catch (error) {

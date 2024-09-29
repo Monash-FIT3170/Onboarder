@@ -25,32 +25,6 @@ import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
 
 const styles = {
-  recruitmentRoundPage: {
-    fontFamily: "Arial, sans-serif",
-  },
-  studentTeam: {
-    marginBottom: "0.5rem",
-  },
-  section: {
-    marginBottom: "2rem",
-  },
-  addRoundButton: {
-    marginBottom: "1rem",
-  },
-  table: {
-    minWidth: 650,
-  },
-  tableHeader: {
-    backgroundColor: "#f2f2f2",
-  },
-  viewButton: {
-    backgroundColor: "#1976d2",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
     minHeight: "300px",
@@ -136,7 +110,7 @@ const ViewRecruitmentRoundPage = () => {
   };
 
   return (
-    <div style={styles.recruitmentRoundPage}>
+    <div>
       <main>
         <Box
           display="flex"
@@ -148,9 +122,7 @@ const ViewRecruitmentRoundPage = () => {
             <IconButton onClick={handleBack} sx={{ mr: 2 }}>
               <BackIcon />
             </IconButton>
-            <Typography variant="h4" style={styles.studentTeam}>
-              {authStore.team_name}
-            </Typography>
+            <Typography variant="h4">{authStore.team_name}</Typography>
           </Box>
           <Box>
             <Button
@@ -181,7 +153,7 @@ const ViewRecruitmentRoundPage = () => {
           </Grid>
         </Grid>
         <Typography variant="h5">Recruitment Rounds</Typography>
-        <section style={styles.section}>
+        <section>
           <h4>
             Current Recruitment Rounds: Showing{" "}
             {
@@ -207,16 +179,14 @@ const ViewRecruitmentRoundPage = () => {
                 to="/addrecruitmentround"
                 style={{ textDecoration: "none" }}
               >
-                <Button variant="contained" style={styles.addRoundButton}>
-                  ADD ROUND
-                </Button>
+                <Button variant="contained">ADD ROUND</Button>
               </Link>
             </Grid>
           </Grid>
 
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
-            <Table style={styles.table} stickyHeader>
-              <TableHead style={styles.tableHeader}>
+            <Table stickyHeader>
+              <TableHead>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
                   <TableCell>Status</TableCell>
@@ -288,7 +258,7 @@ const ViewRecruitmentRoundPage = () => {
             </Table>
           </TableContainer>
         </section>
-        <section style={styles.section}>
+        <section>
           <h4>
             Archived Recruitment Rounds: Showing{" "}
             {data.filter((item: any) => item.status == "R").length < 3
@@ -297,8 +267,8 @@ const ViewRecruitmentRoundPage = () => {
             of {data.filter((item: any) => item.status == "R").length}
           </h4>
           <TableContainer component={Paper}>
-            <Table style={styles.table} stickyHeader>
-              <TableHead style={styles.tableHeader}>
+            <Table stickyHeader>
+              <TableHead>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
                   <TableCell>Status</TableCell>

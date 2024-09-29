@@ -145,7 +145,6 @@ function AppBarOnBoarder() {
               }
               label={darkMode ? "Dark Mode" : "Light Mode"}
               sx={{
-                color: "white",
                 "& .MuiSwitch-track": {
                   backgroundColor: darkMode ? "white" : "grey",
                 },

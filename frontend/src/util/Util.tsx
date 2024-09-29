@@ -47,10 +47,6 @@ export enum UserRole {
  * @returns {string} The API URL specified in the environment variables, or a default URL if not specified.
  */
 export const getBaseAPIURL = (): string => {
-  // For User Acceptance Testing
-  //   const local_supabase_url = "";
-  //   return local_supabase_url;
-
   if (import.meta.env.VITE_BACKEND_URL) {
     return import.meta.env.VITE_BACKEND_URL;
   } else {
