@@ -49,6 +49,9 @@ const AvailabilityCalendar: React.FC = () => {
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
 
+  // First Ill set an arbitrary cutoff day, for example today
+  const cutoffDate = new Date("2024-09-30");
+
   // Function to handle the selection of a new time slot in the calendar
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     const overlappingEvent = eventsList.find(
@@ -147,6 +150,18 @@ const AvailabilityCalendar: React.FC = () => {
 
     decryptId();
   }, [id]);
+
+  // Check if today is past the deadline
+  if (today > cutoffDate) {
+    return (
+      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+        <h2>Preference submission has closed</h2>
+        <p>
+          The deadline for submitting your interview availability has passed.
+        </p>
+      </div>
+    );
+  }
 
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
