@@ -104,6 +104,7 @@ Create `.env` file in root folder
 ```.env
 SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<your projects client id>
 SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<your projects secret>
+DEV_EMAIL=<your monash email>
 ```
 
 If this has been done, ask your team for these keys, otherwise complete "Google Sign-In Setup" later in this document.
@@ -231,6 +232,8 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 2. Keep Docker running in the background.
 3. Ensure Docker is configured for your OS according to the screenshot in this page: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
 4. Open a terminal in the root folder and execute:
+   `python pre-process-seed.py`
+   then
    `supabase start` or `npx supabase start`
    NOTE: If you need to add npx for this to work, you will need to use `npx` before all `supabase` commands you do
    This may take a while the first time.
@@ -273,6 +276,7 @@ Source: [Supabase Docs: Local Development](https://supabase.com/docs/guides/cli/
 ##### Dummy Data
 
 - You can edit the SQL for creating dummy data in `/supabase/seed.sql`
+- If this is empty, it will be filled after running `python pre-process-seed.py`
 
 ##### Initialising Tables and Data
 
