@@ -1,5 +1,5 @@
 INSERT INTO public."PROFILE" (email, interview_availability) VALUES
-    ('DEV_EMAIL', ARRAY['Tuesday 1 PM - 4 PM']), -- DEV_EMAIL will be replaced with yours after running pre-process-seed.py
+    ('DEV_EMAIL', ARRAY['Tuesday 1 PM - 4 PM']), -- DEV EMAIL will be replaced with yours after running pre-process-seed.py
     ('random1@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
     ('random2@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
     ('random3@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
