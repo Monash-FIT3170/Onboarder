@@ -27,4 +27,3 @@ dist-ssr
 *.sln
 *.sw?
 frontend/.env
-supabase/seed.sql
