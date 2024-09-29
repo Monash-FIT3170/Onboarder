@@ -1,20 +1,33 @@
 import os
 import shutil
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+def load_env(file_path='.env'):
+    """Load environment variables from a file."""
+    env_vars = {}
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    key, value = line.split('=', 1)
+                    env_vars[key.strip()] = value.strip().strip("'").strip('"')
+    except FileNotFoundError:
+        print(f"Warning: {file_path} not found. Proceeding with system environment variables.")
+    return env_vars
+
+# Load environment variables
+env_vars = load_env()
 
 # Define file paths
 template_path = 'supabase/seed.sql.template'
 output_path = 'supabase/seed.sql'
 
-# Get the email from environment variable
-email = os.getenv("DEV_EMAIL")
+# Get the email from environment variables
+email = env_vars.get("DEV_EMAIL") 
 
 # Check if the email is set
 if email is None:
-    print("Error: DEV_EMAIL is not set in .env file")
+    print("Error: DEV_EMAIL is not set in .env file or system environment variables")
     exit(1)
 
 # Copy template to new file
