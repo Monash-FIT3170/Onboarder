@@ -230,20 +230,21 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 #### Supabase Local Development
 
 1. Add the `.env` file to the root folder (see configuration details below).
-2. Keep Docker running in the background.
-3. Ensure Docker is configured for your OS according to the screenshot in this page: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
-4. Open a terminal in the root folder and execute:
+2. Install [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started?queryGroups=platform&platform=windows)
+3. Keep Docker running in the background.
+4. Ensure Docker is configured for your OS according to the screenshot in this page: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
+5. Open a terminal in the root folder and execute:
    `python pre-process-seed.py`
    then
    `supabase start` or `npx supabase start`
    NOTE: If you need to add npx for this to work, you will need to use `npx` before all `supabase` commands you do
    This may take a while the first time.
-5. After completion, run:
+6. After completion, run:
    ```
    supabase db reset
    ```
    This will populate your local instance of Supabase with testing data
-6. You can access the supabase dashboard for your local setup by pasting this into your browser:
+7. You can access the supabase dashboard for your local setup by pasting this into your browser:
    ```
    http://127.0.0.1:54323
    ```

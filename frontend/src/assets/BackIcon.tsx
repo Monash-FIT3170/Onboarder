@@ -18,7 +18,6 @@ const BackIconWrapper = styled.div<{ theme: any }>`
 `;
 
 function BackIcon() {
-  const { darkMode } = useTheme();
   const theme = useMuiTheme(); // This gets the current MUI theme
 
   return (
