@@ -105,7 +105,7 @@ Create `.env` file in root folder
 ```.env
 SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<your projects client id>
 SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<your projects secret>
-DEV_EMAIL=<your monash email>
+DEV_EMAIL=<your monash email> // e.g. jdoe0000@student.monash.edu
 ```
 
 If this has been done, ask your team for these keys, otherwise complete "Google Sign-In Setup" later in this document.
