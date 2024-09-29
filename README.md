@@ -351,6 +351,7 @@ http://localhost:54321/auth/v1/callback
 
 ### Commit Guidelines
 
+- Refer to: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)
 - Frequent commits to prevent data loss
 - Clear, concise commit messages with descriptive keywords
 - Important commits tagged and tied to milestones
@@ -362,6 +363,7 @@ http://localhost:54321/auth/v1/callback
 - Branch naming conventions:
   - Feature branches: 'feature/[description]'
   - Fix branches: 'fix/[description]'
+  - Test branches: 'test/[description]'
 - Maximum two levels of branching from main
 - Temporary branches allowed for experimentation (to be cleaned up)
 
