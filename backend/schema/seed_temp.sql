@@ -19,29 +19,29 @@ INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUE
     (1, 3, 'T'),  -- Team Lead of Team Charlie
     (1, 4, 'A');  -- Admin of Team Delta
 
-    -- -- random 1
-    -- (2, 1, 'T'),  -- Team Lead of Team Alpha
-    -- (2, 2, 'T'),  -- Owner of Team Bravo
-    -- (2, 3, 'A'),  -- Admin of Team Charlie
-    -- (2, 4, 'T'),  -- Team Lead of Team Delta
+    -- random 1
+    (2, 1, 'T'),  -- Team Lead of Team Alpha
+    (2, 2, 'T'),  -- Owner of Team Bravo
+    (2, 3, 'A'),  -- Admin of Team Charlie
+    (2, 4, 'T'),  -- Team Lead of Team Delta
 
-    -- -- random 2
-    -- (3, 1, 'T'),  -- Admin of Team Alpha
-    -- (3, 2, 'T'),  -- Team Lead of Team Bravo
-    -- (3, 3, 'T'),  -- Owner of Team Charlie
-    -- (3, 4, 'A'),  -- Admin of Team Delta
+    -- random 2
+    (3, 1, 'T'),  -- Admin of Team Alpha
+    (3, 2, 'T'),  -- Team Lead of Team Bravo
+    (3, 3, 'T'),  -- Owner of Team Charlie
+    (3, 4, 'A'),  -- Admin of Team Delta
 
-    -- -- random 3
-    -- (4, 1, 'T'),  -- Team Lead of Team Alpha
-    -- (4, 2, 'A'),  -- Admin of Team Bravo
-    -- (4, 3, 'T'),  -- Team Lead of Team Charlie
-    -- (4, 4, 'T');  -- Owner of Team Delta
+    -- random 3
+    (4, 1, 'T'),  -- Team Lead of Team Alpha
+    (4, 2, 'A'),  -- Admin of Team Bravo
+    (4, 3, 'T'),  -- Team Lead of Team Charlie
+    (4, 4, 'T');  -- Owner of Team Delta
     
-    -- -- random 34
-    -- (4, 1, 'A'),  -- Team Lead of Team Alpha
-    -- (4, 2, 'T'),  -- Admin of Team Bravo
-    -- (4, 3, 'T'),  -- Team Lead of Team Charlie
-    -- (4, 4, 'T');  -- Owner of Team Delta
+    -- random 4
+    (4, 1, 'A'),  -- Team Lead of Team Alpha
+    (4, 2, 'T'),  -- Admin of Team Bravo
+    (4, 3, 'T'),  -- Team Lead of Team Charlie
+    (4, 4, 'T');  -- Owner of Team Delta
 
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, deadline, status) VALUES
     -- Team Alpha (id: 1)
