@@ -194,8 +194,8 @@ const AvailabilityCalendar: React.FC = () => {
         <DragAndDropCalendar
           localizer={localizer}
           events={eventsList}
-          startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
-          endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
+          startAccessor={(event) => (event as Event).start} // Specify how to access the start date of an event
+          endAccessor={(event) => (event as Event).end} // Specify how to access the end date of an event
           style={{ height: "80%" }}
           defaultView="week"
           views={["week"]}
@@ -204,7 +204,7 @@ const AvailabilityCalendar: React.FC = () => {
           onSelectSlot={handleSelectSlot} // Handle new slot selection
           onEventResize={handleEventResize} // Handle resizing of existing events
           onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
-          titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+          titleAccessor={(event) => (event as Event).title} // Specify how to access the title of an event
           min={startOfDay(today)} // Earliest selectable date
           max={endOfDay(twoWeeksLater)} // Latest selectable date (2 weeks from now)
           step={30}
