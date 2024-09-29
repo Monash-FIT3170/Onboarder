@@ -13,6 +13,7 @@ import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
 import InviteMemberModal from "./InviteMemberModal";
 import axios from "axios";
 import { useAuthStore } from "../util/stores/authStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const ViewTeamMembersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,23 +22,24 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { team_id, team_name } = useAuthStore();
+  const { team_id: studentTeamId, team_name } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
-      if (!team_id) {
+      if (!studentTeamId) {
         setError("No team selected");
         setIsLoading(false);
         return;
       }
 
       try {
+        const BASE_API_URL = getBaseAPIURL();
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `http://127.0.0.1:3000/profileTeamInfo/${team_id}`
+          `${BASE_API_URL}/student-team/${studentTeamId}/members`, // Working
         );
         const profileTeamInfo = profileTeamResponse.data;
-        console.log(profileTeamInfo)
+        console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -45,15 +47,15 @@ const ViewTeamMembersPage: React.FC = () => {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            console.log(memberInfo)
+            console.log(memberInfo);
             const studentResponse = await axios.get(
-              `http://127.0.0.1:3000/profile/${memberInfo.profile_id}`
+              `${BASE_API_URL}/profile/${memberInfo.profile_id}`, // Working
             );
             // const studentInfo = studentResponse.data.find(
             //   (student: any) => student.student_team_id === team_id
             // );
             const studentInfo = studentResponse.data[0];
-            console.log(studentInfo)
+            console.log(studentInfo);
 
             if (studentInfo) {
               return {
@@ -66,7 +68,7 @@ const ViewTeamMembersPage: React.FC = () => {
           } catch (error) {
             console.error(
               `Error fetching student info for profile ${memberInfo.profile_id}:`,
-              error
+              error,
             );
             return null;
           }
@@ -75,8 +77,8 @@ const ViewTeamMembersPage: React.FC = () => {
         const resolvedMembers = await Promise.all(membersPromises);
         setMembers(
           resolvedMembers.filter(
-            (member): member is TeamMember => member !== null
-          )
+            (member): member is TeamMember => member !== null,
+          ),
         );
       } catch (error) {
         console.error("Error fetching team members:", error);
@@ -87,7 +89,7 @@ const ViewTeamMembersPage: React.FC = () => {
     };
 
     fetchTeamMembers();
-  }, [team_id]);
+  }, [studentTeamId, isInviteModalOpen]);
 
   const getRoleText = (role: string) => {
     switch (role) {
@@ -142,14 +144,14 @@ const ViewTeamMembersPage: React.FC = () => {
           color="primary"
           onClick={handleOpenInviteModal}
         >
-          INVITE MEMBER
+          ADD MEMBER
         </Button>
       </Box>
       <TeamMembersTable members={members} onRemove={handleRemove} />
       <InviteMemberModal
         open={isInviteModalOpen}
         onClose={handleCloseInviteModal}
-        teamId={team_id}
+        teamId={studentTeamId}
       />
     </Box>
   );

@@ -12,7 +12,6 @@ import {
   Paper,
   Grid,
   Typography,
-  TableSortLabel,
   Skeleton,
   IconButton,
 } from "@mui/material";
@@ -22,37 +21,13 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
+import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const styles = {
-  recruitmentRoundPage: {
-    fontFamily: "Arial, sans-serif",
-  },
-  studentTeam: {
-    color: "gray",
-    marginBottom: "1rem",
-  },
-  section: {
-    marginBottom: "2rem",
-  },
-  addRoundButton: {
-    marginBottom: "1rem",
-  },
-  table: {
-    minWidth: 650,
-  },
-  tableHeader: {
-    backgroundColor: "#f2f2f2",
-  },
-  viewButton: {
-    backgroundColor: "#1976d2",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
+    minHeight: "300px",
     overflowY: "auto",
     display: "block",
   },
@@ -71,51 +46,32 @@ const ViewRecruitmentRoundPage = () => {
   const SHOW_ARCHIVED_AMOUNT = 3;
 
   const authStore = useAuthStore();
+  const studentTeamStore = useStudentTeamStore();
 
   const setRecruitmentDetails = useRecruitmentStore(
-    (state) => state.setRecruitmentDetails
+    (state) => state.setRecruitmentDetails,
   );
 
-  const formatDeadline = (deadline: Date) => {
-    return `${deadline.getDate().toString().padStart(2, "0")}/${(
-      deadline.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}/${deadline.getFullYear()} ${deadline
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${deadline.getMinutes().toString().padStart(2, "0")}`;
-  };
-
   const filterData = (round: any) => {
-    const {
-      student_team_name,
-      id,
-      deadline,
-      status,
-      semester,
-      year,
-      openings_count,
-    } = round;
-    const formattedDeadline = formatDeadline(new Date(deadline));
+    const { student_team_name, id, status, semester, year, openings_count } =
+      round;
     const statusText =
       Status[status as keyof typeof Status] || "Unknown Status";
 
     return [
       `${student_team_name} ${id}`,
-      formattedDeadline,
       statusText,
       semester,
       year,
       openings_count,
     ].some((value: any) =>
-      value.toString().toLowerCase().includes(filter.toLowerCase())
+      value.toString().toLowerCase().includes(filter.toLowerCase()),
     );
   };
 
-  let student_team_id = authStore.team_id;
-
-  const API_URL = `http://127.0.0.1:3000/studentTeams/${student_team_id}/recruitmentRounds`;
+  const studentTeamId = authStore.team_id;
+  const BASE_API_URL = getBaseAPIURL();
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round`; // Working
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,14 +97,12 @@ const ViewRecruitmentRoundPage = () => {
     });
     navigate("/recruitment-details-page");
   };
+  const handleAllocateTeamLeads = () => {
+    navigate("/viewTeamLeads");
+  };
 
   const handleViewTeamMembers = () => {
     navigate("/view-team-members");
-  };
-
-  const handleAllocateTeamLeads = () => {
-    // Implement logic to allocate team leads
-    // This might involve navigating to a new page or opening a modal
   };
 
   const handleBack = () => {
@@ -156,21 +110,19 @@ const ViewRecruitmentRoundPage = () => {
   };
 
   return (
-    <div style={styles.recruitmentRoundPage}>
+    <div>
       <main>
         <Box
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          mb={2}
+          mb={0}
         >
           <Box display="flex" alignItems="baseline">
             <IconButton onClick={handleBack} sx={{ mr: 2 }}>
               <BackIcon />
             </IconButton>
-            <Typography variant="h4" style={styles.studentTeam}>
-              Recruitment Rounds
-            </Typography>
+            <Typography variant="h4">{authStore.team_name}</Typography>
           </Box>
           <Box>
             <Button
@@ -192,51 +144,51 @@ const ViewRecruitmentRoundPage = () => {
         </Box>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            <div></div>
-            <h3>{authStore.team_name}</h3>
+            <p>
+              {"Team Description: " +
+                studentTeamStore.studentTeams.find(
+                  (item) => item.student_team_id === authStore.team_id,
+                )?.student_team_description}
+            </p>
           </Grid>
         </Grid>
-        <section style={styles.section}>
+        <Typography variant="h5">Recruitment Rounds</Typography>
+        <section>
+          <h4>
+            Current Recruitment Rounds: Showing{" "}
+            {
+              data.filter(
+                (item: any) => item.status == "I" || item.status == "A",
+              ).length
+            }
+          </h4>
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
-              <h4>
-                Current Recruitment Rounds: Showing{" "}
-                {
-                  data.filter(
-                    (item: any) => item.status == "I" || item.status == "A"
-                  ).length
-                }
-              </h4>
+            <Grid item xs={6}>
+              <TextField
+                style={{ marginBottom: "1rem", width: "25%" }}
+                variant="outlined"
+                placeholder="Round Name, Deadline, etc..."
+                size="small"
+                label="Search"
+                fullWidth
+                onChange={(e) => setFilter(e.target.value)}
+              />
             </Grid>
             <Grid item>
               <Link
                 to="/addrecruitmentround"
                 style={{ textDecoration: "none" }}
               >
-                <Button variant="contained" style={styles.addRoundButton}>
-                  ADD ROUND
-                </Button>
+                <Button variant="contained">ADD ROUND</Button>
               </Link>
             </Grid>
           </Grid>
-          <TextField
-            style={{ marginBottom: "1rem", width: "25%" }}
-            variant="outlined"
-            placeholder="Round Name, Deadline, etc..."
-            size="small"
-            label="Filter"
-            fullWidth
-            onChange={(e) => setFilter(e.target.value)}
-          />
+
           <TableContainer component={Paper} style={styles.scrollableTableBody}>
-            <Table style={styles.table} stickyHeader>
-              <TableHead style={styles.tableHeader}>
+            <Table stickyHeader>
+              <TableHead>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>
-                    Deadline
-                    <TableSortLabel></TableSortLabel>
-                  </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
@@ -248,9 +200,6 @@ const ViewRecruitmentRoundPage = () => {
                 {loading
                   ? Array.from(new Array(5)).map((_, index) => (
                       <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
@@ -279,14 +228,12 @@ const ViewRecruitmentRoundPage = () => {
                       .filter((item: any) => item.status != "R")
                       .filter(filterData)
                       .map((item: any) => {
-                        const deadline = new Date(item.deadline);
-                        const formattedDeadline = formatDeadline(deadline);
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
                               {authStore.team_name + " " + item.id}
                             </TableCell>
-                            <TableCell>{formattedDeadline}</TableCell>
+
                             <TableCell>
                               {Status[item.status as keyof typeof Status] ||
                                 "Unknown Status"}
@@ -297,12 +244,11 @@ const ViewRecruitmentRoundPage = () => {
                             <TableCell>
                               <Button
                                 variant="contained"
-                                style={{ padding: 0 }}
                                 onClick={() => {
                                   handleViewRound(item.id);
                                 }}
                               >
-                                VIEW
+                                VIEW ROUND
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -312,17 +258,19 @@ const ViewRecruitmentRoundPage = () => {
             </Table>
           </TableContainer>
         </section>
-        <section style={styles.section}>
+        <section>
           <h4>
-            Archived Recruitment Rounds: Showing {data.filter((item: any) => item.status == "R").length < 3 ? data.filter((item: any) => item.status == "R").length  : SHOW_ARCHIVED_AMOUNT} of{" "}
-            {data.filter((item: any) => item.status == "R").length}
+            Archived Recruitment Rounds: Showing{" "}
+            {data.filter((item: any) => item.status == "R").length < 3
+              ? data.filter((item: any) => item.status == "R").length
+              : SHOW_ARCHIVED_AMOUNT}{" "}
+            of {data.filter((item: any) => item.status == "R").length}
           </h4>
           <TableContainer component={Paper}>
-            <Table style={styles.table} stickyHeader>
-              <TableHead style={styles.tableHeader}>
+            <Table stickyHeader>
+              <TableHead>
                 <TableRow>
                   <TableCell>Round Name</TableCell>
-                  <TableCell>Deadline</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>
@@ -348,23 +296,17 @@ const ViewRecruitmentRoundPage = () => {
                         <TableCell>
                           <Skeleton variant="text" />
                         </TableCell>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
                       </TableRow>
                     ))
                   : data
                       .filter((item: any) => item.status == "R")
                       .slice(0, SHOW_ARCHIVED_AMOUNT)
                       .map((item: any) => {
-                        const deadline = new Date(item.deadline);
-                        const formattedDeadline = formatDeadline(deadline);
                         return (
                           <TableRow key={item.id}>
                             <TableCell>
-                              {item.student_team_name + " " + item.id}
+                              {authStore.team_name + " " + item.id}
                             </TableCell>
-                            <TableCell>{formattedDeadline}</TableCell>
                             <TableCell>
                               {Status[item.status as keyof typeof Status] ||
                                 "Unknown Status"}

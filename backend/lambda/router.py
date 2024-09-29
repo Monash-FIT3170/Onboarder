@@ -1,4 +1,3 @@
-
 import controller
 from typing import Callable
 import json
@@ -49,21 +48,27 @@ def route(path: str, methods: list[str]) -> Callable:
 
 
 # OPTIONS HANDLER
+@route('/profile', ['OPTIONS'])
 @route('/profile/{profileId}', ['OPTIONS'])
-@route('/studentTeams', ['OPTIONS'])
-@route('/applications/{applicationId}', ['OPTIONS'])
-@route('/studentTeams/{profileId}', ['OPTIONS'])
-@route('/profile/{profileId}/availability', ['OPTIONS'])
-@route('/profileTeamInfo', ['OPTIONS'])
-@route('/profileTeamInfo/{studentTeamId}', ['OPTIONS'])
-@route('/recruitmentRounds', ['OPTIONS'])
-@route('/recruitmentRounds/{roundId}/openings', ['OPTIONS'])
-@route('/openings', ['OPTIONS'])
-@route('/openings/{openingId}', ['OPTIONS'])
-@route('/openings/{openingId}/applications', ['OPTIONS'])
-@route('/recruitmentRounds/{roundId}/status', ['OPTIONS'])
-@route('/sendInterviewEmails/{openingId}', ['OPTIONS'])
-@route('/updateAvailability/{applicationId}', ['OPTIONS'])
+@route('/profile/{profileId}/student-teams', ['OPTIONS'])
+@route('/student-team', ['OPTIONS'])
+@route('/student-team/{studentTeamId}', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/members', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/members/{profileId}', ['OPTIONS'])
+@route('/recruitment-round', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/recruitment-round', ['OPTIONS'])
+@route('/recruitment-round/{roundId}', ['OPTIONS'])
+@route('/opening', ['OPTIONS'])
+@route('/recruitment-round/{roundId}/opening', ['OPTIONS'])
+@route('/opening/{openingId}', ['OPTIONS'])
+@route('/student-team/{studentTeamId}/team-lead-assign', ['OPTIONS'])
+@route('/opening/{openingId}/team-lead-assign', ['OPTIONS'])
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['OPTIONS'])
+@route('/application', ['OPTIONS'])
+@route('/opening/{openingId}/application', ['OPTIONS'])
+@route('/application/{applicationId}', ['OPTIONS'])
+@route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/decrypt/{id}', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -75,11 +80,59 @@ def options_handler(_={}, __={}, ___={}):
         }
     }
 
+# ------------------ PROFILE ------------------
 
-@route('/profile/{profileId}', ['GET'])
-def get_profile(path_params={}, _={}, __={}):
-    profile_id = path_params.get('profileId')
-    data = controller.get_profile(profile_id)
+@route('/profile', ['POST'])
+def create_profile(path_params={}, _={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['user_id', 'email']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        user_id = data['user_id']
+        email = data['email']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_profile(user_id, email)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/profile', ['GET'])
+def get_all_profiles(path_params={}, _={}, __={}):
+    data = controller.get_all_profiles()
     data = json.dumps(data)
 
     response = {
@@ -90,23 +143,8 @@ def get_profile(path_params={}, _={}, __={}):
 
     return response
 
-
-@route('/profile/{profileId}/availability', ['GET'])
-def get_availability(path_params={}, _={}, __={}):
-    profile_id = path_params.get('profileId')
-    data = controller.get_availability(profile_id)
-    data = json.dumps(data)
-
-    response = {
-        'statusCode': 200,
-        'body': data,
-        'headers': HEADERS
-    }
-
-    return response
-
-@route('/profile/{profileId}/availability', ['POST'])
-def update_availability(path_params={}, _={}, body={}):
+@route('/profile/{profileId}', ['PATCH'])
+def update_profile(path_params={}, _={}, body={}):
     profile_id = path_params.get('profileId')
     if not body:
         return {
@@ -124,49 +162,21 @@ def update_availability(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['availability']
-    missing_fields = [field for field in required_fields if field not in data]
-    if missing_fields:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
-            'headers': HEADERS
-        }
-    
-    try:
-        availability = data['availability']
-    except (ValueError, KeyError):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'}),
-            'headers': HEADERS
-        }
-    
-    response = controller.update_availability(profile_id, availability)
+    response = controller.update_profile(profile_id, data)
     
     return {
-        'statusCode': 201,
+        'statusCode': 200,
         'body': json.dumps({
             'success': True,
             'data': response
         }),
         'headers': HEADERS
-    }
+    }   
 
-# STUDENT TEAMS
-
-@route('/studentTeams', ['GET'])
-@route('/studentTeams/{profileId}', ['GET'])
-def get_student_teams(path_params={}, _={}, __={}):
-    profile_id = None
-
-    if path_params:
-        profile_id = path_params.get('profileId')
-    if profile_id:
-        data = controller.get_student_teams(profile_id)
-    else:
-        data = controller.get_all_student_teams()
-
+@route('/profile/{profileId}', ['GET'])
+def get_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_profile(profile_id)
     data = json.dumps(data)
 
     response = {
@@ -177,7 +187,37 @@ def get_student_teams(path_params={}, _={}, __={}):
 
     return response
 
-@route('/studentTeams', ['POST'])
+@route('/profile/{profileId}', ['DELETE'])
+def delete_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.delete_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/profile/{profileId}/student-teams', ['GET'])
+def get_student_teams_for_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_student_teams_for_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+# ------------------ STUDENT TEAMS ------------------
+
+@route('/student-team', ['POST'])
 def create_student_team(path_params={}, _={}, body={}):
     if not body:
         return {
@@ -195,7 +235,7 @@ def create_student_team(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['profile_id', 'team_name', 'team_description']
+    required_fields = ['name', 'description']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -205,9 +245,8 @@ def create_student_team(path_params={}, _={}, body={}):
         }
     
     try:
-        profile_id = data['profile_id']
-        team_name = data['team_name']
-        team_description = data['team_description']
+        name = data['name']
+        description = data['description']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -215,14 +254,7 @@ def create_student_team(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.create_student_team(team_name, team_description)
-
-    print(response, "response")
-    
-    # Create entry in profile_team_info table
-    student_team_id = response[0].get('id')
-    role = 'O'
-    controller.add_profile_team_info(profile_id, student_team_id, role)
+    response = controller.create_student_team(name, description)
     
     return {
         'statusCode': 201,
@@ -233,8 +265,64 @@ def create_student_team(path_params={}, _={}, body={}):
         'headers': HEADERS
     }
 
+@route('/student-team', ['GET'])
+def get_all_student_teams(path_params={}, _={}, __={}):
+    data = controller.get_all_student_teams()
+    data = json.dumps(data)
 
-@route('/studentTeams/{studentTeamId}', ['POST'])
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}', ['PATCH'])
+def update_student_team(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_student_team(student_team_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/student-team/{studentTeamId}', ['GET'])
+def get_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}', ['DELETE'])
 def delete_student_team(path_params={}, _={}, __={}):
     student_team_id = path_params.get('studentTeamId')
     data = controller.delete_student_team(student_team_id)
@@ -248,8 +336,11 @@ def delete_student_team(path_params={}, _={}, __={}):
 
     return response
 
-@route('/profileTeamInfo', ['POST'])
-def add_profile_team_info(path_params={}, _={}, body={}):
+# ------------------ STUDENT TEAM MEMEBERS ------------------
+
+@route('/student-team/{studentTeamId}/members', ['POST'])
+def add_member_to_student_team(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
     if not body:
         return {
             'statusCode': 400,
@@ -266,7 +357,7 @@ def add_profile_team_info(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['email', 'student_team_id', 'role']
+    required_fields = ['email', 'role']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -277,7 +368,6 @@ def add_profile_team_info(path_params={}, _={}, body={}):
     
     try:
         email = data['email']
-        student_team_id = data['student_team_id']
         role = data['role']
     except (ValueError, KeyError):
         return {
@@ -286,7 +376,7 @@ def add_profile_team_info(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.add_profile_team_info(email, student_team_id, role)
+    response = controller.add_member_to_student_team(student_team_id, email, role)
     
     return {
         'statusCode': 201,
@@ -297,35 +387,10 @@ def add_profile_team_info(path_params={}, _={}, body={}):
         'headers': HEADERS
     }
 
-@route('/profileTeamInfo/{studentTeamId}', ['GET'])
-def get_team_members(path_params={}, _={}, __={}):
-    # parameter validation
-    if path_params:
-        student_team_id = path_params.get('studentTeamId')
-    if student_team_id:
-        data = controller.get_all_members_of_student_team(student_team_id)
-    else:
-        pass
-
-    data = json.dumps(data)
-
-    response = {
-        'statusCode': 200,
-        'body': data,
-        'headers': HEADERS
-    }
-
-    return response
-
-
-
-
-# RECRUITMENT ROUNDS
-
-@route('/studentTeams/{studentTeamId}/recruitmentRounds', ['GET'])
-def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
+@route('/student-team/{studentTeamId}/members', ['GET'])
+def get_all_members_of_student_team(path_params={}, _={}, __={}):
     student_team_id = path_params.get('studentTeamId')
-    data = controller.get_rec_rounds_for_student_team(student_team_id)
+    data = controller.get_all_members_of_student_team(student_team_id)
     data = json.dumps(data)
 
     response = {
@@ -336,8 +401,10 @@ def get_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
 
     return response
 
-@route('/studentTeams/{studentTeamId}/allocations', ['POST'])
-def allocate_member_to_opening(path_params={}, _={}, body={}):
+@route('/student-team/{studentTeamId}/members/{profileId}', ['PATCH'])
+def update_student_team_member(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    profile_id = path_params.get('profileId')
     if not body:
         return {
             'statusCode': 400,
@@ -346,7 +413,6 @@ def allocate_member_to_opening(path_params={}, _={}, body={}):
         }
     
     try:
-        student_team_id = path_params.get('studentTeamId')
         data = json.loads(body)
     except ValueError:
         return {
@@ -355,7 +421,362 @@ def allocate_member_to_opening(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['profile_id', 'opening_id']
+    response = controller.update_student_team_member(student_team_id, profile_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/student-team/{studentTeamId}/members/{profileId}', ['GET'])
+def get_student_team_member(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    profile_id = path_params.get('profileId')
+    data = controller.get_student_team_member(student_team_id, profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}/members/{profileId}', ['DELETE'])
+def remove_member_from_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    profile_id = path_params.get('profileId')
+    data = controller.remove_member_from_student_team(student_team_id, profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+# ------------------ RECRUITMENT ROUND ------------------
+
+@route('/recruitment-round', ['GET'])
+def get_all_recruitment_rounds(path_params={}, _={}, __={}):
+    data = controller.get_all_recruitment_rounds()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/student-team/{studentTeamId}/recruitment-round', ['POST'])
+def create_recruitment_round(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['semester', 'year', 'deadline', 'status']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        semester = data['semester']
+        year = data['year']
+        deadline = data['deadline']
+        status = data['status']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.create_recruitment_round(student_team_id, semester, year, deadline, status)
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/student-team/{studentTeamId}/recruitment-round', ['GET'])
+def get_all_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_all_recruitment_rounds_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/recruitment-round/{roundId}', ['PATCH'])
+def update_recruitment_round(path_params={}, _={}, body={}):
+    round_id = path_params.get('roundId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_recruitment_round(round_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/recruitment-round/{roundId}', ['GET'])
+def get_recruitment_round(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.get_recruitment_round(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/recruitment-round/{roundId}', ['DELETE'])
+def delete_recruitment_round(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.delete_recruitment_round(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+# ------------------ OPENINGS ------------------
+
+@route('/opening', ['GET'])
+def get_all_openings(path_params={}, _={}, __={}):
+    data = controller.get_all_openings()
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/recruitment-round/{roundId}/opening', ['POST'])
+def create_opening(path_params={}, _={}, body={}):
+    round_id = path_params.get('roundId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    required_fields = ['title', 'description', 'status', 'required_skills', 'desired_skills', 'task_email_format', 'task_enabled']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+
+    try:
+        title = data['title']
+        description = data['description']
+        status = data['status']
+        required_skills = data['required_skills']
+        desired_skills = data['desired_skills']
+        task_email_format = data['task_email_format']
+        task_enabled = data['task_enabled']
+    except (ValueError, KeyError):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid data types in request body'}),
+            'headers': HEADERS
+        }
+
+    response = controller.create_opening(round_id, title, description, status, required_skills, desired_skills, task_email_format, task_enabled)
+
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/recruitment-round/{roundId}/opening', ['GET'])
+def get_all_openings_for_recruitment_round(path_params={}, _={}, __={}):
+    round_id = path_params.get('roundId')
+    data = controller.get_all_openings_for_recruitment_round(round_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}', ['PATCH'])
+def update_opening(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    response = controller.update_opening(opening_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
+@route('/opening/{openingId}', ['GET'])
+def get_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.get_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}', ['DELETE'])
+def delete_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.delete_opening(opening_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+# ------------------ TEAM LEAD APPLICATION ASSIGNMENT ------------------
+
+@route('/student-team/{studentTeamId}/team-lead-assign', ['GET'])
+def get_team_lead_for_student_team(path_params={}, _={}, __={}):
+    student_team_id = path_params.get('studentTeamId')
+    data = controller.get_team_lead_for_student_team(student_team_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}/team-lead-assign', ['POST'])
+def assign_team_lead_to_opening(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['profile_id']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -366,7 +787,6 @@ def allocate_member_to_opening(path_params={}, _={}, body={}):
     
     try:
         profile_id = data['profile_id']
-        opening_id = data['opening_id']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
@@ -374,7 +794,7 @@ def allocate_member_to_opening(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.allocate_member_to_opening(profile_id, opening_id)
+    response = controller.assign_team_lead_to_opening(opening_id, profile_id)
     
     return {
         'statusCode': 201,
@@ -385,10 +805,10 @@ def allocate_member_to_opening(path_params={}, _={}, body={}):
         'headers': HEADERS
     }
 
-@route('/studentTeams/{studentTeamId}/allocations', ['GET'])
-def get_allocations_for_student_team(path_params={}, _={}, __={}):
-    student_team_id = path_params.get('studentTeamId')
-    data = controller.get_allocated_members_for_student_team(student_team_id)
+@route('/opening/{openingId}/team-lead-assign', ['GET'])
+def get_team_lead_for_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    data = controller.get_team_lead_for_opening(opening_id)
     data = json.dumps(data)
 
     response = {
@@ -399,18 +819,26 @@ def get_allocations_for_student_team(path_params={}, _={}, __={}):
 
     return response
 
-@route('/recruitmentRounds', ['GET'])
-@route('/recruitmentRounds/{roundId}', ['GET'])
-def fetch_recruitment_rounds(path_params={}, _={}, __={}):
-    round_id = None
-    # parameter validation
-    if path_params:
-        round_id = path_params.get('roundId')
-    if round_id:
-        data = controller.get_specific_rec_round(round_id)
-    else:
-        data = controller.get_all_rec_rounds()
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['DELETE'])
+def remove_team_lead_from_opening(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    profile_id = path_params.get('profileId')
+    data = controller.remove_team_lead_from_opening(opening_id, profile_id)
+    data = json.dumps(data)
 
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+@route('/opening/{openingId}/team-lead-assign/{profileId}', ['GET'])
+def get_team_lead_opening_assignment_status(path_params={}, _={}, __={}):
+    opening_id = path_params.get('openingId')
+    profile_id = path_params.get('profileId')
+    data = controller.get_team_lead_opening_assignment_status(opening_id, profile_id)
     data = json.dumps(data)
 
     response = {
@@ -422,449 +850,169 @@ def fetch_recruitment_rounds(path_params={}, _={}, __={}):
     return response
 
 
-@route('/recruitmentRounds', ['POST'])
-def create_recruitment_round(_={}, __={}, body={}):
+# ------------------ APPLICATIONS ------------------
 
-    # Get the request body
-    if not body:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Parse the request body as JSON
-    try:
-        data = json.loads(body)
-    except ValueError:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Validate the request body structure and ensure all required fields are present
-    required_fields = ['deadline', 'semester',
-                       'year', 'status']
-    missing_fields = [field for field in required_fields if field not in data]
-
-    if missing_fields:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
-            'headers': HEADERS
-        }
-        return response
-
-    try:
-        deadline = data['deadline']
-        semester = int(data['semester'])
-        year = data["year"]
-        status = str(data['status'])
-    except (ValueError, KeyError):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'}),
-            'headers': HEADERS
-        }
-
-    # Create recruitment round
-    try:
-        response = controller.create_rec_round(
-            deadline, semester, year, 4, status)
-        return {
-            'statusCode': 201,
-            'body': json.dumps({
-                'success': True,
-                'data': response
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
-
-
-# OPENINGS
-
-
-@route('/openings', ['GET'])
-def get_all_openings(_={}, __={}, ___={}):
-
-    records = controller.get_all_openings()
-
-    records = json.dumps(records)
+@route('/application', ['GET'])
+def get_all_applications(path_params={}, _={}, __={}):
+    data = controller.get_all_applications()
+    data = json.dumps(data)
 
     response = {
         'statusCode': 200,
-        'body': records,
-        'headers': HEADERS
-    }
-    return response
-
-
-@route('/recruitmentRounds/{roundId}/openings', ['GET'])
-@route('/recruitmentRounds/{roundId}/openings/{openingId}', ['GET'])
-def get_openings_for_round(path_params={}, _={}, __={}):
-    # parameter validation
-    round_id = path_params.get('roundId')
-    opening_id = path_params.get('openingId')
-    if opening_id:
-        records = controller.get_specific_open_for_round(round_id, opening_id)
-    else:
-        records = controller.get_all_opens_for_round(round_id)
-
-    records = json.dumps(records)
-
-    response = {
-        'statusCode': 200,
-        'body': records,
+        'body': data,
         'headers': HEADERS
     }
 
     return response
 
 
-@route('/recruitmentRounds/{roundId}/openings', ['POST'])
-def create_opening(path_params={}, __={}, body={}):
-    # Get the request body
+@route('/opening/{openingId}/application', ['POST'])
+def create_application(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
     if not body:
-        response = {
+        return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Request body is missing'}),
             'headers': HEADERS
         }
-        return response
-
-    # Parse the request body as JSON
+    
     try:
         data = json.loads(body)
     except ValueError:
-        response = {
+        return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Invalid request body'}),
             'headers': HEADERS
         }
-        return response
-
-    # Validate the request body structure and ensure all required fields are present
-    required_fields = ['title', 'description',
-                       'status', 'required_skills', 'desired_skills']
+    
+    required_fields = [
+        'email', 'name', 'phone', 'semesters_until_completion', 
+        'current_semester', 'major_enrolled', 'additional_info', 
+        'skills', 'course_name' # 'created_at', 'candidate_availability', 'interview_date', 'interview_notes', 'interview_score', 'status',
+    ]
     missing_fields = [field for field in required_fields if field not in data]
-
     if missing_fields:
-        response = {
+        return {
             'statusCode': 400,
             'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
             'headers': HEADERS
         }
-        return response
-
+    
     try:
-        round_id = path_params.get('roundId')
-        title = str(data['title'])
-        description = str(data['description'])
-        status = str(data['status'])
-        required_skills = data['required_skills']
-        desired_skills = data['desired_skills']
-    except (ValueError, KeyError):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid data types in request body'}),
-            'headers': HEADERS
-        }
-
-    # Create opening
-    try:
-        response = controller.create_opening(
-            round_id, title, description, status, required_skills, desired_skills)
-        return {
-            'statusCode': 201,
-            'body': json.dumps({
-                'success': True,
-                'data': response
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
-
-
-@route('/recruitmentRounds/{roundId}/status', ['PATCH'])
-def update_recruitment_round_status(path_params={}, _={}, body={}):
-    # Get the roundId from the path parameters
-    print("hi")
-    round_id = path_params.get('roundId')
-
-    if not round_id:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Round ID is missing'}),
-            'headers': HEADERS
-        }
-
-    # Get the request body and parse it
-    if not body:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'}),
-            'headers': HEADERS
-        }
-
-    try:
-        data = json.loads(body)
-    except ValueError:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'}),
-            'headers': HEADERS
-        }
-
-    # Validate new status is provided
-    new_status = data.get('status')
-    if not new_status:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'New status is required'}),
-            'headers': HEADERS
-        }
-
-    # Call the controller to update the status
-    try:
-        controller.update_recruitment_round_status(round_id, new_status)
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'success': True,
-                'msg': f'Status of recruitment round {round_id} updated to {new_status}'
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
-
-@route('/openings/{openingId}', ['GET'])
-def get_opening(path_params={}, _={}, __={}):
-    # parameter validation
-    opening_id = path_params.get('openingId')
-    records = controller.get_opening(opening_id)
-
-    records = json.dumps(records)
-
-    response = {
-        'statusCode': 200,
-        'body': records,
-        'headers': HEADERS
-    }
-    return response
-
-
-@route('/openings/{openingId}', ['POST'])
-def update_opening(path_params={}, __={}, body={}):
-    opening_id = path_params.get('openingId')
-
-    # Get the request body
-    if not body:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Parse the request body as JSON
-    try:
-        data = json.loads(body)
-    except ValueError:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Update opening
-    try:
-        response = controller.update_opening(opening_id, data)
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'success': True,
-                'data': response
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
-
-# APPLICATIONS
-
-@route('/openings/{openingId}/applications', ['POST'])
-def create_application(path_params={}, __={}, body={}):
-    # Get the request body
-    if not body:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Parse the request body as JSON
-    try:
-        data = json.loads(body)
-    except ValueError:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Validate the request body structure and ensure all required fields are present
-    required_fields = ['email', 'name', 'phone', 'semesters_until_completion',
-                       'current_semester', 'course_enrolled', 'major_enrolled', 'cover_letter', 'skills']
-    missing_fields = [field for field in required_fields if field not in data]
-    if missing_fields:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
-            'headers': HEADERS
-        }
-        return response
-
-    try:
-        email = str(data['email'])
-        name = str(data['name'])
-        phone = str(data['phone'])
-        semesters_until_completion = int(data['semesters_until_completion'])
-        current_semester = int(data['current_semester'])
-        course_enrolled = str(data['course_enrolled'])
-        major_enrolled = str(data['major_enrolled'])
-        cover_letter = str(data['cover_letter'])
+        email = data['email']
+        name = data['name']
+        phone = data['phone']
+        semesters_until_completion = data['semesters_until_completion']
+        current_semester = data['current_semester']
+        major_enrolled = data['major_enrolled']
+        additional_info = data['additional_info']
         skills = data['skills']
-        openingId = path_params.get('openingId')
-
+        # created_at = data['created_at']
+        # candidate_availability = data['candidate_availability']
+        # interview_date = data['interview_date']
+        # interview_notes = data['interview_notes']
+        # interview_score = data['interview_score']
+        # status = data['status']
+        course_name = data['course_name']
     except (ValueError, KeyError):
         return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Invalid data types in request body'}),
             'headers': HEADERS
         }
+    
+    response = controller.create_application(
+        email, name, phone, semesters_until_completion, 
+        current_semester, major_enrolled, additional_info, 
+        skills, opening_id, course_name
+        # interview_notes, interview_score, created_at, candidate_availability, interview_date, status, 
+    )
+    
+    return {
+        'statusCode': 201,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
 
-    # Create application
-    try:
-        response = controller.create_application(
-            openingId, email, name, phone, semesters_until_completion, current_semester, course_enrolled, major_enrolled, cover_letter, skills)
-        return {
-            'statusCode': 201,
-            'body': json.dumps({
-                'success': True,
-                'data': response
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
-
-
-@route('/openings/{openingId}/applications', ['GET'])
-def get_applications_for_opening(path_params={}, _={}, __={}):
-    # parameter validation
+@route('/opening/{openingId}/application', ['GET'])
+def get_all_applications_for_opening(path_params={}, _={}, __={}):
     opening_id = path_params.get('openingId')
-    records = controller.get_all_applications_for_opening(opening_id)
-
-    records = json.dumps(records)
-
-    response = {
-        'statusCode': 200,
-        'body': records,
-        'headers': HEADERS
-    }
-    return response
-
-
-@route('/applications/{applicationId}', ['GET'])
-def get_application(path_params={}, _={}, __={}):
-    # parameter validation
-    application_id = path_params.get('applicationId')
-    records = controller.get_application(application_id)
-
-    records = json.dumps(records)
+    data = controller.get_all_applications_for_opening(opening_id)
+    data = json.dumps(data)
 
     response = {
         'statusCode': 200,
-        'body': records,
+        'body': data,
         'headers': HEADERS
     }
+
     return response
 
-@route('/applications/{applicationId}', ['POST'])
-def update_application(path_params={}, __={}, body={}):
+@route('/application/{applicationId}', ['PATCH'])
+def update_application(path_params={}, _={}, body={}):
     application_id = path_params.get('applicationId')
-
-    # Get the request body
     if not body:
-        response = {
+        return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Request body is missing'}),
             'headers': HEADERS
         }
-        return response
-
-    # Parse the request body as JSON
+    
     try:
         data = json.loads(body)
     except ValueError:
-        response = {
+        return {
             'statusCode': 400,
             'body': json.dumps({'error': 'Invalid request body'}),
             'headers': HEADERS
         }
-        return response
+    
+    response = controller.update_application(application_id, data)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
 
-    # Update application
-    try:
-        response = controller.update_application(application_id, data)
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'success': True,
-                'data': response
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)}),
-            'headers': HEADERS
-        }
+@route('/application/{applicationId}', ['GET'])
+def get_application(path_params={}, _={}, __={}):
+    application_id = path_params.get('applicationId')
+    data = controller.get_application(application_id)
+    data = json.dumps(data)
 
-# Email
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
 
-@route('/sendInterviewEmails/{openingId}', ['POST'])
+    return response
+
+@route('/application/{applicationId}', ['DELETE'])
+def delete_application(path_params={}, _={}, __={}):
+    application_id = path_params.get('applicationId')
+    data = controller.delete_application(application_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
+
+# ------------------ MISC ------------------
+
+@route('/send-interview-emails/{openingId}', ['POST'])
 def send_email(path_params={}, querystring_params={}, body={}):
     try:
         opening_id = path_params.get('openingId')
@@ -897,7 +1045,7 @@ def send_email(path_params={}, querystring_params={}, body={}):
         return response
 
 
-@route('/decrypt_id/{id}', ['GET'])
+@route('/decrypt/{id}', ['GET'])
 def decrypt_id(path_params={}, _={}, __={}):
     id = path_params.get('id')
     result = controller.decrypt_id(id)
@@ -915,50 +1063,3 @@ def decrypt_id(path_params={}, _={}, __={}):
     }
     return response
 
-
-@route('/updateAvailability/{applicationId}', ['POST'])
-def updateAvailability(path_params={}, querystring_params={}, body={}):
-    if not body:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Request body is missing'}),
-            'headers': HEADERS
-        }
-        return response
-
-    # Parse the request body as JSON
-    try:
-        data = json.loads(body)
-    except ValueError:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': 'Invalid request body'}),
-            'headers': HEADERS
-        }
-        return response
-
-    required_fields = ['candidate_availablity']
-    missing_fields = [field for field in required_fields if field not in data]
-
-    if missing_fields:
-        response = {
-            'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
-            'headers': HEADERS
-        }
-        return response
-
-    applicationId = path_params.get('applicationId')
-    candidate_availablity = data['candidate_availablity']
-
-    controller.update_availability(applicationId, candidate_availablity)
-
-    response = {
-        'statusCode': 200,
-        'body': json.dumps({
-            'success': True,
-            'msg': "Availability updated"
-        }),
-        'headers': HEADERS
-    }
-    return response

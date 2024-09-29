@@ -35,7 +35,7 @@ interface OpeningsTableProps {
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    applications_count: number
+    applications_count: number,
   ) => void;
 }
 
@@ -46,8 +46,8 @@ const generateRowFunction = (
     recruitment_round_id: number,
     student_team_name: string,
     title: string,
-    applications_count: number
-  ) => void
+    applications_count: number,
+  ) => void,
 ) => {
   return results.map((result) => {
     return (
@@ -56,7 +56,7 @@ const generateRowFunction = (
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
         <TableCell component="th" scope="row">
-          {result.title}
+          {result.opening_title}
         </TableCell>
         <TableCell>{result.applications_count}</TableCell>
         {/* <TableCell>
@@ -70,12 +70,12 @@ const generateRowFunction = (
                 result.id,
                 result.recruitment_round_id,
                 result.student_team_name,
-                result.title,
-                result.applications_count
+                result.opening_title,
+                result.applications_count,
               )
             }
           >
-            View
+            View Opening
           </Button>
         </TableCell>
       </TableRow>
@@ -91,6 +91,7 @@ export function OpeningsTable(props: OpeningsTableProps) {
           <TableHead>
             <TableCell> Opening Name </TableCell>
             <TableCell> Applications Received </TableCell>
+            <TableCell></TableCell>
             {/* <TableCell> Status of Applications </TableCell> */}
           </TableHead>
           <TableBody>

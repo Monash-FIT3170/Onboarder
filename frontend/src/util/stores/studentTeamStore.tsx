@@ -6,6 +6,7 @@ export interface StudentTeam {
   student_team_name: string;
   user_team_role: string;
   student_team_owner: string;
+  student_team_description: string;
 }
 
 interface StudentTeamStore {

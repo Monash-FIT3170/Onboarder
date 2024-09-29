@@ -17,6 +17,7 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 interface InviteMemberModalProps {
   open: boolean;
@@ -37,6 +38,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     message: "",
     severity: "success" as "success" | "error",
   });
+  const BASE_API_URL = getBaseAPIURL();
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRole(event.target.value);
@@ -75,33 +77,32 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:3000/profileTeamInfo",
+        `${BASE_API_URL}/student-team/${teamId}/members`, // Fixed not tested
         {
           email: email,
-          student_team_id: teamId,
           role: role,
-        }
+        },
       );
 
       if (response.status === 201) {
         setSnackbar({
           open: true,
-          message: "Team member invited successfully!",
+          message: "Team member added successfully!",
           severity: "success",
         });
         onClose();
       } else {
         setSnackbar({
           open: true,
-          message: "Failed to invite team member.",
+          message: "Failed to added team member.",
           severity: "error",
         });
       }
     } catch (error) {
-      console.error("Error inviting team member:", error);
+      console.error("Error adding team member:", error);
       setSnackbar({
         open: true,
-        message: "There was an error inviting the team member.",
+        message: "There was an error adding the team member.",
         severity: "error",
       });
     } finally {
@@ -117,7 +118,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <Typography variant="h6">Invite Team Member</Typography>
+          <Typography variant="h6">Add Team Member</Typography>
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
@@ -154,7 +155,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
               color="primary"
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : "Invite Member"}
+              {isLoading ? <CircularProgress size={24} /> : "Add Member"}
             </Button>
           </DialogActions>
         </form>

@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Select,
   MenuItem,
@@ -17,32 +17,8 @@ import { DateTime } from "luxon";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-
-const styles = {
-  recruitmentRoundPage: {
-    fontFamily: "Arial, sans-serif",
-  },
-  section: {
-    marginBottom: "2rem",
-  },
-  addRoundButton: {
-    marginBottom: "1rem",
-  },
-  table: {
-    minWidth: 650,
-  },
-  tableHeader: {
-    backgroundColor: "#f2f2f2",
-  },
-  viewButton: {
-    backgroundColor: "#1976d2",
-    color: "white",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};
+import { useAuthStore } from "../util/stores/authStore";
+import { getBaseAPIURL } from "../util/Util";
 
 const AddRecruitmentRoundPage = () => {
   const [deadline, setDeadline] = useState(DateTime.now());
@@ -52,7 +28,10 @@ const AddRecruitmentRoundPage = () => {
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const API_URL = "http://127.0.0.1:3000/recruitmentRounds/";
+  const authStore = useAuthStore();
+  const studentTeamId = authStore.team_id;
+  const BASE_API_URL = getBaseAPIURL();
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round/`; // Working
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -87,7 +66,7 @@ const AddRecruitmentRoundPage = () => {
   };
 
   return (
-    <div style={styles.recruitmentRoundPage}>
+    <div>
       <main>
         <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>
           Create Recruitment Round
@@ -223,7 +202,6 @@ const AddRecruitmentRoundPage = () => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  style={styles.addRoundButton}
                   type="submit"
                   disabled={loading}
                 >
@@ -236,12 +214,7 @@ const AddRecruitmentRoundPage = () => {
                   to="/viewrecruitmentround"
                   style={{ textDecoration: "none" }}
                 >
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="large"
-                    style={styles.addRoundButton}
-                  >
+                  <Button variant="contained" color="error" size="large">
                     Cancel
                   </Button>
                 </Link>

@@ -1,51 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import {
   DashboardTable,
   StudentTeamResultProps,
 } from "../components/DashboardTable";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import JobInterviewIcon from "../assets/JobInterview.jpg";
 import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import axios from "axios";
+import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrap = styled.div`
   margin: auto;
   text-align: center;
-`;
-
-const CardContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  width: 100%;
-`;
-
-const StyledCard = styled(Card)`
-  max-width: 250px;
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const StyledCardMedia = styled(CardMedia)`
-  height: 160px;
-  width: 250px;
-  object-fit: contain;
-  padding: 16px;
 `;
 
 const ButtonStyle = styled.div`
@@ -56,38 +24,42 @@ const ButtonStyle = styled.div`
 `;
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const BASE_API_URL = getBaseAPIURL();
   const authStore = useAuthStore();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
+
+  const { user, profile } = useAuthStore();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let profile_id = 1; // Replace with actual profile_id fetching logic
+        // let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
+        let profileId = profile;
 
-        if (!profile_id) {
-          profile_id = await authStore.fetchProfile();
+        if (!profileId) {
+          profileId = await authStore.fetchProfile();
         }
+        console.log("Profile ID: ", profileId);
 
         const rolesResponse = await axios.get(
-          `http://127.0.0.1:3000/studentTeams/${profile_id}`
+          `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
         );
-
-        let tableData = rolesResponse.data
+        // console.log(rolesResponse.data);
+        const tableData = rolesResponse.data
           .map((role: any) => ({
-            id: role.id, // Assuming the API returns a user id
+            id: role.profile_id, // Assuming the API returns a user id
             student_team_id: role.student_team_id,
             student_team_name: role.student_team_name,
             user_team_role:
               role.your_role === "O"
                 ? "Owner"
                 : role.your_role === "A"
-                ? "Admin"
-                : "Team Lead",
+                  ? "Admin"
+                  : "Team Lead",
             student_team_owner: role.owner_email,
+            student_team_description: role.student_team_description,
           }))
           .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
             const roleRanking: { [key: string]: number } = {
@@ -99,6 +71,7 @@ const Dashboard: React.FC = () => {
               roleRanking[a.user_team_role] - roleRanking[b.user_team_role]
             );
           });
+        // console.log(tableData);
 
         setStudentTeams(tableData);
       } catch (error) {
@@ -109,11 +82,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-  }, [setStudentTeams, authStore]);
-
-  const handleInterviewCardClick = () => {
-    navigate("/interviews");
-  };
+  }, [isAddTeamModalOpen]);
 
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
@@ -123,41 +92,52 @@ const Dashboard: React.FC = () => {
     setIsAddTeamModalOpen(false);
   };
 
-  const handleSubmitTeam = (teamName: string, teamDescription: string) => {
-    // TODO: Implement team creation logic
-    console.log("Team created:", { teamName, teamDescription });
-    // You might want to update the studentTeams or fetch new data here
+  const handleSubmitTeam = async (
+    teamName: string,
+    teamDescription: string,
+  ) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/student-team`, {
+        name: teamName,
+        description: teamDescription,
+      });
+
+      const newTeamId = response.data.data[0].id;
+
+      await axios.post(`${BASE_API_URL}/student-team/${newTeamId}/members`, {
+        email: user.email,
+        role: "O",
+      });
+
+      const newStudentTeam = {
+        id: newTeamId,
+        student_team_id: newTeamId,
+        student_team_name: teamName,
+        user_team_role: "Owner",
+        student_team_owner: user.email,
+        student_team_description: teamDescription,
+      };
+
+      setStudentTeams([...studentTeams, newStudentTeam]);
+    } catch (error) {
+      console.error("Error submitting team:", error);
+    }
   };
 
   return (
     <Box display="flex" flexDirection="column">
       <TitleWrap>
         <Typography variant="h2" fontWeight="light" gutterBottom>
-          Student Team
+          Dashboard
         </Typography>
       </TitleWrap>
       <ButtonStyle>
-        <Typography variant="h4">Your student teams</Typography>
+        <Typography variant="h4">Your Student Teams</Typography>
         <Button variant="contained" onClick={handleAddTeamClick}>
           Add Team
         </Button>
       </ButtonStyle>
       <DashboardTable results={studentTeams} />
-      <CardContainer>
-        <StyledCard>
-          <CardActionArea onClick={handleInterviewCardClick}>
-            <StyledCardMedia image={JobInterviewIcon} />
-            <CardContent>
-              <Typography variant="h5" component="div">
-                Interviews
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                View interviews and manage your availability
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </StyledCard>
-      </CardContainer>
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}

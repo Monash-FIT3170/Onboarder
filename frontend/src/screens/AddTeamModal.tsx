@@ -32,7 +32,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Basic team details</DialogTitle>
+      <DialogTitle>Team details</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
