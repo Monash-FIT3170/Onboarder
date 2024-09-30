@@ -23,6 +23,7 @@ import ViewInterviewAllocation from "./screens/ViewInterviewAllocation";
 import Feedbacknote from "./screens/FeedbackNote";
 import AvailabilityCalendarUser from "./screens/AvailabilityCalendarUser";
 import ViewTeamLeads from "./screens/ViewTeamLeads";
+import ManuallyAddInterview from "./screens/ManuallyAddInterview";
 
 function App() {
   return (
@@ -31,7 +32,6 @@ function App() {
       <Box component={"section"} sx={{ padding: "20px" }}>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
@@ -71,6 +71,10 @@ function App() {
               element={<AvailabilityCalendarUser />}
             />
             <Route path="/view-team-members" element={<ViewTeamMemberPage />} />
+            <Route
+              path="/manually-add-interview"
+              element={<ManuallyAddInterview />}
+            />
           </Route>
           <Route
             path="/availability-calendar/:id"

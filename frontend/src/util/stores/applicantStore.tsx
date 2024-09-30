@@ -9,6 +9,7 @@ interface ApplicantDetails {
   student_team_name: string | null;
   opening_title: string | null;
   application_count: number | null;
+  applicant_email: string | null;
 }
 
 interface ApplicantStore {
