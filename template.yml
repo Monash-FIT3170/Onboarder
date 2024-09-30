@@ -440,6 +440,20 @@ Resources:
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           
+          /send-interview-join-email:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
           /decrypt/{id}:
             get:
                 x-amazon-apigateway-integration:
