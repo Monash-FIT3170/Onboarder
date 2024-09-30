@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
-from minizinc import Instance, Model, Solver
+import pulp
 from supabase import create_client, Client
 
 url: str = os.environ.get("SUPABASE_URL")
@@ -10,35 +10,36 @@ supabase: Client = create_client(url, key)
 
 
 def lambda_handler(event, context):
-    # Extract opening_id from SQS event
-    sqs_message = json.loads(event['Records'][0]['body'])
-    opening_id = sqs_message['opening_id']
+    try:
+        # Extract opening_id from SQS event
+        sqs_message = json.loads(event['Records'][0]['body'])
+        opening_id = sqs_message['opening_id']
 
-    # Fetch opening details and availabilities from database
-    set_opening_status(opening_id, 'I')
-    interviewers, interviewer_availabilities = get_interviewer_availabilities(opening_id)
-    interviewees, interviewee_availabilities = get_interviewee_availabilities(opening_id)
-    interview_duration_minutes = get_interview_length(opening_id)
+        # Fetch opening details and availabilities from database
+        set_opening_status(opening_id, 'I')
+        interviewers, interviewer_availabilities = get_interviewer_availabilities(opening_id)
+        interviewees, interviewee_availabilities = get_interviewee_availabilities(opening_id)
+        interview_duration_minutes = get_interview_length(opening_id)
 
-    # Solve the scheduling problem
-    schedule = solve_scheduling_problem(
-        interviewer_availabilities,
-        interviewee_availabilities,
-        interview_duration_minutes
-    )
-    records = process_schedule_for_db(schedule, interviewers, interviewees)
+        # Solve the scheduling problem
+        schedule = solve_scheduling_problem(
+            interviewer_availabilities,
+            interviewee_availabilities,
+            interview_duration_minutes
+        )
+        records = process_schedule_for_db(schedule, interviewers, interviewees)
 
-    # Write the schedule to database
-    write_schedule_to_db(opening_id, records)
-    set_opening_status(opening_id, 'S')
+        # Write the schedule to database
+        write_schedule_to_db(opening_id, records)
+        set_opening_status(opening_id, 'S')
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"message": "Scheduling completed successfully"})
-    }
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"message": "Scheduling completed successfully"})
+        }
+    except Exception as e:
+        print(e)
 
-
-# POTENTIALLY THIS IS DONE IN API
 def set_opening_status(opening_id, status):
     data = {'interview_allocation_status': status}
     response = supabase.table('OPENING').update(data).eq('id', opening_id).execute()
@@ -53,10 +54,14 @@ def get_interviewee_availabilities(opening_id):
     return [item['id'] for item in response.data], [item['candidate_availability'] for item in response.data]
 
 def get_interviewer_availabilities(opening_id):
-    response = supabase.table('PROFILE') \
-        .select('id, interview_availability') \
-        .join("TEAM_LEAD_ASSIGNMENT", "TEAM_LEAD_ASSIGNMENT.profile_id", "PROFILE.id") \
-        .eq('TEAM_LEAD_ASSIGNMENT.opening_id', opening_id) \
+    response = supabase.table('TEAM_LEAD_ASSIGNMENT') \
+        .select('''
+        PROFILE!inner(
+            id,
+            interview_availability
+        )
+    ''') \
+        .eq('opening_id', opening_id) \
         .execute()
     return [item['id'] for item in response.data], [item['interview_availability'] for item in response.data]
 
@@ -93,86 +98,72 @@ def solve_scheduling_problem(interviewer_availabilities, interviewee_availabilit
     interviewer_avail = availability_matrix[:n_interviewers]
     interviewee_avail = availability_matrix[n_interviewers:]
 
-    # MiniZinc model
-    mzn_model = r"""
-    int: n_interviewers;
-    int: n_interviewees;
-    int: n_timeslots;
+# Create PuLP problem
+    prob = pulp.LpProblem("Interview_Scheduling", pulp.LpMaximize)
 
-    array[1..n_interviewers, 1..n_timeslots] of int: interviewer_avail;
-    array[1..n_interviewees, 1..n_timeslots] of int: interviewee_avail;
-    int: interview_length;
+    # Decision variables
+    interview_scheduled = pulp.LpVariable.dicts("interview",
+                                                ((i, j, t) for i in range(n_interviewers)
+                                                            for j in range(n_interviewees)
+                                                            for t in range(n_timeslots)),
+                                                cat='Binary')
 
-    array[1..n_interviewers, 1..n_interviewees, 1..n_timeslots] of var bool: interview_scheduled;
+    # Objective function
+    total_interviews = pulp.lpSum(interview_scheduled[i, j, t] 
+                                  for i in range(n_interviewers)
+                                  for j in range(n_interviewees)
+                                  for t in range(n_timeslots))
+    
+    interviewer_load = [pulp.lpSum(interview_scheduled[i, j, t] 
+                                   for j in range(n_interviewees)
+                                   for t in range(n_timeslots))
+                        for i in range(n_interviewers)]
+    
+    max_load = pulp.LpVariable("max_load", lowBound=0, cat='Integer')
+    min_load = pulp.LpVariable("min_load", lowBound=0, cat='Integer')
 
-    % Constraints
-    constraint forall(i in 1..n_interviewees) (
-        sum(j in 1..n_interviewers, t in 1..n_timeslots) (interview_scheduled[j, i, t]) <= 1
-    );
+    prob += 100 * total_interviews - (max_load - min_load)
 
-    constraint forall(j in 1..n_interviewers, t in 1..n_timeslots) (
-        sum(i in 1..n_interviewees) (interview_scheduled[j, i, t]) <= 1
-    );
+    # Constraints
+    for j in range(n_interviewees):
+        prob += pulp.lpSum(interview_scheduled[i, j, t] 
+                           for i in range(n_interviewers)
+                           for t in range(n_timeslots)) <= 1
 
-    constraint forall(j in 1..n_interviewers, i in 1..n_interviewees, t in 1..n_timeslots-interview_length+1) (
-        interview_scheduled[j, i, t] -> 
-        forall(k in 0..interview_length-1) (
-            interviewer_avail[j, t+k] == 1 /\ interviewee_avail[i, t+k] == 1
-        )
-    );
+    for i in range(n_interviewers):
+        for t in range(n_timeslots):
+            prob += pulp.lpSum(interview_scheduled[i, j, t] 
+                               for j in range(n_interviewees)) <= 1
 
-    % Objective variables
-    var int: total_interviews = sum(j in 1..n_interviewers, i in 1..n_interviewees, t in 1..n_timeslots) (
-        interview_scheduled[j, i, t]
-    );
+    interview_length = interview_duration_minutes // 30  # Assuming 30-minute slots
+    for i in range(n_interviewers):
+        for j in range(n_interviewees):
+            for t in range(n_timeslots - interview_length + 1):
+                prob += interview_scheduled[i, j, t] <= min(interviewer_avail[i][t+k] * interviewee_avail[j][t+k] 
+                                                            for k in range(interview_length))
 
-    array[1..n_interviewers] of var int: interviewer_load = [
-        sum(i in 1..n_interviewees, t in 1..n_timeslots) (interview_scheduled[j, i, t])
-        | j in 1..n_interviewers
-    ];
+    for i in range(n_interviewers):
+        prob += max_load >= interviewer_load[i]
+        prob += min_load <= interviewer_load[i]
 
-    var int: max_load = max(interviewer_load);
-    var int: min_load = min(interviewer_load);
-    var int: load_difference = max_load - min_load;
-
-    % Multi-objective optimization
-    solve maximize total_interviews * 100 - load_difference;
-    """
-
-    # Set up and solve MiniZinc model
-    model = Model()
-    model.add_string(mzn_model)
-    solver = Solver.lookup("cbc")
-    instance = Instance(solver, model)
-
-    instance["n_interviewers"] = n_interviewers
-    instance["n_interviewees"] = n_interviewees
-    instance["n_timeslots"] = n_timeslots
-    instance["interview_length"] = interview_duration_minutes // 30  # Assuming 30-minute slots
-    instance["interviewer_avail"] = interviewer_avail
-    instance["interviewee_avail"] = interviewee_avail
-
-    result = instance.solve()
+    # Solve the problem
+    prob.solve()
 
     # Process results
-    interview_scheduled = result["interview_scheduled"]
     schedule = []
-
-    for i in range(n_interviewees):
+    for j in range(n_interviewees):
         interview_time = None
         interviewer_index = None
-
-        for j in range(n_interviewers):
+        for i in range(n_interviewers):
             for t in range(n_timeslots):
-                if interview_scheduled[j][i][t]:
+                if pulp.value(interview_scheduled[i, j, t]) == 1:
                     interview_time = time_slots[t]
-                    interviewer_index = j
+                    interviewer_index = i
                     break
             if interview_time:
                 break
-
         schedule.append({
-            "interviewee_index": i,
+            "interviewee_index": j,
             "interview_time": interview_time.isoformat() if interview_time else None,
             "interviewer_index": interviewer_index
         })
