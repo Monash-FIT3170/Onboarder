@@ -64,19 +64,41 @@ function ViewOpenPage() {
   );
   const authStore = useAuthStore();
 
-  const sortedApplications = React.useMemo(() => {
-    if (!sortColumn) return applications;
+  // Fetching applications data when the component mounts or selectedOpening changes
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/viewrecruitmentround");
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return [...applications].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) {
-        return sortDirection === "asc" ? -1 : 1;
-      }
-      if (a[sortColumn] > b[sortColumn]) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
-      return 0;
-    });
-  }, [applications, sortColumn, sortDirection]);
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  // const sortedApplications = React.useMemo(() => {
+  //   if (!sortColumn) return applications;
+
+  //   return [...applications].sort((a, b) => {
+  //     if (a[sortColumn] < b[sortColumn]) {
+  //       return sortDirection === "asc" ? -1 : 1;
+  //     }
+  //     if (a[sortColumn] > b[sortColumn]) {
+  //       return sortDirection === "asc" ? 1 : -1;
+  //     }
+  //     return 0;
+  //   });
+  // }, [applications, sortColumn, sortDirection]);
 
   // Placeholder function for handling the sort
   const handleSort = (column) => {
