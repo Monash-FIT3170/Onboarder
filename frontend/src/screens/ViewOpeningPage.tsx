@@ -13,7 +13,10 @@ import {
   Skeleton,
   TextField,
   Box,
+  Collapse, // Importing Collapse to create expandable/collapsible sections
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"; // Icon for expand action
+import ExpandLessIcon from "@mui/icons-material/ExpandLess"; // Icon for collapse action
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
@@ -41,17 +44,17 @@ export interface SingleApplicationProps {
 }
 
 function ViewOpenPage() {
-  // State to manage the sorting direction
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState(null);
-  const BASE_API_URL = getBaseAPIURL();
-  const navigate = useNavigate();
+  // States to manage sorting direction and column
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
-  );
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  ); // Storing applications data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [expandedApplicants, setExpandedApplicants] = useState(true); // To handle expand/collapse for Applicants section
+  const [expandedCandidates, setExpandedCandidates] = useState(false); // To handle expand/collapse for Candidates section
+  const [expandedRecruits, setExpandedRecruits] = useState(false); // To handle expand/collapse for Recruits section
 
+  const BASE_API_URL = getBaseAPIURL();
+  const navigate = useNavigate();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
