@@ -113,6 +113,28 @@ function ViewOpenPage() {
     navigate("/recruitment-details-page");
   };
 
+  // Function to display rows in the table, generates dynamic rows based on the applications data
+  const generateRowFunction = (applications: SingleApplicationProps[]) => {
+    return applications.map((application) => (
+      <TableRow key={application.id}>
+        <TableCell>{application.name}</TableCell>
+        <TableCell>{application.email}</TableCell>
+        <TableCell>{getAppStatusText(application.status)}</TableCell>
+        <TableCell>
+          {new Date(application.created_at).toLocaleDateString()}
+        </TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => handleViewApplication(application.id)}
+          >
+            VIEW APPLICATION
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
