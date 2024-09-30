@@ -196,9 +196,3 @@ def process_availabilities(availabilities, interview_duration_minutes):
                     availability_matrix[person][i] = 1
 
     return time_slots, availability_matrix
-
-if __name__=="__main__":
-    int1 = ['[{"start": "2024-08-26T16:15:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"},{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'] * 10
-    int2 = ['[{"start": "2024-08-26T16:30:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"},{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'] * 30
-    minutes = 30
-    print(solve_scheduling_problem(int1, int2, minutes))
