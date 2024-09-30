@@ -3,6 +3,13 @@ import os
 import smtplib
 import ssl
 from email.message import EmailMessage
+from email.utils import formataddr
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+from datetime import datetime, timezone
+from icalendar import Calendar, Event # type: ignore
 from cryptography.fernet import Fernet # type: ignore
 
 url: str = os.environ.get("SUPABASE_URL")
@@ -492,3 +499,84 @@ def send_welcome_email(email, team_name, role):
         print(f"Failed to send notification email to {email}")
 
     return email_sent
+
+def create_icalendar_event(summary, description, start_time, end_time, location, organizer_name, organizer_email):
+    cal = Calendar()
+    event = Event()
+    event.add('summary', summary)
+    event.add('description', description)
+    event.add('dtstart', start_time)
+    event.add('dtend', end_time)
+    event.add('location', location)
+    
+    organizer = f"CN={organizer_name}:mailto:{organizer_email}"
+    event.add('organizer', organizer)    
+    
+    cal.add_component(event)
+    return cal.to_ical()
+
+def send_email_with_calendar_attachment(recipient_email, subject, body, ical_content):
+    email_sender = os.environ.get('EMAIL_SENDER')
+    smtp_host = os.environ.get('SMTP_HOST')
+    smtp_port = int(os.environ.get('SMTP_PORT'))
+    smtp_username = os.environ.get('SMTP_USERNAME')
+    smtp_password = os.environ.get('SMTP_PASSWORD')
+    context = ssl.create_default_context()
+    try:
+        with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context) as smtp:
+            smtp.login(smtp_username, smtp_password)
+            msg = MIMEMultipart()
+            msg['From'] = email_sender
+            msg['To'] = recipient_email
+            msg['Subject'] = subject
+            msg.attach(MIMEText(body, 'html'))
+            ical_part = MIMEBase('text', 'calendar', method='REQUEST', name='invite.ics')
+            ical_part.set_payload(ical_content)
+            encoders.encode_base64(ical_part)
+            ical_part.add_header('Content-Disposition', 'attachment; filename="invite.ics"')
+            msg.attach(ical_part)
+            smtp.send_message(msg)
+            print(f"Email with calendar invite sent successfully to {recipient_email}")
+            return True
+    except smtplib.SMTPAuthenticationError:
+        print("Authentication failed. Please check your email and password.")
+    except smtplib.SMTPException as e:
+        print(f"SMTP error occurred: {str(e)}")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+    return False
+
+def send_email_with_calendar_invite(recipient_email, start_time, end_time, organizer_name, organizer_email):
+    subject = "Interview Invitation"
+    summary = f"Interview with {organizer_name}"
+    location = "Zoom (Online)"
+    
+    # start_time and end_time to be in UTF-8 format
+    formatted_date = start_time.strftime("%A, %B %d, %Y")
+    formatted_start_time = start_time.strftime("%I:%M %p")
+    formatted_end_time = end_time.strftime("%I:%M %p")
+    
+    body = f"""
+    <html>
+    <body>
+    <p>Dear Candidate,</p>
+    <p>We are pleased to invite you for an interview with {organizer_name}. We look forward to discussing your qualifications and experience.</p>
+    <p><strong>Interview Details:</strong></p>
+    <ul>
+        <li>Date: {formatted_date}</li>
+        <li>Time: {formatted_start_time} - {formatted_end_time}</li>
+        <li>Location: Zoom (Online)</li>
+        <li>Organizer: {organizer_name}</li>
+    </ul>
+    <p>A calendar invite is attached to this email for your convenience.</p>
+    <p>If you need to reschedule or have any questions, please don't hesitate to contact us.</p>
+    <p>We look forward to meeting you!</p>
+    <p>Best regards,<br>{organizer_name}</p>
+    </body>
+    </html>
+    """
+    
+    description = f"Interview invitation for {formatted_date} from {formatted_start_time} to {formatted_end_time}. Location: Zoom (Online)"
+    
+    ical_content = create_icalendar_event(summary, description, start_time, end_time, location, organizer_name, organizer_email)
+    return send_email_with_calendar_attachment(recipient_email, subject, body, ical_content)
