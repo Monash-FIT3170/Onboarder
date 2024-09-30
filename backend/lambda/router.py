@@ -1,6 +1,7 @@
 import controller
 from typing import Callable
 import json
+from datetime import datetime, timedelta
 
 routes = dict()
 
@@ -68,6 +69,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
 @route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/send-interview-join-email', ['OPTIONS'])
 @route('/decrypt/{id}', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
@@ -1043,6 +1045,81 @@ def send_email(path_params={}, querystring_params={}, body={}):
             'headers': HEADERS
         }
         return response
+
+@route('/send-interview-join-email', ['POST'])
+def send_interview_join_email(path_params={}, querystring_params={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        data = json.loads(body) if isinstance(body, str) else body
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+    
+    required_fields = ['interview_start_time', 'applicant_email', 'organizer_name', 'organizer_email']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'headers': HEADERS
+        }
+    
+    try:
+        interview_start_time = data['interview_start_time']
+        applicant_email = data['applicant_email']
+        organizer_name = data['organizer_name']
+        organizer_email = data['organizer_email']
+        # Parse the UTC timestamp
+        start_time = datetime.strptime(interview_start_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+        
+        # Interview duration set to 30 mins
+        end_time = start_time + timedelta(minutes=30)
+        result = controller.send_email_with_calendar_invite(applicant_email, start_time, end_time, organizer_name, organizer_email)
+        if result:
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'success': True,
+                    'msg': 'Interview join email sent successfully',
+                }),
+                'headers': HEADERS
+            }
+        else:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({
+                    'success': False,
+                    'error': 'Failed to send interview join email'
+                }),
+                'headers': HEADERS
+            }
+    except ValueError as ve:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({
+                'success': False,
+                'error': f'Invalid data: {str(ve)}'
+            }),
+            'headers': HEADERS
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({
+                'success': False,
+                'error': f'An error occurred while sending interview join email: {str(e)}'
+            }),
+            'headers': HEADERS
+        }
 
 
 @route('/decrypt/{id}', ['GET'])
