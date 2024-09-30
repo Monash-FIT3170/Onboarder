@@ -101,10 +101,16 @@ function ViewOpenPage() {
   // }, [applications, sortColumn, sortDirection]);
 
   // Placeholder function for handling the sort
-  const handleSort = (column) => {
-    const isAsc = sortColumn === column && sortDirection === "asc";
-    setSortDirection(isAsc ? "desc" : "asc");
-    setSortColumn(column);
+  // const handleSort = (column) => {
+  //   const isAsc = sortColumn === column && sortDirection === "asc";
+  //   setSortDirection(isAsc ? "desc" : "asc");
+  //   setSortColumn(column);
+  // };
+
+  // Function to clear the selected opening and navigate back
+  const handleBack = () => {
+    clearSelectedOpening();
+    navigate("/recruitment-details-page");
   };
 
   const handleViewApplication = (applicationId: number) => {
