@@ -47,7 +47,7 @@ const styles = {
 };
 
 const AddRecruitmentRoundPage = () => {
-  const [deadline, setDeadline] = useState(DateTime.now());
+  const [deadline, setDeadline] = useState<DateTime | null>(DateTime.now());
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
   const [open, setOpen] = useState(false);
@@ -61,14 +61,20 @@ const AddRecruitmentRoundPage = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    if (!deadline || !semester || !year || year.length <= 0) {
+    if (
+      !deadline ||
+      !semester ||
+      !year ||
+      year.length <= 0 ||
+      !DateTime.isDateTime(deadline)
+    ) {
       alert("Please fill in all fields");
       return;
     }
     setLoading(true);
     try {
       const response = await axios.post(API_URL, {
-        deadline: deadline.toString(),
+        deadline: deadline.toISO(),
         semester: semester,
         year: year,
         status: "I",
