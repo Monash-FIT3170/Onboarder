@@ -1,14 +1,87 @@
 import json
+import os
 from datetime import datetime, timedelta
 from minizinc import Instance, Model, Solver
-import boto3
+from supabase import create_client, Client
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+
 
 def lambda_handler(event, context):
-    # Parse input
-    interviewer_availabilities = json.loads(event['interviewer_availabilities'])
-    interviewee_availabilities = json.loads(event['interviewee_availabilities'])
-    interview_duration_minutes = event.get('interview_duration_minutes', 60)
+    # Extract opening_id from SQS event
+    sqs_message = json.loads(event['Records'][0]['body'])
+    opening_id = sqs_message['opening_id']
 
+    # Fetch opening details and availabilities from database
+    set_opening_status(opening_id, 'I')
+    interviewers, interviewer_availabilities = get_interviewer_availabilities(opening_id)
+    interviewees, interviewee_availabilities = get_interviewee_availabilities(opening_id)
+    interview_duration_minutes = get_interview_length(opening_id)
+
+    # Solve the scheduling problem
+    schedule = solve_scheduling_problem(
+        interviewer_availabilities,
+        interviewee_availabilities,
+        interview_duration_minutes
+    )
+    records = process_schedule_for_db(schedule, interviewers, interviewees)
+
+    # Write the schedule to database
+    write_schedule_to_db(opening_id, records)
+    set_opening_status(opening_id, 'S')
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"message": "Scheduling completed successfully"})
+    }
+
+
+# POTENTIALLY THIS IS DONE IN API
+def set_opening_status(opening_id, status):
+    data = {'interview_allocation_status': status}
+    response = supabase.table('OPENING').update(data).eq('id', opening_id).execute()
+    return response.data[0] if response.data else None
+
+def get_interview_length(opening_id):
+    # response = supabase.table('RECRUITMENT_ROUND').select('interview_period')
+    return 30
+
+def get_interviewee_availabilities(opening_id):
+    response = supabase.table('APPLICATION').select('id, candidate_availability').eq('opening_id', opening_id).execute()
+    return [item['id'] for item in response.data], [item['candidate_availability'] for item in response.data]
+
+def get_interviewer_availabilities(opening_id):
+    response = supabase.table('PROFILE') \
+        .select('id, interview_availability') \
+        .join("TEAM_LEAD_ASSIGNMENT", "TEAM_LEAD_ASSIGNMENT.profile_id", "PROFILE.id") \
+        .eq('TEAM_LEAD_ASSIGNMENT.opening_id', opening_id) \
+        .execute()
+    return [item['id'] for item in response.data], [item['interview_availability'] for item in response.data]
+
+def write_schedule_to_db(opening_id, records):
+    for item in records:
+        supabase.table('APPLICATION').insert({
+            'application_id': opening_id,
+            'interview_date': item['interview_date'],
+            'interviewer_id': item['interviewer_id']
+        }).execute()
+
+
+def process_schedule_for_db(schedule, interviewers, interviewees):
+    records = []
+    for interview in schedule:
+        records.append(
+            {
+                'application_id': interviewees[interview['interviewee_index']],
+                'interview_date': interview['interview_time'],
+                'interviewer_id': interviewers[interview['interviewer_index']],
+            }
+        )
+
+
+def solve_scheduling_problem(interviewer_availabilities, interviewee_availabilities, interview_duration_minutes):
     # Process availabilities
     all_availabilities = interviewer_availabilities + interviewee_availabilities
     time_slots, availability_matrix = process_availabilities(all_availabilities, interview_duration_minutes)
@@ -63,13 +136,13 @@ def lambda_handler(event, context):
     var int: load_difference = max_load - min_load;
 
     % Multi-objective optimization
-    solve maximize total_interviews - load_difference;
+    solve maximize total_interviews * 100 - load_difference;
     """
 
     # Set up and solve MiniZinc model
     model = Model()
     model.add_string(mzn_model)
-    solver = Solver.lookup("chuffed")
+    solver = Solver.lookup("cbc")
     instance = Instance(solver, model)
 
     instance["n_interviewers"] = n_interviewers
@@ -104,10 +177,7 @@ def lambda_handler(event, context):
             "interviewer_index": interviewer_index
         })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(schedule)
-    }
+    return schedule
 
 def process_availabilities(availabilities, interview_duration_minutes):
     all_times = set()
@@ -116,9 +186,9 @@ def process_availabilities(availabilities, interview_duration_minutes):
             start = datetime.fromisoformat(slot['start'].replace('Z', '+00:00'))
             end = datetime.fromisoformat(slot['end'].replace('Z', '+00:00'))
             current = start
-            while current < end:
+            while current <= end - timedelta(minutes = interview_duration_minutes):
                 all_times.add(current)
-                current += timedelta(minutes=30)
+                current += timedelta(minutes=15)
 
     time_slots = sorted(list(all_times))
     n_slots = len(time_slots)
@@ -136,18 +206,8 @@ def process_availabilities(availabilities, interview_duration_minutes):
 
     return time_slots, availability_matrix
 
-# for local testing
-if __name__ == "__main__":
-    # sample event for testing
-    test_event = {
-        "interviewer_availabilities": json.dumps([
-            '[{"start": "2024-08-26T16:30:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"}]',
-            '[{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'
-        ]),
-        "interviewee_availabilities": json.dumps([
-            '[{"start": "2024-08-26T16:30:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"}]',
-            '[{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'
-        ]),
-        "interview_duration_minutes": 60
-    }
-    print(lambda_handler(test_event, None))
+if __name__=="__main__":
+    int1 = ['[{"start": "2024-08-26T16:15:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"},{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'] * 10
+    int2 = ['[{"start": "2024-08-26T16:30:00.000Z", "end": "2024-08-27T00:00:00.000Z", "title": "Available Slot"},{"start": "2024-08-25T17:30:00.000Z", "end": "2024-08-25T18:00:00.000Z", "title": "Available Slot"}]'] * 30
+    minutes = 30
+    print(solve_scheduling_problem(int1, int2, minutes))
