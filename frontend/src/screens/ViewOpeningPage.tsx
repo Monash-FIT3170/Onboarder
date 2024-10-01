@@ -274,7 +274,7 @@ function ViewOpenPage() {
         <TextField
           style={{ width: "25%" }}
           variant="outlined"
-          placeholder="Round Name, Deadline, etc..."
+          placeholder="Round Name, ApplicationDeadline, etc..."
           size="small"
           label="Search"
           fullWidth

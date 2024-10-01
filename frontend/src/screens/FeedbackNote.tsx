@@ -38,7 +38,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 interface ResultProps {
   id: number;
-  opening_id: number; // assuming deadline is a date in string format
+  opening_id: number; // assuming application_deadline is a date in string format
   email: string;
   name: string;
   phone: string;

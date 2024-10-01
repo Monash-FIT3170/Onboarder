@@ -127,7 +127,7 @@ function CreateOpeningPage() {
                     variant="subtitle1"
                     style={{ fontWeight: "bold" }}
                   >
-                    Deadline
+                    ApplicationDeadline
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -138,7 +138,7 @@ function CreateOpeningPage() {
                   {team_name} {recruitmentDetails.roundId}
                 </TableCell>
                 <TableCell style={{ borderBottom: "none" }}>
-                  {formatDeadline(recruitmentDetails.roundDeadline)}
+                  {formatDeadline(recruitmentDetails.roundApplicationDeadline)}
                 </TableCell>
               </TableRow>
             </TableBody>

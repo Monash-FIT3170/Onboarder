@@ -30,7 +30,7 @@ export interface applicantOpeningResultProps {
   desired_skills: string[];
   application_count: number;
   applications_pending_review: number;
-  recruitment_round_deadline: string;
+  recruitment_round_application_deadline: string;
   student_team_description: string;
   owner_email: string;
   opening_status: string;
@@ -81,7 +81,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
   ) => {
     return results.map((result) => {
       const formattedDeadline = (() => {
-        const date = new Date(result.recruitment_round_deadline);
+        const date = new Date(result.recruitment_round_application_deadline);
         const day = String(date.getDate()).padStart(2, "0"); // Ensure 2 digits
         const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
         const year = date.getFullYear();
@@ -130,7 +130,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           <TableHead>
             <TableRow>
               <TableCell> Opening Name </TableCell>
-              <TableCell> Deadline </TableCell>
+              <TableCell> Application Deadline </TableCell>
               <TableCell> Student Team </TableCell>
               <TableCell> Semester </TableCell>
               <TableCell> Year </TableCell>

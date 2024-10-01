@@ -21,7 +21,7 @@ import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 
 const AddRecruitmentRoundPage = () => {
-  const [deadline, setDeadline] = useState(DateTime.now());
+  const [application_deadline, setApplicationDeadline] = useState(DateTime.now());
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
   const [open, setOpen] = useState(false);
@@ -35,14 +35,14 @@ const AddRecruitmentRoundPage = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    if (!deadline || !semester || !year || year.length <= 0) {
+    if (!application_deadline || !semester || !year || year.length <= 0) {
       alert("Please fill in all fields");
       return;
     }
     setLoading(true);
     try {
       const response = await axios.post(API_URL, {
-        deadline: deadline.toString(),
+        application_deadline: application_deadline.toString(),
         semester: semester,
         year: year,
         status: "I",
@@ -120,7 +120,7 @@ const AddRecruitmentRoundPage = () => {
               justifyContent="flex-start"
             >
               <Grid item>
-                <h1 style={{ fontWeight: "normal" }}>Deadline:</h1>
+                <h1 style={{ fontWeight: "normal" }}>Application Deadline:</h1>
               </Grid>
             </Grid>
           </Grid>
@@ -138,10 +138,10 @@ const AddRecruitmentRoundPage = () => {
                 >
                   <DateTimePicker
                     label="Date Picker"
-                    value={deadline}
+                    value={application_deadline}
                     onChange={(newValue) => {
                       if (newValue) {
-                        setDeadline(newValue);
+                        setApplicationDeadline(newValue);
                       }
                     }}
                     defaultValue={DateTime.now()}
@@ -244,7 +244,7 @@ const AddRecruitmentRoundPage = () => {
           <Button
             onClick={() => {
               setOpen(false);
-              setDeadline(DateTime.now()), setSemester(""), setYear("");
+              setApplicationDeadline(DateTime.now()), setSemester(""), setYear("");
             }}
           >
             CREATE MORE ROUNDS

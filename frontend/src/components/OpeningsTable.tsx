@@ -16,7 +16,7 @@ export interface openingsResultProps {
   recruitment_round_id: number;
   recruitment_round_year: number;
   recruitment_round_semester: string;
-  deadline: string;
+  application_deadline: string;
   student_team_id: number;
   student_team_name: string;
   title: string;

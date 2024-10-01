@@ -17,7 +17,7 @@ export interface archiveOpeningResultProps {
   recruitment_round_id: number;
   recruitment_round_year: number;
   recruitment_round_semester: string;
-  deadline: string;
+  application_deadline: string;
   student_team_id: number;
   student_team_name: string;
   title: string;
@@ -43,7 +43,7 @@ const generateRowFunction = (results: archiveOpeningResultProps[]) => {
         <TableCell component="th" scope="row">
           {result.title}
         </TableCell>
-        <TableCell>{formatDeadline(result.deadline)}</TableCell>
+        <TableCell>{formatDeadline(result.application_deadline)}</TableCell>
         <TableCell>{result.student_team_name}</TableCell>
         <TableCell>{result.recruitment_round_semester}</TableCell>
         <TableCell>{result.recruitment_round_year}</TableCell>
@@ -62,7 +62,7 @@ export function ArchiveAdminOpeningsTable(props: adminOpeningTableProps) {
         <Table aria-label="openings_table">
           <TableHead>
             <TableCell> Opening Name </TableCell>
-            <TableCell> Deadline </TableCell>
+            <TableCell> Application Deadline </TableCell>
             <TableCell> Status </TableCell>
             <TableCell> Semester </TableCell>
             <TableCell> Opening </TableCell>

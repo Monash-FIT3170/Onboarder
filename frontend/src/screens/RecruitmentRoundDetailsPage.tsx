@@ -152,7 +152,7 @@ function RecruitmentRoundDetailsPage() {
   const handleAddOpening = () => {
     setRecruitmentDetails({
       roundId: recruitmentDetails.roundId,
-      roundDeadline: rounds[0].deadline,
+      roundApplicationDeadline: rounds[0].application_deadline,
       roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id,
       roundStatus: rounds[0]?.status,
     });

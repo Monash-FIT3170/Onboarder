@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface RecruitmentDetails {
   roundId: number | null;
-  roundDeadline: string | null;
+  roundApplicationDeadline: string | null;
   roundName: string | null;
   roundStatus: string | null;
 }
@@ -16,7 +16,7 @@ interface RecruitmentStore {
 export const useRecruitmentStore = create<RecruitmentStore>((set) => ({
   recruitmentDetails: {
     roundId: null,
-    roundDeadline: null,
+    roundApplicationDeadline: null,
     roundName: null,
     roundStatus: null,
   },
@@ -25,7 +25,7 @@ export const useRecruitmentStore = create<RecruitmentStore>((set) => ({
     set({
       recruitmentDetails: {
         roundId: null,
-        roundDeadline: null,
+        roundApplicationDeadline: null,
         roundName: null,
         roundStatus: null,
       },

@@ -159,12 +159,14 @@ def get_all_recruitment_rounds():
     response = supabase.table("rec_rounds_with_openings_count").select("*").execute()
     return response.data
 
-def create_recruitment_round(student_team_id, semester, year, deadline, status):
+def create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period,status):
     response = supabase.table("RECRUITMENT_ROUND").insert({
         "student_team_id": student_team_id,
         "semester": semester,
         "year": year,
-        "deadline": deadline,
+        "application_deadline": application_deadline,
+        "interview_preference_deadline": interview_preference_deadline,
+        "interview_period": interview_period
         "status": status
     }).execute()
 

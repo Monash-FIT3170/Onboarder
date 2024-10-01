@@ -187,7 +187,7 @@ Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure.
 The `WEBSITE_URL` is used in controller.py
 For development, it is the local URL given by VITE when you run `npm run dev`
 
-## Setup Instructions
+  ## Setup Instructions
 
 ### Front-end Setup
 
