@@ -135,7 +135,7 @@ def solve_scheduling_problem(interviewer_availabilities, interviewee_availabilit
             prob += pulp.lpSum(interview_scheduled[i, j, t] 
                                for j in range(n_interviewees)) <= 1
 
-    interview_length = interview_duration_minutes // 30  # Assuming 30-minute slots
+    interview_length = interview_duration_minutes // 15  # Assuming 15-minute slots
     for i in range(n_interviewers):
         for j in range(n_interviewees):
             for t in range(n_timeslots - interview_length + 1):
@@ -179,7 +179,7 @@ def process_availabilities(availabilities, interview_duration_minutes):
             current = start
             while current <= end - timedelta(minutes = interview_duration_minutes):
                 all_times.add(current)
-                current += timedelta(minutes=15)
+                current += timedelta(minutes=15) # Assuming 15-minute slots
 
     time_slots = sorted(list(all_times))
     n_slots = len(time_slots)
