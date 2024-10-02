@@ -21,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import { smtpexpressClient } from "../../../backend/lambda/tests";
+
 const TitleWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -28,9 +30,11 @@ const TitleWrapper = styled.div`
   align-items: center;
   gap: 50px;
 `;
+
 const PaddingBox = styled.div`
   margin-bottom: 30px;
 `;
+
 export interface SingleApplicationProps {
   id: number;
   opening_id: number;
@@ -47,8 +51,15 @@ export interface SingleApplicationProps {
   created_at: string;
   interview_date: string;
   candidate_availability: string;
-  profile_id: number;
+  profile_id: string;
 }
+
+export interface Interview {
+  email: string; // Applicant email
+  profile_id: number; // Interviewer ID
+  interview_date: Date;
+}
+
 const ViewInterviewAllocation = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -62,6 +73,7 @@ const ViewInterviewAllocation = () => {
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
+
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
@@ -93,11 +105,13 @@ const ViewInterviewAllocation = () => {
       </TableRow>
     ));
   };
+
   useEffect(() => {
     if (!selectedOpening) {
       navigate("/viewopen");
       return;
     }
+
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
@@ -111,8 +125,10 @@ const ViewInterviewAllocation = () => {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [selectedOpening, navigate]);
+
   // const handleBack = () => {
   //     clearSelectedOpening();
   //     navigate("/viewopen");
@@ -123,10 +139,12 @@ const ViewInterviewAllocation = () => {
   const interviewNotScheduledCount = applications.filter(
     (app) => !app.candidate_availability,
   ).length;
+
   const respond = () => {
     // clearSelectedOpening();
     navigate("/viewopen");
   };
+
   const handleScheduleInterview = async () => {
     //  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
     //    setLoading(true);
@@ -142,17 +160,70 @@ const ViewInterviewAllocation = () => {
     //         setError(err.message || "An error occurred while scheduling interviews");
     //     }
   };
+
+  //const send_single_invite =
+
   // NEXT SPRINT BUTTON
-  const handleSendInvite = async () => {
-    const candidates = applications
-      .filter((app) => app.interview_date !== null)
-      .map((app) => [app.email, app.profile_id, app.interview_date]);
+  const handleSendInvite = async (e: any) => {
+    // TODO when you click send invites button, loop through applications and select all emails where date is not null
+    const invitees_interviewers = applications
+      .filter((value) => value.interview_date !== null)
+      .map((value) => [value.email, value.profile_id]);
+    // FOR TESTING
+    const tester_invitee = invitees.filter(
+      (value) => value == "nhuy0018@student.monash.edu",
+    );
 
-    // Code for getting interviewer email from profile_id
+    const loading = useState(false);
+    const eventTitle = useState("");
+    const [email, setEmail] = useState("");
+    const [startDateInvite, setStartDateInvite] = useState("");
+    const [endDateInvite, setEndDateInvite] = useState("");
+    const [location, setLocation] = useState("");
+    const [url, setUrl] = useState("");
+    const [meetingLocation, setMeetingLocation] = useState("");
+    const [description, setDescription] = useState("");
 
-    // For each interview - Candidate Email, Team Lead Email(s), Interview Date/Time (UTF8).
-    // Add description
+    // YOUR CODE HERE (call component)
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await smtpexpressClient.sendApi.sendMail({
+        subject: "Calender Invite",
+        message: "Please find the attached calendar invite.",
+        sender: {
+          email: tester_invitee.email,
+          name: "Khang", // Full name of the sender for personalization
+        },
+        recipients: {
+          email: email,
+          // name: "John Doe", // name of the recipient for personalization
+        },
+        calendarEvent: {
+          title: eventTitle,
+          startDate: startDateInvite,
+          endDate: endDateInvite,
+          organizer: "alex.johnson@company.com", //  use the email of the event organizer
+          location: location === "remote",
+          url: url, // meeting link
+          description: description,
+        },
+      });
+
+      // Notify user of successful submission
+      alert("Please check your email to view the sent message");
+      setLoading(false);
+
+      // clear your form fields.
+    } catch (error) {
+      console.log(error);
+      alert("Oops! Something went wrong. Please try again later.");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <>
       <TitleWrapper>
@@ -171,24 +242,26 @@ const ViewInterviewAllocation = () => {
         <Box display="flex" alignItems="center">
           <Button
             variant="contained"
-            onClick={handleScheduleInterview}
-            disabled={loading}
-            style={{ marginLeft: "1rem" }}
-          >
-            {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
-          </Button>
-          <Button
-            variant="contained"
             onClick={handleSendInvite}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
           >
             {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
           </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleScheduleInterview}
+            disabled={loading}
+            style={{ marginLeft: "1rem" }}
+          >
+            {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
+          </Button>
         </Box>
       </Box>
       <PaddingBox>
         <PaddingBox></PaddingBox>
+
         <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableRow>
@@ -214,6 +287,7 @@ const ViewInterviewAllocation = () => {
           onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
         />
       </PaddingBox>
+
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
@@ -255,4 +329,5 @@ const ViewInterviewAllocation = () => {
     </>
   );
 };
+
 export default ViewInterviewAllocation;
