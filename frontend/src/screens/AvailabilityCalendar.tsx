@@ -44,13 +44,14 @@ const AvailabilityCalendar: React.FC = () => {
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
   const [applicationId, setApplicationId] = useState(null);
+  const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] = useState(null);
   const BASE_API_URL = getBaseAPIURL();
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
 
   // First Ill set an arbitrary cutoff day, for example today
-  const cutoffDate = new Date("2024-09-30");
+  const cutoffDate = new Date(interviewPreferenceDeadline);
 
   // Function to handle the selection of a new time slot in the calendar
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
@@ -127,7 +128,8 @@ const AvailabilityCalendar: React.FC = () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
 
-        const { candidate_availability, decrypted_id } = response.data.data;
+        const { candidate_availability, decrypted_id, interview_preference_deadline } = response.data.data;
+        setInterviewPreferenceDeadline(interview_preference_deadline);
         setApplicationId(decrypted_id);
 
         const parsedData = candidate_availability.map((event: Event) => {
