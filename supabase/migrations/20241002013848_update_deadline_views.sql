@@ -46,7 +46,6 @@ SELECT
     st.name AS student_team_name,
     st.description AS student_team_description,
     p.email AS owner_email,
-    rr.deadline AS recruitment_round_deadline,
     rr.application_deadline AS recruitment_round_deadline,
     rr.interview_preference_deadline  AS recruitment_round_interview_preference_deadline,
     rr.interview_period AS recruitment_round_interview_period,

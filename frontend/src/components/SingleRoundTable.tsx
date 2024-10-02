@@ -34,7 +34,7 @@ const generateTableRows = (results: SingleRoundResultProps[]) => {
       <TableCell>
         {formatDeadline(result.interview_preference_deadline)}
       </TableCell>
-      <TableCell>{formatDeadline(result.interview_period)}</TableCell>
+      <TableCell>{result.interview_period}</TableCell>
       <TableCell>{result.semester}</TableCell>
       <TableCell>{getStatusText(result.status)}</TableCell>
       <TableCell align="center">{result.openings_count}</TableCell>
