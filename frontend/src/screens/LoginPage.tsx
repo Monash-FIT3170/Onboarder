@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google", // You can replace this with your Monash SSO logic if available
         options: {
-          redirectTo: "http://localhost:5173/login",
+          redirectTo: "http://127.0.0.1:5173/login",
         },
       });
 
@@ -153,7 +153,10 @@ const LoginPage: React.FC = () => {
         )}
       </FormSection>
       <ImageSection>
-      <CoverImage src={darkMode ? loginImageDark : loginImageLight} alt="Login illustration" />
+        <CoverImage
+          src={darkMode ? loginImageDark : loginImageLight}
+          alt="Login illustration"
+        />
       </ImageSection>
     </FlexContainer>
   );
