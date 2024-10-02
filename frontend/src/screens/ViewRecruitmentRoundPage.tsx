@@ -93,7 +93,10 @@ const ViewRecruitmentRoundPage = () => {
     setRecruitmentDetails({
       roundId: id,
       roundApplicationDeadline: null,
+      roundInterviewPreferenceDeadline: null,
+      roundInterviewPeriod: null,
       roundName: null,
+      roundStatus: null,
     });
     navigate("/recruitment-details-page");
   };

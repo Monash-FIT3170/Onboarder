@@ -13,6 +13,8 @@ import { formatDeadline, getStatusText } from "../util/Util";
 export interface SingleRoundResultProps {
   id: number;
   application_deadline: string; // assuming application_deadline is a date in string format
+  interview_preference_deadline: string; // assuming interview_preference_deadline is a date in string format
+  interview_period: string; // assuming interview_period is a date in string format
   semester: number;
   year: number;
   student_team_id: number;
@@ -29,6 +31,10 @@ const generateTableRows = (results: SingleRoundResultProps[]) => {
   return results.map((result) => (
     <TableRow key={result.id}>
       <TableCell>{formatDeadline(result.application_deadline)}</TableCell>
+      <TableCell>
+        {formatDeadline(result.interview_preference_deadline)}
+      </TableCell>
+      <TableCell>{formatDeadline(result.interview_period)}</TableCell>
       <TableCell>{result.semester}</TableCell>
       <TableCell>{getStatusText(result.status)}</TableCell>
       <TableCell align="center">{result.openings_count}</TableCell>
@@ -46,6 +52,8 @@ export const SingleRoundTable: React.FC<SingleRoundTableProps> = (
           <TableHead>
             <TableRow>
               <TableCell>Application Deadline</TableCell>
+              <TableCell>Interview Preference Deadline</TableCell>
+              <TableCell>Interview Period</TableCell>
               <TableCell>Semester</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="center">Openings</TableCell>
