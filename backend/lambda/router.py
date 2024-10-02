@@ -69,6 +69,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/application/{applicationId}', ['OPTIONS'])
 @route('/send-interview-emails/{openingId}', ['OPTIONS'])
 @route('/decrypt/{id}', ['OPTIONS'])
+@route('/opening/{openingId}/schedule_interviews', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -1063,3 +1064,17 @@ def decrypt_id(path_params={}, _={}, __={}):
     }
     return response
 
+
+@route('/opening/{openingId}/schedule_interviews', ['POST'])
+def schedule_interviews(path_params={}, _={}, body={}):
+    opening_id = path_params.get('openingId')
+    
+    controller.schedule_interviews(opening_id)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+        }),
+        'headers': HEADERS
+    }

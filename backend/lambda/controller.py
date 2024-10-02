@@ -5,6 +5,8 @@ import ssl
 from email.message import EmailMessage
 from cryptography.fernet import Fernet # type: ignore
 
+import sqs
+
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
@@ -152,6 +154,10 @@ def delete_opening(opening_id):
     response = supabase.table("OPENING").delete().eq("id", opening_id).execute()
     return response.data
 
+def schedule_interviews(opening_id):
+    body = {'opening_id': opening_id}
+    sqs.post(body)
+    
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
 
