@@ -94,9 +94,29 @@ function AppBarOnBoarder() {
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Onboarding: Recruitment Platform
+            Onboarder: Recruitment Platform
           </Typography>
-
+          {isProtectedRoute && !isDashboard && team_name && role && (
+            <Typography variant="body2" component="div" sx={{ marginRight: 2 }}>
+              <Typography variant="body2" component={"span"}>
+                Viewing Team:
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                {" "}
+                {team_name}
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                &nbsp;
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                as:
+              </Typography>
+              <Typography variant="body2" component={"span"}>
+                {" "}
+                {role}
+              </Typography>
+            </Typography>
+          )}
           {user && (
             <>
               <Button
