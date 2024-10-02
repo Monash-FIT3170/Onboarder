@@ -27,20 +27,17 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
-// const TitleWrap = styled.div`
-//   margin: auto;
-//   text-align: center;
-// `;
+
 const AddRecruitmentRoundPage = () => {
   const [application_deadline, setApplicationDeadline] = useState(
     DateTime.now(),
   );
   const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] =
     useState(DateTime.now());
-  const [interviewPeriod, setInterviewPeriod] = useState([
+  const [interviewPeriodStart, setInterviewPeriodStart] = useState(
     DateTime.now(),
-    DateTime.now(),
-  ]);
+  );
+  const [interviewPeriodEnd, setInterviewPeriodEnd] = useState(DateTime.now());
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
   const [open, setOpen] = useState(false);
@@ -50,8 +47,9 @@ const AddRecruitmentRoundPage = () => {
   const navigate = useNavigate();
   const authStore = useAuthStore();
   const studentTeamId = authStore.team_id;
+  const studentTeamName = authStore.team_name;
   const BASE_API_URL = getBaseAPIURL();
-  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round/`; // Working
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round/`;
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -61,7 +59,8 @@ const AddRecruitmentRoundPage = () => {
       !year ||
       year.length <= 0 ||
       !interviewPreferenceDeadline ||
-      !interviewPeriod
+      !interviewPeriodStart ||
+      !interviewPeriodEnd
     ) {
       alert("Please fill in all fields");
       return;
@@ -72,7 +71,10 @@ const AddRecruitmentRoundPage = () => {
       const response = await axios.post(API_URL, {
         application_deadline: application_deadline.toString(),
         interview_preference_deadline: interviewPreferenceDeadline.toString(),
-        interview_period: interviewPeriod.map((date) => date?.toString()),
+        interview_period: [
+          interviewPeriodStart.toString(),
+          interviewPeriodEnd.toString(),
+        ],
         semester: semester,
         year: year,
         status: "I",
@@ -98,12 +100,12 @@ const AddRecruitmentRoundPage = () => {
   return (
     <div>
       <main>
-        <h1 style={{ textAlign: "center", fontSize: "4em", fontWeight: "100" }}>
+        <h1 style={{ textAlign: "center", fontSize: "3em", fontWeight: "75" }}>
           Create Recruitment Round
         </h1>
       </main>
       <form onSubmit={handleSubmit}>
-        <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+        <TableContainer component={Paper} sx={{ marginTop: "10px" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -112,7 +114,7 @@ const AddRecruitmentRoundPage = () => {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>w</TableCell>
+                <TableCell>{studentTeamName}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -195,7 +197,7 @@ const AddRecruitmentRoundPage = () => {
 
           <Grid item xs={12} sm={6}>
             <Typography variant="body2" fontSize={20}>
-              Interview Period:
+              Interview Period Start:
             </Typography>
             <LocalizationProvider
               dateAdapter={AdapterLuxon}
@@ -203,20 +205,29 @@ const AddRecruitmentRoundPage = () => {
             >
               <DateTimePicker
                 label="Start Date"
-                value={interviewPeriod[0]}
+                value={interviewPeriodStart}
                 onChange={(newValue) => {
-                  if (newValue)
-                    setInterviewPeriod([newValue, interviewPeriod[1]]);
+                  if (newValue) setInterviewPeriodStart(newValue);
                 }}
                 defaultValue={DateTime.now()}
                 slotProps={{ textField: { fullWidth: true } }}
               />
+            </LocalizationProvider>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" fontSize={20}>
+              Interview Period End:
+            </Typography>
+            <LocalizationProvider
+              dateAdapter={AdapterLuxon}
+              adapterLocale="en-us"
+            >
               <DateTimePicker
                 label="End Date"
-                value={interviewPeriod[1]}
+                value={interviewPeriodEnd}
                 onChange={(newValue) => {
-                  if (newValue)
-                    setInterviewPeriod([interviewPeriod[0], newValue]);
+                  if (newValue) setInterviewPeriodEnd(newValue);
                 }}
                 defaultValue={DateTime.now()}
                 slotProps={{ textField: { fullWidth: true } }}
@@ -270,6 +281,9 @@ const AddRecruitmentRoundPage = () => {
             onClick={() => {
               setOpen(false);
               setApplicationDeadline(DateTime.now()),
+                setInterviewPreferenceDeadline(DateTime.now()),
+                setInterviewPeriodStart(DateTime.now()),
+                setInterviewPeriodEnd(DateTime.now()),
                 setSemester(""),
                 setYear("");
             }}
