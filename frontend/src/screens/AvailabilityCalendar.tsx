@@ -3,7 +3,7 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { DndProvider } from "react-dnd"; // Provides the drag-and-drop context for the calendar
 import { HTML5Backend } from "react-dnd-html5-backend"; // HTML5 backend for react-dnd, handles drag-and-drop interactions
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"; // Higher-order component to enable drag-and-drop on the calendar
-import format from "date-fns/format"; // Utility for formatting dates
+import { format } from "date-fns"; // Utility for formatting dates
 import parse from "date-fns/parse"; // Utility for parsing dates
 import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the start of the week
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
@@ -44,7 +44,8 @@ const AvailabilityCalendar: React.FC = () => {
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
   const [applicationId, setApplicationId] = useState(null);
-  const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] = useState(null);
+  const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] =
+    useState(null);
   const BASE_API_URL = getBaseAPIURL();
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
@@ -127,8 +128,13 @@ const AvailabilityCalendar: React.FC = () => {
     const decryptId = async () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
-
-        const { candidate_availability, decrypted_id, interview_preference_deadline } = response.data.data;
+        console.log(response.data.data);
+        const {
+          candidate_availability,
+          decrypted_id,
+          interview_preference_deadline,
+        } = response.data.data;
+        console.log(interviewPreferenceDeadline);
         setInterviewPreferenceDeadline(interview_preference_deadline);
         setApplicationId(decrypted_id);
 
@@ -159,7 +165,7 @@ const AvailabilityCalendar: React.FC = () => {
       <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
         <h2>Preference submission has closed</h2>
         <p>
-          The deadline for submitting your interview availability has passed.
+          The deadline for submitting was {format(cutoffDate, "dd/MM/yyyy")}.
         </p>
       </div>
     );
@@ -188,7 +194,7 @@ const AvailabilityCalendar: React.FC = () => {
             <h2> Interview Availability Submission</h2>
             <p style={{ maxWidth: "900px", textAlign: "center" }}>
               Select your available slots for the interview process in the next
-              two weeks.
+              two weeks. Deadline: {format(cutoffDate, "dd/MM/yyyy")}
             </p>
           </div>
         </div>
