@@ -18,6 +18,52 @@ Resources:
               Ref: FEApi
             Path: /{proxy+}
             Method: ANY
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt InterviewSchedulerQueue.QueueName
+      Environment:
+        Variables:
+          EMAIL_SENDER: ${env:EMAIL_SENDER}
+          SMTP_HOST: ${env:SMTP_HOST}
+          SMTP_PORT: ${env:SMTP_PORT}
+          SMTP_USERNAME: ${env:SMTP_USERNAME}
+          SMTP_PASSWORD: ${env:SMTP_PASSWORD}
+          SUPABASE_URL: ${env:SUPABASE_URL}
+          SUPABASE_KEY: ${env:SUPABASE_KEY}
+          ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
+          INTERVIEW_SCHEDULER_QUEUE_URL: !Ref InterviewSchedulerQueue
+
+  InterviewSchedulerQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: InterviewSchedulerQueue
+      VisibilityTimeout: 300  # 5 minutes, should match the Lambda timeout
+
+  InterviewSchedulerLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/lambda  # Adjust this path as needed
+      Handler: optimisation.lambda_handler
+      Runtime: python3.12
+      Timeout: 300  # 5 minutes, adjust as needed
+      Environment:
+        Variables:
+          EMAIL_SENDER: ${env:EMAIL_SENDER}
+          SMTP_HOST: ${env:SMTP_HOST}
+          SMTP_PORT: ${env:SMTP_PORT}
+          SMTP_USERNAME: ${env:SMTP_USERNAME}
+          SMTP_PASSWORD: ${env:SMTP_PASSWORD}
+          SUPABASE_URL: ${env:SUPABASE_URL}
+          SUPABASE_KEY: ${env:SUPABASE_KEY}
+          ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt InterviewSchedulerQueue.Arn
+            BatchSize: 1
 
   FEApi:
     Type: AWS::Serverless::Api
@@ -335,6 +381,20 @@ Resources:
                   type: aws_proxy
                   uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             
+            /opening/{openingId}/schedule_interviews:
+              post:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+              options:
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  payloadFormatVersion: "2.0"
+                  type: aws_proxy
+                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
             /opening/{openingId}/team-lead-assign/{profileId}:
               get:
                 x-amazon-apigateway-integration:

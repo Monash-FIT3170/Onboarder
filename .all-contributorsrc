@@ -1,11 +1,15 @@
 {
+  "projectName": "Onboarder",
+  "projectOwner": "Monash-FIT3170",
+  "repoType": "github",
+  "repoHost": "https://github.com",
   "files": [
     "README.md"
   ],
   "imageSize": 100,
   "commit": false,
-  "commitType": "docs",
   "commitConvention": "angular",
+  "contributorsSortAlphabetically": true,
   "contributors": [
     {
       "login": "jcru0005",
@@ -13,7 +17,88 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/62014277?v=4",
       "profile": "https://github.com/jcru0005",
       "contributions": [
-        "code"
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "JesseCr00",
+      "name": "Jesse Cruickshank",
+      "avatar_url": "https://avatars.githubusercontent.com/u/167516726?v=4",
+      "profile": "https://github.com/JesseCr00",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "FahadAssadi",
+      "name": "Fahad Assadi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91127049?v=4",
+      "profile": "https://github.com/FahadAssadi",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "HanifZafari",
+      "name": "hanifzafari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28986046?v=4",
+      "profile": "https://github.com/HanifZafari",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Rahul-Saxena-1",
+      "name": "Rahul-Saxena-1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163801505?v=4",
+      "profile": "https://github.com/Rahul-Saxena-1",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Rahuls525",
+      "name": "Rahuls525",
+      "avatar_url": "https://avatars.githubusercontent.com/u/140256502?v=4",
+      "profile": "https://github.com/Rahuls525",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "umairBinMohammad",
+      "name": "Umair Bin Mohammad",
+      "avatar_url": "https://avatars.githubusercontent.com/u/127007460?v=4",
+      "profile": "https://github.com/umairBinMohammad",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Saxena-Rahul",
+      "name": "Saxena-Rahul",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91989487?v=4",
+      "profile": "https://github.com/Saxena-Rahul",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "TavishiSaxena",
+      "name": "TavishiSaxena",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139798920?v=4",
+      "profile": "https://github.com/TavishiSaxena",
+      "contributions": [
+        "code",
+        "doc"
       ]
     },
     {
@@ -22,14 +107,129 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/140464163?v=4",
       "profile": "https://github.com/ahmadhafiz17",
       "contributions": [
-        "code"
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "ShubhBajpai25",
+      "name": "Shubh Bajpai",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161799525?v=4",
+      "profile": "https://github.com/ShubhBajpai25",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "sai-ramishetty",
+      "name": "sai-ramishetty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163802375?v=4",
+      "profile": "https://github.com/sai-ramishetty",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Khang0018",
+      "name": "Khang0018",
+      "avatar_url": "https://avatars.githubusercontent.com/u/162103344?v=4",
+      "profile": "https://github.com/Khang0018",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "arazzell",
+      "name": "arazzell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58514489?v=4",
+      "profile": "https://github.com/arazzell",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "sairamishetty",
+      "name": "Sai Ashish Ramishetty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/126044967?v=4",
+      "profile": "https://github.com/sairamishetty",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "allcontributors[bot]",
+      "name": "allcontributors[bot]",
+      "avatar_url": "https://avatars.githubusercontent.com/in/23186?v=4",
+      "profile": "https://github.com/apps/allcontributors",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "windneverstops",
+      "name": "Daniel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108613049?v=4",
+      "profile": "https://danielhong.dev/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "brendonPerera",
+      "name": "brendonPerera",
+      "avatar_url": "https://avatars.githubusercontent.com/u/168376672?v=4",
+      "profile": "https://github.com/brendonPerera",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Tavishi11",
+      "name": "Tavishi11",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71335738?v=4",
+      "profile": "https://github.com/Tavishi11",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "ranithsim",
+      "name": "ranithsim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/126638614?v=4",
+      "profile": "https://github.com/ranithsim",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "NgocDuy1234",
+      "name": "NgocDuy1234",
+      "avatar_url": "https://avatars.githubusercontent.com/u/155885179?v=4",
+      "profile": "https://github.com/NgocDuy1234",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "AbBaSaMo",
+      "name": "AbBaSaMo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95030427?v=4",
+      "profile": "https://github.com/AbBaSaMo",
+      "contributions": [
+        "projectManagement"
       ]
     }
   ],
-  "projectName": "Onboarder",
-  "projectOwner": "Monash-FIT3170",
   "contributorsPerLine": 7,
-  "skipCi": true,
-  "repoType": "github",
-  "repoHost": "https://github.com",
+  "linkToUsage": true
 }
