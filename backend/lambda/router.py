@@ -67,7 +67,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/application', ['OPTIONS'])
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
-@route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/send-interview-emails/{openingId}', ['OPTIONS'])  # This is for scheduling availabilities
 @route('/decrypt/{id}', ['OPTIONS'])
 @route('/opening/{openingId}/schedule_interviews', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
