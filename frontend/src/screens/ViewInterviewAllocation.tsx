@@ -21,7 +21,6 @@ import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
-import { smtpexpressClient } from "../../../backend/lambda/tests";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -52,6 +51,15 @@ export interface SingleApplicationProps {
   interview_date: string;
   candidate_availability: string;
   profile_id: string;
+  profile: { email: string };
+}
+
+export interface InterviewEventProps {
+  interview_start_time: string;
+  applicant_email: string;
+  interviewers: string[];
+  organizer_name: string;
+  zoom_link: string;
 }
 
 export interface Interview {
@@ -113,11 +121,12 @@ const ViewInterviewAllocation = () => {
     }
 
     const fetchData = async () => {
+      // Get application info
       try {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log(applicationsResponse);
+        console.log(applicationsResponse.data);
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -133,6 +142,7 @@ const ViewInterviewAllocation = () => {
   //     clearSelectedOpening();
   //     navigate("/viewopen");
   // };
+
   const interviewScheduledCount = applications.filter(
     (app) => app.candidate_availability,
   ).length;
@@ -161,57 +171,66 @@ const ViewInterviewAllocation = () => {
     //     }
   };
 
-  //const send_single_invite =
+  // Mapping function
+  const mapToInterviewEventProps = (
+    applications: SingleApplicationProps[],
+  ): InterviewEventProps[] => {
+    return applications.map((application) => {
+      console.log(application);
+      if (
+        !application.interview_date ||
+        !application.email ||
+        !application.profile.email ||
+        !authStore.team_name
+      ) {
+        throw new Error("One or more required fields are null");
+      }
 
-  // NEXT SPRINT BUTTON
+      return {
+        interview_start_time: new Date(application.interview_date)
+          .toISOString()
+          .replace("T", " ")
+          .split(".")[0],
+        applicant_email: application.email,
+        interviewers: [application.profile.email],
+        organizer_name: authStore.team_name,
+        zoom_link: "some_link",
+      };
+    });
+  };
+
+  // Handler functions
+
+  // Send invites to all applicants with interview dates
   const handleSendInvite = async (e: any) => {
-    // TODO when you click send invites button, loop through applications and select all emails where date is not null
-    const invitees_interviewers = applications
-      .filter((value) => value.interview_date !== null)
-      .map((value) => [value.email, value.profile_id]);
-    // FOR TESTING
-    const tester_invitee = invitees.filter(
-      (value) => value == "nhuy0018@student.monash.edu",
+    console.log(applications);
+    const invitees_interviewers = applications.filter(
+      (value) => value.interview_date !== null,
     );
 
-    const loading = useState(false);
-    const eventTitle = useState("");
-    const [email, setEmail] = useState("");
-    const [startDateInvite, setStartDateInvite] = useState("");
-    const [endDateInvite, setEndDateInvite] = useState("");
-    const [location, setLocation] = useState("");
-    const [url, setUrl] = useState("");
-    const [meetingLocation, setMeetingLocation] = useState("");
-    const [description, setDescription] = useState("");
+    // FOR TESTING
+    const tester_invitee = invitees_interviewers.filter(
+      (value) =>
+        value.email == "nhuy0018@student.monash.edu" ||
+        value.email == "jcru0005@student.monash.edu",
+    );
+    console.log("Tester Invitee: ");
+    console.log(tester_invitee);
+    const eventData = mapToInterviewEventProps(tester_invitee);
+    console.log("Event Data: ");
+    console.log(eventData);
 
-    // YOUR CODE HERE (call component)
     e.preventDefault();
     setLoading(true);
     try {
-      await smtpexpressClient.sendApi.sendMail({
-        subject: "Calender Invite",
-        message: "Please find the attached calendar invite.",
-        sender: {
-          email: tester_invitee.email,
-          name: "Khang", // Full name of the sender for personalization
-        },
-        recipients: {
-          email: email,
-          // name: "John Doe", // name of the recipient for personalization
-        },
-        calendarEvent: {
-          title: eventTitle,
-          startDate: startDateInvite,
-          endDate: endDateInvite,
-          organizer: "alex.johnson@company.com", //  use the email of the event organizer
-          location: location === "remote",
-          url: url, // meeting link
-          description: description,
-        },
-      });
-
+      // Call the lambda function
+      const calendarInvitesResponse = await axios.post(
+        `${BASE_API_URL}/create-calendar-events`,
+        eventData,
+      );
+      console.log(calendarInvitesResponse);
       // Notify user of successful submission
-      alert("Please check your email to view the sent message");
+      alert("Google Calendar Invites have been sent to all candidates.");
       setLoading(false);
 
       // clear your form fields.
@@ -222,6 +241,7 @@ const ViewInterviewAllocation = () => {
     } finally {
       setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
