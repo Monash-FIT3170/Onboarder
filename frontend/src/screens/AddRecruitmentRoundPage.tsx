@@ -48,11 +48,11 @@ const AddRecruitmentRoundPage = () => {
         status: "I",
       });
       if (response.status === 201) {
-        console.log(response);
+        // console.log(response);
         setOpen(true);
         setIsSuccessful(true);
       } else {
-        console.log(response);
+        // console.log(response);
         setOpen(true);
         setIsSuccessful(false);
       }

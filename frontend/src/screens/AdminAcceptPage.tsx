@@ -116,10 +116,10 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        console.log(response);
+        // console.log(response);
         setDialogParam("Applicant Accepted!");
       } else {
-        console.log(response);
+        // console.log(response);
         setDialogParam("There was an error accepting the applicant.");
       }
     } catch (error) {
@@ -146,10 +146,10 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        console.log(response);
+        // console.log(response);
         setDialogParam("Applicant Rejected!");
       } else {
-        console.log(response);
+        // console.log(response);
         setDialogParam("There was an error rejecting the applicant.");
       }
     } catch (error) {

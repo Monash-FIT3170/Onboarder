@@ -61,7 +61,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/opening/${openingId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setOpening(res.data);
         })
         .catch((error) => {
@@ -72,7 +72,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/recruitment-round/${roundId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setRound(res.data);
         })
         .catch((error) => {
@@ -128,7 +128,7 @@ function ApplicationSubmissionPage() {
           submissionData,
         )
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           setOpen(true);
           setIsSuccessful(true);
         })

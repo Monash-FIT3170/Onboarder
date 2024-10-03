@@ -108,7 +108,7 @@ const ViewInterviewAllocation = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log(applicationsResponse);
+        // console.log(applicationsResponse);
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);

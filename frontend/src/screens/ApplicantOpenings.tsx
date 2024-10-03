@@ -78,7 +78,7 @@ function RecruitmentRoundDetailsPage() {
   }, []);
 
   const filteredOpenings = openings.filter((opening) => {
-    console.log(opening);
+    // console.log(opening);
     if (openings.length != 0) {
       // filter active
       const searchMatch =
