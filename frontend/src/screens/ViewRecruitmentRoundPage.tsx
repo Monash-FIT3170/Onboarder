@@ -15,6 +15,7 @@ import {
   Skeleton,
   IconButton,
 } from "@mui/material";
+import Modal from "@mui/material/Modal";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -33,7 +34,32 @@ const styles = {
   },
 };
 
+const styleLink = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 700,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 const ViewRecruitmentRoundPage = () => {
+  // Modal Link modify
+  const [loadingLink, setLoadingLink] = useState(false);
+  const [urlLink, setUrlLink] = useState("");
+  const [descriptionLink, setDescriptionLink] = useState("");
+
+  const [openLink, setOpenLink] = React.useState(false);
+  const handleOpenLink = () => setOpenLink(true);
+  const handleCloseLink = () => setOpenLink(false);
+  const handleSubmitLink = async (e: any) => {
+    e.preventDefault();
+    setLoadingLink(true);
+  };
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   enum Status {
@@ -179,6 +205,98 @@ const ViewRecruitmentRoundPage = () => {
                 to="/addrecruitmentround"
                 style={{ textDecoration: "none" }}
               >
+                <Grid>
+                  <Modal
+                    open={openLink}
+                    onClose={handleCloseLink}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={styleLink}>
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h4"
+                        component="h2"
+                        align="center"
+                      >
+                        CONFIGURE INTERVIEW LINK
+                      </Typography>
+                      <Typography id="modal-modal-description" sx={{ mt: 4 }}>
+                        <Grid item xs={30} sm={30} marginLeft={10}>
+                          <Grid
+                            container
+                            spacing={1}
+                            alignItems="center"
+                            justifyContent="flex-start"
+                          >
+                            <Grid item xs={10} sm={10}>
+                              <h3 style={{ fontWeight: "normal" }}>Url:</h3>
+                              <TextField
+                                placeholder="Url Link"
+                                id="outlined-multiline-static"
+                                label="Url link"
+                                fullWidth
+                                variant="filled"
+                                multiline
+                                rows={2}
+                                value={urlLink}
+                                onChange={(e) => setUrlLink(e.target.value)}
+                              />
+                            </Grid>
+                            <Grid item></Grid>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={30} sm={30} marginLeft={10}>
+                          <Grid
+                            container
+                            spacing={1}
+                            alignItems="center"
+                            justifyContent="flex-start"
+                          >
+                            <Grid item xs={10} sm={10}>
+                              <h3 style={{ fontWeight: "normal" }}>
+                                Description:
+                              </h3>
+                              <TextField
+                                id="outlined-multiline-static"
+                                label="Description"
+                                placeholder="Description"
+                                fullWidth
+                                variant="filled"
+                                multiline
+                                rows={2}
+                                value={descriptionLink}
+                                onChange={(e) =>
+                                  setDescriptionLink(e.target.value)
+                                }
+                              />
+                            </Grid>
+                            <Grid item></Grid>
+                          </Grid>
+                        </Grid>
+
+                        <Grid item xs={2} sm={2} mt={4} marginLeft={35}>
+                          <Button
+                            variant="contained"
+                            onClick={handleSubmitLink}
+                          >
+                            Save
+                          </Button>
+                        </Grid>
+                      </Typography>
+                    </Box>
+                  </Modal>
+                </Grid>
+
+                <Link
+                  to=""
+                  style={{ textDecoration: "none", marginRight: "1rem" }}
+                >
+                  <Button variant="contained" onClick={handleOpenLink}>
+                    Configure Interview Link
+                  </Button>
+                </Link>
+
                 <Button variant="contained">ADD ROUND</Button>
               </Link>
             </Grid>
