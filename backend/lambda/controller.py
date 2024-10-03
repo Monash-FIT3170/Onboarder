@@ -640,8 +640,8 @@ def create_interview_event_with_attendees(applicant_emails, interviewer_emails, 
     service = build('calendar', 'v3', credentials=creds)
 
     description = f"""Dear Candidate,
-    \n We are pleased to invite you for an interview with {organizer_name}. We look forward to discussing your qualifications and experience.
-    \n Interview Details:
+    \nWe are pleased to invite you for an interview with {organizer_name}. We look forward to discussing your qualifications and experience.
+    \nInterview Details:
 
     * Location: Online
     * Organizer: {organizer_name}
@@ -649,18 +649,18 @@ def create_interview_event_with_attendees(applicant_emails, interviewer_emails, 
 
     if zoom_link:
         description += f"* Zoom Link: {
-            zoom_link} \n\n    Please use the Zoom link above to join the interview at the scheduled time."
+            zoom_link} \n\n Please use the Zoom link above to join the interview at the scheduled time."
     else:
         description += "The specific link for the online interview will be provided closer to the interview date."
 
     description += f"""
-    \n If you need to reschedule or have any questions, please don't hesitate to contact us on {organizer_email}.
-    \n We look forward to meeting you!
-    \n Best regards,
-    MCAV"""
+    \nIf you need to reschedule or have any questions, please don't hesitate to contact us on {organizer_email}.
+    \nWe look forward to meeting you!
+    \nBest regards,
+    \n{organizer_name}"""
 
     event = {
-        'summary': 'Interview',
+        'summary': 'Student Team Interview',
         'location': 'Online',
         'description': description,
         'start': {
@@ -681,6 +681,9 @@ def create_interview_event_with_attendees(applicant_emails, interviewer_emails, 
                 {'method': 'email', 'minutes': 24 * 60},
                 {'method': 'popup', 'minutes': 10},
             ],
+        },
+        "organizer": {
+            "email": interviewer_emails[0],
         },
     }
 
