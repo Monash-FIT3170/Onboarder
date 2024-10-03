@@ -1,3 +1,4 @@
+import os
 import controller
 from typing import Callable
 import json
@@ -69,7 +70,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
 @route('/send-interview-emails/{openingId}', ['OPTIONS'])
-@route('/send-interview-join-email', ['OPTIONS'])
+@route('/create-calendar-events', ['OPTIONS'])
 @route('/decrypt/{id}', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
@@ -1046,8 +1047,8 @@ def send_email(path_params={}, querystring_params={}, body={}):
         }
         return response
 
-@route('/send-interview-join-email', ['POST'])
-def send_interview_join_email(path_params={}, querystring_params={}, body={}):
+@route('/create-calendar-events', ['POST'])
+def schedule_interviews(path_params={}, querystring_params={}, body={}):
     if not body:
         return {
             'statusCode': 400,
@@ -1064,62 +1065,82 @@ def send_interview_join_email(path_params={}, querystring_params={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['interview_start_time', 'applicant_email', 'organizer_name', 'organizer_email']
-    missing_fields = [field for field in required_fields if field not in data]
-    if missing_fields:
+    if not isinstance(data, list):
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+            'body': json.dumps({'error': 'Request body should be a list of interview details'}),
             'headers': HEADERS
         }
     
-    try:
-        interview_start_time = data['interview_start_time']
-        applicant_email = data['applicant_email']
-        organizer_name = data['organizer_name']
-        organizer_email = data['organizer_email']
-        # Parse the UTC timestamp
-        start_time = datetime.strptime(interview_start_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+    results = []
+    for interview in data:
+        required_fields = ['interview_start_time', 'applicant_email', 'interviewers', 'organizer_name']
+        missing_fields = [field for field in required_fields if field not in interview]
+        if missing_fields:
+            results.append({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            })
+            continue
         
-        # Interview duration set to 30 mins
-        end_time = start_time + timedelta(minutes=30)
-        result = controller.send_email_with_calendar_invite(applicant_email, start_time, end_time, organizer_name, organizer_email)
-        if result:
-            return {
-                'statusCode': 200,
-                'body': json.dumps({
+        try:
+            interview_start_time = interview['interview_start_time']
+            applicant_emails = interview['applicant_email']
+            interviewer_emails = interview['interviewers']
+            organizer_name = interview['organizer_name']
+            zoom_link = interview.get('zoom_link')  # Optional field
+            
+            if not isinstance(applicant_emails, list) or not isinstance(interviewer_emails, list):
+                raise ValueError("applicant_email and interviewers must be lists")
+            
+            start_time = datetime.strptime(interview_start_time, "%Y-%m-%d %H:%M:%S")
+            end_time = start_time + timedelta(minutes=30)
+            
+            # Use the organizer's email from the environment variable
+            organizer_email = os.environ.get('SMTP_USERNAME')
+            if not organizer_email:
+                raise ValueError("ORGANIZER_EMAIL environment variable not set")
+            
+            event = controller.create_interview_event_with_attendees(
+                applicant_emails,
+                interviewer_emails,
+                start_time,
+                end_time,
+                organizer_name,
+                organizer_email,
+                zoom_link
+            )
+            
+            if event:
+                results.append({
                     'success': True,
-                    'msg': 'Interview join email sent successfully',
-                }),
-                'headers': HEADERS
-            }
-        else:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({
+                    'msg': f'Interview scheduled successfully for {", ".join(applicant_emails)}',
+                    'event_link': event.get('htmlLink')
+                })
+            else:
+                results.append({
                     'success': False,
-                    'error': 'Failed to send interview join email'
-                }),
-                'headers': HEADERS
-            }
-    except ValueError as ve:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({
+                    'error': f'Failed to schedule interview for {", ".join(applicant_emails)}'
+                })
+        
+        except ValueError as ve:
+            results.append({
                 'success': False,
                 'error': f'Invalid data: {str(ve)}'
-            }),
-            'headers': HEADERS
-        }
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
+            })
+        except Exception as e:
+            results.append({
                 'success': False,
-                'error': f'An error occurred while sending interview join email: {str(e)}'
-            }),
-            'headers': HEADERS
-        }
+                'error': f'An error occurred while scheduling interview: {str(e)}'
+            })
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'results': results
+        }),
+        'headers': HEADERS
+    }
 
 
 @route('/decrypt/{id}', ['GET'])
