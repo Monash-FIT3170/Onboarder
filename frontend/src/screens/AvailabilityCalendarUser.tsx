@@ -103,7 +103,7 @@ const AvailabilityCalendarUser: React.FC = () => {
   const { profile: profileId, fetchProfile } = useAuthStore();
 
   const handleSave = async () => {
-    console.log(eventsList);
+    // console.log(eventsList);
     try {
       await axios.patch(`${API_URL}/profile/${profileId}`, {
         interview_availability: eventsList,

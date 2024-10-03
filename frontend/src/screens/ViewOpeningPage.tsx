@@ -172,7 +172,7 @@ function ViewOpenPage() {
       const response = await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.error("Error sending emails:", error);
     }
@@ -241,7 +241,7 @@ function ViewOpenPage() {
           <Button
             variant="outlined"
             onClick={() => {
-              console.log("Navigating to /task-email-format");
+              // console.log("Navigating to /task-email-format");
               respond2();
             }}
           >
@@ -251,7 +251,7 @@ function ViewOpenPage() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              console.log("Navigating to /view-interview-allocation");
+              // console.log("Navigating to /view-interview-allocation");
               respond();
             }}
           >

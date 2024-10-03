@@ -53,7 +53,7 @@ function ViewTeamLeads() {
           `${BASE_API_URL}/student-team/${team_id}/members`,
         );
         const profileTeamInfo = profileTeamResponse.data;
-        console.log(profileTeamInfo);
+        // console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -61,7 +61,7 @@ function ViewTeamLeads() {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            console.log(memberInfo);
+            // console.log(memberInfo);
             const studentResponse = await axios.get(
               `${BASE_API_URL}/profile/${memberInfo.profile_id}`,
             );
@@ -69,7 +69,7 @@ function ViewTeamLeads() {
             //   (student: any) => student.student_team_id === team_id
             // );
             const studentInfo = studentResponse.data[0];
-            console.log(studentInfo);
+            // console.log(studentInfo);
 
             if (studentInfo) {
               return {

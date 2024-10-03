@@ -128,13 +128,13 @@ const AvailabilityCalendar: React.FC = () => {
     const decryptId = async () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
-        console.log(response.data.data);
+        // console.log(response.data.data);
         const {
           candidate_availability,
           decrypted_id,
           interview_preference_deadline,
         } = response.data.data;
-        console.log(interviewPreferenceDeadline);
+        // console.log(interviewPreferenceDeadline);
         setInterviewPreferenceDeadline(interview_preference_deadline);
         setApplicationId(decrypted_id);
 
