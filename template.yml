@@ -29,6 +29,12 @@ Resources:
           SUPABASE_KEY: ${env:SUPABASE_KEY}
           ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
           WEBSITE_URL: ${env:WEBSITE_URL}
+          GOOGLE_CALENDAR_TOKEN: ${env:GOOGLE_CALENDER_TOKEN}
+          GOOGLE_CALENDAR_REFRESH_TOKEN: ${env:GOOGLE_CALENDAR_REFRESH_TOKEN}
+          GOOGLE_CALENDAR_TOKEN_URI: ${env:GOOGLE_CALENDAR_TOKEN_URI}
+          GOOGLE_CALENDAR_CLIENT_ID: ${env:GOOGLE_CALENDAR_CLIENT_ID}
+          GOOGLE_CALENDAR_CLIENT_SECRET: ${env:GOOGLE_CALENDAR_CLIENT_SECRET}
+          GOOGLE_CALENDAR_EXPIRY: ${env:GOOGLE_CALENDAR_EXPIRY}
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -440,7 +446,7 @@ Resources:
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
           
-          /send-interview-join-email:
+          /create-calendar-events:
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
