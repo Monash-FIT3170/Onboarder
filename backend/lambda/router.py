@@ -555,6 +555,37 @@ def create_recruitment_round(path_params={}, _={}, body={}):
         'headers': HEADERS
     }
 
+@route('/student-team/{studentTeamId}/recruitment-round', ['PATCH'])
+def update_student_team_recruitment_round(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    response = controller.update_student_team_recruitment_round(
+        student_team_id, data)
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
 
 @route('/student-team/{studentTeamId}/recruitment-round', ['GET'])
 def get_all_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
@@ -954,12 +985,6 @@ def create_application(path_params={}, _={}, body={}):
         major_enrolled = data['major_enrolled']
         additional_info = data['additional_info']
         skills = data['skills']
-        # created_at = data['created_at']
-        # candidate_availability = data['candidate_availability']
-        # interview_date = data['interview_date']
-        # interview_notes = data['interview_notes']
-        # interview_score = data['interview_score']
-        # status = data['status']
         course_name = data['course_name']
     except (ValueError, KeyError):
         return {
@@ -972,7 +997,6 @@ def create_application(path_params={}, _={}, body={}):
         email, name, phone, semesters_until_completion,
         current_semester, major_enrolled, additional_info,
         skills, opening_id, course_name
-        # interview_notes, interview_score, created_at, candidate_availability, interview_date, status,
     )
 
     return {
@@ -1139,7 +1163,7 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
             applicant_email = interview['applicant_email']
             interviewer_emails = interview['interviewers']
             organizer_name = interview['organizer_name']
-            zoom_link = interview.get('zoom_link')  # Optional field
+            meeting_link = interview['meeting_link']
 
             if not isinstance(interviewer_emails, list):
                 raise ValueError(
@@ -1162,7 +1186,7 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
                 end_time,
                 organizer_name,
                 organizer_email,
-                zoom_link
+                meeting_link
             )
 
             if event:

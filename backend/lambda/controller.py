@@ -658,7 +658,7 @@ def get_credentials():
         raise
 
 
-def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, zoom_link):
+def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, meeting_link):
     creds = get_credentials()
     service = build('calendar', 'v3', credentials=creds)
 
@@ -670,9 +670,9 @@ def create_interview_event_with_attendees(applicant_emails, interviewer_emails, 
     * Organizer: {organizer_name}
     """
 
-    if zoom_link:
-        description += f"* Zoom Link: {
-            zoom_link} \n\n Please use the Zoom link above to join the interview at the scheduled time."
+    if meeting_link != "":
+        description += f"* Meeting Link: {
+            meeting_link} \n\n Please use the Meeting link above to join the interview at the scheduled time."
     else:
         description += "The specific link for the online interview will be provided closer to the interview date."
 
