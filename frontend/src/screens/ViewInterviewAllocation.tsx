@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import axios from "axios";
 import {
   Typography,
   TextField,
@@ -16,6 +13,9 @@ import {
   Skeleton,
   Button,
 } from "@mui/material";
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import axios from "axios";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
@@ -23,6 +23,7 @@ import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 
+// Css file
 const TitleWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -30,37 +31,37 @@ const TitleWrapper = styled.div`
   align-items: center;
   gap: 50px;
 `;
-
 const PaddingBox = styled.div`
   margin-bottom: 30px;
 `;
 
+// Import the back end
 export interface SingleApplicationProps {
-  id: number;
-  opening_id: number;
-  email: string;
-  name: string;
-  phone: string;
-  semesters_until_completion: number;
-  current_semester: number;
-  course_enrolled: string;
-  major_enrolled: string;
-  cover_letter: string;
-  skills: string[];
-  accepted: string;
-  created_at: string;
-  interview_date: string;
-  candidate_availability: string;
-  profile_id: string;
-  profile: { email: string };
+  id: number; // application id
+  opening_id: number; // Appilication opening id
+  email: string; // email
+  name: string; // name
+  phone: string; // mobile phone number
+  semesters_until_completion: number; // semester
+  current_semester: number; // current semester
+  course_enrolled: string; // course enrolled
+  major_enrolled: string; // major enrolled
+  cover_letter: string; // cover letter
+  skills: string[]; // skills
+  accepted: string; // status acception
+  created_at: string; // created placed
+  interview_date: string; // interview date
+  candidate_availability: string; // availability
+  profile_id: string; // profile id
+  profile: { email: string }; // profile
 }
 
 export interface InterviewEventProps {
-  interview_start_time: string;
-  applicant_email: string;
-  interviewers: string[];
-  organizer_name: string;
-  meeting_link: string;
+  interview_start_time: string; // starting time
+  applicant_email: string; // email
+  interviewers: string[]; // interviewers
+  organizer_name: string; // organizer name
+  meeting_link: string; // link
 }
 
 export interface Interview {
@@ -70,18 +71,21 @@ export interface Interview {
 }
 
 export interface RoundProps {
-  id: number;
-  student_team_id: number;
-  semester: string;
-  year: number;
-  status: string;
-  application_deadline: string;
-  interview_preference_deadline: string;
-  interview_period: string[];
+  id: number; // round id
+  student_team_id: number; //student id
+  semester: string; // semester
+  year: number; // year
+  status: string; // status
+  application_deadline: string; // deadline
+  interview_preference_deadline: string; // interview preference
+  interview_period: string[]; // period
 }
 
 const ViewInterviewAllocation = () => {
+  // State hooks
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [round, setRound] = useState<RoundProps | null>(null);
   const navigate = useNavigate();
   const BASE_API_URL = getBaseAPIURL();
   const studentTeamStore = useStudentTeamStore();
@@ -89,44 +93,24 @@ const ViewInterviewAllocation = () => {
   // const filteredData = mockData.filter((applicant) =>
   //   applicant.applicantName.toLowerCase().includes(searchTerm.toLowerCase())
   // );
-  const [loading, setLoading] = useState(true);
+
+  // Constants
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const [round, setRound] = useState<RoundProps | null>(null);
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
-
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
+
+  // Store hooks
   const authStore = useAuthStore();
+
   const filteredApplications = applications.filter((application) =>
     application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-  const generateRowFunction = (applications: SingleApplicationProps[]) => {
-    return applications.map((application) => (
-      <TableRow key={application.id}>
-        <TableCell>{application.name}</TableCell>
-        <TableCell>{application.email}</TableCell>
-        <TableCell>
-          {application.candidate_availability != null ? "YES" : "NO"}
-        </TableCell>
-        <TableCell>
-          {application.interview_date != null
-            ? new Date(application.interview_date).toLocaleString("en-US", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })
-            : "No Interview Scheduled"}
-        </TableCell>
-      </TableRow>
-    ));
-  };
 
+  // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
       navigate("/viewopen");
@@ -220,7 +204,6 @@ const ViewInterviewAllocation = () => {
   };
 
   // Handler functions
-
   // Send invites to all applicants with interview dates
   const handleSendInvite = async (e: any) => {
     if (!applications) {
@@ -257,6 +240,31 @@ const ViewInterviewAllocation = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Row generation function
+  const generateRowFunction = (applications: SingleApplicationProps[]) => {
+    return applications.map((application) => (
+      <TableRow key={application.id}>
+        <TableCell>{application.name}</TableCell>
+        <TableCell>{application.email}</TableCell>
+        <TableCell>
+          {application.candidate_availability != null ? "YES" : "NO"}
+        </TableCell>
+        <TableCell>
+          {application.interview_date != null
+            ? new Date(application.interview_date).toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+            : "No Interview Scheduled"}
+        </TableCell>
+      </TableRow>
+    ));
   };
 
   return (
