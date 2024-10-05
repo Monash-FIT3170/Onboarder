@@ -22,6 +22,8 @@ import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 import { useAuthStore } from "../util/stores/authStore";
 import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBack";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -129,6 +131,9 @@ function RecruitmentRoundDetailsPage() {
   return (
     <>
       <TitleWrapper>
+        <IconButton onClick={handleSignOut} sx={{ mr: 2 }}>
+          <BackIcon />
+        </IconButton>
         <Typography variant="h5">Student Team Openings</Typography>
       </TitleWrapper>
 
