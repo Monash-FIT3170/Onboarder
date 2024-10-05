@@ -68,6 +68,17 @@ export interface Interview {
   interview_date: Date;
 }
 
+export interface RoundProps {
+  id: number;
+  student_team_id: number;
+  semester: string;
+  year: number;
+  status: string;
+  application_deadline: string;
+  interview_preference_deadline: string;
+  interview_period: string[];
+}
+
 const ViewInterviewAllocation = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -78,6 +89,7 @@ const ViewInterviewAllocation = () => {
   // );
   const [loading, setLoading] = useState(true);
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
+  const [round, setRound] = useState<RoundProps | null>(null);
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
@@ -105,7 +117,6 @@ const ViewInterviewAllocation = () => {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-                second: "2-digit",
                 hour12: true,
               })
             : "No Interview Scheduled"}
@@ -126,8 +137,13 @@ const ViewInterviewAllocation = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log(applicationsResponse.data);
+        // console.log(applicationsResponse);
         setApplications(applicationsResponse.data);
+        const roundResponse = await axios.get(
+          `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
+        );
+        console.log(roundResponse);
+        setRound(roundResponse.data[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -286,13 +302,26 @@ const ViewInterviewAllocation = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
-              <TableCell>Due Date</TableCell>
+              <TableCell>Interview Preference Deadline</TableCell>
               <TableCell>Interviews Scheduled</TableCell>
               <TableCell>Interviews Not Scheduled</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
-              <TableCell>None</TableCell>
+              <TableCell>
+                {round?.interview_preference_deadline
+                  ? new Date(
+                      round.interview_preference_deadline,
+                    ).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  : "No Deadline"}
+              </TableCell>
               <TableCell>{interviewScheduledCount}</TableCell>
               <TableCell>{interviewNotScheduledCount}</TableCell>
             </TableRow>
@@ -301,7 +330,7 @@ const ViewInterviewAllocation = () => {
         <PaddingBox></PaddingBox>
         <TextField
           id="outlined-search"
-          label="Search Applicants Name"
+          label="Search"
           type="search"
           value={searchTerm} //
           onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change

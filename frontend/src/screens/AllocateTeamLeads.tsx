@@ -124,8 +124,8 @@ const AllocateTeamLeads = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
     );
-    console.log("Lead counts response (Allocated Member");
-    console.log(response.data);
+    // console.log("Lead counts response (Allocated Member");
+    // console.log(response.data);
     return response.data;
   };
 
@@ -136,8 +136,8 @@ const AllocateTeamLeads = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
     );
-    console.log("Assignments response");
-    console.log(response.data);
+    // console.log("Assignments response");
+    // console.log(response.data);
     return response.data;
   };
 

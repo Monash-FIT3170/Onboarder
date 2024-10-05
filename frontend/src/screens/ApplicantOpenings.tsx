@@ -67,6 +67,7 @@ function RecruitmentRoundDetailsPage() {
       try {
         const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
         setOpening(openingsResponse.data);
+        console.log(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -78,7 +79,7 @@ function RecruitmentRoundDetailsPage() {
   }, []);
 
   const filteredOpenings = openings.filter((opening) => {
-    console.log(opening);
+    // console.log(opening);
     if (openings.length != 0) {
       // filter active
       const searchMatch =
@@ -152,7 +153,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  <TableCell>Application Deadline</TableCell>
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>

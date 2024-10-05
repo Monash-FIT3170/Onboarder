@@ -3,7 +3,7 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { DndProvider } from "react-dnd"; // Provides the drag-and-drop context for the calendar
 import { HTML5Backend } from "react-dnd-html5-backend"; // HTML5 backend for react-dnd, handles drag-and-drop interactions
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"; // Higher-order component to enable drag-and-drop on the calendar
-import format from "date-fns/format"; // Utility for formatting dates
+import { format } from "date-fns"; // Utility for formatting dates
 import parse from "date-fns/parse"; // Utility for parsing dates
 import startOfWeek from "date-fns/startOfWeek"; // Utility for determining the start of the week
 import getDay from "date-fns/getDay"; // Utility for getting the day of the week
@@ -44,10 +44,15 @@ const AvailabilityCalendar: React.FC = () => {
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
   const [applicationId, setApplicationId] = useState(null);
+  const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] =
+    useState(null);
   const BASE_API_URL = getBaseAPIURL();
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
+
+  // First Ill set an arbitrary cutoff day, for example today
+  const cutoffDate = new Date(interviewPreferenceDeadline);
 
   // Function to handle the selection of a new time slot in the calendar
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
@@ -123,8 +128,14 @@ const AvailabilityCalendar: React.FC = () => {
     const decryptId = async () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
-
-        const { candidate_availability, decrypted_id } = response.data.data;
+        // console.log(response.data.data);
+        const {
+          candidate_availability,
+          decrypted_id,
+          interview_preference_deadline,
+        } = response.data.data;
+        // console.log(interviewPreferenceDeadline);
+        setInterviewPreferenceDeadline(interview_preference_deadline);
         setApplicationId(decrypted_id);
 
         const parsedData = candidate_availability.map((event: Event) => {
@@ -147,6 +158,18 @@ const AvailabilityCalendar: React.FC = () => {
 
     decryptId();
   }, [id]);
+
+  // Check if today is past the deadline
+  if (today > cutoffDate) {
+    return (
+      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+        <h2>Preference submission has closed</h2>
+        <p>
+          The deadline for submitting was {format(cutoffDate, "dd/MM/yyyy")}.
+        </p>
+      </div>
+    );
+  }
 
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
@@ -171,7 +194,7 @@ const AvailabilityCalendar: React.FC = () => {
             <h2> Interview Availability Submission</h2>
             <p style={{ maxWidth: "900px", textAlign: "center" }}>
               Select your available slots for the interview process in the next
-              two weeks.
+              two weeks. Deadline: {format(cutoffDate, "dd/MM/yyyy")}
             </p>
           </div>
         </div>
@@ -179,8 +202,8 @@ const AvailabilityCalendar: React.FC = () => {
         <DragAndDropCalendar
           localizer={localizer}
           events={eventsList}
-          startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
-          endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
+          startAccessor={(event) => (event as Event).start} // Specify how to access the start date of an event
+          endAccessor={(event) => (event as Event).end} // Specify how to access the end date of an event
           style={{ height: "80%" }}
           defaultView="week"
           views={["week"]}
@@ -189,7 +212,7 @@ const AvailabilityCalendar: React.FC = () => {
           onSelectSlot={handleSelectSlot} // Handle new slot selection
           onEventResize={handleEventResize} // Handle resizing of existing events
           onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
-          titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+          titleAccessor={(event) => (event as Event).title} // Specify how to access the title of an event
           min={startOfDay(today)} // Earliest selectable date
           max={endOfDay(twoWeeksLater)} // Latest selectable date (2 weeks from now)
           step={30}

@@ -37,6 +37,7 @@ Recruitment platform for Monash University student teams
       - [CORS Error](#cors-error)
       - [Front End Crash (Blank Screen)](#front-end-crash-blank-screen)
       - [SAM cannot find Docker](#sam-cannot-find-docker)
+    - [NPM Dependency error (node modules not found)](#npm-dependency-error-node-modules-not-found)
   - [Git Management](#git-management)
     - [Repository Structure](#repository-structure)
     - [Commit Guidelines](#commit-guidelines)
@@ -126,7 +127,7 @@ The `env.json` file in the root folder contains crucial configuration settings f
     "SUPABASE_URL": "http://host.docker.internal:54321",
     "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
     "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY", // Add your encryption key
-    "WEBSITE_URL": "http://localhost:5173"
+    "WEBSITE_URL": "http://127.0.0.1:5173"
   }
 }
 ```
@@ -187,7 +188,7 @@ Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure.
 The `WEBSITE_URL` is used in controller.py
 For development, it is the local URL given by VITE when you run `npm run dev`
 
-## Setup Instructions
+  ## Setup Instructions
 
 ### Front-end Setup
 
@@ -312,6 +313,7 @@ In addition to this, in the Authorised JavaScript origins section for your OAuth
 
 ```
 http://localhost:5173
+http://127.0.0.1:5173
 http://localhost:3000
 http://127.0.0.1:3000
 ```
@@ -346,6 +348,13 @@ http://localhost:54321/auth/v1/callback
 
 - Ensure that default Docker Socket is enabled.
 - Sometimes you may need to disable this in Docker Advanced Settings, restart and the enable it again.
+
+### NPM Dependency error (node modules not found)
+You might get this error:
+The file does not exist at "Your_Directory/Onboarder/frontend/node_modules/.vite/deps/some_dependency" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+
+Fix:
+Delete node_module/.vite and then rerun `npm install` and `npm run dev`
 
 ## Git Management
 

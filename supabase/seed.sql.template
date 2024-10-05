@@ -2,11 +2,16 @@
 
 -- Insert users
 INSERT INTO public."PROFILE" (email, interview_availability) VALUES
-    ('DEV_EMAIL', ARRAY['Tuesday 1 PM - 4 PM']), -- this should have your email after running pre-process-seed.py (in seed.sql)
-    ('random1@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
-    ('random2@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
-    ('random3@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']), 
-    ('random4@student.monash.edu', ARRAY['Tuesday 1 PM - 4 PM']);
+    ('DEV_EMAIL', ARRAY['{"start":"2024-09-30T15:30:00.000Z","end":"2024-10-01T01:30:00.000Z","title":"Available Slot"}', 
+          '{"start":"2024-10-01T16:00:00.000Z","end":"2024-10-02T02:00:00.000Z","title":"Available Slot"}']), -- this should have your email after running pre-process-seed.py (in seed.sql)
+    ('random1@student.monash.edu', ARRAY['{"start":"2024-09-30T15:30:00.000Z","end":"2024-10-01T01:30:00.000Z","title":"Available Slot"}', 
+          '{"start":"2024-10-01T16:00:00.000Z","end":"2024-10-02T02:00:00.000Z","title":"Available Slot"}']), 
+    ('random2@student.monash.edu', ARRAY['{"start":"2024-09-30T15:30:00.000Z","end":"2024-10-01T01:30:00.000Z","title":"Available Slot"}', 
+          '{"start":"2024-10-01T16:00:00.000Z","end":"2024-10-02T02:00:00.000Z","title":"Available Slot"}']), 
+    ('random3@student.monash.edu', ARRAY['{"start":"2024-09-30T15:30:00.000Z","end":"2024-10-01T01:30:00.000Z","title":"Available Slot"}', 
+          '{"start":"2024-10-01T16:00:00.000Z","end":"2024-10-02T02:00:00.000Z","title":"Available Slot"}']), 
+    ('random4@student.monash.edu', ARRAY['{"start":"2024-09-30T15:30:00.000Z","end":"2024-10-01T01:30:00.000Z","title":"Available Slot"}', 
+          '{"start":"2024-10-01T16:00:00.000Z","end":"2024-10-02T02:00:00.000Z","title":"Available Slot"}']);
 
 -- Insert student teams
 INSERT INTO public."STUDENT_TEAM" (name, description) VALUES
@@ -50,28 +55,28 @@ INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUE
 -- Insert recruitment rounds
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, application_deadline, status, interview_preference_deadline, interview_period) VALUES
     -- Team Alpha (id: 1)
-    (1, 'S1', 2023, '2023-03-15 23:59:59+11:00', 'R', '2023-03-15 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (1, 'S2', 2023, '2023-08-15 23:59:59+10:00', 'R', '2023-08-15 23:59:59+10:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (1, 'S2', 2024, '2024-09-30 23:59:59+10:00', 'A', '2024-09-30 23:59:59+10:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Active
-    (1, 'S1', 2025, '2025-03-15 23:59:59+11:00', 'I', '2025-03-15 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Inactive (future)
+    (1, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  -- Archived
+    (1, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Archived
+    (1, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Active
+    (1, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  -- Inactive (future)
 
-    -- Team Bravo (id: 2(id: 2))
-    (2, 'S1', 2023, '2023-03-20 23:59:59+11:00', 'R', '2023-03-20 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (2, 'S2', 2023, '2023-08-20 23:59:59+10:00', 'R', '2023-08-20 23:59:59+10:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (2, 'S2', 2024, '2024-10-05 23:59:59+11:00', 'A', '2024-10-05 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Active
-    (2, 'S1', 2025, '2025-03-20 23:59:59+11:00', 'I', '2025-03-20 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Inactive (future)
+    -- Team Bravo (id: 2)
+    (2, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  -- Archived
+    (2, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Archived
+    (2, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Active
+    (2, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  -- Inactive (future)
 
-    -- Team Charlie (id: 3e (id: 3))
-    (3, 'S1', 2023, '2023-03-25 23:59:59+11:00', 'R', '2023-03-25 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (3, 'S2', 2023, '2023-08-25 23:59:59+10:00', 'R', '2023-08-25 23:59:59+10:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (3, 'S2', 2024, '2024-10-10 23:59:59+11:00', 'A', '2024-10-10 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Active
-    (3, 'S1', 2025, '2025-03-25 23:59:59+11:00', 'I', '2025-03-25 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Inactive (future)
+    -- Team Charlie (id: 3)
+    (3, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  -- Archived
+    (3, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Archived
+    (3, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Active
+    (3, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  -- Inactive (future)
 
-    -- Team Delta (id: 4(id: 4))
-    (4, 'S1', 2023, '2023-03-30 23:59:59+11:00', 'R', '2023-03-30 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (4, 'S2', 2023, '2023-08-30 23:59:59+10:00', 'R', '2023-08-30 23:59:59+10:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Archived
-    (4, 'S2', 2024, '2024-10-15 23:59:59+11:00', 'A', '2024-10-15 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']),  -- Active
-    (4, 'S1', 2025, '2025-03-30 23:59:59+11:00', 'I', '2025-03-30 23:59:59+11:00', ARRAY['Tuesday 1 PM - 4 PM']);  -- Inactive (future)
+    -- Team Delta (id: 4)
+    (4, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  -- Archived
+    (4, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Archived
+    (4, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Active
+    (4, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']);  -- Inactive (future)
     
 -- Insert openings
 INSERT INTO public."OPENING" (recruitment_round_id, title, description, status, required_skills, desired_skills, task_email_format, task_enabled, interview_allocation_status) VALUES
@@ -224,8 +229,9 @@ BEGIN
             (ARRAY['Python', 'Java', 'C++', 'JavaScript', 'SQL', 'R', 'Git', 'Docker', 'Kubernetes', 'AWS', 'Machine Learning', 'Data Analysis', 'Agile', 'Scrum'])[floor(random() * 14 + 1)],
             (ARRAY['Python', 'Java', 'C++', 'JavaScript', 'SQL', 'R', 'Git', 'Docker', 'Kubernetes', 'AWS', 'Machine Learning', 'Data Analysis', 'Agile', 'Scrum'])[floor(random() * 14 + 1)]
         ]::VARCHAR[] AS skills,
-        ARRAY['Weekdays 9 AM - 5 PM', 'Weekends 10 AM - 4 PM', 'Evenings 6 PM - 10 PM']::VARCHAR[] AS candidate_availability,
-        (NOW() + (random() * INTERVAL '30 days'))::TIMESTAMP WITH TIME ZONE AS interview_date,
+        ARRAY['{"start":"2024-08-15T09:00:00.000Z","end":"2024-08-15T17:00:00.000Z","title":"Available Slot"}', 
+              '{"start":"2024-08-16T10:00:00.000Z","end":"2024-08-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[] AS candidate_availability,
+        (timestamp '2024-08-15 09:00:00' + (random() * (timestamp '2024-08-25 17:00:00' - timestamp '2024-08-15 09:00:00')))::TIMESTAMP WITH TIME ZONE AS interview_date,
         ((ARRAY['Excellent communication skills', 'Strong technical background', 'Good problem-solving abilities', 'Enthusiastic learner', 'Team player'])[floor(random() * 5 + 1)])::VARCHAR AS interview_notes,
         floor(random() * 5 + 1)::INTEGER AS interview_score,
         ((ARRAY['A', 'C', 'R'])[floor(random() * 3 + 1)])::VARCHAR(1) AS status,
