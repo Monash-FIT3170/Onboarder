@@ -44,9 +44,10 @@ def lambda_handler(event: str, context: dict) -> dict:
         print("Schedule Processing Completed")
         print("Records: ")
         print(records)
+
         # Write the schedule to database
-        # write_schedule_to_db(opening_id, records)
-        # set_opening_status(opening_id, 'S')
+        write_schedule_to_db(opening_id, records)
+        set_opening_status(opening_id, 'S')
 
         print("Data Written")
 
@@ -132,7 +133,7 @@ def solve_scheduling_problem(interviewer_availabilities: list, interviewee_avail
     interviewer_avail = availability_matrix[:n_interviewers]
     interviewee_avail = availability_matrix[n_interviewers:]
 
-# Create PuLP problem
+    # Create PuLP problem
     prob = pulp.LpProblem("Interview_Scheduling", pulp.LpMaximize)
 
     # Decision variables
@@ -181,8 +182,8 @@ def solve_scheduling_problem(interviewer_availabilities: list, interviewee_avail
         prob += min_load <= interviewer_load[i]
 
     # Solve the problem
-    prob.solve()
-
+    prob.solve(pulp.PULP_CBC_CMD())
+    
     # Process results
     schedule = []
     for j in range(n_interviewees):
@@ -211,6 +212,8 @@ def process_availabilities(availabilities: list, interview_duration_minutes: str
         if isinstance(availability, str):
             availability = json.loads(availability)
         for slot in availability:
+            if isinstance(slot, str):
+                slot = json.loads(slot)
             start = datetime.fromisoformat(
                 slot['start'].replace('Z', '+00:00'))
             end = datetime.fromisoformat(slot['end'].replace('Z', '+00:00'))
@@ -230,6 +233,8 @@ def process_availabilities(availabilities: list, interview_duration_minutes: str
         if isinstance(availability, str):
             availability = json.loads(availability)
         for slot in availability:
+            if isinstance(slot, str):
+                slot = json.loads(slot)
             start = datetime.fromisoformat(
                 slot['start'].replace('Z', '+00:00'))
             end = datetime.fromisoformat(slot['end'].replace('Z', '+00:00'))
