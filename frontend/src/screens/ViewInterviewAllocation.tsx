@@ -137,19 +137,14 @@ const ViewInterviewAllocation = () => {
   };
 
   const handleScheduleInterview = async () => {
-    //  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
-    //    setLoading(true);
-    //     setError(null);
-    //     setResponse(null);
-    //     try {
-    //         const res = await axios.post(`${BASE_API_URL}/opening/${selectedOpening.id}/schedule-interviews`, {
-    //             // Add data
-    //         });
-    //         setResponse(res.data);
-    //         // setApplications(res.data.updatedApplications);
-    //     } catch (err) {
-    //         setError(err.message || "An error occurred while scheduling interviews");
-    //     }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post(`${BASE_API_URL}/opening/${selectedOpening.id}/schedule-interviews`);
+      fetchData();
+      } catch (err) {
+        setError(err.message || "An error occurred while scheduling interviews");
+      }
   };
 
   // NEXT SPRINT BUTTON
@@ -172,7 +167,7 @@ const ViewInterviewAllocation = () => {
         </Box>
         <Button
           variant="contained"
-          onClick={handleSendInvite}
+          onClick={handleScheduleInterviews}
           disabled={loading}
           style={{ marginLeft: "1rem" }}
         >
@@ -206,23 +201,6 @@ const ViewInterviewAllocation = () => {
           value={searchTerm} //
           onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
         />
-
-        {/* <Button
-          variant="contained"
-          onClick={handleSendInvite}
-          disabled={loading}
-          style={{ marginLeft: "1rem" }}
-        >
-          {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleScheduleInterview}
-          disabled={loading}
-          style={{ marginLeft: "1rem" }}
-        >
-          {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
-        </Button> */}
       </PaddingBox>
 
       <TableContainer component={Paper}>

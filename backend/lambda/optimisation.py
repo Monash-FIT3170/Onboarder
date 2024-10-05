@@ -70,7 +70,7 @@ def write_schedule_to_db(opening_id, records):
         supabase.table('APPLICATION').insert({
             'application_id': opening_id,
             'interview_date': item['interview_date'],
-            'interviewer_id': item['interviewer_id']
+            'profile_id': item['profile_id']
         }).execute()
 
 
@@ -81,7 +81,7 @@ def process_schedule_for_db(schedule, interviewers, interviewees):
             {
                 'application_id': interviewees[interview['interviewee_index']],
                 'interview_date': interview['interview_time'],
-                'interviewer_id': interviewers[interview['interviewer_index']],
+                'profile_id': interviewers[interview['interviewer_index']],
             }
         )
 
