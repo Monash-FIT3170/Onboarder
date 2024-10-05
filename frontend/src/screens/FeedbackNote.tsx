@@ -167,6 +167,7 @@ function Feedbacknote() {
         const applicantResponse = await axios.get(
           `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
+        console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
@@ -243,7 +244,17 @@ function Feedbacknote() {
                   Date of Interview
                 </Typography>
               </TableCell>
-              <TableCell>{applicantInformation[0]?.interview_date}</TableCell>
+              <TableCell>
+                {new Date(
+                  applicantInformation[0]?.interview_date,
+                ).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
@@ -251,7 +262,7 @@ function Feedbacknote() {
                   Position
                 </Typography>
               </TableCell>
-              <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+              <TableCell>{selectedApplicant?.opening_name}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -167,8 +167,15 @@ function ApplicationSubmissionPage() {
           <TableBody>
             <TableRow>
               <TableCell>
-                {new Date(round[0]?.application_deadline).toLocaleDateString(
+                {new Date(round[0]?.application_deadline).toLocaleString(
                   "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
                 )}
               </TableCell>
               <TableCell align="center">{round[0]?.student_team_id}</TableCell>
