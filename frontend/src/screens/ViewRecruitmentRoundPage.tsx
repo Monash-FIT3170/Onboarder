@@ -24,6 +24,7 @@ import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
+import React from "react";
 
 const styles = {
   scrollableTableBody: {
@@ -41,24 +42,17 @@ const styleLink = {
   transform: "translate(-50%, -50%)",
   width: 700,
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
 const ViewRecruitmentRoundPage = () => {
   // Modal Link modify
-  const [loadingLink, setLoadingLink] = useState(false);
   const [urlLink, setUrlLink] = useState("");
-  const [descriptionLink, setDescriptionLink] = useState("");
 
   const [openLink, setOpenLink] = React.useState(false);
   const handleOpenLink = () => setOpenLink(true);
   const handleCloseLink = () => setOpenLink(false);
-  const handleSubmitLink = async (e: any) => {
-    e.preventDefault();
-    setLoadingLink(true);
-  };
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,6 +99,11 @@ const ViewRecruitmentRoundPage = () => {
         const response = await axios.get(API_URL);
 
         setData(response.data);
+        setUrlLink(
+          studentTeamStore.studentTeams.find(
+            (item) => item.student_team_id === authStore.team_id,
+          )?.student_team_meeting_link || "",
+        );
       } catch (error) {
         console.error("There was an error!", error);
       } finally {
@@ -126,6 +125,20 @@ const ViewRecruitmentRoundPage = () => {
     });
     navigate("/recruitment-details-page");
   };
+
+  const handleEditLink = async () => {
+    try {
+      const response = await axios.patch(
+        `${BASE_API_URL}/student-team/${studentTeamId}`,
+        { meeting_link: urlLink },
+      );
+    } catch (error) {
+      console.error("There was an error!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAllocateTeamLeads = () => {
     navigate("/viewTeamLeads");
   };
@@ -153,7 +166,87 @@ const ViewRecruitmentRoundPage = () => {
             </IconButton>
             <Typography variant="h4">{authStore.team_name}</Typography>
           </Box>
+          <Grid>
+            <Modal
+              open={openLink}
+              onClose={handleCloseLink}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={styleLink}>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h4"
+                  component="h2"
+                  align="center"
+                >
+                  CONFIGURE INTERVIEW LINK
+                </Typography>
+                <Grid>
+                  <Grid alignItems="center" justifyContent="flex-start">
+                    <Grid item xs={10} sm={10}>
+                      <h3 style={{ fontWeight: "normal" }}>
+                        Enter URL Here (Optional):
+                      </h3>
+                      <TextField
+                        placeholder="https://zoom-example.com"
+                        id="outlined-multiline-static"
+                        label="Global Meeting URL"
+                        fullWidth
+                        variant="filled"
+                        value={urlLink}
+                        onChange={(e) => setUrlLink(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={30} sm={30} marginLeft={0}>
+                  <Grid
+                    spacing={1}
+                    alignItems="center"
+                    justifyContent="flex-start"
+                  >
+                    <Grid item xs={10} sm={10}>
+                      <Box mt={2}>
+                        <Typography variant="body1" component="p" paragraph>
+                          Onboarder does not generate zoom/meeting links.
+                          <br />
+                          To add a global/reusable meeting link, please enter
+                          the link here.
+                          <br />
+                          This will be used as meeting link for all interviews
+                          that your team conducts.
+                          <br />
+                          Alternatively, you can assign individual links on
+                          Google Calendar after you have sent out the event
+                          invites.
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} sm={12} mt={4}>
+                  <Box display="flex" justifyContent="center" gap={2}>
+                    <Button variant="contained" onClick={handleEditLink}>
+                      Save
+                    </Button>
+                    <Button variant="contained" onClick={handleCloseLink}>
+                      Cancel
+                    </Button>
+                  </Box>
+                </Grid>
+              </Box>
+            </Modal>
+          </Grid>
+
           <Box>
+            <Button
+              variant="contained"
+              onClick={handleOpenLink}
+              style={{ marginRight: "10px" }}
+            >
+              Configure Interview Link
+            </Button>
             <Button
               variant="outlined"
               color="primary"
@@ -203,103 +296,12 @@ const ViewRecruitmentRoundPage = () => {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </Grid>
+
             <Grid item>
               <Link
                 to="/addrecruitmentround"
                 style={{ textDecoration: "none" }}
               >
-                <Grid>
-                  <Modal
-                    open={openLink}
-                    onClose={handleCloseLink}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
-                    <Box sx={styleLink}>
-                      <Typography
-                        id="modal-modal-title"
-                        variant="h4"
-                        component="h2"
-                        align="center"
-                      >
-                        CONFIGURE INTERVIEW LINK
-                      </Typography>
-                      <Typography id="modal-modal-description" sx={{ mt: 4 }}>
-                        <Grid item xs={30} sm={30} marginLeft={10}>
-                          <Grid
-                            container
-                            spacing={1}
-                            alignItems="center"
-                            justifyContent="flex-start"
-                          >
-                            <Grid item xs={10} sm={10}>
-                              <h3 style={{ fontWeight: "normal" }}>Url:</h3>
-                              <TextField
-                                placeholder="Url Link"
-                                id="outlined-multiline-static"
-                                label="Url link"
-                                fullWidth
-                                variant="filled"
-                                multiline
-                                rows={2}
-                                value={urlLink}
-                                onChange={(e) => setUrlLink(e.target.value)}
-                              />
-                            </Grid>
-                            <Grid item></Grid>
-                          </Grid>
-                        </Grid>
-                        <Grid item xs={30} sm={30} marginLeft={10}>
-                          <Grid
-                            container
-                            spacing={1}
-                            alignItems="center"
-                            justifyContent="flex-start"
-                          >
-                            <Grid item xs={10} sm={10}>
-                              <h3 style={{ fontWeight: "normal" }}>
-                                Description:
-                              </h3>
-                              <TextField
-                                id="outlined-multiline-static"
-                                label="Description"
-                                placeholder="Description"
-                                fullWidth
-                                variant="filled"
-                                multiline
-                                rows={2}
-                                value={descriptionLink}
-                                onChange={(e) =>
-                                  setDescriptionLink(e.target.value)
-                                }
-                              />
-                            </Grid>
-                            <Grid item></Grid>
-                          </Grid>
-                        </Grid>
-
-                        <Grid item xs={2} sm={2} mt={4} marginLeft={35}>
-                          <Button
-                            variant="contained"
-                            onClick={handleSubmitLink}
-                          >
-                            Save
-                          </Button>
-                        </Grid>
-                      </Typography>
-                    </Box>
-                  </Modal>
-                </Grid>
-
-                <Link
-                  to=""
-                  style={{ textDecoration: "none", marginRight: "1rem" }}
-                >
-                  <Button variant="contained" onClick={handleOpenLink}>
-                    Configure Interview Link
-                  </Button>
-                </Link>
-
                 <Button variant="contained">ADD ROUND</Button>
               </Link>
             </Grid>
