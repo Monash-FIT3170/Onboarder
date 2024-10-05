@@ -29,7 +29,7 @@ import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 
 interface ResultProps {
   id: number;
-  opening_id: number; // assuming deadline is a date in string format
+  opening_id: number; // assuming application_deadline is a date in string format
   email: string;
   name: string;
   phone: string;
@@ -116,10 +116,10 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        console.log(response);
+        // console.log(response);
         setDialogParam("Applicant Accepted!");
       } else {
-        console.log(response);
+        // console.log(response);
         setDialogParam("There was an error accepting the applicant.");
       }
     } catch (error) {
@@ -146,10 +146,10 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        console.log(response);
+        // console.log(response);
         setDialogParam("Applicant Rejected!");
       } else {
-        console.log(response);
+        // console.log(response);
         setDialogParam("There was an error rejecting the applicant.");
       }
     } catch (error) {

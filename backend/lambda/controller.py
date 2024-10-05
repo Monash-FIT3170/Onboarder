@@ -165,12 +165,14 @@ def get_all_recruitment_rounds():
     response = supabase.table("rec_rounds_with_openings_count").select("*").execute()
     return response.data
 
-def create_recruitment_round(student_team_id, semester, year, deadline, status):
+def create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period, status):
     response = supabase.table("RECRUITMENT_ROUND").insert({
         "student_team_id": student_team_id,
         "semester": semester,
         "year": year,
-        "deadline": deadline,
+        "application_deadline": application_deadline,
+        "interview_preference_deadline": interview_preference_deadline,
+        "interview_period": interview_period,
         "status": status
     }).execute()
 
@@ -456,15 +458,32 @@ def decrypt_id(encrypted_id):
     try:
         decrypted_id = fernet.decrypt(encrypted_id.encode()).decode()
         application_data = get_application(decrypted_id)
+        round_data = get_interview_preference_deadline_from_application_id(decrypted_id)
+        interview_preference_deadline_data = get_interview_preference_deadline_from_application_id(decrypted_id)
 
         return {
             'decrypted_id': decrypted_id,
-            'candidate_availability': application_data[0].get('candidate_availability', [])
+            'candidate_availability': application_data[0].get('candidate_availability', []),
+            'interview_preference_deadline': interview_preference_deadline_data
         }
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return None
+
+
+def get_interview_preference_deadline_from_application_id(application_id):
+    try:
+        opening = supabase.table("APPLICATION").select("opening_id").eq("id", application_id).execute()
+        round = supabase.table("openings_with_application_count").select("recruitment_round_id").eq("id", opening.data[0]['opening_id']).execute()
+        preference_deadline = supabase.table("RECRUITMENT_ROUND").select("interview_preference_deadline").eq("id", round.data[0]['recruitment_round_id']).execute()
+        
+        return preference_deadline.data[0]['interview_preference_deadline']
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+        
 
 def send_welcome_email(email, team_name, role):
     role_mapping = {

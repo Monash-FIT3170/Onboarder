@@ -67,7 +67,7 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/application', ['OPTIONS'])
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
-@route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/send-interview-emails/{openingId}', ['OPTIONS'])  # This is for scheduling availabilities
 @route('/decrypt/{id}', ['OPTIONS'])
 @route('/opening/{openingId}/schedule-interviews', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
@@ -497,7 +497,7 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['semester', 'year', 'deadline', 'status']
+    required_fields = ['semester', 'year', 'application_deadline','interview_preference_deadline','interview_period', 'status']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -509,7 +509,9 @@ def create_recruitment_round(path_params={}, _={}, body={}):
     try:
         semester = data['semester']
         year = data['year']
-        deadline = data['deadline']
+        application_deadline = data['application_deadline']
+        interview_preference_deadline = data['interview_preference_deadline']
+        interview_period = data['interview_period']
         status = data['status']
     except (ValueError, KeyError):
         return {
@@ -518,7 +520,7 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    response = controller.create_recruitment_round(student_team_id, semester, year, deadline, status)
+    response = controller.create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period,status)
     
     return {
         'statusCode': 201,
