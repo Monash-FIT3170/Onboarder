@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -59,7 +60,7 @@ export interface InterviewEventProps {
   applicant_email: string;
   interviewers: string[];
   organizer_name: string;
-  zoom_link: string;
+  meeting_link: string;
 }
 
 export interface Interview {
@@ -83,6 +84,7 @@ const ViewInterviewAllocation = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const BASE_API_URL = getBaseAPIURL();
+  const studentTeamStore = useStudentTeamStore();
   // Filter by search
   // const filteredData = mockData.filter((applicant) =>
   //   applicant.applicantName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -137,12 +139,10 @@ const ViewInterviewAllocation = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        // console.log(applicationsResponse);
         setApplications(applicationsResponse.data);
         const roundResponse = await axios.get(
           `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
         );
-        console.log(roundResponse);
         setRound(roundResponse.data[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -172,6 +172,7 @@ const ViewInterviewAllocation = () => {
   };
 
   const handleScheduleInterview = async () => {
+    // Do not delete
     //  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
     //    setLoading(true);
     //     setError(null);
@@ -191,8 +192,11 @@ const ViewInterviewAllocation = () => {
   const mapToInterviewEventProps = (
     applications: SingleApplicationProps[],
   ): InterviewEventProps[] => {
+    const meeting_link =
+      studentTeamStore.studentTeams.find(
+        (item) => item.student_team_id === authStore.team_id,
+      )?.student_team_meeting_link || "";
     return applications.map((application) => {
-      console.log(application);
       if (
         !application.interview_date ||
         !application.email ||
@@ -210,7 +214,7 @@ const ViewInterviewAllocation = () => {
         applicant_email: application.email,
         interviewers: [application.profile.email],
         organizer_name: authStore.team_name,
-        zoom_link: "some_link",
+        meeting_link: meeting_link,
       };
     });
   };
@@ -219,22 +223,19 @@ const ViewInterviewAllocation = () => {
 
   // Send invites to all applicants with interview dates
   const handleSendInvite = async (e: any) => {
-    console.log(applications);
+    if (!applications) {
+      alert("No applications found.");
+      return;
+    }
     const invitees_interviewers = applications.filter(
       (value) => value.interview_date !== null,
     );
+    if (!invitees_interviewers) {
+      alert("No applicants with interview dates found.");
+      return;
+    }
 
-    // FOR TESTING
-    const tester_invitee = invitees_interviewers.filter(
-      (value) =>
-        value.email == "nhuy0018@student.monash.edu" ||
-        value.email == "jcru0005@student.monash.edu",
-    );
-    console.log("Tester Invitee: ");
-    console.log(tester_invitee);
-    const eventData = mapToInterviewEventProps(tester_invitee);
-    console.log("Event Data: ");
-    console.log(eventData);
+    const eventData = mapToInterviewEventProps(invitees_interviewers);
 
     e.preventDefault();
     setLoading(true);
@@ -244,7 +245,6 @@ const ViewInterviewAllocation = () => {
         `${BASE_API_URL}/create-calendar-events`,
         eventData,
       );
-      console.log(calendarInvitesResponse);
       // Notify user of successful submission
       alert("Google Calendar Invites have been sent to all candidates.");
       setLoading(false);
@@ -257,7 +257,6 @@ const ViewInterviewAllocation = () => {
     } finally {
       setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
