@@ -74,6 +74,7 @@ const ViewInterviewAllocation = () => {
   const [loading, setLoading] = useState(true);
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const [round, setRound] = useState<RoundProps | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
@@ -108,30 +109,30 @@ const ViewInterviewAllocation = () => {
     ));
   };
 
+  const fetchData = async () => {
+    try {
+      const applicationsResponse = await axios.get(
+        `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+      );
+      // console.log(applicationsResponse);
+      setApplications(applicationsResponse.data);
+      const roundResponse = await axios.get(
+        `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
+      );
+      console.log(roundResponse);
+      setRound(roundResponse.data[0]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!selectedOpening) {
       navigate("/viewopen");
       return;
     }
-
-    const fetchData = async () => {
-      try {
-        const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
-        );
-        // console.log(applicationsResponse);
-        setApplications(applicationsResponse.data);
-        const roundResponse = await axios.get(
-          `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
-        );
-        console.log(roundResponse);
-        setRound(roundResponse.data[0]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchData();
   }, [selectedOpening, navigate]);
@@ -152,15 +153,33 @@ const ViewInterviewAllocation = () => {
     navigate("/viewopen");
   };
 
-  const handleScheduleInterview = async () => {
+  const handleScheduleInterviews = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post(`${BASE_API_URL}/opening/${selectedOpening.id}/schedule-interviews`);
+      const res = await axios.post(
+        `${BASE_API_URL}/opening/${selectedOpening.id}/schedule-interviews/`,
+      );
+      console.log("res", res);
       fetchData();
-      } catch (err) {
-        setError(err.message || "An error occurred while scheduling interviews");
+    } catch (err) {
+      // setError(err.message || "An error occurred while scheduling interviews");
+      if (axios.isAxiosError(err)) {
+        console.error("Error response data:", err.response?.data);
+        console.error("Error response status:", err.response?.status);
+        console.error("Error response headers:", err.response?.headers);
+        setError(
+          err.response?.data?.message ||
+            "An error occurred while scheduling interviews",
+        );
+      } else {
+        console.error("Error message:", err.message);
+        setError(
+          err.message || "An error occurred while scheduling interviews",
+        );
       }
+    }
+    setLoading(false);
   };
 
   // NEXT SPRINT BUTTON
