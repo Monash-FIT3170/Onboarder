@@ -30,14 +30,16 @@ import { getBaseAPIURL } from "../util/Util";
 
 const AddRecruitmentRoundPage = () => {
   const [application_deadline, setApplicationDeadline] = useState(
-    DateTime.now(),
+    DateTime.now().plus({ days: 1 }),
   );
-  const [interviewPreferenceDeadline, setInterviewPreferenceDeadline] =
-    useState(DateTime.now());
-  const [interviewPeriodStart, setInterviewPeriodStart] = useState(
-    DateTime.now(),
+  const [interview_preference_deadline, setInterviewPreferenceDeadline] =
+    useState(DateTime.now().plus({ days: 2 }));
+  const [interview_period_start, setInterviewPeriodStart] = useState(
+    DateTime.now().plus({ days: 3 }).startOf("day"),
   );
-  const [interviewPeriodEnd, setInterviewPeriodEnd] = useState(DateTime.now());
+  const [interview_period_end, setInterviewPeriodEnd] = useState(
+    DateTime.now().plus({ days: 4 }).startOf("day"),
+  );
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
   const [open, setOpen] = useState(false);
@@ -58,11 +60,30 @@ const AddRecruitmentRoundPage = () => {
       !semester ||
       !year ||
       year.length <= 0 ||
-      !interviewPreferenceDeadline ||
-      !interviewPeriodStart ||
-      !interviewPeriodEnd
+      !interview_preference_deadline ||
+      !interview_period_start ||
+      !interview_period_end
     ) {
       alert("Please fill in all fields");
+      return;
+    }
+
+    if (interview_period_start > interview_period_end) {
+      alert("Interview period start date cannot be after the end date");
+      return;
+    }
+
+    if (interview_preference_deadline > interview_period_start) {
+      alert(
+        "Interview preference deadline cannot be after the interview period start date",
+      );
+      return;
+    }
+
+    if (application_deadline > interview_preference_deadline) {
+      alert(
+        "Application deadline cannot be after the interview preference deadline",
+      );
       return;
     }
 
@@ -70,10 +91,10 @@ const AddRecruitmentRoundPage = () => {
     try {
       const response = await axios.post(API_URL, {
         application_deadline: application_deadline.toString(),
-        interview_preference_deadline: interviewPreferenceDeadline.toString(),
+        interview_preference_deadline: interview_preference_deadline.toString(),
         interview_period: [
-          interviewPeriodStart.toString(),
-          interviewPeriodEnd.toString(),
+          interview_period_start.toString(),
+          interview_period_end.toString(),
         ],
         semester: semester,
         year: year,
@@ -150,9 +171,10 @@ const AddRecruitmentRoundPage = () => {
                 label="Date Picker"
                 value={application_deadline}
                 onChange={(newValue) => {
-                  if (newValue) setApplicationDeadline(newValue);
+                  if (newValue)
+                    setApplicationDeadline(newValue.endOf("minute"));
                 }}
-                defaultValue={DateTime.now()}
+                defaultValue={DateTime.now().startOf("minute")}
                 slotProps={{ textField: { fullWidth: true } }}
               />
             </LocalizationProvider>
@@ -185,9 +207,10 @@ const AddRecruitmentRoundPage = () => {
             >
               <DateTimePicker
                 label="Date Picker"
-                value={interviewPreferenceDeadline}
+                value={interview_preference_deadline}
                 onChange={(newValue) => {
-                  if (newValue) setInterviewPreferenceDeadline(newValue);
+                  if (newValue)
+                    setInterviewPreferenceDeadline(newValue.endOf("minute"));
                 }}
                 defaultValue={DateTime.now()}
                 slotProps={{ textField: { fullWidth: true } }}
@@ -205,12 +228,14 @@ const AddRecruitmentRoundPage = () => {
             >
               <DateTimePicker
                 label="Start Date"
-                value={interviewPeriodStart}
+                value={interview_period_start}
                 onChange={(newValue) => {
-                  if (newValue) setInterviewPeriodStart(newValue);
+                  if (newValue)
+                    setInterviewPeriodStart(newValue.startOf("day"));
                 }}
-                defaultValue={DateTime.now()}
+                defaultValue={DateTime.now().startOf("day")}
                 slotProps={{ textField: { fullWidth: true } }}
+                views={["year", "month", "day"]}
               />
             </LocalizationProvider>
           </Grid>
@@ -225,12 +250,13 @@ const AddRecruitmentRoundPage = () => {
             >
               <DateTimePicker
                 label="End Date"
-                value={interviewPeriodEnd}
+                value={interview_period_end}
                 onChange={(newValue) => {
-                  if (newValue) setInterviewPeriodEnd(newValue);
+                  if (newValue) setInterviewPeriodEnd(newValue.endOf("day"));
                 }}
                 defaultValue={DateTime.now()}
                 slotProps={{ textField: { fullWidth: true } }}
+                views={["year", "month", "day"]}
               />
             </LocalizationProvider>
           </Grid>

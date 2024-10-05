@@ -127,7 +127,7 @@ function CreateOpeningPage() {
                     variant="subtitle1"
                     style={{ fontWeight: "bold" }}
                   >
-                    ApplicationDeadline
+                    Application Deadline
                   </Typography>
                 </TableCell>
               </TableRow>

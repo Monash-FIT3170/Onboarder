@@ -496,7 +496,7 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
     
-    required_fields = ['semester', 'year', 'application_deadline','interview_preference_deadline','interview_period' 'status']
+    required_fields = ['semester', 'year', 'application_deadline','interview_preference_deadline','interview_period', 'status']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
