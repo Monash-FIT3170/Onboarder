@@ -67,6 +67,7 @@ function RecruitmentRoundDetailsPage() {
       try {
         const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
         setOpening(openingsResponse.data);
+        console.log(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -152,7 +153,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  <TableCell>Application Deadline</TableCell>
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>

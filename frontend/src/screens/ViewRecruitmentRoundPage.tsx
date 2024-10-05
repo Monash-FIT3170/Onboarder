@@ -92,8 +92,11 @@ const ViewRecruitmentRoundPage = () => {
   const handleViewRound = (id: number) => {
     setRecruitmentDetails({
       roundId: id,
-      roundDeadline: null,
+      roundApplicationDeadline: null,
+      roundInterviewPreferenceDeadline: null,
+      roundInterviewPeriod: null,
       roundName: null,
+      roundStatus: null,
     });
     navigate("/recruitment-details-page");
   };
@@ -167,7 +170,7 @@ const ViewRecruitmentRoundPage = () => {
               <TextField
                 style={{ marginBottom: "1rem", width: "25%" }}
                 variant="outlined"
-                placeholder="Round Name, Deadline, etc..."
+                placeholder="Round Name, ApplicationDeadline, etc..."
                 size="small"
                 label="Search"
                 fullWidth
