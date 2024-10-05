@@ -20,6 +20,8 @@ import {
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
+import { useAuthStore } from "../util/stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -61,6 +63,15 @@ function RecruitmentRoundDetailsPage() {
   const [openingFilter, setOpeningFilter] = useState("");
   const [teamFilter, setTeamFilter] = useState("");
   const BASE_API_URL = getBaseAPIURL();
+
+  // sign out
+  const { signOut } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
