@@ -8,12 +8,14 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - pip install -r backend/requirements.txt
+      - echo "Downloading env.json from S3..."
+      - aws s3 cp s3://onboarder-envbucket/env.json .
   build:
     commands:
       - echo "Building the Lambda function..."
       - mkdir -p dist
       - cd backend/lambda
-      - zip -r ../../dist/function.zip .
+      - zip -r ../../dist/function.zip . -x "*.pyc"
       - cd ../..
   post_build:
     commands:

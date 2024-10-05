@@ -127,7 +127,7 @@ function Feedbacknote() {
         submissionData,
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         // setOpen(true);
         // setIsSuccessful(true);
       })

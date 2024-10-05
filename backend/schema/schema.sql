@@ -116,6 +116,7 @@ CREATE TABLE public."APPLICATION" (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     candidate_availability VARCHAR[],
     interview_date TIMESTAMP WITH TIME ZONE,
+    interviewer_id VARCHAR,
     interview_notes VARCHAR,
     interview_score INTEGER,
     status VARCHAR(1) NOT NULL DEFAULT 'A' CHECK (status IN ('A', 'C', 'R', 'X')),

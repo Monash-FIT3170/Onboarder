@@ -119,7 +119,7 @@ const ViewInterviewAllocation = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log(applicationsResponse);
+        // console.log(applicationsResponse);
         setApplications(applicationsResponse.data);
         const roundResponse = await axios.get(
           `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,

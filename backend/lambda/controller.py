@@ -5,6 +5,8 @@ import ssl
 from email.message import EmailMessage
 from cryptography.fernet import Fernet # type: ignore
 
+import sqs
+
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
@@ -152,6 +154,10 @@ def delete_opening(opening_id):
     response = supabase.table("OPENING").delete().eq("id", opening_id).execute()
     return response.data
 
+def schedule_interviews(opening_id):
+    body = {'opening_id': opening_id}
+    sqs.post(body)
+    
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
 
@@ -452,15 +458,32 @@ def decrypt_id(encrypted_id):
     try:
         decrypted_id = fernet.decrypt(encrypted_id.encode()).decode()
         application_data = get_application(decrypted_id)
+        round_data = get_interview_preference_deadline_from_application_id(decrypted_id)
+        interview_preference_deadline_data = get_interview_preference_deadline_from_application_id(decrypted_id)
 
         return {
             'decrypted_id': decrypted_id,
-            'candidate_availability': application_data[0].get('candidate_availability', [])
+            'candidate_availability': application_data[0].get('candidate_availability', []),
+            'interview_preference_deadline': interview_preference_deadline_data
         }
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return None
+
+
+def get_interview_preference_deadline_from_application_id(application_id):
+    try:
+        opening = supabase.table("APPLICATION").select("opening_id").eq("id", application_id).execute()
+        round = supabase.table("openings_with_application_count").select("recruitment_round_id").eq("id", opening.data[0]['opening_id']).execute()
+        preference_deadline = supabase.table("RECRUITMENT_ROUND").select("interview_preference_deadline").eq("id", round.data[0]['recruitment_round_id']).execute()
+        
+        return preference_deadline.data[0]['interview_preference_deadline']
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+        
 
 def send_welcome_email(email, team_name, role):
     role_mapping = {

@@ -126,7 +126,7 @@ The `env.json` file in the root folder contains crucial configuration settings f
     "SUPABASE_URL": "http://host.docker.internal:54321",
     "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
     "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY", // Add your encryption key
-    "WEBSITE_URL": "http://localhost:5173"
+    "WEBSITE_URL": "http://127.0.0.1:5173"
   }
 }
 ```
