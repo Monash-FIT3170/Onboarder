@@ -270,9 +270,11 @@ const ViewInterviewAllocation = () => {
   return (
     <>
       <TitleWrapper>
+        {/* The title */}
         <Typography variant="h4">Candiate Submission Status</Typography>
       </TitleWrapper>
       <PaddingBox></PaddingBox>
+      {/* The button */}
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
           <IconButton onClick={() => navigate("/viewopen")}>
@@ -282,6 +284,7 @@ const ViewInterviewAllocation = () => {
             {selectedOpening?.title}
           </Typography>
         </Box>
+        {/* button to send interivew and schedule intervies */}
         <Box display="flex" alignItems="center">
           <Button
             variant="contained"
@@ -304,7 +307,7 @@ const ViewInterviewAllocation = () => {
       </Box>
       <PaddingBox>
         <PaddingBox></PaddingBox>
-
+        {/* The table of the of the interview avaliability */}
         <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableRow>

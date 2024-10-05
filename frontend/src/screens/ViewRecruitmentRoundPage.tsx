@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -15,10 +14,11 @@ import {
   Skeleton,
   IconButton,
 } from "@mui/material";
+import axios from "axios";
 import Modal from "@mui/material/Modal";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
@@ -26,6 +26,7 @@ import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
 import React from "react";
 
+// Css style file
 const styles = {
   scrollableTableBody: {
     height: "calc(100vh - 650px)",
@@ -35,6 +36,7 @@ const styles = {
   },
 };
 
+// Css style for the modal
 const styleLink = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -47,52 +49,37 @@ const styleLink = {
 };
 
 const ViewRecruitmentRoundPage = () => {
+  // State hooks
   // Modal Link modify
   const [urlLink, setUrlLink] = useState("");
-
   const [openLink, setOpenLink] = React.useState(false);
   const handleOpenLink = () => setOpenLink(true);
   const handleCloseLink = () => setOpenLink(false);
-
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Constants
   enum Status {
     A = "Active",
     I = "Inactive",
     R = "Archived",
   }
-  const navigate = useNavigate();
-  const [filter, setFilter] = useState("");
   const SHOW_ARCHIVED_AMOUNT = 3;
-
   const authStore = useAuthStore();
+  const studentTeamId = authStore.team_id;
+  const BASE_API_URL = getBaseAPIURL();
+  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round`; // Working
+
+  // Store hooks
   const studentTeamStore = useStudentTeamStore();
 
   const setRecruitmentDetails = useRecruitmentStore(
     (state) => state.setRecruitmentDetails,
   );
 
-  const filterData = (round: any) => {
-    const { student_team_name, id, status, semester, year, openings_count } =
-      round;
-    const statusText =
-      Status[status as keyof typeof Status] || "Unknown Status";
-
-    return [
-      `${student_team_name} ${id}`,
-      statusText,
-      semester,
-      year,
-      openings_count,
-    ].some((value: any) =>
-      value.toString().toLowerCase().includes(filter.toLowerCase()),
-    );
-  };
-
-  const studentTeamId = authStore.team_id;
-  const BASE_API_URL = getBaseAPIURL();
-  const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round`; // Working
-
+  // Effects hooks
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,6 +100,8 @@ const ViewRecruitmentRoundPage = () => {
 
     fetchData();
   }, []);
+
+  // Handler functions
 
   const handleViewRound = (id: number) => {
     setRecruitmentDetails({
@@ -149,6 +138,23 @@ const ViewRecruitmentRoundPage = () => {
 
   const handleBack = () => {
     navigate("/dashboard");
+  };
+
+  const filterData = (round: any) => {
+    const { student_team_name, id, status, semester, year, openings_count } =
+      round;
+    const statusText =
+      Status[status as keyof typeof Status] || "Unknown Status";
+
+    return [
+      `${student_team_name} ${id}`,
+      statusText,
+      semester,
+      year,
+      openings_count,
+    ].some((value: any) =>
+      value.toString().toLowerCase().includes(filter.toLowerCase()),
+    );
   };
 
   return (
