@@ -1,9 +1,11 @@
 import json
 import os
 from datetime import datetime, timedelta
-import pulp
+# import pulp
 from supabase import create_client, Client
 import traceback
+from scipy.optimize import linprog
+import numpy as np
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
@@ -33,7 +35,7 @@ def lambda_handler(event: str, context: dict) -> dict:
         print("Interviewee Availabilities: ")
         print(interviewee_availabilities)
         # Solve the scheduling problem
-        schedule = solve_scheduling_problem(
+        schedule = solve_scheduling_problem_scipy(
             interviewer_availabilities,
             interviewee_availabilities,
             interview_duration_minutes
@@ -99,18 +101,16 @@ def get_interviewer_availabilities(opening_id: int) -> tuple[list, list]:
     return interviewers, availabilities
 
 
-def write_schedule_to_db(opening_id: int, records: list) -> None:
-    for item in records:
-        supabase.table('APPLICATION').insert({
-            'application_id': opening_id,
-            'interview_date': item['interview_date'],
-            'profile_id': item['profile_id']
-        }).execute()
-
-
 def process_schedule_for_db(schedule: list, interviewers: list, interviewees: list) -> None:
     records = []
+    print("Schedule: ", schedule)
+    print("Interviewers: ", interviewers)
+    print("Interviewees: ", interviewees)
     for interview in schedule:
+        if isinstance(interview, str):
+            interview = json.loads(interview)
+        if interview['interviewer_index'] is None or interview['interview_time'] is None:
+            continue
         records.append(
             {
                 'application_id': interviewees[interview['interviewee_index']],
@@ -119,7 +119,24 @@ def process_schedule_for_db(schedule: list, interviewers: list, interviewees: li
             }
         )
 
+    return records
 
+
+def write_schedule_to_db(opening_id: int, records: list) -> None:
+    for item in records:
+        # supabase.table('APPLICATION').insert({ 
+        #     'opening_id': opening_id,
+        #     'interview_date': item['interview_date'],
+        #     'profile_id': item['profile_id']
+        # }).execute()
+
+        supabase.table('APPLICATION').update({
+            'interview_date': item['interview_date'],
+            'profile_id': item['profile_id']
+        }).eq('opening_id', opening_id).eq('id', item['application_id']).execute()
+
+
+# This may be used for the algorithm in deploymend
 def solve_scheduling_problem(interviewer_availabilities: list, interviewee_availabilities: list, interview_duration_minutes: int) -> list:
     # Process availabilities
     all_availabilities = interviewer_availabilities + interviewee_availabilities
@@ -202,6 +219,83 @@ def solve_scheduling_problem(interviewer_availabilities: list, interviewee_avail
             "interview_time": interview_time.isoformat() if interview_time else None,
             "interviewer_index": interviewer_index
         })
+
+    return schedule
+
+
+def solve_scheduling_problem_scipy(interviewer_availabilities, interviewee_availabilities, interview_duration_minutes):
+    time_slots, availability_matrix = process_availabilities(
+        interviewer_availabilities + interviewee_availabilities, 
+        interview_duration_minutes
+    )
+    
+    n_interviewers = len(interviewer_availabilities)
+    n_interviewees = len(interviewee_availabilities)
+    n_timeslots = len(time_slots)
+
+    # Flatten the decision variables
+    n_vars = n_interviewers * n_interviewees * n_timeslots
+
+    # Objective: Maximize the number of scheduled interviews
+    c = np.ones(n_vars)
+
+    # Constraints
+    A_ub = []
+    b_ub = []
+
+    # Each interviewee is interviewed at most once
+    for j in range(n_interviewees):
+        constraint = np.zeros(n_vars)
+        constraint[j*n_interviewers*n_timeslots:(j+1)*n_interviewers*n_timeslots] = 1
+        A_ub.append(constraint)
+        b_ub.append(1)
+
+    # Each interviewer has at most one interview at a time
+    for i in range(n_interviewers):
+        for t in range(n_timeslots):
+            constraint = np.zeros(n_vars)
+            for j in range(n_interviewees):
+                idx = i + j*n_interviewers + t*n_interviewers*n_interviewees
+                constraint[idx] = 1
+            A_ub.append(constraint)
+            b_ub.append(1)
+
+    # Availability constraints
+    for i in range(n_interviewers):
+        for j in range(n_interviewees):
+            for t in range(n_timeslots):
+                if availability_matrix[i][t] == 0 or availability_matrix[n_interviewers + j][t] == 0:
+                    constraint = np.zeros(n_vars)
+                    idx = i + j*n_interviewers + t*n_interviewers*n_interviewees
+                    constraint[idx] = 1
+                    A_ub.append(constraint)
+                    b_ub.append(0)
+
+    # Solve the problem
+    res = linprog(-c, A_ub=A_ub, b_ub=b_ub, method='highs')
+
+    # Process results
+    schedule = []
+    if res.success:
+        x = res.x.reshape((n_interviewees, n_interviewers, n_timeslots))
+        for j in range(n_interviewees):
+            interview_time = None
+            interviewer_index = None
+            for i in range(n_interviewers):
+                for t in range(n_timeslots):
+                    if x[j, i, t] > 0.5:  # Using 0.5 as a threshold due to potential floating-point imprecision
+                        interview_time = time_slots[t]
+                        interviewer_index = i
+                        break
+                if interview_time:
+                    break
+            schedule.append({
+                "interviewee_index": j,
+                "interview_time": interview_time.isoformat() if interview_time else None,
+                "interviewer_index": interviewer_index
+            })
+    else:
+        print("Optimization failed:", res.message)
 
     return schedule
 

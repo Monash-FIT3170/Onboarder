@@ -24,6 +24,7 @@ Recruitment platform for Monash University student teams
     - [Back-end Setup](#back-end-setup)
       - [Sam](#sam)
       - [Supabase Local Development](#supabase-local-development)
+      - [Optional: Setting up local testing](#optional-setting-up-local-testing)
       - [Opening Website in Browser](#opening-website-in-browser)
   - [Editing the Database](#editing-the-database)
         - [Project Setup](#project-setup)
@@ -248,6 +249,21 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 7. You can access the supabase dashboard for your local setup by pasting this into your browser:
    ```
    http://127.0.0.1:54323
+   ```
+
+#### Optional: Setting up local testing
+  If you would like to try run the algorithm, you will need a python virtual environment.
+  1. Navigate to backend/lambda
+  2. Run
+   ```
+  python -m venv venv
+  ```
+  ```
+  source venv/bin/activate  
+  # On Windows, use `venv\Scripts\activate`
+  ```
+  ```
+  pip install -r requirements.txt
    ```
 
 #### Opening Website in Browser

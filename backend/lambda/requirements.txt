@@ -3,4 +3,5 @@ supabase==2.4.5
 resend==2.4.0
 python-dotenv==1.0.1
 cryptography
-pulp
+scipy
+numpy

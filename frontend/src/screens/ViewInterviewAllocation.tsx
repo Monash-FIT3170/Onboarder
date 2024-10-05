@@ -142,10 +142,10 @@ const ViewInterviewAllocation = () => {
   //     navigate("/viewopen");
   // };
   const interviewScheduledCount = applications.filter(
-    (app) => app.candidate_availability,
+    (app) => app.interview_date != null,
   ).length;
   const interviewNotScheduledCount = applications.filter(
-    (app) => !app.candidate_availability,
+    (app) => app.interview_date == null,
   ).length;
 
   const respond = () => {
