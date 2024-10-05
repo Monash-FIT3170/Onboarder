@@ -4,7 +4,7 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 from cryptography.fernet import Fernet # type: ignore
-
+import json
 import sqs
 
 url: str = os.environ.get("SUPABASE_URL")
@@ -156,7 +156,14 @@ def delete_opening(opening_id):
 
 def schedule_interviews(opening_id):
     body = {'opening_id': opening_id}
-    sqs.post(body)
+
+    local = False
+    if local:
+        import optimisation
+        event = json.dumps({'Records': [{'body': {'opening_id': opening_id}}]})
+        optimisation.lambda_handler(event, {})
+    else:
+        sqs.post(body)
     
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
