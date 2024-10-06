@@ -12,6 +12,7 @@ import {
   Switch,
   FormControlLabel,
   Stack,
+  Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
@@ -86,55 +87,39 @@ function AppBarOnBoarder() {
       <CssBaseline />
       <AppBar
         position="static"
-        // sx={{
-        //   margin: 0,
-        //   // backgroundColor: darkMode
-        //   //   ? theme.palette.grey[900]
-        //   //   : theme.palette.primary.main,
-        // }}
+        // enableColorOnDark
       >
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Onboarding: Recruitment Platform
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          >
+            Onboarder
           </Typography>
-
-          {user && (
-            <>
-              <Button
-                onClick={handleViewAvailability}
-                sx={{
-                  color: "white",
-                  borderColor: "rgba(255, 255, 255, 0.5)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    borderColor: "white",
-                  },
-                  textTransform: "none",
-                }}
-                variant="outlined"
-              >
-                Your Interviews and Availability
-              </Button>
-              <Button
-                onClick={signOut}
-                sx={{
-                  color: "white",
-                  borderColor: "rgba(255, 255, 255, 0.5)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    borderColor: "white",
-                  },
-                  textTransform: "none",
-                  marginLeft: 2,
-                  marginRight: 2,
-                }}
-                variant="outlined"
-              >
-                Sign Out
-              </Button>
-            </>
-          )}
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            <Button
+              key={1}
+              sx={{ color: "#fff" }}
+              onClick={handleViewAvailability}
+            >
+              Your Interviews and Availability
+            </Button>
+            <Button key={2} sx={{ color: "#fff" }} onClick={signOut}>
+              Sign out
+            </Button>
+          </Box>
+          <Divider
+            orientation="vertical"
+            variant="middle"
+            flexItem
+            sx={{ mx: 2, bgcolor: "grey.600" }}
+          />
+          <Stack
+            direction="row"
+            spacing={0}
+            sx={{ alignItems: "center", ml: 1 }}
+          >
             <Typography>Light</Typography>
             <Switch
               checked={darkMode}
