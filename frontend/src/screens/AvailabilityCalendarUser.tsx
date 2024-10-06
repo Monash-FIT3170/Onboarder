@@ -34,17 +34,76 @@ interface Event {
   end: Date;
   title: string;
 }
-const BASE_API_URL = getBaseAPIURL();
-const API_URL = `${BASE_API_URL}`;
 
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 const AvailabilityCalendarUser: React.FC = () => {
-  const navigate = useNavigate();
+  // State hooks
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const [interviewDates, setInterviewDates] = useState<Event[]>([]);
 
+  // Constants
+  const navigate = useNavigate();
+  const scrollToTime = new Date();
+  const BASE_API_URL = getBaseAPIURL();
+
+  // Store hooks
+  const { profile: profileId, fetchProfile } = useAuthStore();
+
+  // Effect hooks
+  const fetchAvailability = async () => {
+    let profileID = profileId;
+
+    if (!profileId) {
+      profileID = await fetchProfile();
+    }
+
+    const response = await axios.get(`${BASE_API_URL}/profile/${profileID}`);
+    const data = response.data;
+
+    const parsedData = data[0].interview_availability.map((event: Event) => {
+      const parsedEvent = JSON.parse(event as unknown as string);
+
+      return {
+        ...parsedEvent,
+        start: new Date(parsedEvent.start),
+        end: new Date(parsedEvent.end),
+      };
+    });
+
+    setEventsList(parsedData);
+  };
+
+  // Get interview dates from applications where profile_id is authenticated user
+  const fetchScheduledInterviews = async () => {
+    const response = await axios.get(
+      `${BASE_API_URL}/profile/${profileId}/application`,
+    );
+    const data = response.data;
+    console.log(data);
+    const interviewDates = data.map((interview: any) => {
+      return {
+        start: new Date(interview.interview_date),
+        end: new Date(
+          new Date(interview.interview_date).setMinutes(
+            new Date(interview.interview_date).getMinutes() + 30,
+          ),
+        ),
+        title: "Interview with " + interview.name,
+        editable: false,
+        outlined: true,
+      };
+    });
+    setInterviewDates(interviewDates);
+  };
+
+  useEffect(() => {
+    fetchAvailability();
+    fetchScheduledInterviews();
+  }, []);
+
+  // Handler functions
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     // Check if the selected time slot overlaps with any existing events
     const overlappingEvent = eventsList.find(
@@ -59,12 +118,20 @@ const AvailabilityCalendarUser: React.FC = () => {
     } else {
       const updatedEvents = [
         ...eventsList,
-        ...interviewDates,
         { start, end, title: "Available Slot" },
       ];
       setEventsList(updatedEvents);
-      // handleSave(updatedEvents); // Automatically save changes
+      console.log("Updated Events");
+      console.log(updatedEvents);
+      console.log("Interview Dates");
+      console.log(interviewDates);
     }
+  };
+
+  const handleSelectEvent = ({ start, end }: { start: Date; end: Date }) => {
+    setEventsList(
+      eventsList.filter((event) => event.start != start && event.end != end),
+    );
   };
 
   const handleEventResize = ({
@@ -82,7 +149,6 @@ const AvailabilityCalendarUser: React.FC = () => {
         : existingEvent,
     );
     setEventsList(updatedEvents);
-    // handleSave(updatedEvents); // Automatically save changes
   };
 
   const handleEventDrop = ({
@@ -102,75 +168,36 @@ const AvailabilityCalendarUser: React.FC = () => {
     setEventsList(updatedEvents);
   };
 
-  const { profile: profileId, fetchProfile } = useAuthStore();
-
   const handleSave = async () => {
     // console.log(eventsList);
     try {
-      await axios.patch(`${API_URL}/profile/${profileId}`, {
+      await axios.patch(`${BASE_API_URL}/profile/${profileId}`, {
         interview_availability: eventsList.filter(
           (event) => event.title === "Available Slot",
         ),
       });
     } catch (error) {
       console.error(`Error saving availability data: ${error}`);
+    } finally {
+      alert("Availability saved successfully!");
     }
   };
 
-  const fetchAvailability = async () => {
-    let profileID = profileId;
-
-    if (!profileId) {
-      profileID = await fetchProfile();
-    }
-
-    const response = await axios.get(`${API_URL}/profile/${profileID}`);
-    const data = response.data;
-
-    const parsedData = data[0].interview_availability.map((event: Event) => {
-      const parsedEvent = JSON.parse(event as unknown as string);
-
-      return {
-        ...parsedEvent,
-        start: new Date(parsedEvent.start),
-        end: new Date(parsedEvent.end),
-      };
-    });
-
-    setEventsList(parsedData);
-  };
-
-  // Get interview dates from applications where profile_id is authenticated user
-  const fetchScheduledInterviews = async () => {
-    const response = await axios.get(
-      `${API_URL}/profile/${profileId}/application`,
-    );
-    const data = response.data;
-    console.log(data);
-    const interviewDates = data.map((interview: any) => {
-      return {
-        start: new Date(interview.interview_date),
-        end: new Date(
-          new Date(interview.interview_date).setMinutes(
-            new Date(interview.interview_date).getMinutes() + 30,
-          ),
-        ),
-        title: "Interview with " + interview.name,
-        editable: false,
-      };
-    });
-    setInterviewDates(interviewDates);
-    // const updatedEvents = [...eventsList, ...interviewDates];
-    // const updatedEvents = [...interviewDates];
-  };
-
-  useEffect(() => {
-    fetchAvailability();
-    fetchScheduledInterviews();
-  }, []);
-
-  const scrollToTime = new Date();
+  // Calendar configuration
   scrollToTime.setHours(9, 0, 0);
+
+  const eventStyleGetter = (event) => {
+    if (event.outlined) {
+      return {
+        className: "outlined",
+        style: {
+          opacity: event.editable ? 1 : 0.7,
+        },
+      };
+    }
+    // For non-outlined events, return an empty object to use default styles
+    return {};
+  };
 
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
@@ -194,6 +221,9 @@ const AvailabilityCalendarUser: React.FC = () => {
             .rbc-allday-cell {
               display: none !important;
             }
+            .rbc-event-content {
+              color: inherit !important;
+            }
           `}
         </style>
         <DragAndDropCalendar
@@ -210,7 +240,9 @@ const AvailabilityCalendarUser: React.FC = () => {
           onEventResize={handleEventResize} // Handle resizing of existing events
           onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
           titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+          onSelectEvent={handleSelectEvent} // This is for deleting event
           scrollToTime={scrollToTime}
+          eventPropGetter={eventStyleGetter}
         />
         {/* Save Button */}
         <Button
