@@ -22,7 +22,7 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { team_id: studentTeamId, team_name } = useAuthStore();
+  const { team_id: studentTeamId, team_name, ability } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -139,13 +139,15 @@ const ViewTeamMembersPage: React.FC = () => {
         <Typography variant="h4" component="h1" sx={{ flexGrow: 1 }}>
           {team_name ? `${team_name} Members` : "Team Members"}
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenInviteModal}
-        >
-          ADD MEMBER
-        </Button>
+        {ability?.can("invite", "Team") && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenInviteModal}
+          >
+            ADD MEMBER
+          </Button>
+        )}
       </Box>
       <TeamMembersTable members={members} onRemove={handleRemove} />
       <InviteMemberModal
