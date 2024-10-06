@@ -145,7 +145,7 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-      <IconButton onClick={() => navigate("/applicant-openings")}>
+      <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
       <Typography variant="h5" component="div">
@@ -327,7 +327,7 @@ function ApplicationSubmissionPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/applicant-openings");
+              navigate("/onboarder-openings");
             }}
           >
             CLOSE

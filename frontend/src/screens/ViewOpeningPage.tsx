@@ -86,7 +86,7 @@ function ViewOpenPage() {
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewrecruitmentround");
+      navigate("/view-recruitment-rounds");
       return;
     }
 
@@ -125,7 +125,7 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/admin-acceptpage");
+    navigate("/review-applicant");
   };
 
   const handleViewInterviewNotes = (applicationId: number) => {
@@ -140,17 +140,17 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/feedbacknote");
+    navigate("/interview-feedback");
   };
 
   const handleBack = () => {
     clearSelectedOpening();
-    navigate("/recruitment-details-page");
+    navigate("/recruitment-round-details");
   };
 
   const respond = () => {
     // clearSelectedOpening();
-    navigate("/view-interview-allocation");
+    navigate("/interview-scheduling");
   };
 
   const respond2 = () => {
@@ -251,7 +251,7 @@ function ViewOpenPage() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              // console.log("Navigating to /view-interview-allocation");
+              // console.log("Navigating to /interview-scheduling");
               respond();
             }}
           >

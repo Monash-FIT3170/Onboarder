@@ -479,7 +479,7 @@ def generate_email_body(application_id, task_enabled=False, task_email_format=""
             <p>Dear Candidate,</p>
             <p>Congratulations on progressing to the next stage of our recruitment process. We're impressed with your application and look forward to learning more about you.</p>
             <p>To move forward, please provide your availability for the next steps by clicking on the following link:
-            <a href="http://localhost:5173/availability-calendar/{encrypted_id}">Enter Availability</a>.
+            <a href="http://localhost:5173/candidate-availability-calendar/{encrypted_id}">Enter Availability</a>.
             We kindly ask that you complete this within the next 3 business days.</p>
             <p>If you have any questions about the process or require any accommodations, please don't hesitate to reach out.</p>
     """

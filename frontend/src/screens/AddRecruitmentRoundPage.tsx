@@ -275,7 +275,7 @@ const AddRecruitmentRoundPage = () => {
             </Grid>
             <Grid item>
               <Link
-                to="/viewrecruitmentround"
+                to="/view-recruitment-rounds"
                 style={{ textDecoration: "none" }}
               >
                 <Button variant="contained" color="error" size="large">
@@ -298,7 +298,7 @@ const AddRecruitmentRoundPage = () => {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/viewrecruitmentround");
+              navigate("/view-recruitment-rounds");
             }}
           >
             GO TO ROUNDS TABLE

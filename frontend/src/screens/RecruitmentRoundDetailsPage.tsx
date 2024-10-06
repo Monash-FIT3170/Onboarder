@@ -176,7 +176,7 @@ function RecruitmentRoundDetailsPage() {
       title,
       application_count,
     });
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
 
   const handleCloseModal = () => {
@@ -190,7 +190,7 @@ function RecruitmentRoundDetailsPage() {
 
   const handleBack = () => {
     clearRecruitmentDetails();
-    navigate("/viewrecruitmentround");
+    navigate("/view-recruitment-rounds");
   };
 
   return (

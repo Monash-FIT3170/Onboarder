@@ -112,7 +112,7 @@ const ViewInterviewAllocation = () => {
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewopen");
+      navigate("/opening-details");
       return;
     }
 
@@ -299,7 +299,7 @@ const ViewInterviewAllocation = () => {
       {/* The button */}
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
-          <IconButton onClick={() => navigate("/viewopen")}>
+          <IconButton onClick={() => navigate("/opening-details")}>
             <BackIcon />
           </IconButton>
           <Typography variant="h6" sx={{ ml: 2 }}>
