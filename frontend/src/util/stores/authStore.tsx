@@ -15,6 +15,7 @@ interface AuthState {
   fetchProfile: () => Promise<string | null>;
   updateTeamAndRole(
     team_id: any | null,
+    team_meeting_link: string | null,
     team_name: string | null,
     role: string | null,
   ): void;
@@ -69,10 +70,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   updateTeamAndRole: (
     team_id: any | null,
+    team_meeting_link: string | null,
     team_name: string | null,
     role: UserRole | null,
   ) => {
-    set({ team_id, team_name, role });
+    set({ team_id, team_meeting_link, team_name, role });
   },
 
   fetchProfile: async (): Promise<string | null> => {

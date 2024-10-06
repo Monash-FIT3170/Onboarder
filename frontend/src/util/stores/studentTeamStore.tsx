@@ -7,6 +7,7 @@ export interface StudentTeam {
   user_team_role: string;
   student_team_owner: string;
   student_team_description: string;
+  student_team_meeting_link: string;
 }
 
 interface StudentTeamStore {

@@ -60,6 +60,7 @@ const Dashboard: React.FC = () => {
                   : "Team Lead",
             student_team_owner: role.owner_email,
             student_team_description: role.student_team_description,
+            student_team_meeting_link: role.student_team_meeting_link,
           }))
           .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
             const roleRanking: { [key: string]: number } = {
