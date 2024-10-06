@@ -5,3 +5,9 @@ python-dotenv==1.0.1
 cryptography
 scipy
 numpy
+icalendar
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+pytz
+pulp

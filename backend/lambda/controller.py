@@ -5,6 +5,16 @@ import ssl
 from email.message import EmailMessage
 from cryptography.fernet import Fernet  # type: ignore
 import json
+from datetime import datetime
+import os.path
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
+from google.auth import _helpers
+import pytz
+
 import sqs
 
 url: str = os.environ.get("SUPABASE_URL")
@@ -60,8 +70,10 @@ def create_application(
 
 
 def get_all_applications_for_opening(opening_id):
+    # print("Current select: *, profile:PROFILE(email).email::text as interviewer_email")
     response = supabase.table("APPLICATION").select(
-        "*").eq("opening_id", opening_id).execute()
+        "*, profile:PROFILE(email).email::text as interviewer_email"
+    ).eq("opening_id", opening_id).execute()
     return response.data
 
 
@@ -622,3 +634,123 @@ def send_welcome_email(email, team_name, role):
         print(f"Failed to send notification email to {email}")
 
     return email_sent
+
+# -------------- GOOGLE CALENDAR CONTROLLERS --------------
+
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+
+def get_credentials():
+    try:
+        creds = None
+        token = os.getenv("GOOGLE_CALENDAR_TOKEN")
+        refresh_token = os.getenv("GOOGLE_CALENDAR_REFRESH_TOKEN")
+        token_uri = os.getenv("GOOGLE_CALENDAR_TOKEN_URI")
+        client_id = os.getenv("GOOGLE_CALENDAR_CLIENT_ID")
+        client_secret = os.getenv("GOOGLE_CALENDAR_CLIENT_SECRET")
+        expiry_str = os.getenv("GOOGLE_CALENDAR_EXPIRY")
+
+        if token and refresh_token and token_uri and client_id and client_secret:
+            creds = Credentials(
+                token=token,
+                refresh_token=refresh_token,
+                token_uri=token_uri,
+                client_id=client_id,
+                client_secret=client_secret,
+                scopes=SCOPES
+            )
+            if expiry_str:
+                # Parse the expiry string and make it timezone-aware
+                expiry = datetime.fromisoformat(expiry_str)
+                if expiry.tzinfo is None:
+                    expiry = pytz.UTC.localize(expiry)
+                creds.expiry = expiry
+
+        # Monkey-patching the _helpers.utcnow() function to return a timezone-aware datetime
+        def utcnow_aware():
+            return datetime.now(pytz.UTC)
+        _helpers.utcnow = utcnow_aware
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                try:
+                    creds.refresh(Request())
+                except RefreshError:
+                    print(
+                        "Failed to refresh the token. You may need to re-authenticate.")
+                    raise
+            else:
+                raise ValueError(
+                    "No valid credentials found. Please set up your environment variables.")
+
+        return creds
+
+    except Exception as e:
+        print(f"An error occurred while getting credentials: {str(e)}")
+        raise
+
+
+def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, meeting_link):
+    creds = get_credentials()
+    service = build('calendar', 'v3', credentials=creds)
+
+    description = f"""Dear Candidate,
+    \nWe are pleased to invite you for an interview with {organizer_name}. We look forward to discussing your qualifications and experience.
+    \nInterview Details:
+
+    * Location: Online
+    * Organizer: {organizer_name}
+    """
+
+    if meeting_link != "":
+        description += f"* Meeting Link: {
+            meeting_link} \n\n Please use the Meeting link above to join the interview at the scheduled time."
+    else:
+        description += "The specific link for the online interview will be provided closer to the interview date."
+
+    description += f"""
+    \nIf you need to reschedule or have any questions, please don't hesitate to contact us on {organizer_email}.
+    \nWe look forward to meeting you!
+    \nBest regards,
+    \n{organizer_name}"""
+
+    event = {
+        'summary': 'Student Team Interview',
+        'location': 'Online',
+        'description': description,
+        'start': {
+            'dateTime': start_time.isoformat(),
+            'timeZone': 'Australia/Melbourne',
+        },
+        'end': {
+            'dateTime': end_time.isoformat(),
+            'timeZone': 'Australia/Melbourne',
+        },
+        'attendees': [
+            {'email': attendee, 'responseStatus': 'needsAction'} for attendee in ([applicant_emails] + interviewer_emails)
+        ],
+        'guestsCanModify': True,
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+        "organizer": {
+            "email": interviewer_emails[0],
+        },
+    }
+
+    try:
+        created_event = service.events().insert(
+            calendarId='primary',
+            body=event,
+            sendUpdates='all'
+        ).execute()
+        print(f'Interview event created: {created_event.get("htmlLink")}')
+        return created_event
+    except Exception as e:
+        print(f"An error occurred while creating the event: {e}")
+        return None

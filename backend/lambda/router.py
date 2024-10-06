@@ -1,6 +1,8 @@
+import os
 import controller
 from typing import Callable
 import json
+from datetime import datetime, timedelta
 
 routes = dict()
 
@@ -67,8 +69,8 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/application', ['OPTIONS'])
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
-# Send email with schedule interview availability link
-@route('/send-interview-emails/{openingId}', ['OPTIONS'])
+@route('/create-calendar-events', ['OPTIONS'])
+@route('/send-interview-emails/{openingId}', ['OPTIONS'])  # This is for scheduling availabilities
 @route('/decrypt/{id}', ['OPTIONS'])
 @route('/opening/{openingId}/schedule-interviews', ['OPTIONS'])
 # Get intreviews for a profile
@@ -573,6 +575,37 @@ def create_recruitment_round(path_params={}, _={}, body={}):
         'headers': HEADERS
     }
 
+@route('/student-team/{studentTeamId}/recruitment-round', ['PATCH'])
+def update_student_team_recruitment_round(path_params={}, _={}, body={}):
+    student_team_id = path_params.get('studentTeamId')
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    response = controller.update_student_team_recruitment_round(
+        student_team_id, data)
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'success': True,
+            'data': response
+        }),
+        'headers': HEADERS
+    }
+
 
 @route('/student-team/{studentTeamId}/recruitment-round', ['GET'])
 def get_all_recruitment_rounds_for_student_team(path_params={}, _={}, __={}):
@@ -972,12 +1005,6 @@ def create_application(path_params={}, _={}, body={}):
         major_enrolled = data['major_enrolled']
         additional_info = data['additional_info']
         skills = data['skills']
-        # created_at = data['created_at']
-        # candidate_availability = data['candidate_availability']
-        # interview_date = data['interview_date']
-        # interview_notes = data['interview_notes']
-        # interview_score = data['interview_score']
-        # status = data['status']
         course_name = data['course_name']
     except (ValueError, KeyError):
         return {
@@ -990,7 +1017,6 @@ def create_application(path_params={}, _={}, body={}):
         email, name, phone, semesters_until_completion,
         current_semester, major_enrolled, additional_info,
         skills, opening_id, course_name
-        # interview_notes, interview_score, created_at, candidate_availability, interview_date, status,
     )
 
     return {
@@ -1112,6 +1138,107 @@ def send_email(path_params={}, querystring_params={}, body={}):
             'headers': HEADERS
         }
         return response
+
+
+@route('/create-calendar-events', ['POST'])
+def schedule_interviews(path_params={}, querystring_params={}, body={}):
+    if not body:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body is missing'}),
+            'headers': HEADERS
+        }
+
+    try:
+        data = json.loads(body) if isinstance(body, str) else body
+    except ValueError:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid request body'}),
+            'headers': HEADERS
+        }
+
+    if not isinstance(data, list):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Request body should be a list of interview details. Data:' + str(data)}),
+            'headers': HEADERS
+        }
+
+    results = []
+    for interview in data:
+        required_fields = ['interview_start_time',
+                           'applicant_email', 'interviewers', 'organizer_name']
+        missing_fields = [
+            field for field in required_fields if field not in interview]
+        if missing_fields:
+            results.append({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            })
+            continue
+
+        try:
+            interview_start_time = interview['interview_start_time']
+            applicant_email = interview['applicant_email']
+            interviewer_emails = interview['interviewers']
+            organizer_name = interview['organizer_name']
+            meeting_link = interview['meeting_link']
+
+            if not isinstance(interviewer_emails, list):
+                raise ValueError(
+                    "Interviewers must be lists")
+
+            start_time = datetime.strptime(
+                interview_start_time, "%Y-%m-%d %H:%M:%S")
+            end_time = start_time + timedelta(minutes=30)
+
+            # Use the organizer's email from the environment variable
+            organizer_email = os.environ.get('SMTP_USERNAME')
+            if not organizer_email:
+                raise ValueError(
+                    "ORGANIZER_EMAIL environment variable not set")
+
+            event = controller.create_interview_event_with_attendees(
+                applicant_email,
+                interviewer_emails,
+                start_time,
+                end_time,
+                organizer_name,
+                organizer_email,
+                meeting_link
+            )
+
+            if event:
+                results.append({
+                    'success': True,
+                    'msg': f'Interview scheduled successfully for {applicant_email}',
+                    'event_link': event.get('htmlLink')
+                })
+            else:
+                results.append({
+                    'success': False,
+                    'error': f'Failed to schedule interview for {applicant_email}'
+                })
+
+        except ValueError as ve:
+            results.append({
+                'success': False,
+                'error': f'Invalid data: {str(ve)}'
+            })
+        except Exception as e:
+            results.append({
+                'success': False,
+                'error': f'An error occurred while scheduling interview: {str(e)}'
+            })
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps({
+            'results': results
+        }),
+        'headers': HEADERS
+    }
 
 
 @route('/decrypt/{id}', ['GET'])
