@@ -1,6 +1,9 @@
 # Onboarder
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Recruitment platform for Monash University student teams
@@ -12,13 +15,17 @@ Recruitment platform for Monash University student teams
   - [Team Members](#team-members)
   - [Prerequisites](#prerequisites)
   - [Configuration Files](#configuration-files)
-      - [`.env` (Front-end)](#env-front-end)
-      - [`.env` (Root)](#env-root)
-      - [`env.json` (Root)](#envjson-root)
-        - [env.json Email Configuration](#envjson-email-configuration)
-        - [env.json Supabase Configuration](#envjson-supabase-configuration)
-        - [env.json Encryption Key](#envjson-encryption-key)
-        - [env.json Website URL](#envjson-website-url)
+    - [`.env` (Front-end)](#env-front-end)
+    - [`.env` (Root)](#env-root)
+    - [`env.json` (Root)](#envjson-root)
+      - [Sinked FIT3170 Template](#sinked-fit3170-template)
+      - [Here is a more general version of the template](#here-is-a-more-general-version-of-the-template)
+      - [env.json Email Configuration](#envjson-email-configuration)
+      - [env.json Supabase Configuration](#envjson-supabase-configuration)
+      - [env.json Encryption Key](#envjson-encryption-key)
+      - [env.json Website URL](#envjson-website-url)
+      - [Google Calendar variables](#google-calendar-variables)
+      - [Scheduler Queue URL](#scheduler-queue-url)
   - [Setup Instructions](#setup-instructions)
     - [Front-end Setup](#front-end-setup)
     - [Back-end Setup](#back-end-setup)
@@ -27,17 +34,18 @@ Recruitment platform for Monash University student teams
       - [Optional: Setting up local testing](#optional-setting-up-local-testing)
       - [Opening Website in Browser](#opening-website-in-browser)
   - [Editing the Database](#editing-the-database)
-        - [Project Setup](#project-setup)
-        - [Adding to the Local Database](#adding-to-the-local-database)
-        - [Dummy Data](#dummy-data)
-        - [Initialising Tables and Data](#initialising-tables-and-data)
-        - [Adding to the Prod Database](#adding-to-the-prod-database)
+    - [Project Setup](#project-setup)
+      - [Adding to the Local Database](#adding-to-the-local-database)
+      - [Dummy Data](#dummy-data)
+      - [Initialising Tables and Data](#initialising-tables-and-data)
+      - [Adding to the Prod Database](#adding-to-the-prod-database)
     - [Google Sign-In Setup](#google-sign-in-setup)
   - [Additional Notes](#additional-notes)
+  - [Prod Deployment Instructions](#prod-deployment-instructions)
   - [Common Issues](#common-issues)
-      - [CORS Error](#cors-error)
-      - [Front End Crash (Blank Screen)](#front-end-crash-blank-screen)
-      - [SAM cannot find Docker](#sam-cannot-find-docker)
+    - [CORS Error](#cors-error)
+    - [Front End Crash (Blank Screen)](#front-end-crash-blank-screen)
+    - [SAM cannot find Docker](#sam-cannot-find-docker)
     - [NPM Dependency error (node modules not found)](#npm-dependency-error-node-modules-not-found)
   - [Git Management](#git-management)
     - [Repository Structure](#repository-structure)
@@ -49,25 +57,7 @@ Recruitment platform for Monash University student teams
 
 ## Team Members
 
-Below are the details of our team members, including their roles and Monash email addresses:
-
-| Member                   | Monash Email                |
-| ------------------------ | --------------------------- |
-| Hanif Zafari (SA)        | hmoh0035@student.monash.edu |
-| Anthony Razzell (SA)     | araz0013@student.monash.edu |
-| Rahul Saxena (SA)        | rsax0001@student.monash.edu |
-| Fahad Assadi (RTE)       | fass0001@student.monash.edu |
-| Rahul Sahni (RTE)        | rsah0008@student.monash.edu |
-| Umair Mohammad (RTE)     | umoh0005@student.monash.edu |
-| Tran Ngo (RTE)           | tngo0031@student.monash.edu |
-| Nguyen Khang (RTE)       | nhuy0018@student.monash.edu |
-| Ranith Pathiranage (RTE) | rsim0010@student.monash.edu |
-| Shubh Bajpai (PO)        | sbaj0015@student.monash.edu |
-| Sai Rami (PO)            | sram0056@student.monash.edu |
-| Tavishi Saxena (PO)      | tsax0001@student.monash.edu |
-| Ahmed Hafiz (PO)         | abin0036@student.monash.edu |
-| Jesse Cruickshank (PO)   | jcru0005@student.monash.edu |
-| Brendon Perera (PO)      | bper0009@student.monash.edu |
+Refer to all-contributors at the bottom of this document.
 
 ## Prerequisites
 
@@ -86,10 +76,10 @@ For development, team members work on local Supabase instances.
 
 ## Configuration Files
 
-You need to create these three files in your project to be able to develop. 
+You need to create these three files in your project to be able to develop.
 Do not add these files to Git.
 
-#### `.env` (Front-end)
+### `.env` (Front-end)
 
 Create `.env` file in `/frontend`
 
@@ -100,22 +90,25 @@ VITE_SUPABASE_KEY=YeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1k
 
 These are the default keys for local Supabase
 
-#### `.env` (Root)
+### `.env` (Root)
 
 Create `.env` file in root folder
 
 ```.env
 SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<your projects client id>
 SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET=<your projects secret>
-DEV_EMAIL=<your monash email> // e.g. jdoe0000@student.monash.edu
+DEV_EMAIL=<your monash email>
 ```
+
+Replace `<your monash email>` with your student email.
 
 If this has been done, ask your team for these keys, otherwise complete "Google Sign-In Setup" later in this document.
 
-#### `env.json` (Root)
+### `env.json` (Root)
 
 The `env.json` file in the root folder contains crucial configuration settings for the back-end, including email settings, database connections, and encryption keys. Here's a breakdown of its structure and how to set it up:
-**Sinked FIT3170 Template**
+
+#### Sinked FIT3170 Template
 
 ```json
 {
@@ -128,12 +121,19 @@ The `env.json` file in the root folder contains crucial configuration settings f
     "SUPABASE_URL": "http://host.docker.internal:54321",
     "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0",
     "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY", // Add your encryption key
-    "WEBSITE_URL": "http://127.0.0.1:5173"
+    "WEBSITE_URL": "http://127.0.0.1:5173",
+    "GOOGLE_CALENDAR_TOKEN": "",
+    "GOOGLE_CALENDAR_REFRESH_TOKEN": "",
+    "GOOGLE_CALENDAR_TOKEN_URI": "",
+    "GOOGLE_CALENDAR_CLIENT_ID": "",
+    "GOOGLE_CALENDAR_CLIENT_SECRET": "",
+    "GOOGLE_CALENDAR_EXPIRY": "",
+    "INTERVIEW_SCHEDULER_QUEUE_URL": ""
   }
 }
 ```
 
-**Here is a more general version of the template**
+#### Here is a more general version of the template
 
 ```json
 {
@@ -147,12 +147,19 @@ The `env.json` file in the root folder contains crucial configuration settings f
     "SUPABASE_URL": "YOUR_SUPABASE_URL",
     "SUPABASE_KEY": "YOUR_SUPABASE_KEY",
     "ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY",
-    "WEBSITE_URL": "YOUR_WEBSITE_URL"
+    "WEBSITE_URL": "YOUR_WEBSITE_URL",
+    "GOOGLE_CALENDAR_TOKEN": "",
+    "GOOGLE_CALENDAR_REFRESH_TOKEN": "",
+    "GOOGLE_CALENDAR_TOKEN_URI": "",
+    "GOOGLE_CALENDAR_CLIENT_ID": "",
+    "GOOGLE_CALENDAR_CLIENT_SECRET": "",
+    "GOOGLE_CALENDAR_EXPIRY": "",
+    "INTERVIEW_SCHEDULER_QUEUE_URL": ""
   }
 }
 ```
 
-##### env.json Email Configuration
+#### env.json Email Configuration
 
 - `EMAIL_SENDER`: The email address used to send notifications.
 - `SMTP_HOST`, `SMTP_PORT`: SMTP server settings (example shows Gmail's settings).
@@ -161,14 +168,14 @@ The `env.json` file in the root folder contains crucial configuration settings f
 
 Note: While we use Gmail as an example, you can configure any SMTP provider by updating these values accordingly.
 
-##### env.json Supabase Configuration
+#### env.json Supabase Configuration
 
 - `SUPABASE_URL`: Your Supabase project URL.
 - `SUPABASE_KEY`: Your Supabase project API key.
 
 These can be found in your Supabase project settings.
 
-##### env.json Encryption Key
+#### env.json Encryption Key
 
 The `ENCRYPTION_KEY` is used to encrypt sensitive data, such as application IDs in emails. Generate it once using the Fernet library in Python:
 
@@ -184,32 +191,48 @@ Run this script once, save the output, and use it as your `ENCRYPTION_KEY` in th
 
 Important: Keep your `env.json` file and especially the `ENCRYPTION_KEY` secure. Never commit them to version control or share them publicly.
 
-##### env.json Website URL
+#### env.json Website URL
 
 The `WEBSITE_URL` is used in controller.py
 For development, it is the local URL given by VITE when you run `npm run dev`
 
-  ## Setup Instructions
+#### Google Calendar variables
+
+TODO
+
+#### Scheduler Queue URL
+
+This is used for deployment. Having it blank means that the codebase will use a different implenentation with python for testing.
+
+## Setup Instructions
 
 ### Front-end Setup
 
 1. Install NodeJS (v20.6.1 if the latest version doesn't work).
 2. Ensure the second `.env` file is in frontend folder
 3. Open a terminal in the front-end folder:
-   ```
+
+   ```bash
    cd frontend
    ```
+
 4. Install dependencies:
-   ```
+
+   ```bash
    npm install
    ```
+
 5. If any packages have security issues, run:
-   ```
+
+   ```bash
    npm audit fix
    ```
+
    (Note: Use discretion as this might introduce breaking changes)
+
 6. Start the development server:
-   ```
+
+   ```bash
    npm run dev
    ```
 
@@ -221,11 +244,14 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 2. Add the `env.json` file to the root folder (see configuration details below).
 3. Keep Docker running in the background.
 4. Open a terminal in the root folder and execute:
-   ```
+
+   ```bash
    sam build
    ```
+
 5. After completion, run:
-   ```
+
+   ```bash
    sam local start-api --warm-containers EAGER --env-vars env.json
    ```
 
@@ -236,87 +262,111 @@ For development, it is the local URL given by VITE when you run `npm run dev`
 3. Keep Docker running in the background.
 4. Ensure Docker is configured for your OS according to the screenshot in this page: [Supabase Docs: Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
 5. Open a terminal in the root folder and execute:
+
    `python pre-process-seed.py`
+
    then
+
    `supabase start` or `npx supabase start`
+
    NOTE: If you need to add npx for this to work, you will need to use `npx` before all `supabase` commands you do
    This may take a while the first time.
+
 6. After completion, run:
-   ```
+
+   ```bash
    supabase db reset
    ```
+
    This will populate your local instance of Supabase with testing data
+
 7. You can access the supabase dashboard for your local setup by pasting this into your browser:
-   ```
-   http://127.0.0.1:54323
-   ```
+
+   <http://127.0.0.1:54323>
 
 #### Optional: Setting up local testing
-  If you would like to try run the algorithm, you will need a python virtual environment.
-  1. Navigate to backend/lambda
-  2. Run
+
+If you would like to try run the algorithm, you will need a python virtual environment.
+
+1. Navigate to backend/lambda
+2. Create a virtual environment by running:
+
+   ```bash
+   python -m venv venv
    ```
-  python -m venv venv
-  ```
-  ```
-  source venv/bin/activate  
-  # On Windows, use `venv\Scripts\activate`
-  ```
-  ```
-  pip install -r requirements.txt
+
+3. Then activate it:
+
+   ```bash
+   source venv/bin/activate
+   # On Windows, use `venv\Scripts\activate`
+   # If these don't work, refer to (https://docs.python.org/3/library/venv.html)
+   ```
+
+4. Then install the requirements:
+
+   ```bash
+   pip install -r requirements.txt
    ```
 
 #### Opening Website in Browser
 
 1. Navigate to `http://127.0.0.1:5173/` in your browser. (**NOT localhost:5173**)
 2. Sign in with your Monash account.
-3. You are now good to start developing. 
+3. You are now good to start developing.
 
 ## Editing the Database
 
 Source: [Supabase Docs: Local Development](https://supabase.com/docs/guides/cli/local-development)
 
+### Project Setup
 
-
-##### Project Setup
 0. Only do steps 1 and 2 if your team does not have a Supabase project yet.
 1. Sign up for a Supabase account.
 2. Create a new project.
 3. We will upload migrations to this project from local supabase instances (later steps)
 
-##### Adding to the Local Database
+#### Adding to the Local Database
 
 - To make changes to the local database, create a new migration and add necessary sql to update or add to the schema. Do not edit existing migrations.
 - Generate a migration:
-  ```
+
+  ```bash
   supabase migration new migration_name
   ```
+
 - You can find this migration in `/supabase/migrations`
 
-##### Dummy Data
+#### Dummy Data
 
 - You can edit the SQL for creating dummy data in `/supabase/seed.sql`
 - If this is empty, it will be filled after running `python pre-process-seed.py`
 
-##### Initialising Tables and Data
+#### Initialising Tables and Data
 
 - Whenever you run `supabase db reset` it will clear your local database (including auth) and then run your migrations (in the order they were created) and finally run `seed.sql`
 
-##### Adding to the Prod Database
+#### Adding to the Prod Database
 
 - To upload the local migrations to prod Supabase, first:
 
 1. Login to your Supabase account with:
-   ```
+
+   ```bash
    supabase login
    ```
-1. Associate your project with your remote project
-   ```
+
+2. Associate your project with your remote project
+
+   ```bash
    supabase link --project-ref <project-id>
    ```
-   You can get <`project-id>` from your project's dashboard URL: https://supabase.com/dashboard/project/ `<project-id>`
-1. To deploy migrations to prod, run:
-   ```
+
+   You can get <`project-id>` from your project's dashboard URL: <https://supabase.com/dashboard/project/> `<project-id>`
+
+3. To deploy migrations to prod, run:
+
+   ```bash
    supabase db push
    ```
 
@@ -327,7 +377,7 @@ Source: [Supabase Docs: Local Development](https://supabase.com/docs/guides/cli/
 To enable sign-in with Google follow the steps outlined in this [Youtube Video](https://www.youtube.com/watch?v=dE2vtnv83Fc)
 In addition to this, in the Authorised JavaScript origins section for your OAuth Client setup you will need to add:
 
-```
+```text
 http://localhost:5173
 http://127.0.0.1:5173
 http://localhost:3000
@@ -336,7 +386,7 @@ http://127.0.0.1:3000
 
 To the Authorised Redirect URIs section you will need to add:
 
-```
+```text
 YOUR_SUPABASE_URL/auth/v1/callback
 http://127.0.0.1:54321/auth/v1/callback
 http://localhost:54321/auth/v1/callback
@@ -348,26 +398,31 @@ http://localhost:54321/auth/v1/callback
 - If you encounter issues with the latest NodeJS version, try using v20.6.1.
 - For any SMTP provider other than Gmail, update the SMTP settings in `env.json` accordingly.
 
+## Prod Deployment Instructions
+
+TODO
+
 ## Common Issues
 
-#### CORS Error
+### CORS Error
 
 - This may sometimes occur when trying to make API requests to backend
 - To resolve this, ensure you have followed the correct steps above regarding configuration files.
 - If this does not work, make sure to have an HTTP Options method alongside every POST request method in the code.
 
-#### Front End Crash (Blank Screen)
+### Front End Crash (Blank Screen)
 
 - Follow above steps, ensuring both .env files and the env.json file are correct and in the right place
 
-#### SAM cannot find Docker
+### SAM cannot find Docker
 
 - Ensure that default Docker Socket is enabled.
 - Sometimes you may need to disable this in Docker Advanced Settings, restart and the enable it again.
 
 ### NPM Dependency error (node modules not found)
-You might get this error:
-The file does not exist at "Your_Directory/Onboarder/frontend/node_modules/.vite/deps/some_dependency" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+
+- You might get this error:
+  `The file does not exist at "Your_Directory/Onboarder/frontend/node_modules/.vite/deps/some_dependency" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to 'optimizeDeps.exclude'.`
 
 Fix:
 Delete node_module/.vite and then rerun `npm install` and `npm run dev`
