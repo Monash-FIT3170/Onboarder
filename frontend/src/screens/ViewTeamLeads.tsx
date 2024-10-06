@@ -110,7 +110,7 @@ function ViewTeamLeads() {
       id: id ?? null,
       email: email ?? "",
     });
-    navigate("/allocateTeamLeads");
+    navigate("/allocate-team-leads");
   };
   return (
     <div style={{ padding: "20px" }}>
