@@ -43,6 +43,7 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 const AvailabilityCalendarUser: React.FC = () => {
   const navigate = useNavigate();
   const [eventsList, setEventsList] = useState<Event[]>([]);
+  const [interviewDates, setInterviewDates] = useState<Event[]>([]);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     // Check if the selected time slot overlaps with any existing events
@@ -58,6 +59,7 @@ const AvailabilityCalendarUser: React.FC = () => {
     } else {
       const updatedEvents = [
         ...eventsList,
+        ...interviewDates,
         { start, end, title: "Available Slot" },
       ];
       setEventsList(updatedEvents);
@@ -106,7 +108,9 @@ const AvailabilityCalendarUser: React.FC = () => {
     // console.log(eventsList);
     try {
       await axios.patch(`${API_URL}/profile/${profileId}`, {
-        interview_availability: eventsList,
+        interview_availability: eventsList.filter(
+          (event) => event.title === "Available Slot",
+        ),
       });
     } catch (error) {
       console.error(`Error saving availability data: ${error}`);
@@ -136,9 +140,37 @@ const AvailabilityCalendarUser: React.FC = () => {
     setEventsList(parsedData);
   };
 
+  // Get interview dates from applications where profile_id is authenticated user
+  const fetchScheduledInterviews = async () => {
+    const response = await axios.get(
+      `${API_URL}/profile/${profileId}/application`,
+    );
+    const data = response.data;
+    console.log(data);
+    const interviewDates = data.map((interview: any) => {
+      return {
+        start: new Date(interview.interview_date),
+        end: new Date(
+          new Date(interview.interview_date).setMinutes(
+            new Date(interview.interview_date).getMinutes() + 30,
+          ),
+        ),
+        title: "Interview with " + interview.name,
+        editable: false,
+      };
+    });
+    setInterviewDates(interviewDates);
+    // const updatedEvents = [...eventsList, ...interviewDates];
+    // const updatedEvents = [...interviewDates];
+  };
+
   useEffect(() => {
     fetchAvailability();
+    fetchScheduledInterviews();
   }, []);
+
+  const scrollToTime = new Date();
+  scrollToTime.setHours(9, 0, 0);
 
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
@@ -154,9 +186,19 @@ const AvailabilityCalendarUser: React.FC = () => {
             <h2> Enter your availability to conduct interviews </h2>
           </Grid>
         </Grid>
+        <style>
+          {`
+            .rbc-time-view .rbc-time-slot {
+              min-height: 40px; /* Adjust this value to increase/decrease row height */
+            }
+            .rbc-allday-cell {
+              display: none !important;
+            }
+          `}
+        </style>
         <DragAndDropCalendar
           localizer={localizer}
-          events={eventsList}
+          events={[...eventsList, ...interviewDates]} // Combine availability and interview dates
           startAccessor={(event: Event) => event.start} // Specify how to access the start date of an event
           endAccessor={(event: Event) => event.end} // Specify how to access the end date of an event
           style={{ height: "90%" }}
@@ -168,6 +210,7 @@ const AvailabilityCalendarUser: React.FC = () => {
           onEventResize={handleEventResize} // Handle resizing of existing events
           onEventDrop={handleEventDrop} // Handle dragging (moving) of existing events
           titleAccessor={(event: Event) => event.title} // Specify how to access the title of an event
+          scrollToTime={scrollToTime}
         />
         {/* Save Button */}
         <Button

@@ -67,10 +67,12 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/application', ['OPTIONS'])
 @route('/opening/{openingId}/application', ['OPTIONS'])
 @route('/application/{applicationId}', ['OPTIONS'])
-# This is for scheduling availabilities
+# Send email with schedule interview availability link
 @route('/send-interview-emails/{openingId}', ['OPTIONS'])
 @route('/decrypt/{id}', ['OPTIONS'])
 @route('/opening/{openingId}/schedule-interviews', ['OPTIONS'])
+# Get intreviews for a profile
+@route('/profile/{profileId}/application', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -222,6 +224,22 @@ def get_student_teams_for_profile(path_params={}, _={}, __={}):
     }
 
     return response
+
+
+@route('/profile/{profileId}/application', ['GET'])
+def get_interviews_for_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_interviews_for_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 
 # ------------------ STUDENT TEAMS ------------------
 

@@ -425,6 +425,21 @@ def get_student_teams_for_profile(profile_id):
     return response.data
 
 
+def get_interviews_for_profile(profile_id):
+    """
+    Retrieves interview details for a given profile ID from the "APPLICATION" table.
+
+    Args:
+        profile_id (str): The profile id of the user (interviewer)
+
+    Returns:
+        list: A list of dictionaries containing the corresponding interview details (name, email, interview_date).
+    """
+    response = supabase.table("APPLICATION").select(
+        "name, email, interview_date").eq("profile_id", profile_id).execute()
+    return response.data
+
+
 # -------------- EMAIL CONTROLLERS --------------
 
 encryption_key = os.environ.get('ENCRYPTION_KEY')
