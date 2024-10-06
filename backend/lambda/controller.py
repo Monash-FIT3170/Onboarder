@@ -3,7 +3,16 @@ import os
 import smtplib
 import ssl
 from email.message import EmailMessage
-from cryptography.fernet import Fernet # type: ignore
+from datetime import datetime
+from cryptography.fernet import Fernet  # type: ignore
+import os.path
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
+from google.auth import _helpers
+import pytz
 
 import sqs
 
@@ -13,28 +22,30 @@ supabase: Client = create_client(url, key)
 
 # -------------- ALL APPLICATION CONTROLLERS --------------
 
+
 def get_all_applications():
     response = supabase.table("APPLICATION").select("*").execute()
     return response.data
 
+
 def create_application(
-        email, 
-        name, 
-        phone, 
-        semesters_until_completion, 
-        current_semester, 
-        major_enrolled, 
-        additional_info, 
-        skills, 
-        # created_at, 
-        # candidate_availability, 
-        # interview_date, 
-        # interview_notes, 
-        # interview_score, 
-        # status, 
-        opening_id,
-        course_name
-    ):
+    email,
+    name,
+    phone,
+    semesters_until_completion,
+    current_semester,
+    major_enrolled,
+    additional_info,
+    skills,
+    # created_at,
+    # candidate_availability,
+    # interview_date,
+    # interview_notes,
+    # interview_score,
+    # status,
+    opening_id,
+    course_name
+):
     response = supabase.table("APPLICATION").insert({
         "email": email,
         "name": name,
@@ -56,64 +67,85 @@ def create_application(
 
     return response.data
 
+
 def get_all_applications_for_opening(opening_id):
-    response = supabase.table("APPLICATION").select("*").eq("opening_id", opening_id).execute()
+    print("Current select: *, profile:PROFILE(email).email::text as interviewer_email")
+    response = supabase.table("APPLICATION").select(
+        "*, profile:PROFILE(email).email::text as interviewer_email"
+    ).eq("opening_id", opening_id).execute()
     return response.data
+
 
 def update_application(application_id, data):
-    response = supabase.table("APPLICATION").update(data).eq("id", application_id).execute()
+    response = supabase.table("APPLICATION").update(
+        data).eq("id", application_id).execute()
     return response.data
+
 
 def get_application(application_id):
-    response = supabase.table("APPLICATION").select("*").eq("id", application_id).execute()
+    response = supabase.table("APPLICATION").select(
+        "*").eq("id", application_id).execute()
     return response.data
 
+
 def delete_application(application_id):
-    response = supabase.table("APPLICATION").delete().eq("id", application_id).execute()
+    response = supabase.table("APPLICATION").delete().eq(
+        "id", application_id).execute()
     return response.data
 
 
 # -------------- ALL TEAM LEAD APPLICATION ASSIGNMENT CONTROLLERS --------------
 
 def get_team_lead_for_student_team(student_team_id):
-    response = supabase.table("allocated_members_for_student_team").select("*").eq("student_team_id", student_team_id).execute()
+    response = supabase.table("allocated_members_for_student_team").select(
+        "*").eq("student_team_id", student_team_id).execute()
     return response.data
+
 
 def assign_team_lead_to_opening(opening_id, profile_id):
-    response = supabase.table("TEAM_LEAD_ASSIGNMENT").insert({"opening_id": opening_id, "profile_id": profile_id}).execute()
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").insert(
+        {"opening_id": opening_id, "profile_id": profile_id}).execute()
     return response.data
+
 
 def get_team_lead_for_opening(opening_id):
-    response = supabase.table("allocated_members_for_student_team").select("*").eq("opening_id", opening_id).execute()
+    response = supabase.table("allocated_members_for_student_team").select(
+        "*").eq("opening_id", opening_id).execute()
     return response.data
 
+
 def get_team_lead_opening_assignment_status(opening_id, profile_id):
-    response = supabase.table("TEAM_LEAD_ASSIGNMENT").select("*").eq("opening_id", opening_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").select(
+        "*").eq("opening_id", opening_id).eq("profile_id", profile_id).execute()
     # return len(response.data) > 0
     return response.data
 
+
 def remove_team_lead_from_opening(opening_id, profile_id):
-    response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq("opening_id", opening_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("TEAM_LEAD_ASSIGNMENT").delete().eq(
+        "opening_id", opening_id).eq("profile_id", profile_id).execute()
     return response.data
 
 
 # -------------- ALL OPENING CONTROLLERS --------------
 
 def get_all_openings():
-    response = supabase.table("openings_with_application_count").select("*").execute()
+    response = supabase.table(
+        "openings_with_application_count").select("*").execute()
     return response.data
 
+
 def create_opening(
-        recruitment_round_id, 
-        title, 
+        recruitment_round_id,
+        title,
         description,
         status,
         required_skills,
-        desired_skills, 
+        desired_skills,
         task_email_format,
         task_enabled
 
-    ):
+):
     response = supabase.table("OPENING").insert({
         "recruitment_round_id": recruitment_round_id,
         "title": title,
@@ -123,35 +155,43 @@ def create_opening(
         "desired_skills": desired_skills,
         "task_email_format": task_email_format,
         "task_enabled": task_enabled,
-        
+
     }).execute()
 
     return response.data
 
+
 def get_all_openings_for_recruitment_round(round_id):
-    response = supabase.table("openings_with_application_count").select("*").eq("recruitment_round_id", round_id).execute()
+    response = supabase.table("openings_with_application_count").select(
+        "*").eq("recruitment_round_id", round_id).execute()
     return response.data
+
 
 def update_opening(opening_id, data):
-    response = supabase.table("OPENING").update(data).eq("id", opening_id).execute()
+    response = supabase.table("OPENING").update(
+        data).eq("id", opening_id).execute()
     return response.data
 
+
 def get_opening(opening_id):
-    response = supabase.table("openings_with_application_count").select("*").eq("id", opening_id).execute()
+    response = supabase.table("openings_with_application_count").select(
+        "*").eq("id", opening_id).execute()
     return response.data
+
 
 def delete_opening(opening_id):
     # Delete related entries in TEAM_LEAD_ASSIGNMENT
     remove_team_lead_from_opening(opening_id)
-    
+
     # Delete related entries in APPLICATION
     applications = get_all_applications_for_opening(opening_id)
 
     for application in applications:
         delete_application(application["id"])
-    
+
     # Finally, delete the opening
-    response = supabase.table("OPENING").delete().eq("id", opening_id).execute()
+    response = supabase.table("OPENING").delete().eq(
+        "id", opening_id).execute()
     return response.data
 
 def schedule_interviews(opening_id):
@@ -162,7 +202,8 @@ def schedule_interviews(opening_id):
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
 
 def get_all_recruitment_rounds():
-    response = supabase.table("rec_rounds_with_openings_count").select("*").execute()
+    response = supabase.table(
+        "rec_rounds_with_openings_count").select("*").execute()
     return response.data
 
 def create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period, status):
@@ -178,22 +219,30 @@ def create_recruitment_round(student_team_id, semester, year, application_deadli
 
     return response.data
 
+
 def get_all_recruitment_rounds_for_student_team(student_team_id):
-    response = supabase.table("rec_rounds_with_openings_count").select("*").eq("student_team_id", student_team_id).execute()
+    response = supabase.table("rec_rounds_with_openings_count").select(
+        "*").eq("student_team_id", student_team_id).execute()
     return response.data
 
+
 def update_recruitment_round(recruitment_round_id, data):
-    response = supabase.table("RECRUITMENT_ROUND").update(data).eq("id", recruitment_round_id).execute()
+    response = supabase.table("RECRUITMENT_ROUND").update(
+        data).eq("id", recruitment_round_id).execute()
 
     if "status" in data:
         # update the status of all openings in the recruitment round
-        supabase.table("OPENING").update({"status": data["status"]}).eq("recruitment_round_id", recruitment_round_id).execute()
+        supabase.table("OPENING").update({"status": data["status"]}).eq(
+            "recruitment_round_id", recruitment_round_id).execute()
 
     return response.data
+
 
 def get_recruitment_round(recruitment_round_id):
-    response = supabase.table("rec_rounds_with_openings_count").select("*").eq("id", recruitment_round_id).execute()
+    response = supabase.table("rec_rounds_with_openings_count").select(
+        "*").eq("id", recruitment_round_id).execute()
     return response.data
+
 
 def delete_recruitment_round(recruitment_round_id):
     # Delete related entries in OPENING
@@ -203,7 +252,8 @@ def delete_recruitment_round(recruitment_round_id):
         delete_opening(opening["id"])
 
     # Finally, delete the recruitment round
-    response = supabase.table("RECRUITMENT_ROUND").delete().eq("id", recruitment_round_id).execute()
+    response = supabase.table("RECRUITMENT_ROUND").delete().eq(
+        "id", recruitment_round_id).execute()
     return response.data
 
 
@@ -211,85 +261,108 @@ def delete_recruitment_round(recruitment_round_id):
 
 def add_member_to_student_team(student_team_id, email, role):
     # first check if the profile exists
-    response = supabase.table("PROFILE").select("*").eq("email", email).execute()
+    response = supabase.table("PROFILE").select(
+        "*").eq("email", email).execute()
 
     if not response.data:
         # create the profile without user_id
         response = supabase.table("PROFILE").insert({"email": email}).execute()
-    
+
     profile_id = response.data[0]["id"]
 
     # check if the member is already in the team
-    response = supabase.table("PROFILE_TEAM_INFO").select("*").eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("PROFILE_TEAM_INFO").select(
+        "*").eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
 
     if response.data:
         return {"error": "Member already in team"}
-    
-    response = supabase.table("PROFILE_TEAM_INFO").insert({"student_team_id": student_team_id, "profile_id": profile_id, "role": role}).execute()
+
+    response = supabase.table("PROFILE_TEAM_INFO").insert(
+        {"student_team_id": student_team_id, "profile_id": profile_id, "role": role}).execute()
 
     # Send welcome email
-    team_response = supabase.table("STUDENT_TEAM").select("name").eq("id", student_team_id).execute()
+    team_response = supabase.table("STUDENT_TEAM").select(
+        "name").eq("id", student_team_id).execute()
     team_name = team_response.data[0]["name"]
 
     send_welcome_email(email, team_name, role)
 
     return response.data
 
+
 def get_all_members_of_student_team(student_team_id):
-    response = supabase.table("PROFILE_TEAM_INFO").select("*").eq("student_team_id", student_team_id).execute()
+    response = supabase.table("PROFILE_TEAM_INFO").select(
+        "*").eq("student_team_id", student_team_id).execute()
     return response.data
+
 
 def update_student_team_member(student_team_id, profile_id, data):
-    response = supabase.table("PROFILE_TEAM_INFO").update(data).eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("PROFILE_TEAM_INFO").update(data).eq(
+        "student_team_id", student_team_id).eq("profile_id", profile_id).execute()
     return response.data
 
+
 def get_student_team_member(student_team_id, profile_id):
-    response = supabase.table("PROFILE_TEAM_INFO").select("*").eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("PROFILE_TEAM_INFO").select(
+        "*").eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
     return response.data
+
 
 def remove_member_from_student_team(student_team_id, profile_id):
     # Remove team lead assignments for the member in the given student team
-    openings = supabase.table("PROFILE_TEAM_INFO").select("id").eq("student_team_id", student_team_id).execute()
+    openings = supabase.table("PROFILE_TEAM_INFO").select(
+        "id").eq("student_team_id", student_team_id).execute()
 
     for opening in openings.data:
         remove_team_lead_from_opening(opening["id"], profile_id)
 
     # Update applications to remove the profile_id
-    applications = supabase.table("APPLICATION").select("id").eq("profile_id", profile_id).execute()
-    
+    applications = supabase.table("APPLICATION").select(
+        "id").eq("profile_id", profile_id).execute()
+
     for application in applications.data:
         update_application(application["id"], {"profile_id": None})
 
     # Delete the member from PROFILE_TEAM_INFO
-    response = supabase.table("PROFILE_TEAM_INFO").delete().eq("student_team_id", student_team_id).eq("profile_id", profile_id).execute()
+    response = supabase.table("PROFILE_TEAM_INFO").delete().eq(
+        "student_team_id", student_team_id).eq("profile_id", profile_id).execute()
     return response.data
 
 
 # -------------- ALL STUDENT TEAM CONTROLLERS --------------
 
 def create_student_team(name, description):
-    response = supabase.table("STUDENT_TEAM").insert({"name": name, "description": description}).execute()
+    response = supabase.table("STUDENT_TEAM").insert(
+        {"name": name, "description": description}).execute()
     return response.data
+
 
 def get_all_student_teams():
     response = supabase.table("STUDENT_TEAM").select("*").execute()
     return response.data
 
+
 def update_student_team(student_team_id, data):
-    response = supabase.table("STUDENT_TEAM").update(data).eq("id", student_team_id).execute()
+    response = supabase.table("STUDENT_TEAM").update(
+        data).eq("id", student_team_id).execute()
     return response.data
 
+
 def get_student_team(student_team_id):
-    response = supabase.table("STUDENT_TEAM").select("*").eq("id", student_team_id).execute()
+    response = supabase.table("STUDENT_TEAM").select(
+        "*").eq("id", student_team_id).execute()
     return response.data
+
 
 def delete_student_team(student_team_id):
     # Delete related entries in PROFILE_TEAM_INFO
-    supabase.table("PROFILE_TEAM_INFO").delete().eq("student_team_id", student_team_id).execute()
-    
+    supabase.table("PROFILE_TEAM_INFO").delete().eq(
+        "student_team_id", student_team_id).execute()
+
     # Delete related entries in RECRUITMENT_ROUND
-    recruitment_rounds = get_all_recruitment_rounds_for_student_team(student_team_id)
-    
+    recruitment_rounds = get_all_recruitment_rounds_for_student_team(
+        student_team_id)
+
     for rec_round in recruitment_rounds:
         # Delete related entries in OPENING
         openings = get_all_openings_for_recruitment_round(rec_round["id"])
@@ -297,32 +370,40 @@ def delete_student_team(student_team_id):
         for opening in openings:
             # Delete the opening (which will also handle related TEAM_LEAD_ASSIGNMENT and APPLICATION entries)
             delete_opening(opening["id"])
-        
+
         # Delete the recruitment round
         delete_recruitment_round(rec_round["id"])
-    
+
     # Finally, delete the student team
-    response = supabase.table("STUDENT_TEAM").delete().eq("id", student_team_id).execute()
+    response = supabase.table("STUDENT_TEAM").delete().eq(
+        "id", student_team_id).execute()
     return response.data
 
 
 # -------------- ALL PROFILE CONTROLLERS --------------
 
 def create_profile(user_id, email):
-    response = supabase.table("PROFILE").insert({"user_id": user_id, "email": email}).execute()
+    response = supabase.table("PROFILE").insert(
+        {"user_id": user_id, "email": email}).execute()
     return response.data
+
 
 def get_all_profiles():
     response = supabase.table("PROFILE").select("*").execute()
     return response.data
 
+
 def update_profile(profile_id, data):
-    response = supabase.table("PROFILE").update(data).eq("id", profile_id).execute()
+    response = supabase.table("PROFILE").update(
+        data).eq("id", profile_id).execute()
     return response.data
 
+
 def get_profile(profile_id):
-    response = supabase.table("PROFILE").select("*").eq("id", profile_id).execute()
+    response = supabase.table("PROFILE").select(
+        "*").eq("id", profile_id).execute()
     return response.data
+
 
 def delete_profile(profile_id):
     # Remove the member from all student teams
@@ -330,13 +411,16 @@ def delete_profile(profile_id):
 
     for team in student_teams:
         remove_member_from_student_team(team["student_team_id"], profile_id)
-    
+
     # Finally, delete the profile
-    response = supabase.table("PROFILE").delete().eq("id", profile_id).execute()
+    response = supabase.table("PROFILE").delete().eq(
+        "id", profile_id).execute()
     return response.data
 
+
 def get_student_teams_for_profile(profile_id):
-    response = supabase.table("student_teams_with_roles_and_owners").select("*").eq("profile_id", profile_id).execute()
+    response = supabase.table("student_teams_with_roles_and_owners").select(
+        "*").eq("profile_id", profile_id).execute()
     return response.data
 
 
@@ -493,7 +577,7 @@ def send_welcome_email(email, team_name, role):
     }
     new_role = role_mapping.get(role, 'Team Member')
     website_url = os.environ.get('WEBSITE_URL')
-    
+
     subject = f"Welcome to {team_name}! 🎉"
     body = f"""
     <html>
@@ -517,3 +601,123 @@ def send_welcome_email(email, team_name, role):
         print(f"Failed to send notification email to {email}")
 
     return email_sent
+
+# -------------- GOOGLE CALENDAR CONTROLLERS --------------
+
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+
+def get_credentials():
+    try:
+        creds = None
+        token = os.getenv("GOOGLE_CALENDAR_TOKEN")
+        refresh_token = os.getenv("GOOGLE_CALENDAR_REFRESH_TOKEN")
+        token_uri = os.getenv("GOOGLE_CALENDAR_TOKEN_URI")
+        client_id = os.getenv("GOOGLE_CALENDAR_CLIENT_ID")
+        client_secret = os.getenv("GOOGLE_CALENDAR_CLIENT_SECRET")
+        expiry_str = os.getenv("GOOGLE_CALENDAR_EXPIRY")
+
+        if token and refresh_token and token_uri and client_id and client_secret:
+            creds = Credentials(
+                token=token,
+                refresh_token=refresh_token,
+                token_uri=token_uri,
+                client_id=client_id,
+                client_secret=client_secret,
+                scopes=SCOPES
+            )
+            if expiry_str:
+                # Parse the expiry string and make it timezone-aware
+                expiry = datetime.fromisoformat(expiry_str)
+                if expiry.tzinfo is None:
+                    expiry = pytz.UTC.localize(expiry)
+                creds.expiry = expiry
+
+        # Monkey-patching the _helpers.utcnow() function to return a timezone-aware datetime
+        def utcnow_aware():
+            return datetime.now(pytz.UTC)
+        _helpers.utcnow = utcnow_aware
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                try:
+                    creds.refresh(Request())
+                except RefreshError:
+                    print(
+                        "Failed to refresh the token. You may need to re-authenticate.")
+                    raise
+            else:
+                raise ValueError(
+                    "No valid credentials found. Please set up your environment variables.")
+
+        return creds
+
+    except Exception as e:
+        print(f"An error occurred while getting credentials: {str(e)}")
+        raise
+
+
+def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, meeting_link):
+    creds = get_credentials()
+    service = build('calendar', 'v3', credentials=creds)
+
+    description = f"""Dear Candidate,
+    \nWe are pleased to invite you for an interview with {organizer_name}. We look forward to discussing your qualifications and experience.
+    \nInterview Details:
+
+    * Location: Online
+    * Organizer: {organizer_name}
+    """
+
+    if meeting_link != "":
+        description += f"* Meeting Link: {
+            meeting_link} \n\n Please use the Meeting link above to join the interview at the scheduled time."
+    else:
+        description += "The specific link for the online interview will be provided closer to the interview date."
+
+    description += f"""
+    \nIf you need to reschedule or have any questions, please don't hesitate to contact us on {organizer_email}.
+    \nWe look forward to meeting you!
+    \nBest regards,
+    \n{organizer_name}"""
+
+    event = {
+        'summary': 'Student Team Interview',
+        'location': 'Online',
+        'description': description,
+        'start': {
+            'dateTime': start_time.isoformat(),
+            'timeZone': 'Australia/Melbourne',
+        },
+        'end': {
+            'dateTime': end_time.isoformat(),
+            'timeZone': 'Australia/Melbourne',
+        },
+        'attendees': [
+            {'email': attendee, 'responseStatus': 'needsAction'} for attendee in ([applicant_emails] + interviewer_emails)
+        ],
+        'guestsCanModify': True,
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+        "organizer": {
+            "email": interviewer_emails[0],
+        },
+    }
+
+    try:
+        created_event = service.events().insert(
+            calendarId='primary',
+            body=event,
+            sendUpdates='all'
+        ).execute()
+        print(f'Interview event created: {created_event.get("htmlLink")}')
+        return created_event
+    except Exception as e:
+        print(f"An error occurred while creating the event: {e}")
+        return None

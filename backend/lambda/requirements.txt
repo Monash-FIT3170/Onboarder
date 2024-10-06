@@ -3,4 +3,9 @@ supabase==2.4.5
 resend==2.4.0
 python-dotenv==1.0.1
 cryptography
+icalendar
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+pytz
 pulp
