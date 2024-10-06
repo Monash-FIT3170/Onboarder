@@ -11,6 +11,7 @@ import {
   MenuProps,
   Switch,
   FormControlLabel,
+  Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
@@ -133,24 +134,16 @@ function AppBarOnBoarder() {
               </Button>
             </>
           )}
-
-          <Box sx={{ ml: "auto" }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={darkMode}
-                  onChange={toggleTheme}
-                  color="default"
-                />
-              }
-              label={darkMode ? "Dark Mode" : "Light Mode"}
-              sx={{
-                "& .MuiSwitch-track": {
-                  backgroundColor: darkMode ? "white" : "grey",
-                },
-              }}
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+            <Typography>Light</Typography>
+            <Switch
+              checked={darkMode}
+              onChange={toggleTheme}
+              inputProps={{ "aria-label": "controlled" }}
+              color="default"
             />
-          </Box>
+            <Typography>Dark</Typography>
+          </Stack>
         </Toolbar>
       </AppBar>
     </Box>
