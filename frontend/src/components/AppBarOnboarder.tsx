@@ -10,7 +10,6 @@ import {
   Menu,
   MenuProps,
   Switch,
-  FormControlLabel,
   Stack,
   Divider,
 } from "@mui/material";
@@ -18,69 +17,72 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 import { useTheme as useCustomTheme } from "../util/ThemeContext";
+import { Breadcrumbs, Link } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { all } from "axios";
 
-const StyledMenu = styled((props: MenuProps) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "right",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "right",
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  "& .MuiPaper-root": {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === "light"
-        ? "rgb(55, 65, 81)"
-        : theme.palette.grey[300],
-    boxShadow:
-      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
-    "& .MuiMenu-list": {
-      padding: "4px 0",
-    },
-    "& .MuiMenuItem-root": {
-      "& .MuiSvgIcon-root": {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      "&:active": {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity,
-        ),
-      },
-    },
-  },
-}));
+const pathToNameMap: { [key: string]: string } = {
+  "/": "Home",
+  "/dashboard": "Dashboard",
+  "/allocate-team-leads": "Allocate Team Leads",
+  "/login": "Login",
+  "/recruitment-round-details": "Recruitment Round Details",
+  "/create-opening": "Create Opening",
+  "/view-recruitment-rounds": "View Recruitment Round",
+  "/add-recruitment-round": "Add Recruitment Round",
+  "/opening-details": "View Opening",
+  "/onboarder-openings": "Applicant Openings",
+  "/application-submission": "Application Submission",
+  "/review-application": "Admin Accept",
+  "/task-email-format": "Task Email Format",
+  "/candidate-availability-calendar": "Availability Calendar",
+  "/view-team-member": "View Team Member",
+  "/interview-scheduling": "View Interview Allocation",
+  "/feedback-note": "Feedback Note",
+  "/user-availability-calendar": "Availability Calendar User",
+  "/view-team-leads": "View Team Leads",
+};
 
 function AppBarOnBoarder() {
   const { user, team_name, role, signOut } = useAuthStore();
   const isProtectedRoute = useRouteProtectionStore(
     (state) => state.isProtectedRoute,
   );
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const location = useLocation();
   const isDashboard = location.pathname === "/dashboard";
-  const theme = useTheme();
   const { darkMode, toggleTheme } = useCustomTheme();
-
+  const locationPath = location.pathname.split("/")[1];
   const handleViewAvailability = () => {
-    navigate("/availability-calendar-user");
+    navigate("/user-availability-calendar");
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  console.log("Location Path: ", locationPath);
+  const [pathnames, setPathnames] = useState([locationPath]);
+  console.log("Pathnames: ", pathnames);
+
+  useEffect(() => {
+    if (locationPath === "dashboard") {
+      // setPathnames(["Dashboard"]);
+    } else {
+      setPathnames((prevPathnames) => {
+        const newPathnames = location.pathname.split("/").filter((x) => x);
+        console.log("New Pathnames: ", newPathnames);
+        const allPathnames = [...prevPathnames, ...newPathnames];
+        console.log("All Pathnames: ", allPathnames);
+        const uniquePathnames = Array.from(new Set(allPathnames));
+        for (let i = 0; i < uniquePathnames.length; i++) {
+          if (uniquePathnames[i] === locationPath) {
+            return uniquePathnames.slice(0, i + 1);
+          }
+        }
+        console.log("Unique Pathnames: ", uniquePathnames);
+        return uniquePathnames;
+      });
+    }
+  }, [location.pathname]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -93,22 +95,31 @@ function AppBarOnBoarder() {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ display: { xs: "none", sm: "block" } }}
           >
             Onboarder
           </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            <Button
-              key={1}
-              sx={{ color: "#fff" }}
-              onClick={handleViewAvailability}
-            >
-              Your Interviews and Availability
-            </Button>
-            <Button key={2} sx={{ color: "#fff" }} onClick={signOut}>
-              Sign out
-            </Button>
-          </Box>
+
+          {locationPath !== "/login" &&
+          locationPath !== "/onboarder-openings" ? (
+            <>
+              <Box sx={{ flexGrow: 1 }}></Box>
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <Button
+                  key={1}
+                  sx={{ color: "#fff" }}
+                  onClick={handleViewAvailability}
+                >
+                  Your Interviews and Availability
+                </Button>
+                <Button key={2} sx={{ color: "#fff" }} onClick={signOut}>
+                  Sign out
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <Box sx={{ flexGrow: 1 }}></Box>
+          )}
           <Divider
             orientation="vertical"
             variant="middle"
@@ -131,6 +142,41 @@ function AppBarOnBoarder() {
           </Stack>
         </Toolbar>
       </AppBar>
+      <Breadcrumbs aria-label="breadcrumb" sx={{ ml: 2, mt: 2, flexGrow: 1 }}>
+        {pathnames.map((value, index) => {
+          const isLast = index === pathnames.length - 1;
+          const isFirst = index === 0;
+          return isFirst && isLast ? (
+            <Typography
+              sx={{
+                color: "text.primary",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+              {pathToNameMap[`/${value}`] + " /"}
+            </Typography>
+          ) : isLast ? (
+            <Typography sx={{ color: "text.primary" }}>
+              {pathToNameMap[`/${value}`]}
+            </Typography>
+          ) : isFirst ? (
+            <Link
+              underline="hover"
+              color="inherit"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+              {pathToNameMap[`/${value}`]}
+            </Link>
+          ) : (
+            <Link underline="hover" color="inherit">
+              {pathToNameMap[`/${value}`]}
+            </Link>
+          );
+        })}
+      </Breadcrumbs>
     </Box>
   );
 }

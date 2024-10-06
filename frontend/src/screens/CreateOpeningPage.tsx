@@ -93,7 +93,7 @@ function CreateOpeningPage() {
   };
 
   const handleCancel = () => {
-    navigate("/recruitment-details-page");
+    navigate("/recruitment-round-details");
   };
 
   return (
@@ -245,7 +245,7 @@ function CreateOpeningPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/recruitment-details-page");
+              navigate("/recruitment-round-details");
             }}
           >
             Go to Openings Table
