@@ -6,17 +6,6 @@ export const lightTheme = createTheme({
     primary: {
       main: "#a40aeb",
     },
-    // secondary: {
-    //   main: '#ac4708',
-    // },
-    // background: {
-    //   default: "#ffffff",
-    //   paper: "#f5f5f5",
-    // },
-    // text: {
-    //   primary: "#333333",
-    //   secondary: "#666666",
-    // },
   },
 });
 
@@ -26,16 +15,5 @@ export const darkTheme = createTheme({
     primary: {
       main: "#a40aeb",
     },
-    // secondary: {
-    //   main: '#ac4708',
-    // },
-    // background: {
-    //   default: "#303030",
-    //   paper: "#424242",
-    // },
-    // text: {
-    //   primary: "#ffffff",
-    //   secondary: "#b0b0b0",
-    // },
   },
 });

@@ -86,12 +86,12 @@ function AppBarOnBoarder() {
       <CssBaseline />
       <AppBar
         position="static"
-        sx={{
-          margin: 0,
-          backgroundColor: darkMode
-            ? theme.palette.grey[900]
-            : theme.palette.primary.main,
-        }}
+        // sx={{
+        //   margin: 0,
+        //   // backgroundColor: darkMode
+        //   //   ? theme.palette.grey[900]
+        //   //   : theme.palette.primary.main,
+        // }}
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
