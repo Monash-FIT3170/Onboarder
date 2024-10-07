@@ -251,6 +251,74 @@ function ViewOpenPage() {
       </Box>
     );
   };
+
+  return (
+    <div>
+      {/* Back Button and Page Title */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
+        <IconButton onClick={() => navigate("/recruitment-details-page")}>
+          <BackIcon />
+        </IconButton>
+        <Typography variant="h5" sx={{ ml: 2 }}>
+          {selectedOpening?.title}
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/task-email-format")}
+          sx={{ mr: 2 }}
+        >
+          CONFIGURE INTERVIEW SCHEDULING EMAIL
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/view-interview-allocation")}
+        >
+          INTERVIEW SCHEDULE
+        </Button>
+      </Box>
+
+      {/* Recruitment Round Details */}
+      <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Recruitment Round</TableCell>
+              <TableCell>Applications Received for Opening</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>{selectedOpening?.application_count}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Render sections for each category */}
+      {renderCategorySection(
+        "Applicants",
+        "A",
+        expandedApplicants,
+        setExpandedApplicants,
+      )}
+      {renderCategorySection(
+        "Candidates",
+        "C",
+        expandedCandidates,
+        setExpandedCandidates,
+      )}
+      {renderCategorySection(
+        "Recruits",
+        "R",
+        expandedRecruits,
+        setExpandedRecruits,
+      )}
+    </div>
+  );
 }
 
 export default ViewOpenPage;
