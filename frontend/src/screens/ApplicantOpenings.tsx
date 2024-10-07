@@ -20,6 +20,9 @@ import {
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
+import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBack";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -61,12 +64,18 @@ function RecruitmentRoundDetailsPage() {
   const [openingFilter, setOpeningFilter] = useState("");
   const [teamFilter, setTeamFilter] = useState("");
   const BASE_API_URL = getBaseAPIURL();
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
         setOpening(openingsResponse.data);
+        console.log(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -78,7 +87,7 @@ function RecruitmentRoundDetailsPage() {
   }, []);
 
   const filteredOpenings = openings.filter((opening) => {
-    console.log(opening);
+    // console.log(opening);
     if (openings.length != 0) {
       // filter active
       const searchMatch =
@@ -117,6 +126,9 @@ function RecruitmentRoundDetailsPage() {
   return (
     <>
       <TitleWrapper>
+        <IconButton onClick={handleBack} sx={{ mr: 2 }}>
+          <BackIcon />
+        </IconButton>
         <Typography variant="h5">Student Team Openings</Typography>
       </TitleWrapper>
 
@@ -152,7 +164,7 @@ function RecruitmentRoundDetailsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Opening Name</TableCell>
-                  <TableCell>Deadline</TableCell>
+                  <TableCell>Application Deadline</TableCell>
                   <TableCell>Student Team</TableCell>
                   <TableCell>Semester</TableCell>
                   <TableCell>Year</TableCell>

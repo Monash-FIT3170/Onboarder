@@ -1,28 +1,31 @@
-import { useState, useEffect } from "react";
 import {
+  Box,
   Button,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Paper,
+  Skeleton,
   Table,
-  TableContainer,
   TableBody,
   TableCell,
-  TableRow,
+  TableContainer,
   TableHead,
-  Paper,
-  IconButton,
-  Skeleton,
+  TableRow,
   TextField,
-  Box,
+  Typography,
 } from "@mui/material";
-import BackIcon from "../assets/BackIcon";
-import { useNavigate } from "react-router-dom";
-import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 import axios from "axios";
-
-import { useOpeningStore } from "../util/stores/openingStore";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
-import React from "react";
+import { useOpeningStore } from "../util/stores/openingStore";
+import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 
 export interface SingleApplicationProps {
   id: number;
@@ -41,17 +44,22 @@ export interface SingleApplicationProps {
 }
 
 function ViewOpenPage() {
-  // State to manage the sorting direction
+  // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState(null);
-  const BASE_API_URL = getBaseAPIURL();
-  const navigate = useNavigate();
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
 
+  // Constants
+  const BASE_API_URL = getBaseAPIURL();
+  const navigate = useNavigate();
+
+  // Store hooks
+  const authStore = useAuthStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
@@ -59,8 +67,8 @@ function ViewOpenPage() {
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
-  const authStore = useAuthStore();
 
+  // Derived state
   const sortedApplications = React.useMemo(() => {
     if (!sortColumn) return applications;
 
@@ -75,7 +83,30 @@ function ViewOpenPage() {
     });
   }, [applications, sortColumn, sortDirection]);
 
-  // Placeholder function for handling the sort
+  // Effect hooks
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/view-recruitment-rounds");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  // Handler functions
   const handleSort = (column) => {
     const isAsc = sortColumn === column && sortDirection === "asc";
     setSortDirection(isAsc ? "desc" : "asc");
@@ -94,7 +125,7 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/admin-acceptpage");
+    navigate("/review-applicant");
   };
 
   const handleViewInterviewNotes = (applicationId: number) => {
@@ -109,9 +140,51 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/feedbacknote");
+    navigate("/interview-feedback");
   };
 
+  const handleBack = () => {
+    clearSelectedOpening();
+    navigate("/recruitment-round-details");
+  };
+
+  const respond = () => {
+    // clearSelectedOpening();
+    navigate("/interview-scheduling");
+  };
+
+  const respond2 = () => {
+    // clearSelectedOpening();
+    navigate("/task-email-format");
+  };
+
+  const handleClickOpen = () => {
+    setConfirmEmailModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setConfirmEmailModalOpen(false);
+  };
+
+  const handleSendEmails = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
+      );
+      // console.log(response);
+    } catch (error) {
+      console.error("Error sending emails:", error);
+    }
+    setLoading(false);
+    handleClose();
+  };
+
+  const handleConfirmSendEmails = () => {
+    handleClickOpen();
+  };
+
+  // Row generation function
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
       <TableRow key={application.id}>
@@ -216,7 +289,7 @@ function ViewOpenPage() {
           <Button
             variant="outlined"
             onClick={() => {
-              console.log("Navigating to /task-email-format");
+              // console.log("Navigating to /task-email-format");
               respond2();
             }}
           >
@@ -226,7 +299,7 @@ function ViewOpenPage() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              console.log("Navigating to /view-interview-allocation");
+              // console.log("Navigating to /interview-scheduling");
               handleInterviewSchedule();
             }}
           >
@@ -273,7 +346,7 @@ function ViewOpenPage() {
         <TextField
           style={{ width: "25%" }}
           variant="outlined"
-          placeholder="Round Name, Deadline, etc..."
+          placeholder="Round Name, ApplicationDeadline, etc..."
           size="small"
           label="Search"
           fullWidth
@@ -281,7 +354,7 @@ function ViewOpenPage() {
         />
         <Button
           variant="contained"
-          onClick={handleSendEmails}
+          onClick={handleConfirmSendEmails}
           disabled={
             loading ||
             applications.find((item) => item.status === "C") == undefined
@@ -380,6 +453,30 @@ function ViewOpenPage() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog
+        open={confirmEmailModalOpen}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Send Interview Scheduling Emails"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to send interview scheduling emails? This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSendEmails} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

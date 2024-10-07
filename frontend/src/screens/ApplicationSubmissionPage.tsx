@@ -61,7 +61,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/opening/${openingId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setOpening(res.data);
         })
         .catch((error) => {
@@ -72,7 +72,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/recruitment-round/${roundId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setRound(res.data);
         })
         .catch((error) => {
@@ -128,7 +128,7 @@ function ApplicationSubmissionPage() {
           submissionData,
         )
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           setOpen(true);
           setIsSuccessful(true);
         })
@@ -145,7 +145,7 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-      <IconButton onClick={() => navigate("/applicant-openings")}>
+      <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
       <Typography variant="h5" component="div">
@@ -159,7 +159,7 @@ function ApplicationSubmissionPage() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Deadline</TableCell>
+              <TableCell>Application Deadline</TableCell>
               <TableCell align="center">Student Team</TableCell>
               <TableCell align="center">Semester</TableCell>
             </TableRow>
@@ -167,7 +167,16 @@ function ApplicationSubmissionPage() {
           <TableBody>
             <TableRow>
               <TableCell>
-                {new Date(round[0]?.deadline).toLocaleDateString("en-GB")}
+                {new Date(round[0]?.application_deadline).toLocaleString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                )}
               </TableCell>
               <TableCell align="center">{round[0]?.student_team_id}</TableCell>
               <TableCell align="center">{round[0]?.semester}</TableCell>
@@ -318,7 +327,7 @@ function ApplicationSubmissionPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/applicant-openings");
+              navigate("/onboarder-openings");
             }}
           >
             CLOSE

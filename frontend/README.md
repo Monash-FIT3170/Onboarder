@@ -68,7 +68,7 @@ Pages are protected using the ProtectedRoute component. The ProtectedRoute compo
 
 ```typescript
 <Route element={<ProtectedRoute />}>
-	<Route path="/viewrecruitmentround" element={<ViewRecruitmentRoundPage />} />
+	<Route path="/view-recruitment-rounds" element={<ViewRecruitmentRoundPage />} />
 	{/* Add other protected routes here */}
 </Route>
 ```

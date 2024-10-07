@@ -35,39 +35,42 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/allocateTeamLeads" element={<AllocateTeamLeads />} />
-            <Route path="/viewTeamLeads" element={<ViewTeamLeads />} />
+            <Route
+              path="/allocate-team-leads"
+              element={<AllocateTeamLeads />}
+            />
+            <Route path="/view-team-leads" element={<ViewTeamLeads />} />
             {/* <Route path="/createstudentteam" element={<CreateStudentTeam />} /> */}
             <Route
-              path="/viewrecruitmentround"
+              path="/view-recruitment-rounds"
               element={<ViewRecruitmentRoundPage />}
             />
             <Route
-              path="/addrecruitmentround"
+              path="/add-recruitment-round"
               element={<AddRecruitmentRoundPage />}
             />
             <Route
-              path="/recruitment-details-page"
+              path="/recruitment-round-details"
               element={<RecruitmentRoundDetailsPage />}
             />
             <Route path="/create-opening" element={<CreateOpeningPage />} />
-            <Route path="/viewopen" element={<ViewOpenPage />} />
-            <Route path="/admin-acceptpage" element={<AdminAcceptPage />} />
+            <Route path="/opening-details" element={<ViewOpenPage />} />
+            <Route path="/review-applicant" element={<AdminAcceptPage />} />
             <Route
               path="/task-email-format"
               element={<TaskEmailFormatPage />}
             />
             <Route
-              path="/availability-calendar"
+              path="/candidate-availability-calendar"
               element={<AvailabilityCalendar />}
             />
-            <Route path="/feedbacknote" element={<Feedbacknote />} />
+            <Route path="/interview-feedback" element={<Feedbacknote />} />
             <Route
-              path="/view-interview-allocation"
+              path="/interview-scheduling"
               element={<ViewInterviewAllocation />}
             />
             <Route
-              path="/availability-calendar-user"
+              path="/user-availability-calendar"
               element={<AvailabilityCalendarUser />}
             />
             <Route path="/view-team-members" element={<ViewTeamMemberPage />} />
@@ -77,10 +80,10 @@ function App() {
             />
           </Route>
           <Route
-            path="/availability-calendar/:id"
+            path="/candidate-availability-calendar/:id"
             element={<AvailabilityCalendar />}
           />
-          <Route path="/applicant-openings" element={<ApplicantOpenings />} />
+          <Route path="/onboarder-openings" element={<ApplicantOpenings />} />
           <Route
             path="/application-submission"
             element={<ApplicationSubmissionPage />}
