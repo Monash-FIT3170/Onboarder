@@ -175,6 +175,82 @@ function ViewOpenPage() {
       </TableRow>
     ));
   };
+
+  // Render section for Applicants, Candidates, or Recruits
+  const renderCategorySection = (
+    title: string,
+    status: string,
+    expanded: boolean,
+    setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
+    const filteredApplications = filterApplications(status);
+    console.log(status);
+    console.log(filteredApplications);
+
+    return (
+      <Box sx={{ mb: 2 }}>
+        <Button
+          onClick={() => setExpanded(!expanded)}
+          fullWidth
+          sx={{
+            justifyContent: "space-between",
+            mb: 1,
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        >
+          <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
+            {title}
+          </Typography>
+          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Button>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Student Name</TableCell>
+                  <TableCell>Student Email</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Date of Submission</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading
+                  ? [...Array(3)].map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            width={200}
+                            height={36}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : generateRowFunction(filteredApplications)}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Collapse>
+      </Box>
+    );
+  };
 }
 
 export default ViewOpenPage;
