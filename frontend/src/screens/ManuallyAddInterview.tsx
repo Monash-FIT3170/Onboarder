@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -45,6 +45,11 @@ const ManuallyAddInterview: React.FC = () => {
   const authStore = useAuthStore();
   const [eventsList, setEventsList] = useState<Event[]>([]);
 
+  useEffect(() => {
+    console.log('Selected Applicant:', selectedApplicant);
+    console.log('Application ID:', selectedApplicant?.application_id);
+  }, [selectedApplicant]);
+
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     const newEvent = { start, end, title: "Interview" };
     setEventsList([...eventsList, newEvent]);
@@ -84,10 +89,13 @@ const ManuallyAddInterview: React.FC = () => {
     setEventsList(updatedEvents);
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     // Implement save functionality here
+    const profile_id = authStore?.profile;
+    const applicationId = selectedApplicant?.application_id;
+    console.log(profile_id,applicationId);
     console.log("Saving interview dates:", eventsList);
-  };
+  }, [authStore?.profile, selectedApplicant?.application_id, eventsList, navigate]);
 
   return (
     <DndProvider backend={HTML5Backend}>

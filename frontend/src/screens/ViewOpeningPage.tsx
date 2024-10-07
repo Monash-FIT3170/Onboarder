@@ -178,8 +178,7 @@ function ViewOpenPage() {
     navigate("/recruitment-details-page");
   };
 
-  const respond = () => {
-    // clearSelectedOpening();
+  const handleInterviewSchedule = () => {
     navigate("/view-interview-allocation");
   };
 
@@ -228,7 +227,7 @@ function ViewOpenPage() {
             sx={{ ml: 2 }}
             onClick={() => {
               console.log("Navigating to /view-interview-allocation");
-              respond();
+              handleInterviewSchedule();
             }}
           >
             INTERVIEW SCHEDULE

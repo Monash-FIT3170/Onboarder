@@ -71,7 +71,7 @@ const ViewInterviewAllocation = () => {
     [],
   );
   const authStore = useAuthStore();
-  const { setSelectedApplicant } = useApplicantStore();
+  const { setSelectedApplicant, selectedApplicant } = useApplicantStore();
   const recruitmentDetails = useRecruitmentStore(
     (state) => state.recruitmentDetails,
   );
@@ -107,8 +107,8 @@ const ViewInterviewAllocation = () => {
                 opening_title: selectedOpening?.title || null,
                 recruitment_round_name: recruitmentDetails.roundName,
                 applicant_email: application.email,
-                opening_name: null,
-                application_id: null,
+                opening_name: selectedOpening?.title || null,
+                application_id: application.id,
                 opening_id: selectedOpening?.id || null,
                 recruitment_round_id: recruitmentDetails.roundId,
                 student_team_name: selectedOpening?.student_team_name || null,
