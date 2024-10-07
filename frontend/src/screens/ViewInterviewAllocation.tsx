@@ -107,8 +107,10 @@ const ViewInterviewAllocation = () => {
     (app) => app.interview_date == null,
   ).length;
 
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
+
   // Store hooks
-  const authStore = useAuthStore();
   const studentTeamStore = useStudentTeamStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 

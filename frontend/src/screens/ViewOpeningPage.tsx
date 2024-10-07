@@ -246,30 +246,8 @@ function ViewOpenPage() {
     fetchData();
   }, [selectedOpening, navigate]);
 
-  const handleBack = () => {
-    clearSelectedOpening();
-    navigate("/recruitment-details-page");
-  };
-
   const handleInterviewSchedule = () => {
     navigate("/view-interview-allocation");
-  };
-
-  const respond2 = () => {
-    // clearSelectedOpening();
-    navigate("/task-email-format");
-  };
-
-  const handleSendEmails = async () => {
-    setLoading(true);
-    try {
-      // const response = await axios.post(`${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`); // Fixed but not tested
-      // console.log(response);
-      console.log("Commented out due to email limit");
-    } catch (error) {
-      console.error("Error sending emails:", error);
-    }
-    setLoading(false);
   };
 
   return (

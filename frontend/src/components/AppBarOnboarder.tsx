@@ -100,21 +100,25 @@ function AppBarOnBoarder() {
             Onboarder
           </Typography>
           {isProtectedRoute && !isDashboard && team_name && role && (
-            <Typography variant="body2" component="div" sx={{ marginRight: 2 }}>
-              <Typography variant="body2" component={"span"}>
+            <Typography
+              variant="caption"
+              component="div"
+              sx={{ marginRight: 2, marginLeft: 2 }}
+            >
+              <Typography variant="caption" component={"span"}>
                 Viewing Team:
               </Typography>
-              <Typography variant="body2" component={"span"}>
+              <Typography variant="caption" component={"span"}>
                 {" "}
                 {team_name}
               </Typography>
-              <Typography variant="body2" component={"span"}>
+              <Typography variant="caption" component={"span"}>
                 &nbsp;
               </Typography>
-              <Typography variant="body2" component={"span"}>
+              <Typography variant="caption" component={"span"}>
                 as:
               </Typography>
-              <Typography variant="body2" component={"span"}>
+              <Typography variant="caption" component={"span"}>
                 {" "}
                 {role}
               </Typography>
