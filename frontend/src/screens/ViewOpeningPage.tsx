@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Typography,
@@ -11,12 +11,11 @@ import {
   Paper,
   IconButton,
   Skeleton,
-  TextField,
   Box,
   Collapse,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
-import ExpandMorelcon from "@mui/icons-material/ExpandMore";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useNavigate } from "react-router-dom";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
@@ -24,7 +23,6 @@ import axios from "axios";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
-import React from "react";
 
 export interface SingleApplicationProps {
   id: number;
@@ -121,24 +119,42 @@ function ViewOpenPage() {
       (app) => app.status.toLowerCase() === status.toLowerCase(),
     );
 
+  // Function to generate table rows based on applications list
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
+    // If there are no applications, display a message saying no data is available.
+    if (applications.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={5} align="center">
+            No data available for this category.
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    // Map through the applications array and create a table row for each application
     return applications.map((application) => (
       <TableRow key={application.id}>
+        {/* Student Name */}
         <TableCell>{application.name}</TableCell>
+
+        {/* Student Email */}
         <TableCell>{application.email}</TableCell>
+
+        {/* Application Status */}
         <TableCell>{getAppStatusText(application.status)}</TableCell>
+
+        {/* Date of Submission */}
         <TableCell>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
+
+        {/* Actions: View application and interview notes if applicable */}
         <TableCell>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {(application.status == "C" || application.status == "X") && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            {/* Show interview notes button only for Candidate or Recruit */}
+            {(application.status === "Candidate" ||
+              application.status === "Recruit") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -146,8 +162,8 @@ function ViewOpenPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-            <Box sx={{ flexGrow: 1 }} />{" "}
-            {/* Spacer to push the VIEW button to the right */}
+
+            {/* View application button */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -160,94 +176,113 @@ function ViewOpenPage() {
     ));
   };
 
-  useEffect(() => {
-    if (!selectedOpening) {
-      navigate("/viewrecruitmentround");
-      return;
-    }
+  // Render section for Applicants, Candidates, or Recruits
+  const renderCategorySection = (
+    title: string,
+    status: string,
+    expanded: boolean,
+    setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
+    const filteredApplications = filterApplications(status);
+    console.log(status);
+    console.log(filteredApplications);
 
-    const fetchData = async () => {
-      try {
-        const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
-        );
-        setApplications(applicationsResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedOpening, navigate]);
-
-  const handleBack = () => {
-    clearSelectedOpening();
-    navigate("/recruitment-details-page");
-  };
-
-  const respond = () => {
-    // clearSelectedOpening();
-    navigate("/view-interview-allocation");
-  };
-
-  const respond2 = () => {
-    // clearSelectedOpening();
-    navigate("/task-email-format");
-  };
-
-  const handleSendEmails = async () => {
-    setLoading(true);
-    try {
-      // const response = await axios.post(`${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`); // Fixed but not tested
-      // console.log(response);
-      console.log("Commented out due to email limit");
-    } catch (error) {
-      console.error("Error sending emails:", error);
-    }
-    setLoading(false);
+    return (
+      <Box sx={{ mb: 2 }}>
+        <Button
+          onClick={() => setExpanded(!expanded)}
+          fullWidth
+          sx={{
+            justifyContent: "space-between",
+            mb: 1,
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        >
+          <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
+            {title}
+          </Typography>
+          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Button>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Student Name</TableCell>
+                  <TableCell>Student Email</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Date of Submission</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading
+                  ? [...Array(3)].map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            width={200}
+                            height={36}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : generateRowFunction(filteredApplications)}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Collapse>
+      </Box>
+    );
   };
 
   return (
     <div>
-      {/* Creates a button below allowing the user to add positions */}
-      <div
-        style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
-      >
-        <IconButton onClick={() => handleBack()}>
+      {/* Back Button and Page Title */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
+        <IconButton onClick={() => navigate("/recruitment-details-page")}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5" style={{ marginLeft: "10px" }}>
+        <Typography variant="h5" sx={{ ml: 2 }}>
           {selectedOpening?.title}
         </Typography>
+      </Box>
 
-        <div style={{ marginLeft: "auto" }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              console.log("Navigating to /task-email-format");
-              respond2();
-            }}
-          >
-            CONFIGURE INTERVIEW SCHEDULING EMAIL
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ ml: 2 }}
-            onClick={() => {
-              console.log("Navigating to /view-interview-allocation");
-              respond();
-            }}
-          >
-            INTERVIEW SCHEDULE
-          </Button>
-        </div>
-      </div>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/task-email-format")}
+          sx={{ mr: 2 }}
+        >
+          CONFIGURE INTERVIEW SCHEDULING EMAIL
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/view-interview-allocation")}
+        >
+          INTERVIEW SCHEDULE
+        </Button>
+      </Box>
 
-      {/* creates a table showing all the number of applications for each recruitment round */}
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+      {/* Recruitment Round Details */}
+      <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -263,133 +298,25 @@ function ViewOpenPage() {
         </Table>
       </TableContainer>
 
-      <div style={{ marginTop: "50px" }}></div>
-
-      {/* adds a table showing the number of applications for the current opening */}
-      <Typography
-        variant="h6"
-        style={{ marginLeft: "10px", marginTop: "20px" }}
-      >
-        Opening Applications
-      </Typography>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1rem",
-        }}
-      >
-        <TextField
-          style={{ width: "25%" }}
-          variant="outlined"
-          placeholder="Round Name, Deadline, etc..."
-          size="small"
-          label="Search"
-          fullWidth
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          onClick={handleSendEmails}
-          disabled={
-            loading ||
-            applications.find((item) => item.status === "C") == undefined
-          }
-          style={{ marginLeft: "1rem" }}
-        >
-          {loading ? (
-            <Skeleton width={100} />
-          ) : (
-            "Send Interview Scheduling Emails"
-          )}
-        </Button>
-      </div>
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Student Name</TableCell>
-              <TableCell>
-                Student Email
-                <Button
-                  onClick={() => handleSort("email")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "email"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-
-              <TableCell>
-                Status
-                <Button
-                  onClick={() => handleSort("status")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "status"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>
-                Date of Submission
-                <Button
-                  onClick={() => handleSort("date")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "date"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading
-              ? [...Array(3)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={80} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : generateRowFunction(sortedApplications)}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Render sections for each category */}
+      {renderCategorySection(
+        "Applicants",
+        "A",
+        expandedApplicants,
+        setExpandedApplicants,
+      )}
+      {renderCategorySection(
+        "Candidates",
+        "C",
+        expandedCandidates,
+        setExpandedCandidates,
+      )}
+      {renderCategorySection(
+        "Recruits",
+        "R",
+        expandedRecruits,
+        setExpandedRecruits,
+      )}
     </div>
   );
 }
