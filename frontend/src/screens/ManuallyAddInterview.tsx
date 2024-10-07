@@ -17,6 +17,8 @@ import { useApplicantStore } from "../util/stores/applicantStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { EventInteractionArgs } from "react-big-calendar/lib/addons/dragAndDrop";
+import { getBaseAPIURL } from "../util/Util";
+import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -44,10 +46,12 @@ const ManuallyAddInterview: React.FC = () => {
   const { selectedOpening } = useOpeningStore();
   const authStore = useAuthStore();
   const [eventsList, setEventsList] = useState<Event[]>([]);
+  const BASE_API_URL = getBaseAPIURL();
 
   useEffect(() => {
-    console.log('Selected Applicant:', selectedApplicant);
-    console.log('Application ID:', selectedApplicant?.application_id);
+    console.log("Selected Applicant:", selectedApplicant);
+    console.log("Application ID:", selectedApplicant?.application_id);
+    console.log("Interview dateL", selectedApplicant?.interview_date);
   }, [selectedApplicant]);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
@@ -89,13 +93,35 @@ const ManuallyAddInterview: React.FC = () => {
     setEventsList(updatedEvents);
   };
 
-  const handleSave = useCallback(() => {
+  const handleSave = async () => {
     // Implement save functionality here
     const profile_id = authStore?.profile;
     const applicationId = selectedApplicant?.application_id;
-    console.log(profile_id,applicationId);
-    console.log("Saving interview dates:", eventsList);
-  }, [authStore?.profile, selectedApplicant?.application_id, eventsList, navigate]);
+    if (!eventsList.length) {
+      alert("No interview dates selected");
+      return;
+    }
+    const interview_date = eventsList[0].start.toISOString();
+
+    try {
+      const response = await axios.patch(
+        `${BASE_API_URL}/application/${applicationId}`,
+        {
+          interview_date,
+          profile_id,
+        },
+      );
+      console.log(response);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          `Failed to update interview date: ${error.response.data.message || "Please try again."}`,
+        );
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
+    }
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>

@@ -10,6 +10,7 @@ interface ApplicantDetails {
   opening_title: string | null;
   application_count: number | null;
   applicant_email?: string | null;
+  interview_date?: string | null;
 }
 
 interface ApplicantStore {

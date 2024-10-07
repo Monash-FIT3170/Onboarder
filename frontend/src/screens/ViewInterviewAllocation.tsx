@@ -304,6 +304,7 @@ const ViewInterviewAllocation = () => {
                 recruitment_round_id: recruitmentDetails.roundId,
                 student_team_name: selectedOpening?.student_team_name || null,
                 application_count: null,
+                interview_date: application.interview_date,
               });
               navigate(`/manually-add-interview`);
             }}

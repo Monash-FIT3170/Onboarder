@@ -247,7 +247,7 @@ function ViewOpenPage() {
   }, [selectedOpening, navigate]);
 
   const handleInterviewSchedule = () => {
-    navigate("/view-interview-allocation");
+    navigate("/interview-scheduling");
   };
 
   return (
