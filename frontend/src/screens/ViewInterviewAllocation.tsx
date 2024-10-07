@@ -86,29 +86,28 @@ const ViewInterviewAllocation = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [round, setRound] = useState<RoundProps | null>(null);
-  const navigate = useNavigate();
-  const BASE_API_URL = getBaseAPIURL();
-  const studentTeamStore = useStudentTeamStore();
-  // Filter by search
-  // const filteredData = mockData.filter((applicant) =>
-  //   applicant.applicantName.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  // Constants
-  const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening,
-  );
+  const [error, setError] = useState<string | null>(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
 
-  // Store hooks
-  const authStore = useAuthStore();
-
+  // Constants
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
   const filteredApplications = applications.filter((application) =>
     application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+  const interviewScheduledCount = applications.filter(
+    (app) => app.interview_date != null,
+  ).length;
+  const interviewNotScheduledCount = applications.filter(
+    (app) => app.interview_date == null,
+  ).length;
+
+  // Store hooks
+  const authStore = useAuthStore();
+  const studentTeamStore = useStudentTeamStore();
+  const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
   // Effect hooks
   useEffect(() => {
@@ -138,39 +137,33 @@ const ViewInterviewAllocation = () => {
     fetchData();
   }, [selectedOpening, navigate]);
 
-  // const handleBack = () => {
-  //     clearSelectedOpening();
-  //     navigate("/opening-details");
-  // };
-
-  const interviewScheduledCount = applications.filter(
-    (app) => app.candidate_availability,
-  ).length;
-  const interviewNotScheduledCount = applications.filter(
-    (app) => !app.candidate_availability,
-  ).length;
-
-  const respond = () => {
-    // clearSelectedOpening();
-    navigate("/opening-details");
+  const fetchData = async () => {
+    try {
+      const applicationsResponse = await axios.get(
+        `${BASE_API_URL}/opening/${selectedOpening?.id}/application`,
+      );
+      // console.log(applicationsResponse);
+      setApplications(applicationsResponse.data);
+      const roundResponse = await axios.get(
+        `${BASE_API_URL}/recruitment-round/${selectedOpening?.recruitment_round_id}/`,
+      );
+      console.log(roundResponse);
+      setRound(roundResponse.data[0]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleScheduleInterview = async () => {
-    // Do not delete
-    //  SCEHLUDE INTERVIEW BUTTON FUNCTIONALITY
-    //    setLoading(true);
-    //     setError(null);
-    //     setResponse(null);
-    //     try {
-    //         const res = await axios.post(`${BASE_API_URL}/opening/${selectedOpening.id}/schedule-interviews`, {
-    //             // Add data
-    //         });
-    //         setResponse(res.data);
-    //         // setApplications(res.data.updatedApplications);
-    //     } catch (err) {
-    //         setError(err.message || "An error occurred while scheduling interviews");
-    //     }
-  };
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/viewopen");
+      return;
+    }
+
+    fetchData();
+  }, [selectedOpening, navigate]);
 
   // Mapping function
   const mapToInterviewEventProps = (
@@ -242,6 +235,35 @@ const ViewInterviewAllocation = () => {
     }
   };
 
+  const handleScheduleInterviews = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post(
+        `${BASE_API_URL}/opening/${selectedOpening?.id}/schedule-interviews/`,
+      );
+      console.log("res", res);
+      fetchData();
+    } catch (err) {
+      // setError(err.message || "An error occurred while scheduling interviews");
+      if (axios.isAxiosError(err)) {
+        console.error("Error response data:", err.response?.data);
+        console.error("Error response status:", err.response?.status);
+        console.error("Error response headers:", err.response?.headers);
+        setError(
+          err.response?.data?.message ||
+            "An error occurred while scheduling interviews",
+        );
+      } else {
+        console.error("Error message:", err.message);
+        setError(
+          err.message || "An error occurred while scheduling interviews",
+        );
+      }
+    }
+    setLoading(false);
+  };
+
   // Row generation function
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
@@ -297,7 +319,7 @@ const ViewInterviewAllocation = () => {
 
           <Button
             variant="contained"
-            onClick={handleScheduleInterview}
+            onClick={handleScheduleInterviews}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
           >
