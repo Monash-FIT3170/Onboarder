@@ -13,12 +13,14 @@ import {
   Skeleton,
   TextField,
   Box,
+  Collapse,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
+import ExpandMorelcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useNavigate } from "react-router-dom";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 import axios from "axios";
-
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
