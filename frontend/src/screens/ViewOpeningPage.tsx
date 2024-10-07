@@ -63,12 +63,28 @@ function ViewOpenPage() {
   );
   const authStore = useAuthStore();
 
-  // Placeholder function for handling the sort
-  const handleSort = (column) => {
-    const isAsc = sortColumn === column && sortDirection === "asc";
-    setSortDirection(isAsc ? "desc" : "asc");
-    setSortColumn(column);
-  };
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/viewrecruitmentround");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+        );
+        console.log("Fetched applications:", applicationsResponse.data); // Debugging
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate, BASE_API_URL]);
 
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
