@@ -43,16 +43,16 @@ export interface SingleApplicationProps {
 }
 
 function ViewOpenPage() {
-  // State to manage the sorting direction
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState(null);
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+
+  const [expandedApplicants, setExpandedApplicants] = useState(false);
+  const [expandedCandidates, setExpandedCandidates] = useState(false);
+  const [expandedRecruits, setExpandedRecruits] = useState(false);
 
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const clearSelectedOpening = useOpeningStore(
@@ -62,20 +62,6 @@ function ViewOpenPage() {
     (state) => state.setSelectedApplicant,
   );
   const authStore = useAuthStore();
-
-  const sortedApplications = React.useMemo(() => {
-    if (!sortColumn) return applications;
-
-    return [...applications].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) {
-        return sortDirection === "asc" ? -1 : 1;
-      }
-      if (a[sortColumn] > b[sortColumn]) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
-      return 0;
-    });
-  }, [applications, sortColumn, sortDirection]);
 
   // Placeholder function for handling the sort
   const handleSort = (column) => {
