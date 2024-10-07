@@ -34,6 +34,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Team details</DialogTitle>
       <DialogContent>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -66,6 +67,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
         <Button onClick={onClose} color="error" variant="contained">
           Cancel
         </Button>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Button onClick={handleSubmit} color="primary" variant="contained">
           Create
         </Button>

@@ -233,6 +233,7 @@ const ViewRecruitmentRoundPage = () => {
                 </Grid>
                 <Grid item xs={12} sm={12} mt={4}>
                   <Box display="flex" justifyContent="center" gap={2}>
+                    {/* TODO: ADD ABILITY CHECK HERE */}
                     <Button variant="contained" onClick={handleEditLink}>
                       Save
                     </Button>
@@ -246,6 +247,7 @@ const ViewRecruitmentRoundPage = () => {
           </Grid>
 
           <Box>
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               variant="contained"
               onClick={handleOpenLink}
@@ -253,6 +255,7 @@ const ViewRecruitmentRoundPage = () => {
             >
               Configure Interview Link
             </Button>
+
             <Button
               variant="outlined"
               color="primary"
@@ -261,6 +264,8 @@ const ViewRecruitmentRoundPage = () => {
             >
               View Team Members
             </Button>
+
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               variant="contained"
               color="primary"

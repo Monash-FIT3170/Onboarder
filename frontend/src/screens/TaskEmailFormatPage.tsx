@@ -143,6 +143,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
       />
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Button variant="contained" color="primary" onClick={handleConfirm}>
           Confirm
         </Button>

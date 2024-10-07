@@ -234,6 +234,7 @@ function RecruitmentRoundDetailsPage() {
         ) : (
           <div>
             {/* Archive Round Button */}
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               variant="outlined"
               style={{
@@ -251,6 +252,7 @@ function RecruitmentRoundDetailsPage() {
               {isArchiving ? <CircularProgress size={24} /> : "Archive Round"}
             </Button>
             {/* Activate Round Button */}
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               disabled={status === "R"}
               variant="contained"
@@ -337,6 +339,7 @@ function RecruitmentRoundDetailsPage() {
           <Typography variant="h6">
             {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
           </Typography>
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button
             variant="contained"
             onClick={handleAddOpening}
@@ -423,6 +426,7 @@ function RecruitmentRoundDetailsPage() {
           >
             Cancel
           </Button>
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button variant="contained" onClick={handleConfirm} sx={{ mt: 2 }}>
             Confirm
           </Button>

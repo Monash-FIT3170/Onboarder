@@ -44,6 +44,7 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
             <TableRow key={member.profile_id}>
               <TableCell>{member.email}</TableCell>
               <TableCell>{member.role}</TableCell>
+              {/* TODO: ADD ABILITY CHECK HERE */}
               <TableCell>
                 {member.profile_id === currentUserProfileId ? (
                   "Current User"

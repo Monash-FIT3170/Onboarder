@@ -304,6 +304,7 @@ function ViewOpenPage() {
           fullWidth
           onChange={(e) => setSearch(e.target.value)}
         />
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Button
           variant="contained"
           onClick={handleConfirmSendEmails}
@@ -424,6 +425,7 @@ function ViewOpenPage() {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button onClick={handleSendEmails} color="primary" autoFocus>
             Confirm
           </Button>

@@ -303,6 +303,7 @@ const AddRecruitmentRoundPage = () => {
           >
             GO TO ROUNDS TABLE
           </Button>
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button
             onClick={() => {
               setOpen(false);

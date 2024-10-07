@@ -270,6 +270,7 @@ const AllocateTeamLeads = () => {
                       </TableCell>
                       <TableCell>{opening.opening_title}</TableCell>
                       <TableCell>{allocatedCount}</TableCell>
+                      {/* TODO: ADD ABILITY CHECK HERE */}
                       <TableCell>
                         {!userAssigned ? (
                           <Button

@@ -216,6 +216,7 @@ function CreateOpeningPage() {
       </Grid>
 
       <Grid item container xs={12} justifyContent="center" spacing={2}>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Grid item>
           <Button
             variant="contained"
@@ -250,6 +251,7 @@ function CreateOpeningPage() {
           >
             Go to Openings Table
           </Button>
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button
             onClick={() => {
               setOpen(false);

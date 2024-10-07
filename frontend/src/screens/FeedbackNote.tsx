@@ -326,6 +326,7 @@ function Feedbacknote() {
       >
         <Grid item>
           <React.Fragment>
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               variant="contained"
               color="primary"
@@ -358,6 +359,7 @@ function Feedbacknote() {
 
         <Grid item>
           <React.Fragment>
+            {/* TODO: ADD ABILITY CHECK HERE */}
             <Button
               variant="contained"
               color="warning"

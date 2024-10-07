@@ -398,6 +398,7 @@ export default function RecruitmentPlatform() {
         >
           {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT APPLICANT"}
         </Button>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <Button
           variant="contained"
           color="error"

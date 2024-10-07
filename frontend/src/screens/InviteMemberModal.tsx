@@ -120,6 +120,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
         <DialogTitle>
           <Typography variant="h6">Add Team Member</Typography>
         </DialogTitle>
+        {/* TODO: ADD ABILITY CHECK HERE */}
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <TextField

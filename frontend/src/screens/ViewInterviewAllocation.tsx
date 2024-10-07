@@ -286,6 +286,7 @@ const ViewInterviewAllocation = () => {
         </Box>
         {/* button to send interivew and schedule intervies */}
         <Box display="flex" alignItems="center">
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button
             variant="contained"
             onClick={handleSendInvite}
@@ -295,6 +296,7 @@ const ViewInterviewAllocation = () => {
             {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
           </Button>
 
+          {/* TODO: ADD ABILITY CHECK HERE */}
           <Button
             variant="contained"
             onClick={handleScheduleInterview}
