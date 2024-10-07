@@ -209,15 +209,6 @@ function ViewOpenPage() {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <TableContainer component={Paper}>
             <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Student Name</TableCell>
-                  <TableCell>Student Email</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Date of Submission</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
               <TableBody>
                 {loading
                   ? [...Array(3)].map((_, index) => (
@@ -295,6 +286,21 @@ function ViewOpenPage() {
               <TableCell>{selectedOpening?.application_count}</TableCell>
             </TableRow>
           </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Common Table Header */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Student Name</TableCell>
+              <TableCell>Student Email</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Date of Submission</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
         </Table>
       </TableContainer>
 
