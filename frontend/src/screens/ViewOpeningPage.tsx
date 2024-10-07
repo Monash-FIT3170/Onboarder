@@ -116,6 +116,11 @@ function ViewOpenPage() {
     navigate("/feedbacknote");
   };
 
+  const filterApplications = (status: string) =>
+    applications.filter(
+      (app) => app.status.toLowerCase() === status.toLowerCase(),
+    );
+
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
       <TableRow key={application.id}>
