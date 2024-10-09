@@ -224,6 +224,32 @@ function ViewOpenPage() {
     ));
   };
 
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/viewrecruitmentround");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  const handleInterviewSchedule = () => {
+    navigate("/interview-scheduling");
+  };
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -252,7 +278,7 @@ function ViewOpenPage() {
             sx={{ ml: 2 }}
             onClick={() => {
               // console.log("Navigating to /interview-scheduling");
-              respond();
+              handleInterviewSchedule();
             }}
           >
             INTERVIEW SCHEDULE

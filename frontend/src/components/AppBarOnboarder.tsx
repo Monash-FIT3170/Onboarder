@@ -99,7 +99,31 @@ function AppBarOnBoarder() {
           >
             Onboarder
           </Typography>
-
+          {isProtectedRoute && !isDashboard && team_name && role && (
+            <Typography
+              variant="caption"
+              component="div"
+              sx={{ marginRight: 2, marginLeft: 2 }}
+            >
+              <Typography variant="caption" component={"span"}>
+                Viewing Team:
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                {" "}
+                {team_name}
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                &nbsp;
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                as:
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                {" "}
+                {role}
+              </Typography>
+            </Typography>
+          )}
           {locationPath !== "/login" &&
           locationPath !== "/onboarder-openings" ? (
             <>

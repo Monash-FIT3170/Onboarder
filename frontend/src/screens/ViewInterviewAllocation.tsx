@@ -19,6 +19,8 @@ import axios from "axios";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useApplicantStore } from "../util/stores/applicantStore";
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
@@ -90,10 +92,11 @@ const ViewInterviewAllocation = () => {
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
-
-  // Constants
-  const navigate = useNavigate();
-  const BASE_API_URL = getBaseAPIURL();
+  const authStore = useAuthStore();
+  const { setSelectedApplicant, selectedApplicant } = useApplicantStore();
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails,
+  );
   const filteredApplications = applications.filter((application) =>
     application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -104,8 +107,10 @@ const ViewInterviewAllocation = () => {
     (app) => app.interview_date == null,
   ).length;
 
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
+
   // Store hooks
-  const authStore = useAuthStore();
   const studentTeamStore = useStudentTeamStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
@@ -285,6 +290,29 @@ const ViewInterviewAllocation = () => {
               })
             : "No Interview Scheduled"}
         </TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setSelectedApplicant({
+                opening_title: selectedOpening?.title || null,
+                recruitment_round_name: recruitmentDetails.roundName,
+                applicant_email: application.email,
+                opening_name: selectedOpening?.title || null,
+                application_id: application.id,
+                opening_id: selectedOpening?.id || null,
+                recruitment_round_id: recruitmentDetails.roundId,
+                student_team_name: selectedOpening?.student_team_name || null,
+                application_count: null,
+                interview_date: application.interview_date,
+              });
+              navigate(`/manually-add-interview`);
+            }}
+            disabled={loading}
+          >
+            Manually Add Interview
+          </Button>
+        </TableCell>
       </TableRow>
     ));
   };
@@ -377,6 +405,7 @@ const ViewInterviewAllocation = () => {
               <TableCell>Email</TableCell>
               <TableCell>Interview Preference Submitted</TableCell>
               <TableCell>Interview Date</TableCell>
+              <TableCell>Manually Schedule Interview</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
