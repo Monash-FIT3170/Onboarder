@@ -70,7 +70,9 @@ function ViewOpenPage() {
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
-
+  const clearSelectedOpening = useOpeningStore(
+    (state) => state.clearSelectedOpening,
+  );
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
@@ -125,10 +127,10 @@ function ViewOpenPage() {
     navigate("/interview-feedback");
   };
 
-  // const handleBack = () => {
-  //   clearSelectedOpening();
-  //   navigate("/recruitment-round-details");
-  // };
+  const handleBack = () => {
+    clearSelectedOpening();
+    navigate("/recruitment-round-details");
+  };
 
   const respond = () => {
     // clearSelectedOpening();
@@ -290,15 +292,16 @@ function ViewOpenPage() {
 
   return (
     <div>
-      <div>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
-          <IconButton onClick={() => navigate("/recruitment-details-page")}>
-            <BackIcon />
-          </IconButton>
-          <Typography variant="h5" sx={{ ml: 2 }}>
-            {selectedOpening?.title}
-          </Typography>
-        </Box>
+      {/* Creates a button below allowing the user to add positions */}
+      <div
+        style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
+      >
+        <IconButton onClick={() => handleBack()}>
+          <BackIcon />
+        </IconButton>
+        <Typography variant="h5" style={{ marginLeft: "10px" }}>
+          {selectedOpening?.title}
+        </Typography>
 
         <div style={{ marginLeft: "auto" }}>
           <Button
