@@ -177,8 +177,8 @@ function ViewOpenPage() {
     if (applications.length === 0) {
       return (
         <TableRow>
-          <TableCell colSpan={5} align="center">
-            No data available for this category.
+          <TableCell colSpan={5} align="center" sx={{ width: "20%" }}>
+            None
           </TableCell>
         </TableRow>
       );
@@ -186,16 +186,18 @@ function ViewOpenPage() {
 
     return applications.map((application) => (
       <TableRow key={application.id}>
-        <TableCell>{application.name}</TableCell>
-        <TableCell>{application.email}</TableCell>
-        <TableCell>{getAppStatusText(application.status)}</TableCell>
-        <TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.name}</TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.email}</TableCell>
+        <TableCell sx={{ width: "20%" }}>
+          {getAppStatusText(application.status)}
+        </TableCell>
+        <TableCell sx={{ width: "15%" }}>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-        <TableCell>
+        <TableCell sx={{ width: "25%" }}>
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            {(application.status === "Candidate" ||
-              application.status === "Recruit") && (
+            {/* If the application is in the "C" (Candidate) or "R" (Recruit) status, show the INTERVIEW NOTES button */}
+            {(application.status === "C" || application.status === "R") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -375,11 +377,11 @@ function ViewOpenPage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Student Name</TableCell>
-              <TableCell>Student Email</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Date of Submission</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Name</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Email</TableCell>
+              <TableCell sx={{ width: "20%" }}>Status</TableCell>
+              <TableCell sx={{ width: "15%" }}>Date of Submission</TableCell>
+              <TableCell sx={{ width: "25%" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
         </Table>
