@@ -29,16 +29,6 @@ const FormSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const DarkBlueButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  width: "100%",
-  backgroundColor: "#007FFF", // Monash blue
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#005BB5",
-  },
-}));
-
 const ImageSection = styled(Box)(({ theme }) => ({
   flex: 1,
   display: "flex",
@@ -67,7 +57,7 @@ const LoginPage: React.FC = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google", // You can replace this with your Monash SSO logic if available
         options: {
-          redirectTo: "http://localhost:5173/login",
+          redirectTo: "http://127.0.0.1:5173/login",
         },
       });
 
@@ -78,7 +68,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleApplicantLogin = () => {
-    navigate("/applicant-openings");
+    navigate("/onboarder-openings");
   };
 
   useEffect(() => {
@@ -116,7 +106,7 @@ const LoginPage: React.FC = () => {
     checkUser();
   }, [navigate]);
   const handleOpenings = () => {
-    navigate("/applicant-openings");
+    navigate("/onboarder-openings");
   };
 
   return (
@@ -128,20 +118,16 @@ const LoginPage: React.FC = () => {
         <Typography variant="body2" color="textSecondary" gutterBottom>
           Part of a student team? Log in with your Monash email to get started.
         </Typography>
-        <DarkBlueButton
-          variant="contained"
-          onClick={handleMonashLogin}
-          sx={{ mb: 7 }}
-        >
+        <Button variant="contained" onClick={handleMonashLogin} sx={{ mb: 7 }}>
           LOG IN VIA MONASH SSO
-        </DarkBlueButton>
+        </Button>
 
         <Typography variant="body2" color="textSecondary" gutterBottom>
           Want to start your application process? Click below.
         </Typography>
-        <DarkBlueButton variant="contained" onClick={handleOpenings}>
+        <Button variant="contained" onClick={handleOpenings}>
           Apply for a position
-        </DarkBlueButton>
+        </Button>
 
         {error && (
           <Alert
@@ -153,7 +139,10 @@ const LoginPage: React.FC = () => {
         )}
       </FormSection>
       <ImageSection>
-      <CoverImage src={darkMode ? loginImageDark : loginImageLight} alt="Login illustration" />
+        <CoverImage
+          src={darkMode ? loginImageDark : loginImageLight}
+          alt="Login illustration"
+        />
       </ImageSection>
     </FlexContainer>
   );

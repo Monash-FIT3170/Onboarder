@@ -23,6 +23,7 @@ export interface StudentTeamResultProps {
   student_team_name: string;
   user_team_role: string;
   student_team_owner: string;
+  student_team_meeting_link: string;
 }
 
 export interface DashboardTableProps {
@@ -51,9 +52,14 @@ const generateRowFunction = (
   const [leaveModalOpen, setLeaveModalOpen] = useState(false);
   const BASE_API_URL = getBaseAPIURL();
 
-  const handleView = (t_id: number, t_name: string, user_role: string) => {
-    authStore.updateTeamAndRole(t_id, t_name, user_role);
-    navigate("/viewrecruitmentround");
+  const handleView = (
+    t_id: number,
+    t_link: string,
+    t_name: string,
+    user_role: string,
+  ) => {
+    authStore.updateTeamAndRole(t_id, t_link, t_name, user_role);
+    navigate("/view-recruitment-rounds");
   };
 
   const handleCloseModal = () => {
@@ -125,6 +131,7 @@ const generateRowFunction = (
               onClick={() =>
                 handleView(
                   result.student_team_id,
+                  result.student_team_meeting_link,
                   result.student_team_name,
                   result.user_team_role,
                 )

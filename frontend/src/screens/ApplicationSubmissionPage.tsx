@@ -61,7 +61,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/opening/${openingId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setOpening(res.data);
         })
         .catch((error) => {
@@ -72,7 +72,7 @@ function ApplicationSubmissionPage() {
           `${BASE_API_URL}/recruitment-round/${roundId}/`, // Working
         )
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setRound(res.data);
         })
         .catch((error) => {
@@ -128,7 +128,7 @@ function ApplicationSubmissionPage() {
           submissionData,
         )
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           setOpen(true);
           setIsSuccessful(true);
         })
@@ -145,7 +145,7 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-      <IconButton onClick={() => navigate("/applicant-openings")}>
+      <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
       <Typography variant="h5" component="div">
@@ -159,7 +159,7 @@ function ApplicationSubmissionPage() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Deadline</TableCell>
+              <TableCell>Application Deadline</TableCell>
               <TableCell align="center">Student Team</TableCell>
               <TableCell align="center">Semester</TableCell>
             </TableRow>
@@ -167,7 +167,16 @@ function ApplicationSubmissionPage() {
           <TableBody>
             <TableRow>
               <TableCell>
-                {new Date(round[0]?.deadline).toLocaleDateString("en-GB")}
+                {new Date(round[0]?.application_deadline).toLocaleString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                )}
               </TableCell>
               <TableCell align="center">{round[0]?.student_team_id}</TableCell>
               <TableCell align="center">{round[0]?.semester}</TableCell>
@@ -189,6 +198,7 @@ function ApplicationSubmissionPage() {
             label="First Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Sarah"
           />
         </Grid>
         <Grid item xs={6}>
@@ -198,6 +208,7 @@ function ApplicationSubmissionPage() {
             label="Last Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Jones"
           />
         </Grid>
         <Grid item xs={6}>
@@ -207,6 +218,7 @@ function ApplicationSubmissionPage() {
             label="Email*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. applicant628406@example.com"
           />
         </Grid>
         <Grid item xs={6}>
@@ -216,6 +228,7 @@ function ApplicationSubmissionPage() {
             label="Phone Number*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. +1-294-300-6690"
           />
         </Grid>
         <Grid item xs={12}>
@@ -227,6 +240,7 @@ function ApplicationSubmissionPage() {
             multiline
             rows={4}
             onChange={handleInputChange}
+            placeholder="Write your cover letter here..."
           />
         </Grid>
       </Grid>
@@ -242,6 +256,7 @@ function ApplicationSubmissionPage() {
             label="Course Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Computer Science"
           />
         </Grid>
         <Grid item xs={6}>
@@ -251,6 +266,7 @@ function ApplicationSubmissionPage() {
             label="Major"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Data Science"
           />
         </Grid>
         <Grid item xs={12}>
@@ -269,7 +285,12 @@ function ApplicationSubmissionPage() {
               ))
             }
             renderInput={(params) => (
-              <TextField {...params} label="Add skills" />
+              <TextField
+                {...params}
+                label="Add skills"
+                placeholder="Type and press Enter"
+                helperText="Press Enter after typing each skill"
+              />
             )}
           />
         </Grid>
@@ -280,6 +301,7 @@ function ApplicationSubmissionPage() {
             label="Current Semester"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. 5"
           />
         </Grid>
         <Grid item xs={6}>
@@ -289,6 +311,7 @@ function ApplicationSubmissionPage() {
             label="Semesters Remaining"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. 3"
           />
         </Grid>
       </Grid>
@@ -318,7 +341,7 @@ function ApplicationSubmissionPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/applicant-openings");
+              navigate("/onboarder-openings");
             }}
           >
             CLOSE

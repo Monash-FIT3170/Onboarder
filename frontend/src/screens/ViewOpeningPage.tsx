@@ -1,30 +1,35 @@
-import React, { useState, useEffect } from "react";
 import {
+  Box,
   Button,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Paper,
+  Skeleton,
   Table,
-  TableContainer,
   TableBody,
   TableCell,
-  TableRow,
+  TableContainer,
   TableHead,
-  Paper,
-  IconButton,
-  Skeleton,
-  Box,
+  TableRow,
+  Typography,
   Collapse,
   Tooltip,
 } from "@mui/material";
-import BackIcon from "../assets/BackIcon";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
-import { getAppStatusText, getBaseAPIURL } from "../util/Util";
-import axios from "axios";
-import { useOpeningStore } from "../util/stores/openingStore";
+import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
+import { useOpeningStore } from "../util/stores/openingStore";
+import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 
 export interface SingleApplicationProps {
   id: number;
@@ -43,33 +48,40 @@ export interface SingleApplicationProps {
 }
 
 function ViewOpenPage() {
-  const BASE_API_URL = getBaseAPIURL();
-  const navigate = useNavigate();
+  // State hooks
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortColumn, setSortColumn] = useState(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
   const [loading, setLoading] = useState(true);
-
   const [expandedApplicants, setExpandedApplicants] = useState(false);
   const [expandedCandidates, setExpandedCandidates] = useState(false);
   const [expandedRecruits, setExpandedRecruits] = useState(false);
+  const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
 
+  // Constants
+  const BASE_API_URL = getBaseAPIURL();
+  const navigate = useNavigate();
+
+  // Store hooks
+  const authStore = useAuthStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
-  const authStore = useAuthStore();
 
+  // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewrecruitmentround");
+      navigate("/view-recruitment-rounds");
       return;
     }
 
     const fetchData = async () => {
       try {
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
@@ -80,8 +92,9 @@ function ViewOpenPage() {
     };
 
     fetchData();
-  }, [selectedOpening, navigate, BASE_API_URL]);
+  }, [selectedOpening, navigate]);
 
+  // Handler functions
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
@@ -94,7 +107,7 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/admin-acceptpage");
+    navigate("/review-applicant");
   };
 
   const handleViewInterviewNotes = (applicationId: number) => {
@@ -109,13 +122,48 @@ function ViewOpenPage() {
       application_count: selectedOpening?.application_count ?? null,
     });
 
-    navigate("/feedbacknote");
+    navigate("/interview-feedback");
   };
 
-  const handleSendInterviewEmails = () => {
-    // Implement the logic for sending interview scheduling emails here
-    console.log("Sending interview scheduling emails");
-    // You might want to call an API endpoint or dispatch an action here
+  // const handleBack = () => {
+  //   clearSelectedOpening();
+  //   navigate("/recruitment-round-details");
+  // };
+
+  const respond = () => {
+    // clearSelectedOpening();
+    navigate("/interview-scheduling");
+  };
+
+  const respond2 = () => {
+    // clearSelectedOpening();
+    navigate("/task-email-format");
+  };
+
+  const handleClickOpen = () => {
+    setConfirmEmailModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setConfirmEmailModalOpen(false);
+  };
+
+  const handleSendEmails = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
+      );
+      // console.log(response);
+    } catch (error) {
+      console.error("Error sending emails:", error);
+    }
+    setLoading(false);
+    handleClose();
+  };
+
+  const handleConfirmSendEmails = () => {
+    handleClickOpen();
   };
 
   const filterApplications = (status: string) =>
@@ -242,30 +290,38 @@ function ViewOpenPage() {
 
   return (
     <div>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
-        <IconButton onClick={() => navigate("/recruitment-details-page")}>
-          <BackIcon />
-        </IconButton>
-        <Typography variant="h5" sx={{ ml: 2 }}>
-          {selectedOpening?.title}
-        </Typography>
-      </Box>
+      <div>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
+          <IconButton onClick={() => navigate("/recruitment-details-page")}>
+            <BackIcon />
+          </IconButton>
+          <Typography variant="h5" sx={{ ml: 2 }}>
+            {selectedOpening?.title}
+          </Typography>
+        </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button
-          variant="outlined"
-          onClick={() => navigate("/task-email-format")}
-          sx={{ mr: 2 }}
-        >
-          CONFIGURE INTERVIEW SCHEDULING EMAIL
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => navigate("/view-interview-allocation")}
-        >
-          INTERVIEW SCHEDULE
-        </Button>
-      </Box>
+        <div style={{ marginLeft: "auto" }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              // console.log("Navigating to /task-email-format");
+              respond2();
+            }}
+          >
+            CONFIGURE INTERVIEW SCHEDULING EMAIL
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ ml: 2 }}
+            onClick={() => {
+              // console.log("Navigating to /interview-scheduling");
+              respond();
+            }}
+          >
+            INTERVIEW SCHEDULE
+          </Button>
+        </div>
+      </div>
 
       <TableContainer component={Paper} sx={{ mb: 4 }}>
         <Table>
@@ -297,10 +353,18 @@ function ViewOpenPage() {
         </Typography>
         <Button
           variant="contained"
-          color="primary"
-          onClick={handleSendInterviewEmails}
+          onClick={handleConfirmSendEmails}
+          disabled={
+            loading ||
+            applications.find((item) => item.status === "C") == undefined
+          }
+          style={{ marginLeft: "1rem" }}
         >
-          SEND INTERVIEW SCHEDULING EMAILS
+          {loading ? (
+            <Skeleton width={100} />
+          ) : (
+            "Send Interview Scheduling Emails"
+          )}
         </Button>
       </Box>
 
@@ -317,6 +381,30 @@ function ViewOpenPage() {
           </TableHead>
         </Table>
       </TableContainer>
+      <Dialog
+        open={confirmEmailModalOpen}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Send Interview Scheduling Emails"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to send interview scheduling emails? This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSendEmails} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {renderCategorySection(
         "Applicants",

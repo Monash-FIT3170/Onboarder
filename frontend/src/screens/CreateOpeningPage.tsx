@@ -93,7 +93,7 @@ function CreateOpeningPage() {
   };
 
   const handleCancel = () => {
-    navigate("/recruitment-details-page");
+    navigate("/recruitment-round-details");
   };
 
   return (
@@ -127,7 +127,7 @@ function CreateOpeningPage() {
                     variant="subtitle1"
                     style={{ fontWeight: "bold" }}
                   >
-                    Deadline
+                    Application Deadline
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -138,7 +138,7 @@ function CreateOpeningPage() {
                   {team_name} {recruitmentDetails.roundId}
                 </TableCell>
                 <TableCell style={{ borderBottom: "none" }}>
-                  {formatDeadline(recruitmentDetails.roundDeadline)}
+                  {formatDeadline(recruitmentDetails.roundApplicationDeadline)}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -245,7 +245,7 @@ function CreateOpeningPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/recruitment-details-page");
+              navigate("/recruitment-round-details");
             }}
           >
             Go to Openings Table

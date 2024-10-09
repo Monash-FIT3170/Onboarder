@@ -112,6 +112,7 @@ function RecruitmentRoundDetailsPage() {
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
         setStatus(roundsResponse.data[0].status);
+        console.log(roundsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -152,7 +153,9 @@ function RecruitmentRoundDetailsPage() {
   const handleAddOpening = () => {
     setRecruitmentDetails({
       roundId: recruitmentDetails.roundId,
-      roundDeadline: rounds[0].deadline,
+      roundApplicationDeadline: rounds[0].application_deadline,
+      roundInterviewPreferenceDeadline: rounds[0].interview_preference_deadline,
+      roundInterviewPeriod: rounds[0].interview_period,
       roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id,
       roundStatus: rounds[0]?.status,
     });
@@ -173,7 +176,7 @@ function RecruitmentRoundDetailsPage() {
       title,
       application_count,
     });
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
 
   const handleCloseModal = () => {
@@ -187,7 +190,7 @@ function RecruitmentRoundDetailsPage() {
 
   const handleBack = () => {
     clearRecruitmentDetails();
-    navigate("/viewrecruitmentround");
+    navigate("/view-recruitment-rounds");
   };
 
   return (
@@ -283,11 +286,23 @@ function RecruitmentRoundDetailsPage() {
                   <TableCell>
                     <Skeleton variant="text" width={100} />
                   </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width={100} />
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {[...Array(1)].map((_, index) => (
                   <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
                     <TableCell>
                       <Skeleton variant="text" />
                     </TableCell>

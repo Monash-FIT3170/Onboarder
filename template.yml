@@ -18,6 +18,9 @@ Resources:
               Ref: FEApi
             Path: /{proxy+}
             Method: ANY
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt InterviewSchedulerQueue.QueueName
       Environment:
         Variables:
           EMAIL_SENDER: ${env:EMAIL_SENDER}
@@ -29,6 +32,45 @@ Resources:
           SUPABASE_KEY: ${env:SUPABASE_KEY}
           ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
           WEBSITE_URL: ${env:WEBSITE_URL}
+          GOOGLE_CALENDAR_TOKEN: ${env:GOOGLE_CALENDER_TOKEN}
+          GOOGLE_CALENDAR_REFRESH_TOKEN: ${env:GOOGLE_CALENDAR_REFRESH_TOKEN}
+          GOOGLE_CALENDAR_TOKEN_URI: ${env:GOOGLE_CALENDAR_TOKEN_URI}
+          GOOGLE_CALENDAR_CLIENT_ID: ${env:GOOGLE_CALENDAR_CLIENT_ID}
+          GOOGLE_CALENDAR_CLIENT_SECRET: ${env:GOOGLE_CALENDAR_CLIENT_SECRET}
+          GOOGLE_CALENDAR_EXPIRY: ${env:GOOGLE_CALENDAR_EXPIRY}
+          INTERVIEW_SCHEDULER_QUEUE_URL: !Ref InterviewSchedulerQueue
+
+  InterviewSchedulerQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: InterviewSchedulerQueue
+      VisibilityTimeout: 300 # 5 minutes, should match the Lambda timeout
+
+  InterviewSchedulerLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/lambda # Adjust this path as needed
+      Handler: optimisation.lambda_handler
+      Runtime: python3.12
+      Timeout: 300 # 5 minutes, adjust as needed
+      Environment:
+        Variables:
+          EMAIL_SENDER: ${env:EMAIL_SENDER}
+          SMTP_HOST: ${env:SMTP_HOST}
+          SMTP_PORT: ${env:SMTP_PORT}
+          SMTP_USERNAME: ${env:SMTP_USERNAME}
+          SMTP_PASSWORD: ${env:SMTP_PASSWORD}
+          SUPABASE_URL: ${env:SUPABASE_URL}
+          SUPABASE_KEY: ${env:SUPABASE_KEY}
+          ENCRYPTION_KEY: ${env:ENCRYPTION_KEY}
+          WEBSITE_URL: ${env:WEBSITE_URL}
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt InterviewSchedulerQueue.Arn
+            BatchSize: 1
+
   FEApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -39,7 +81,6 @@ Resources:
           title: Frontend API
           version: 1.0.0
         paths:
-
           /profile:
             get:
               x-amazon-apigateway-integration:
@@ -87,18 +128,180 @@ Resources:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
 
           /profile/{profileId}/student-teams:
-              get:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /student-team:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            delete:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /application:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /opening/{openingId}/application:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /application/{applicationId}:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            patch:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            delete:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /send-interview-emails/{openingId}:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+          
+          /create-calendar-events:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /decrypt/{id}:
+            get:
                 x-amazon-apigateway-integration:
                   httpMethod: POST
                   payloadFormatVersion: "2.0"
                   type: aws_proxy
                   uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
-              options:
-                x-amazon-apigateway-integration:
-                  httpMethod: POST
-                  payloadFormatVersion: "2.0"
-                  type: aws_proxy
-                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            
+          /student-team/{studentTeamId}:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            patch:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            delete:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
+          /profile/{profileId}/application:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
 
           /student-team:
             get:
@@ -119,7 +322,7 @@ Resources:
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
-          
+
           /student-team/{studentTeamId}:
             get:
               x-amazon-apigateway-integration:
@@ -328,11 +531,11 @@ Resources:
 
           /opening/{openingId}/team-lead-assign:
             get:
-                x-amazon-apigateway-integration:
-                  httpMethod: POST
-                  payloadFormatVersion: "2.0"
-                  type: aws_proxy
-                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -345,14 +548,28 @@ Resources:
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
-          
+
+          /opening/{openingId}/schedule-interviews:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+
           /opening/{openingId}/team-lead-assign/{profileId}:
             get:
-                x-amazon-apigateway-integration:
-                  httpMethod: POST
-                  payloadFormatVersion: "2.0"
-                  type: aws_proxy
-                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             delete:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -439,22 +656,20 @@ Resources:
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
-          
+
           /decrypt/{id}:
             get:
-                x-amazon-apigateway-integration:
-                  httpMethod: POST
-                  payloadFormatVersion: "2.0"
-                  type: aws_proxy
-                  uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                payloadFormatVersion: "2.0"
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
             options:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 payloadFormatVersion: "2.0"
                 type: aws_proxy
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RouterLambda.Arn}/invocations"
-
-            
 Outputs:
   ApiUrl:
     Description: API endpoint URL for Prod environment

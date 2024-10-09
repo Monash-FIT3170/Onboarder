@@ -38,7 +38,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 interface ResultProps {
   id: number;
-  opening_id: number; // assuming deadline is a date in string format
+  opening_id: number; // assuming application_deadline is a date in string format
   email: string;
   name: string;
   phone: string;
@@ -100,19 +100,19 @@ function Feedbacknote() {
   const handleCloseAccept = () => {
     setOpenAccept(false);
     handleUpdate();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
   const handleCloseReject = () => {
     setOpenReject(false);
     handleUpdate();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
   const authStore = useAuthStore();
 
   const handleBack = () => {
     handleUpdate();
     clearSelectedApplicant();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
 
   const handleUpdate = () => {
@@ -127,7 +127,7 @@ function Feedbacknote() {
         submissionData,
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         // setOpen(true);
         // setIsSuccessful(true);
       })
@@ -160,13 +160,14 @@ function Feedbacknote() {
     const fetchData = async () => {
       if (!selectedApplicant?.application_id) {
         console.error("No application ID selected");
-        navigate("/viewopen");
+        navigate("/opening-details");
         return;
       }
       try {
         const applicantResponse = await axios.get(
           `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
+        console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
@@ -243,7 +244,17 @@ function Feedbacknote() {
                   Date of Interview
                 </Typography>
               </TableCell>
-              <TableCell>{applicantInformation[0]?.interview_date}</TableCell>
+              <TableCell>
+                {new Date(
+                  applicantInformation[0]?.interview_date,
+                ).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
@@ -251,7 +262,7 @@ function Feedbacknote() {
                   Position
                 </Typography>
               </TableCell>
-              <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+              <TableCell>{selectedApplicant?.opening_name}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
