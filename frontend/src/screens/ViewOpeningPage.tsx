@@ -13,6 +13,7 @@ import {
   Skeleton,
   Box,
   Collapse,
+  Tooltip,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -54,9 +55,6 @@ function ViewOpenPage() {
   const [expandedRecruits, setExpandedRecruits] = useState(false);
 
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening,
-  );
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
@@ -73,7 +71,6 @@ function ViewOpenPage() {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log("Fetched applications:", applicationsResponse.data); // Debugging
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -120,9 +117,7 @@ function ViewOpenPage() {
       (app) => app.status.toLowerCase() === status.toLowerCase(),
     );
 
-  // Function to generate table rows based on applications list
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
-    // If there are no applications, display a message saying no data is available.
     if (applications.length === 0) {
       return (
         <TableRow>
@@ -133,27 +128,16 @@ function ViewOpenPage() {
       );
     }
 
-    // Map through the applications array and create a table row for each application
     return applications.map((application) => (
       <TableRow key={application.id}>
-        {/* Student Name */}
         <TableCell>{application.name}</TableCell>
-
-        {/* Student Email */}
         <TableCell>{application.email}</TableCell>
-
-        {/* Application Status */}
         <TableCell>{getAppStatusText(application.status)}</TableCell>
-
-        {/* Date of Submission */}
         <TableCell>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-
-        {/* Actions: View application and interview notes if applicable */}
         <TableCell>
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            {/* Show interview notes button only for Candidate or Recruit */}
             {(application.status === "Candidate" ||
               application.status === "Recruit") && (
               <Button
@@ -163,8 +147,6 @@ function ViewOpenPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-
-            {/* View application button */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -177,16 +159,14 @@ function ViewOpenPage() {
     ));
   };
 
-  // Render section for Applicants, Candidates, or Recruits
   const renderCategorySection = (
     title: string,
     status: string,
     expanded: boolean,
     setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
+    tooltipText: string,
   ) => {
     const filteredApplications = filterApplications(status);
-    console.log(status);
-    console.log(filteredApplications);
 
     return (
       <Box sx={{ mb: 2 }}>
@@ -194,17 +174,27 @@ function ViewOpenPage() {
           onClick={() => setExpanded(!expanded)}
           fullWidth
           sx={{
-            justifyContent: "space-between",
-            mb: 1,
+            justifyContent: "flex-start",
             color: "primary.main",
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.04)",
             },
           }}
         >
-          <Typography variant="h6" component="div" sx={{ fontWeight: "bold" }}>
-            {title}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Tooltip title={tooltipText}>
+              <IconButton size="small" sx={{ mr: 1 }}>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ fontWeight: "bold" }}
+            >
+              {title}
+            </Typography>
+          </Box>
           {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -246,7 +236,6 @@ function ViewOpenPage() {
 
   return (
     <div>
-      {/* Back Button and Page Title */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
         <IconButton onClick={() => navigate("/recruitment-details-page")}>
           <BackIcon />
@@ -272,7 +261,6 @@ function ViewOpenPage() {
         </Button>
       </Box>
 
-      {/* Recruitment Round Details */}
       <TableContainer component={Paper} sx={{ mb: 4 }}>
         <Table>
           <TableHead>
@@ -290,7 +278,6 @@ function ViewOpenPage() {
         </Table>
       </TableContainer>
 
-      {/* Common Table Header */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -305,24 +292,26 @@ function ViewOpenPage() {
         </Table>
       </TableContainer>
 
-      {/* Render sections for each category */}
       {renderCategorySection(
         "Applicants",
         "A",
         expandedApplicants,
         setExpandedApplicants,
+        "Applicants are students who have submitted an application.",
       )}
       {renderCategorySection(
         "Candidates",
         "C",
         expandedCandidates,
         setExpandedCandidates,
+        "Candidates have had their application accepted, and have made it to the interview stage.",
       )}
       {renderCategorySection(
         "Recruits",
         "R",
         expandedRecruits,
         setExpandedRecruits,
+        "Recruits have completed their interview and were accepted to be a part of the team.",
       )}
     </div>
   );
