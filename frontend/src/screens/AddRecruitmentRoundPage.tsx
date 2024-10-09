@@ -27,6 +27,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const AddRecruitmentRoundPage = () => {
   const [application_deadline, setApplicationDeadline] = useState(
@@ -303,8 +304,9 @@ const AddRecruitmentRoundPage = () => {
           >
             GO TO ROUNDS TABLE
           </Button>
-          {/* TODO: ADD ABILITY CHECK HERE */}
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Round"
             onClick={() => {
               setOpen(false);
               setApplicationDeadline(DateTime.now()),
@@ -314,9 +316,10 @@ const AddRecruitmentRoundPage = () => {
                 setSemester(""),
                 setYear("");
             }}
+            tooltipText="You don't have permission to create new rounds"
           >
             CREATE MORE ROUNDS
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </div>

@@ -13,6 +13,7 @@ import axios from "axios";
 
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
   const [taskOn, setTaskOn] = useState(false);
@@ -143,10 +144,16 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
       />
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        {/* TODO: ADD ABILITY CHECK HERE */}
-        <Button variant="contained" color="primary" onClick={handleConfirm}>
+        <PermissionButton
+          action="configure"
+          subject="TaskEmail"
+          variant="contained"
+          color="primary"
+          onClick={handleConfirm}
+          tooltipText="You do not have permission to configure the task email"
+        >
           Confirm
-        </Button>
+        </PermissionButton>
         <Button variant="outlined" color="secondary" onClick={handleBack}>
           Cancel
         </Button>

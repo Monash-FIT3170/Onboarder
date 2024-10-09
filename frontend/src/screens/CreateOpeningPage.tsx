@@ -25,6 +25,7 @@ import axios from "axios";
 
 import { useAuthStore } from "../util/stores/authStore";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import PermissionButton from "../components/PermissionButton";
 
 function CreateOpeningPage() {
   const [openingName, setOpeningName] = useState("");
@@ -216,16 +217,18 @@ function CreateOpeningPage() {
       </Grid>
 
       <Grid item container xs={12} justifyContent="center" spacing={2}>
-        {/* TODO: ADD ABILITY CHECK HERE */}
         <Grid item>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             variant="contained"
             color="primary"
             onClick={handleSubmit}
             disabled={loading}
+            tooltipText="You do not have permission to create an opening"
           >
             {loading ? <CircularProgress size={24} /> : "Submit"}
-          </Button>
+          </PermissionButton>
         </Grid>
         <Grid item>
           <Button variant="contained" color="warning" onClick={handleCancel}>
@@ -251,8 +254,9 @@ function CreateOpeningPage() {
           >
             Go to Openings Table
           </Button>
-          {/* TODO: ADD ABILITY CHECK HERE */}
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             onClick={() => {
               setOpen(false);
               setOpeningName("");
@@ -260,9 +264,10 @@ function CreateOpeningPage() {
               setDesiredSkills([]);
               setRequiredSkills([]);
             }}
+            tooltipText="You do not have permission to create more openings"
           >
             Create More Openings
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </Grid>

@@ -19,6 +19,7 @@ import axios from "axios";
 import { useMemberStore } from "../util/stores/memberStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const AllocateTeamLeads = () => {
   const [openings, setOpenings] = useState<any[]>([]);
@@ -270,22 +271,27 @@ const AllocateTeamLeads = () => {
                       </TableCell>
                       <TableCell>{opening.opening_title}</TableCell>
                       <TableCell>{allocatedCount}</TableCell>
-                      {/* TODO: ADD ABILITY CHECK HERE */}
                       <TableCell>
                         {!userAssigned ? (
-                          <Button
+                          <PermissionButton
+                            action="assign"
+                            subject="Opening"
                             variant="contained"
                             onClick={() => handleAllocate(opening.id)}
+                            tooltipText="You do not have permission to allocate team leads"
                           >
                             Allocate
-                          </Button>
+                          </PermissionButton>
                         ) : (
-                          <Button
+                          <PermissionButton
+                            action="update"
+                            subject="Opening"
                             variant="outlined"
                             onClick={() => handleDeAllocate(opening.id)}
+                            tooltipText="You do not have permission to deallocate team leads"
                           >
                             Deallocate
-                          </Button>
+                          </PermissionButton>
                         )}
                       </TableCell>
                     </TableRow>

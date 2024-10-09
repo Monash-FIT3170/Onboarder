@@ -160,7 +160,6 @@ function ViewTeamLeads() {
                   <TableRow key={teamLead.profile_id}>
                     <TableCell>{teamLead.email}</TableCell>
                     <TableCell>
-                      {/* TODO: ADD ABILITY CHECK HERE */}
                       <Button
                         variant="contained"
                         onClick={() =>
