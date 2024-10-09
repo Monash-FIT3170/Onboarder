@@ -112,6 +112,12 @@ function ViewOpenPage() {
     navigate("/feedbacknote");
   };
 
+  const handleSendInterviewEmails = () => {
+    // Implement the logic for sending interview scheduling emails here
+    console.log("Sending interview scheduling emails");
+    // You might want to call an API endpoint or dispatch an action here
+  };
+
   const filterApplications = (status: string) =>
     applications.filter(
       (app) => app.status.toLowerCase() === status.toLowerCase(),
@@ -277,6 +283,26 @@ function ViewOpenPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2,
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6" component="div">
+          Opening Applications
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSendInterviewEmails}
+        >
+          SEND INTERVIEW SCHEDULING EMAILS
+        </Button>
+      </Box>
 
       <TableContainer component={Paper}>
         <Table>
