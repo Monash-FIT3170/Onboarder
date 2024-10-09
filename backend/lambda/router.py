@@ -72,7 +72,9 @@ def route(path: str, methods: list[str]) -> Callable:
 @route('/create-calendar-events', ['OPTIONS'])
 @route('/send-interview-emails/{openingId}', ['OPTIONS'])  # This is for scheduling availabilities
 @route('/decrypt/{id}', ['OPTIONS'])
-@route('/opening/{openingId}/schedule_interviews', ['OPTIONS'])
+@route('/opening/{openingId}/schedule-interviews', ['OPTIONS'])
+# Get intreviews for a profile
+@route('/profile/{profileId}/application', ['OPTIONS'])
 def options_handler(_={}, __={}, ___={}):
     return {
         'statusCode': 200,
@@ -224,6 +226,22 @@ def get_student_teams_for_profile(path_params={}, _={}, __={}):
     }
 
     return response
+
+
+@route('/profile/{profileId}/application', ['GET'])
+def get_interviews_for_profile(path_params={}, _={}, __={}):
+    profile_id = path_params.get('profileId')
+    data = controller.get_interviews_for_profile(profile_id)
+    data = json.dumps(data)
+
+    response = {
+        'statusCode': 200,
+        'body': data,
+        'headers': HEADERS
+    }
+
+    return response
+
 
 # ------------------ STUDENT TEAMS ------------------
 
@@ -520,8 +538,9 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'body': json.dumps({'error': 'Invalid request body'}),
             'headers': HEADERS
         }
-    
-    required_fields = ['semester', 'year', 'application_deadline','interview_preference_deadline','interview_period', 'status']
+
+    required_fields = ['semester', 'year', 'application_deadline',
+                       'interview_preference_deadline', 'interview_period', 'status']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return {
@@ -543,9 +562,10 @@ def create_recruitment_round(path_params={}, _={}, body={}):
             'body': json.dumps({'error': 'Invalid data types in request body'}),
             'headers': HEADERS
         }
-    
-    response = controller.create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period,status)
-    
+
+    response = controller.create_recruitment_round(
+        student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period, status)
+
     return {
         'statusCode': 201,
         'body': json.dumps({
@@ -1240,16 +1260,16 @@ def decrypt_id(path_params={}, _={}, __={}):
     return response
 
 
-@route('/opening/{openingId}/schedule_interviews', ['POST'])
+@route('/opening/{openingId}/schedule-interviews', ['POST'])
 def schedule_interviews(path_params={}, _={}, body={}):
     opening_id = path_params.get('openingId')
-    
+
     controller.schedule_interviews(opening_id)
-    
+
     return {
         'statusCode': 200,
         'body': json.dumps({
-            'success': True,
+            'success': True
         }),
         'headers': HEADERS
     }

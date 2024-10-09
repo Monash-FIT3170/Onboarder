@@ -3,8 +3,9 @@ import os
 import smtplib
 import ssl
 from email.message import EmailMessage
-from datetime import datetime
 from cryptography.fernet import Fernet  # type: ignore
+import json
+from datetime import datetime
 import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -69,7 +70,7 @@ def create_application(
 
 
 def get_all_applications_for_opening(opening_id):
-    print("Current select: *, profile:PROFILE(email).email::text as interviewer_email")
+    # print("Current select: *, profile:PROFILE(email).email::text as interviewer_email")
     response = supabase.table("APPLICATION").select(
         "*, profile:PROFILE(email).email::text as interviewer_email"
     ).eq("opening_id", opening_id).execute()
@@ -194,10 +195,21 @@ def delete_opening(opening_id):
         "id", opening_id).execute()
     return response.data
 
+
 def schedule_interviews(opening_id):
+    print('(Controller) Scheduling interviews for opening:', opening_id)
     body = {'opening_id': opening_id}
-    sqs.post(body)
-    
+
+    local = os.environ.get('INTERVIEW_SCHEDULER_QUEUE_URL')
+    if local == "":
+        print('Running locally')
+        import optimisation
+        event = json.dumps({'Records': [{'body': {'opening_id': opening_id}}]})
+        optimisation.lambda_handler(event, {})
+    else:
+        print('Running on AWS')
+        sqs.post(body)
+
 
 # -------------- ALL RECRUITMENT ROUND CONTROLLERS --------------
 
@@ -205,6 +217,7 @@ def get_all_recruitment_rounds():
     response = supabase.table(
         "rec_rounds_with_openings_count").select("*").execute()
     return response.data
+
 
 def create_recruitment_round(student_team_id, semester, year, application_deadline, interview_preference_deadline, interview_period, status):
     response = supabase.table("RECRUITMENT_ROUND").insert({
@@ -424,6 +437,21 @@ def get_student_teams_for_profile(profile_id):
     return response.data
 
 
+def get_interviews_for_profile(profile_id):
+    """
+    Retrieves interview details for a given profile ID from the "APPLICATION" table.
+
+    Args:
+        profile_id (str): The profile id of the user (interviewer)
+
+    Returns:
+        list: A list of dictionaries containing the corresponding interview details (name, email, interview_date).
+    """
+    response = supabase.table("APPLICATION").select(
+        "name, email, interview_date").eq("profile_id", profile_id).execute()
+    return response.data
+
+
 # -------------- EMAIL CONTROLLERS --------------
 
 encryption_key = os.environ.get('ENCRYPTION_KEY')
@@ -451,7 +479,7 @@ def generate_email_body(application_id, task_enabled=False, task_email_format=""
             <p>Dear Candidate,</p>
             <p>Congratulations on progressing to the next stage of our recruitment process. We're impressed with your application and look forward to learning more about you.</p>
             <p>To move forward, please provide your availability for the next steps by clicking on the following link:
-            <a href="http://localhost:5173/availability-calendar/{encrypted_id}">Enter Availability</a>.
+            <a href="http://localhost:5173/candidate-availability-calendar/{encrypted_id}">Enter Availability</a>.
             We kindly ask that you complete this within the next 3 business days.</p>
             <p>If you have any questions about the process or require any accommodations, please don't hesitate to reach out.</p>
     """
@@ -542,8 +570,10 @@ def decrypt_id(encrypted_id):
     try:
         decrypted_id = fernet.decrypt(encrypted_id.encode()).decode()
         application_data = get_application(decrypted_id)
-        round_data = get_interview_preference_deadline_from_application_id(decrypted_id)
-        interview_preference_deadline_data = get_interview_preference_deadline_from_application_id(decrypted_id)
+        round_data = get_interview_preference_deadline_from_application_id(
+            decrypted_id)
+        interview_preference_deadline_data = get_interview_preference_deadline_from_application_id(
+            decrypted_id)
 
         return {
             'decrypted_id': decrypted_id,
@@ -558,16 +588,19 @@ def decrypt_id(encrypted_id):
 
 def get_interview_preference_deadline_from_application_id(application_id):
     try:
-        opening = supabase.table("APPLICATION").select("opening_id").eq("id", application_id).execute()
-        round = supabase.table("openings_with_application_count").select("recruitment_round_id").eq("id", opening.data[0]['opening_id']).execute()
-        preference_deadline = supabase.table("RECRUITMENT_ROUND").select("interview_preference_deadline").eq("id", round.data[0]['recruitment_round_id']).execute()
-        
+        opening = supabase.table("APPLICATION").select(
+            "opening_id").eq("id", application_id).execute()
+        round = supabase.table("openings_with_application_count").select(
+            "recruitment_round_id").eq("id", opening.data[0]['opening_id']).execute()
+        preference_deadline = supabase.table("RECRUITMENT_ROUND").select(
+            "interview_preference_deadline").eq("id", round.data[0]['recruitment_round_id']).execute()
+
         return preference_deadline.data[0]['interview_preference_deadline']
-    
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return None
-        
+
 
 def send_welcome_email(email, team_name, role):
     role_mapping = {

@@ -31,7 +31,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
 
   const handleBack = () => {
     // clearSelectedOpening();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
   const handleConfirm = async (event: any) => {
     event.preventDefault();
@@ -65,7 +65,7 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
     const fetchData = async () => {
       if (!selectedOpening?.id) {
         console.error("No opening ID selected");
-        navigate("/viewopen");
+        navigate("/opening-details");
         return;
       }
       try {

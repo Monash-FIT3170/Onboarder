@@ -145,7 +145,7 @@ function ApplicationSubmissionPage() {
 
   return (
     <div>
-      <IconButton onClick={() => navigate("/applicant-openings")}>
+      <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
       <Typography variant="h5" component="div">
@@ -198,6 +198,7 @@ function ApplicationSubmissionPage() {
             label="First Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Sarah"
           />
         </Grid>
         <Grid item xs={6}>
@@ -207,6 +208,7 @@ function ApplicationSubmissionPage() {
             label="Last Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Jones"
           />
         </Grid>
         <Grid item xs={6}>
@@ -216,6 +218,7 @@ function ApplicationSubmissionPage() {
             label="Email*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. applicant628406@example.com"
           />
         </Grid>
         <Grid item xs={6}>
@@ -225,6 +228,7 @@ function ApplicationSubmissionPage() {
             label="Phone Number*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. +1-294-300-6690"
           />
         </Grid>
         <Grid item xs={12}>
@@ -236,6 +240,7 @@ function ApplicationSubmissionPage() {
             multiline
             rows={4}
             onChange={handleInputChange}
+            placeholder="Write your cover letter here..."
           />
         </Grid>
       </Grid>
@@ -251,6 +256,7 @@ function ApplicationSubmissionPage() {
             label="Course Name*"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Computer Science"
           />
         </Grid>
         <Grid item xs={6}>
@@ -260,6 +266,7 @@ function ApplicationSubmissionPage() {
             label="Major"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. Data Science"
           />
         </Grid>
         <Grid item xs={12}>
@@ -278,7 +285,12 @@ function ApplicationSubmissionPage() {
               ))
             }
             renderInput={(params) => (
-              <TextField {...params} label="Add skills" />
+              <TextField
+                {...params}
+                label="Add skills"
+                placeholder="Type and press Enter"
+                helperText="Press Enter after typing each skill"
+              />
             )}
           />
         </Grid>
@@ -289,6 +301,7 @@ function ApplicationSubmissionPage() {
             label="Current Semester"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. 5"
           />
         </Grid>
         <Grid item xs={6}>
@@ -298,6 +311,7 @@ function ApplicationSubmissionPage() {
             label="Semesters Remaining"
             variant="outlined"
             onChange={handleInputChange}
+            placeholder="e.g. 3"
           />
         </Grid>
       </Grid>
@@ -327,7 +341,7 @@ function ApplicationSubmissionPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/applicant-openings");
+              navigate("/onboarder-openings");
             }}
           >
             CLOSE

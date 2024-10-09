@@ -59,7 +59,7 @@ const generateRowFunction = (
     user_role: string,
   ) => {
     authStore.updateTeamAndRole(t_id, t_link, t_name, user_role);
-    navigate("/viewrecruitmentround");
+    navigate("/view-recruitment-rounds");
   };
 
   const handleCloseModal = () => {

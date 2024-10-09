@@ -20,6 +20,9 @@ import {
 } from "../components/ApplicantOpeningsTable";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
+import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBack";
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -61,6 +64,11 @@ function RecruitmentRoundDetailsPage() {
   const [openingFilter, setOpeningFilter] = useState("");
   const [teamFilter, setTeamFilter] = useState("");
   const BASE_API_URL = getBaseAPIURL();
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,6 +126,9 @@ function RecruitmentRoundDetailsPage() {
   return (
     <>
       <TitleWrapper>
+        <IconButton onClick={handleBack} sx={{ mr: 2 }}>
+          <BackIcon />
+        </IconButton>
         <Typography variant="h5">Student Team Openings</Typography>
       </TitleWrapper>
 

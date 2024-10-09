@@ -70,7 +70,7 @@ export default function RecruitmentPlatform() {
     const fetchData = async () => {
       if (!selectedApplicant?.application_id) {
         console.error("No application ID selected");
-        navigate("/viewopen");
+        navigate("/opening-details");
         return;
       }
 
@@ -164,7 +164,7 @@ export default function RecruitmentPlatform() {
 
   const handleBack = () => {
     clearSelectedApplicant();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
 
   if (loading) {
@@ -395,7 +395,7 @@ export default function RecruitmentPlatform() {
           action="update"
           subject="Opening"
           variant="contained"
-          sx={{ m: 1, backgroundColor: "#1f8ae7" }}
+          sx={{ m: 1 }}
           onClick={handleAccept}
           disabled={isDisabledAccept || loadingAccept}
           tooltipText="You do not have permission to accept this applicant"

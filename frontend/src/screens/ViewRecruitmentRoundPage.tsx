@@ -116,7 +116,7 @@ const ViewRecruitmentRoundPage = () => {
       roundName: null,
       roundStatus: null,
     });
-    navigate("/recruitment-details-page");
+    navigate("/recruitment-round-details");
   };
 
   const handleEditLink = async () => {
@@ -133,7 +133,7 @@ const ViewRecruitmentRoundPage = () => {
   };
 
   const handleAllocateTeamLeads = () => {
-    navigate("/viewTeamLeads");
+    navigate("/view-team-leads");
   };
 
   const handleViewTeamMembers = () => {

@@ -101,19 +101,19 @@ function Feedbacknote() {
   const handleCloseAccept = () => {
     setOpenAccept(false);
     handleUpdate();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
   const handleCloseReject = () => {
     setOpenReject(false);
     handleUpdate();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
   const authStore = useAuthStore();
 
   const handleBack = () => {
     handleUpdate();
     clearSelectedApplicant();
-    navigate("/viewopen");
+    navigate("/opening-details");
   };
 
   const handleUpdate = () => {
@@ -161,7 +161,7 @@ function Feedbacknote() {
     const fetchData = async () => {
       if (!selectedApplicant?.application_id) {
         console.error("No application ID selected");
-        navigate("/viewopen");
+        navigate("/opening-details");
         return;
       }
       try {
