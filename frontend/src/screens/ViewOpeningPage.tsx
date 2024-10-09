@@ -17,6 +17,7 @@ import {
 import BackIcon from "../assets/BackIcon";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 import axios from "axios";
