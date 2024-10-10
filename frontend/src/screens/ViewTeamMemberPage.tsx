@@ -10,7 +10,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
-import InviteMemberModal from "./InviteMemberModal";
+import InviteMemberModal from "../components/InviteMemberModal";
 import axios from "axios";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";

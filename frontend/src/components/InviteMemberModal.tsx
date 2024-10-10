@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
-import PermissionButton from "../components/PermissionButton";
+import PermissionButton from "./PermissionButton";
 
 interface InviteMemberModalProps {
   open: boolean;
