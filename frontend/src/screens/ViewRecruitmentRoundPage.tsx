@@ -17,14 +17,14 @@ import {
 import axios from "axios";
 import Modal from "@mui/material/Modal";
 import BackIcon from "../assets/BackIcon";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
 import React from "react";
+import PermissionButton from "../components/PermissionButton";
 
 // Css style file
 const styles = {
@@ -59,6 +59,10 @@ const ViewRecruitmentRoundPage = () => {
   const [filter, setFilter] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleAddRoundClick = () => {
+    navigate("/addrecruitmentround");
+  };
 
   // Constants
   enum Status {
@@ -233,9 +237,15 @@ const ViewRecruitmentRoundPage = () => {
                 </Grid>
                 <Grid item xs={12} sm={12} mt={4}>
                   <Box display="flex" justifyContent="center" gap={2}>
-                    <Button variant="contained" onClick={handleEditLink}>
+                    <PermissionButton
+                      action="update"
+                      subject="Interview"
+                      variant="contained"
+                      onClick={handleEditLink}
+                      tooltipText="You do not have permission to update the interview link"
+                    >
                       Save
-                    </Button>
+                    </PermissionButton>
                     <Button variant="contained" onClick={handleCloseLink}>
                       Cancel
                     </Button>
@@ -253,6 +263,7 @@ const ViewRecruitmentRoundPage = () => {
             >
               Configure Interview Link
             </Button>
+
             <Button
               variant="outlined"
               color="primary"
@@ -261,13 +272,17 @@ const ViewRecruitmentRoundPage = () => {
             >
               View Team Members
             </Button>
-            <Button
+
+            <PermissionButton
+              action="assign"
+              subject="TeamLead"
               variant="contained"
               color="primary"
               onClick={handleAllocateTeamLeads}
+              tooltipText="You do not have permission to allocate team leads"
             >
               Allocate Team Leads
-            </Button>
+            </PermissionButton>
           </Box>
         </Box>
         <Grid container alignItems="center">
@@ -304,12 +319,15 @@ const ViewRecruitmentRoundPage = () => {
             </Grid>
 
             <Grid item>
-              <Link
-                to="/add-recruitment-round"
-                style={{ textDecoration: "none" }}
+              <PermissionButton
+                action="create"
+                subject="Round"
+                onClick={handleAddRoundClick}
+                variant="contained"
+                tooltipText="You don't have permission to add a recruitment round"
               >
-                <Button variant="contained">ADD ROUND</Button>
-              </Link>
+                ADD ROUND
+              </PermissionButton>
             </Grid>
           </Grid>
 

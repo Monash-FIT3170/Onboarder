@@ -26,6 +26,7 @@ import BackIcon from "../assets/BackIcon";
 
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 interface ResultProps {
   id: number;
@@ -390,23 +391,30 @@ export default function RecruitmentPlatform() {
         xs={12}
         sx={{ display: "flex", justifyContent: "center", marginTop: "70px" }}
       >
-        <Button
+        <PermissionButton
+          action="update"
+          subject="Opening"
           variant="contained"
           sx={{ m: 1 }}
           onClick={handleAccept}
           disabled={isDisabledAccept || loadingAccept}
+          tooltipText="You do not have permission to accept this applicant"
         >
           {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT APPLICANT"}
-        </Button>
-        <Button
+        </PermissionButton>
+        <PermissionButton
+          action="update"
+          subject="Opening"
           variant="contained"
           color="error"
           sx={{ m: 1 }}
           onClick={handleReject}
-          disabled={isDisabledReject || loadingReject}
+          disabled={isDisabledReject}
+          loading={loadingReject}
+          tooltipText="You do not have permission to reject this applicant"
         >
           {loadingReject ? <CircularProgress size={24} /> : "REJECT APPLICANT"}
-        </Button>
+        </PermissionButton>
         <Dialog open={open} onClose={() => setOpen(false)}>
           <DialogTitle>{dialogParam}</DialogTitle>
           <DialogContent>

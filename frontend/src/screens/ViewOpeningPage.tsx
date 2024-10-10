@@ -26,6 +26,7 @@ import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 export interface SingleApplicationProps {
   id: number;
@@ -304,7 +305,9 @@ function ViewOpenPage() {
           fullWidth
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button
+        <PermissionButton
+          action="send"
+          subject="Interview"
           variant="contained"
           onClick={handleConfirmSendEmails}
           disabled={
@@ -312,13 +315,14 @@ function ViewOpenPage() {
             applications.find((item) => item.status === "C") == undefined
           }
           style={{ marginLeft: "1rem" }}
+          tooltipText="You do not have permission to send interview scheduling emails"
         >
           {loading ? (
             <Skeleton width={100} />
           ) : (
             "Send Interview Scheduling Emails"
           )}
-        </Button>
+        </PermissionButton>
       </div>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
@@ -424,9 +428,16 @@ function ViewOpenPage() {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSendEmails} color="primary" autoFocus>
+          <PermissionButton
+            action="send"
+            subject="Interview"
+            onClick={handleSendEmails}
+            color="primary"
+            autoFocus
+            tooltipText="You do not have permission to send interview scheduling emails"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </div>
