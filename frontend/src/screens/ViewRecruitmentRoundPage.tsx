@@ -256,16 +256,13 @@ const ViewRecruitmentRoundPage = () => {
           </Grid>
 
           <Box>
-            <PermissionButton
-              action="update"
-              subject="Interview"
+            <Button
               variant="contained"
               onClick={handleOpenLink}
               style={{ marginRight: "10px" }}
-              tooltipText="You do not have permission to configure the interview link"
             >
               Configure Interview Link
-            </PermissionButton>
+            </Button>
 
             <Button
               variant="outlined"

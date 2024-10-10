@@ -264,15 +264,18 @@ const AddRecruitmentRoundPage = () => {
 
           <Grid item container xs={12} justifyContent="center" spacing={2}>
             <Grid item>
-              <Button
+              <PermissionButton
+                action="create"
+                subject="Round"
                 variant="contained"
                 color="primary"
                 size="large"
                 type="submit"
                 disabled={loading}
+                onClick={() => {}}
               >
                 {loading ? <CircularProgress size={24} /> : "Submit"}
-              </Button>
+              </PermissionButton>
             </Grid>
             <Grid item>
               <Link
