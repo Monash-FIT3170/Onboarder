@@ -314,7 +314,7 @@ function CreateOpeningPage() {
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/recruitment-round-details");
+              navigate("/recruitment-round-details", { replace: true });
             }}
           >
             Go to Openings Table

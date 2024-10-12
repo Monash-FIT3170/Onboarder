@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
@@ -60,6 +60,7 @@ function ViewOpenPage() {
   // Constants
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Store hooks
   const authStore = useAuthStore();
@@ -109,7 +110,7 @@ function ViewOpenPage() {
     };
 
     fetchData();
-  }, [selectedOpening, navigate, BASE_API_URL]);
+  }, [selectedOpening, navigate, BASE_API_URL, location.key]);
 
   // Handler functions
   const handleSort = (column: any) => {
