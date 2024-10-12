@@ -138,8 +138,7 @@ function CreateOpeningPage() {
       <Grid item xs={12}>
         <TableContainer
           component={Paper}
-          elevation={0}
-          style={{ border: "none" }}
+          // elevation={0}
         >
           <Table>
             <TableHead>
@@ -296,13 +295,16 @@ function CreateOpeningPage() {
           </PermissionButton>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="warning" onClick={handleCancel}>
+          <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
         </Grid>
       </Grid>
-
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        style={{ margin: "20px" }}
+      >
         <DialogContent>
           <DialogContentText>
             {dialogParam

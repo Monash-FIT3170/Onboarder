@@ -133,6 +133,9 @@ function InterviewFeedbackPage() {
   };
 
   const handleUpdate = () => {
+    console.log("Updating feedback for applicant");
+    console.log("Score: ", score);
+    console.log("Feedback: ", feedback);
     if (!validateScore(score)) {
       return;
     }
@@ -176,6 +179,11 @@ function InterviewFeedbackPage() {
     validateScore(value);
   };
 
+  const handleFeedbackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFeedback(value);
+  };
+
   useEffect(() => {
     if (applicantInformation.length > 0) {
       const status = applicantInformation[0]?.status;
@@ -204,6 +212,8 @@ function InterviewFeedbackPage() {
         );
         console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
+        setFeedback(applicantResponse.data[0]?.interview_notes);
+        setScore(applicantResponse.data[0]?.interview_score);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
       } finally {
@@ -319,7 +329,7 @@ function InterviewFeedbackPage() {
               id="outlined"
               label="Out of 10"
               variant="filled"
-              value={score}
+              defaultValue={applicantInformation[0]?.interview_score}
               onChange={handleScoreChange}
               error={!!scoreError}
               helperText={scoreError}
@@ -343,11 +353,13 @@ function InterviewFeedbackPage() {
             <TextField
               fullWidth
               label="Feedback note"
-              value={feedback}
+              defaultValue={applicantInformation[0]?.interview_notes}
+              // value={feedback}
               variant="filled"
               multiline
               rows={5}
-              onChange={(e) => setFeedback(e.target.value)}
+              onChange={handleFeedbackChange}
+              // onChange={(e) => setFeedback(e.target.value)}
             />
           </div>
         </Grid>
@@ -402,7 +414,7 @@ function InterviewFeedbackPage() {
               action="update"
               subject="Opening"
               variant="contained"
-              color="warning"
+              color="error"
               disabled={isDisabledReject || loading}
               onClick={handleReject}
               tooltipText="You do not have permission to reject this candidate"

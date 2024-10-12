@@ -172,7 +172,7 @@ const ViewTeamMembersPage: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="error">{error}</Alert>
         <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
       </Box>
@@ -180,7 +180,7 @@ const ViewTeamMembersPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
           <ArrowBackIcon />

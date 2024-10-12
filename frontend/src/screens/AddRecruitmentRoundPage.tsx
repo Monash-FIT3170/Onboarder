@@ -397,7 +397,7 @@ const AddRecruitmentRoundPage = () => {
                 to="/view-recruitment-rounds"
                 style={{ textDecoration: "none" }}
               >
-                <Button variant="contained" color="error" size="large">
+                <Button variant="outlined" size="large">
                   Cancel
                 </Button>
               </Link>

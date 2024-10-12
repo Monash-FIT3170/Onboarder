@@ -214,8 +214,14 @@ const UserAvailabilityCalendarPage: React.FC = () => {
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
-        <Grid container alignItems="center" spacing={2}>
+      <div
+        style={{
+          height: "70vh",
+          padding: "0px 20px 0px 20px",
+          paddingTop: "0",
+        }}
+      >
+        <Grid container alignItems="center" spacing={0}>
           <Grid item>
             <IconButton onClick={() => navigate("/dashboard")} sx={{ mr: 2 }}>
               <ArrowBackIcon />

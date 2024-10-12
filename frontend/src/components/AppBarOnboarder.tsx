@@ -33,7 +33,7 @@ const pathToNameMap: { [key: string]: string } = {
   "/review-application": "Admin Accept",
   "/task-email-format": "Task Email Format",
   "/candidate-availability-calendar": "Availability Calendar",
-  "/view-team-member": "View Team Member",
+  "/view-team-members": "View Team Members",
   "/interview-scheduling": "View Interview Allocation",
   "/feedback-note": "Feedback Note",
   "/user-availability-calendar": "Availability Calendar User",
