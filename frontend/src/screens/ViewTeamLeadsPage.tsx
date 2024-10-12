@@ -15,7 +15,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { useAuthStore } from "../util/stores/authStore";
-import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
+import { TeamMember } from "../components/TeamMembersTable";
 import { useNavigate } from "react-router-dom";
 import { useMemberStore } from "../util/stores/memberStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -26,7 +26,7 @@ export interface TeamLeadProps {
   email: string;
 }
 
-function ViewTeamLeads() {
+function ViewTeamLeadsPage() {
   const navigate = useNavigate();
   // State to store the list of team leads
   const [teamLeads, setTeamLeads] = useState<TeamLeadProps[]>([]);
@@ -178,4 +178,4 @@ function ViewTeamLeads() {
   );
 }
 
-export default ViewTeamLeads;
+export default ViewTeamLeadsPage;

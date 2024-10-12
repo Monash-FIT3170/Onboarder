@@ -1,15 +1,13 @@
 import {
-  TableContainer,
-  TableHead,
+  Button,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
-  Button,
-  Paper,
-  Typography,
 } from "@mui/material";
-import styled from "styled-components";
 
 export interface openingsResultProps {
   id: number;
@@ -28,9 +26,10 @@ export interface openingsResultProps {
   desired_skills: string[];
   applications_count: number;
   applications_pending_review: number;
+  opening_title: string;
 }
 
-interface OpeningsTableProps {
+interface RecruitmentRoundOpeningsTableProps {
   results: openingsResultProps[];
   viewHandler: (
     id: number,
@@ -85,7 +84,9 @@ const generateRowFunction = (
   });
 };
 
-export function OpeningsTable(props: OpeningsTableProps) {
+export function RecruitmentRoundOpeningsTable(
+  props: RecruitmentRoundOpeningsTableProps,
+) {
   return (
     <>
       <TableContainer component={Paper}>

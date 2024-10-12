@@ -5,7 +5,7 @@ import {
   StudentTeamResultProps,
 } from "../components/DashboardTable";
 import styled from "styled-components";
-import AddTeamModal from "./AddTeamModal";
+import AddTeamModal from "../components/AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import axios from "axios";
@@ -23,7 +23,7 @@ const ButtonStyle = styled.div`
   margin-bottom: 20px;
 `;
 
-const Dashboard: React.FC = () => {
+const DashboardPage: React.FC = () => {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const BASE_API_URL = getBaseAPIURL();
@@ -148,4 +148,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardPage;

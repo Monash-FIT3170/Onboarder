@@ -1,14 +1,14 @@
-import React from "react";
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Button,
 } from "@mui/material";
+import React from "react";
+import PermissionButton from "./PermissionButton";
 
 export interface TeamMember {
   email: string;
@@ -48,14 +48,17 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
                 {member.profile_id === currentUserProfileId ? (
                   "Current User"
                 ) : userRole === "O" && member.role !== "Owner" ? (
-                  <Button
+                  <PermissionButton
+                    action="delete"
+                    subject="Team"
+                    tooltipText="You do not have permission to remove this team member"
                     variant="contained"
                     color="error"
                     size="small"
                     onClick={() => onRemove(member.profile_id)}
                   >
                     REMOVE
-                  </Button>
+                  </PermissionButton>
                 ) : null}
               </TableCell>
             </TableRow>

@@ -26,6 +26,7 @@ import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 export interface SingleApplicationProps {
   id: number;
@@ -43,7 +44,7 @@ export interface SingleApplicationProps {
   created_at: string;
 }
 
-function ViewOpenPage() {
+function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState(null);
@@ -169,7 +170,7 @@ function ViewOpenPage() {
   const handleSendEmails = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
       // console.log(response);
@@ -224,6 +225,32 @@ function ViewOpenPage() {
     ));
   };
 
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/view-recruitment-round");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  const handleInterviewSchedule = () => {
+    navigate("/interview-scheduling");
+  };
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -252,7 +279,7 @@ function ViewOpenPage() {
             sx={{ ml: 2 }}
             onClick={() => {
               // console.log("Navigating to /interview-scheduling");
-              respond();
+              handleInterviewSchedule();
             }}
           >
             INTERVIEW SCHEDULE
@@ -280,31 +307,20 @@ function ViewOpenPage() {
 
       <div style={{ marginTop: "50px" }}></div>
 
-      {/* adds a table showing the number of applications for the current opening */}
-      <Typography
-        variant="h6"
-        style={{ marginLeft: "10px", marginTop: "20px" }}
-      >
-        Opening Applications
-      </Typography>
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           justifyContent: "space-between",
+          mb: 2,
           alignItems: "center",
-          marginBottom: "1rem",
         }}
       >
-        <TextField
-          style={{ width: "25%" }}
-          variant="outlined"
-          placeholder="Round Name, ApplicationDeadline, etc..."
-          size="small"
-          label="Search"
-          fullWidth
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button
+        <Typography variant="h6" component="div">
+          Opening Applications
+        </Typography>
+        <PermissionButton
+          action="send"
+          subject="Interview"
           variant="contained"
           onClick={handleConfirmSendEmails}
           disabled={
@@ -312,14 +328,16 @@ function ViewOpenPage() {
             applications.find((item) => item.status === "C") == undefined
           }
           style={{ marginLeft: "1rem" }}
+          tooltipText="You do not have permission to send interview scheduling emails"
         >
           {loading ? (
             <Skeleton width={100} />
           ) : (
             "Send Interview Scheduling Emails"
           )}
-        </Button>
-      </div>
+        </PermissionButton>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
@@ -424,13 +442,20 @@ function ViewOpenPage() {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSendEmails} color="primary" autoFocus>
+          <PermissionButton
+            action="send"
+            subject="Interview"
+            onClick={handleSendEmails}
+            color="primary"
+            autoFocus
+            tooltipText="You do not have permission to send interview scheduling emails"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
 
-export default ViewOpenPage;
+export default OpeningDetailsPage;

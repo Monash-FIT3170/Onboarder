@@ -19,20 +19,21 @@ import {
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
 import {
-  OpeningsTable,
+  RecruitmentRoundOpeningsTable,
   openingsResultProps,
-} from "../components/OpeningsTable";
+} from "../components/RecruitmentRoundOpeningsTable";
 import axios from "axios";
 import {
-  SingleRoundTable,
+  RoundDetailsTable,
   SingleRoundResultProps,
-} from "../components/SingleRoundTable";
+} from "../components/RoundDetailsTable";
 import { useNavigate } from "react-router-dom";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -216,31 +217,26 @@ function RecruitmentRoundDetailsPage() {
           <Skeleton variant="rectangular" width={150} height={40} />
         ) : status === "A" ? (
           /* Close Round button */
-          <Button
+          <PermissionButton
+            action="close"
+            subject="Round"
             variant="contained"
-            style={{
-              color: "black",
-              backgroundColor: "white",
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
             disabled={isUpdating}
             onClick={() => {
               updateStatus("I");
             }}
+            tooltipText="You do not have permission to close this round"
           >
             {isUpdating ? <CircularProgress size={24} /> : "Close Round"}
-          </Button>
+          </PermissionButton>
         ) : (
           <div>
             {/* Archive Round Button */}
-            <Button
+            <PermissionButton
+              action="archive"
+              subject="Round"
               variant="outlined"
               style={{
-                // color: "black",
-                // backgroundColor: "white",
-                // borderColor: "black",
-                // borderWidth: "1px",
                 marginRight: "10px",
               }}
               disabled={status === "R"}
@@ -249,21 +245,24 @@ function RecruitmentRoundDetailsPage() {
               }}
             >
               {isArchiving ? <CircularProgress size={24} /> : "Archive Round"}
-            </Button>
+            </PermissionButton>
             {/* Activate Round Button */}
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Round"
               disabled={status === "R"}
               variant="contained"
               onClick={() => {
                 updateStatus("A");
               }}
+              tooltipText="You do not have permission to activate this round"
             >
               {isUpdating ? (
                 <CircularProgress size={24} style={{ color: "white" }} />
               ) : (
                 "Activate Round"
               )}
-            </Button>
+            </PermissionButton>
           </div>
         )}
       </HeadWrapper>
@@ -321,7 +320,7 @@ function RecruitmentRoundDetailsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <SingleRoundTable results={rounds} />
+          <RoundDetailsTable results={rounds} />
         )}
       </div>
 
@@ -337,13 +336,16 @@ function RecruitmentRoundDetailsPage() {
           <Typography variant="h6">
             {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
           </Typography>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             variant="contained"
             onClick={handleAddOpening}
             disabled={loading}
+            tooltipText="You do not have permission to add an opening"
           >
             {loading ? <Skeleton width={100} /> : "Add Opening"}
-          </Button>
+          </PermissionButton>
         </OpeningsWrapper>
         {loading ? (
           <TableContainer component={Paper}>
@@ -386,7 +388,10 @@ function RecruitmentRoundDetailsPage() {
           </TableContainer>
         ) : (
           /* Openings Table Component */
-          <OpeningsTable results={openings} viewHandler={handleView} />
+          <RecruitmentRoundOpeningsTable
+            results={openings}
+            viewHandler={handleView}
+          />
         )}
       </div>
       <Modal
@@ -423,9 +428,16 @@ function RecruitmentRoundDetailsPage() {
           >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleConfirm} sx={{ mt: 2 }}>
+          <PermissionButton
+            action="archive"
+            subject="Round"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={{ mt: 2 }}
+            tooltipText="You do not have permission to archive this round"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </Box>
       </Modal>
     </>

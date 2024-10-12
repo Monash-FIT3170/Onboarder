@@ -19,9 +19,12 @@ import axios from "axios";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useApplicantStore } from "../util/stores/applicantStore";
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import PermissionButton from "../components/PermissionButton";
 
 // Css file
 const TitleWrapper = styled.div`
@@ -81,7 +84,7 @@ export interface RoundProps {
   interview_period: string[]; // period
 }
 
-const ViewInterviewAllocation = () => {
+const InterviewSchedulingPage = () => {
   // State hooks
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -90,10 +93,11 @@ const ViewInterviewAllocation = () => {
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
-
-  // Constants
-  const navigate = useNavigate();
-  const BASE_API_URL = getBaseAPIURL();
+  const authStore = useAuthStore();
+  const { setSelectedApplicant, selectedApplicant } = useApplicantStore();
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails,
+  );
   const filteredApplications = applications.filter((application) =>
     application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -104,8 +108,10 @@ const ViewInterviewAllocation = () => {
     (app) => app.interview_date == null,
   ).length;
 
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
+
   // Store hooks
-  const authStore = useAuthStore();
   const studentTeamStore = useStudentTeamStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
@@ -122,10 +128,12 @@ const ViewInterviewAllocation = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
+        console.log("App response: ", applicationsResponse);
         setApplications(applicationsResponse.data);
         const roundResponse = await axios.get(
           `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
         );
+
         setRound(roundResponse.data[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -158,7 +166,7 @@ const ViewInterviewAllocation = () => {
 
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewopen");
+      navigate("/opening-details");
       return;
     }
 
@@ -285,6 +293,29 @@ const ViewInterviewAllocation = () => {
               })
             : "No Interview Scheduled"}
         </TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setSelectedApplicant({
+                opening_title: selectedOpening?.title || null,
+                recruitment_round_name: recruitmentDetails.roundName,
+                applicant_email: application.email,
+                opening_name: selectedOpening?.title || null,
+                application_id: application.id,
+                opening_id: selectedOpening?.id || null,
+                recruitment_round_id: recruitmentDetails.roundId,
+                student_team_name: selectedOpening?.student_team_name || null,
+                application_count: null,
+                interview_date: application.interview_date,
+              });
+              navigate(`/manually-schedule-interview`);
+            }}
+            disabled={loading}
+          >
+            Manually Add Interview
+          </Button>
+        </TableCell>
       </TableRow>
     ));
   };
@@ -308,23 +339,29 @@ const ViewInterviewAllocation = () => {
         </Box>
         {/* button to send interivew and schedule intervies */}
         <Box display="flex" alignItems="center">
-          <Button
+          <PermissionButton
+            action="send"
+            subject="Interview"
             variant="contained"
             onClick={handleSendInvite}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
+            tooltipText="You do not have permission to send interview invites"
           >
             {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
-          </Button>
+          </PermissionButton>
 
-          <Button
+          <PermissionButton
+            action="schedule"
+            subject="Interview"
             variant="contained"
             onClick={handleScheduleInterviews}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
+            tooltipText="You do not have permission to schedule interviews"
           >
             {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
-          </Button>
+          </PermissionButton>
         </Box>
       </Box>
       <PaddingBox>
@@ -377,6 +414,7 @@ const ViewInterviewAllocation = () => {
               <TableCell>Email</TableCell>
               <TableCell>Interview Preference Submitted</TableCell>
               <TableCell>Interview Date</TableCell>
+              <TableCell>Manually Schedule Interview</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -411,4 +449,4 @@ const ViewInterviewAllocation = () => {
   );
 };
 
-export default ViewInterviewAllocation;
+export default InterviewSchedulingPage;

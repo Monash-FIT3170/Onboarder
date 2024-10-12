@@ -67,10 +67,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleApplicantLogin = () => {
-    navigate("/onboarder-openings");
-  };
-
   useEffect(() => {
     // Check for OAuth errors on page load
     const urlParams = new URLSearchParams(window.location.search);
