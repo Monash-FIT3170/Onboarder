@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Box } from "@mui/material";
 import { ThemeProvider } from "./util/ThemeContext"; // Import our custom ThemeProvider
 import AppBarOnBoarder from "./components/AppBarOnboarder";
@@ -11,7 +11,7 @@ import CreateOpeningPage from "../src/screens/CreateOpeningPage";
 import ViewRecruitmentRoundPage from "./screens/ViewRecruitmentRoundPage";
 import AddRecruitmentRoundPage from "./screens/AddRecruitmentRoundPage";
 import ViewOpenPage from "../src/screens/ViewOpeningPage";
-import ApplicantOpenings from "./screens/ApplicantOpenings";
+import ApplicantOpenings from "./screens/OnboarderOpeningsPage";
 import ApplicationSubmissionPage from "./screens/ApplicationSubmissionPage";
 import AdminAcceptPage from "../src/screens/AdminAcceptPage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -31,7 +31,8 @@ function App() {
       <AppBarOnBoarder />
       <Box component={"section"} sx={{ padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* <Route path="/" element={<LoginPage />} /> */}
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />

@@ -49,11 +49,25 @@ const ManuallyAddInterview: React.FC = () => {
   const authStore = useAuthStore();
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const BASE_API_URL = getBaseAPIURL();
+  const scrollToTime = new Date();
+  scrollToTime.setHours(9, 0, 0);
 
   useEffect(() => {
     console.log("Selected Applicant:", selectedApplicant);
     console.log("Application ID:", selectedApplicant?.application_id);
-    console.log("Interview dateL", selectedApplicant?.interview_date);
+    console.log("Interview date", selectedApplicant?.interview_date);
+    if (selectedApplicant?.interview_date) {
+      const start = selectedApplicant?.interview_date;
+      const startDate = new Date(start);
+      const thirtyMinutesLater = moment(startDate).add(30, "minutes").toDate();
+      const newEvent = {
+        start: startDate,
+        end: thirtyMinutesLater,
+        title: "Interview",
+      };
+      console.log("New Event:", newEvent);
+      setEventsList([newEvent]);
+    }
   }, [selectedApplicant]);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
@@ -65,24 +79,7 @@ const ManuallyAddInterview: React.FC = () => {
       end: thirtyMinutesLater,
       title: "Interview",
     };
-    setEventsList([...eventsList, newEvent]);
-  };
-
-  const handleEventResize = ({
-    event,
-    start,
-    end,
-  }: {
-    event: Event;
-    start: Date;
-    end: Date;
-  }) => {
-    const updatedEvents = eventsList.map((existingEvent) =>
-      existingEvent === event
-        ? { ...existingEvent, start, end }
-        : existingEvent,
-    );
-    setEventsList(updatedEvents);
+    setEventsList([newEvent]);
   };
 
   const handleEventDrop = ({
@@ -110,10 +107,10 @@ const ManuallyAddInterview: React.FC = () => {
       alert("No interview dates selected");
       return;
     }
-    const interview_date = eventsList[0].start;
+    const interviewDate = eventsList[0].start;
 
     // Format the date as ISO8601 with the local time zone offset
-    const formattedDate = interview_date.toISOString();
+    const formattedDate = format(interviewDate, "yyyy-MM-dd'T'HH:mm:ssXXX");
 
     try {
       const response = await axios.patch(
@@ -208,7 +205,7 @@ const ManuallyAddInterview: React.FC = () => {
               defaultView="week"
               views={["week"]}
               selectable={true}
-              // resizable
+              scrollToTime={scrollToTime}
               step={30} // Set the step to 30 minutes
               timeslots={1} // Each slot is 30 minutes
               onSelectSlot={(slotInfo) => {
@@ -218,11 +215,6 @@ const ManuallyAddInterview: React.FC = () => {
                   alert("Only one interview slot can be selected.");
                 }
               }}
-              // onEventResize={
-              //   handleEventResize as (
-              //     args: EventInteractionArgs<object>,
-              //   ) => void
-              // }
               onEventDrop={
                 handleEventDrop as (args: EventInteractionArgs<object>) => void
               }

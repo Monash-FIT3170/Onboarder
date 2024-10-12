@@ -45,7 +45,7 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   // Constants
   const navigate = useNavigate();
-  const scrollToTime = new Date();
+
   const BASE_API_URL = getBaseAPIURL();
 
   // Store hooks
@@ -184,6 +184,7 @@ const AvailabilityCalendarUser: React.FC = () => {
   };
 
   // Calendar configuration
+  const scrollToTime = new Date();
   scrollToTime.setHours(9, 0, 0);
 
   const eventStyleGetter = (event) => {

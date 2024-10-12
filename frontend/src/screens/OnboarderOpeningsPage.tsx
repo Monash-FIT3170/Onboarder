@@ -55,7 +55,7 @@ const generateSkeletonRows = () => {
   ));
 };
 
-function RecruitmentRoundDetailsPage() {
+function OnboarderOpeningsPage() {
   const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
@@ -184,4 +184,4 @@ function RecruitmentRoundDetailsPage() {
   );
 }
 
-export default RecruitmentRoundDetailsPage;
+export default OnboarderOpeningsPage;

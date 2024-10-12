@@ -51,6 +51,9 @@ const AvailabilityCalendar: React.FC = () => {
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
 
+  const scrollToTime = new Date();
+  scrollToTime.setHours(9, 0, 0);
+
   // First Ill set an arbitrary cutoff day, for example today
   const cutoffDate = new Date(interviewPreferenceDeadline);
 
@@ -217,6 +220,7 @@ const AvailabilityCalendar: React.FC = () => {
           max={endOfDay(twoWeeksLater)} // Latest selectable date (2 weeks from now)
           step={30}
           timeslots={2}
+          scrollToTime={scrollToTime}
         />
         {/* Save Button */}
         <Button
