@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import PermissionButton from "./PermissionButton";
 
-export interface TeamMember {
+interface TeamMember {
   email: string;
   role: string;
   profile_id: number;
@@ -19,8 +19,8 @@ export interface TeamMember {
 interface TeamMembersTableProps {
   members: TeamMember[];
   onRemove: (profileId: number) => void;
-  currentUserProfileId: number | null;
-  userRole: string | null;
+  currentUserProfileId: number;
+  userRole: string;
 }
 
 const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
@@ -45,21 +45,20 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
               <TableCell>{member.email}</TableCell>
               <TableCell>{member.role}</TableCell>
               <TableCell>
-                {member.profile_id === currentUserProfileId ? (
-                  "Current User"
-                ) : userRole === "O" && member.role !== "Owner" ? (
-                  <PermissionButton
-                    action="delete"
-                    subject="Team"
-                    tooltipText="You do not have permission to remove this team member"
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => onRemove(member.profile_id)}
-                  >
-                    REMOVE
-                  </PermissionButton>
-                ) : null}
+                {userRole === "O" &&
+                  member.profile_id !== currentUserProfileId && (
+                    <PermissionButton
+                      action="delete"
+                      subject="Team"
+                      onClick={() => onRemove(member.profile_id)}
+                      tooltipText="You do not have permission to remove team members"
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                    >
+                      Remove
+                    </PermissionButton>
+                  )}
               </TableCell>
             </TableRow>
           ))}

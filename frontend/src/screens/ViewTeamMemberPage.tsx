@@ -124,9 +124,31 @@ const ViewTeamMembersPage: React.FC = () => {
     }
   };
 
-  const handleRemove = (profileId: number) => {
-    // Implement remove functionality
-    // console.log(`Removing member with profile ID: ${profileId}`);
+  const handleRemove = async (profileId: number) => {
+    if (!studentTeamId) return;
+
+    try {
+      const BASE_API_URL = getBaseAPIURL();
+      await axios.delete(
+        `${BASE_API_URL}/student-team/${studentTeamId}/members/${profileId}`,
+      );
+
+      // Remove the member from the local state
+      setMembers(members.filter((member) => member.profile_id !== profileId));
+
+      setSnackbar({
+        open: true,
+        message: "Team member removed successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error removing team member:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to remove team member",
+        severity: "error",
+      });
+    }
   };
 
   const handleOpenInviteModal = () => {
