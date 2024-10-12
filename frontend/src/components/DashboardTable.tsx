@@ -1,20 +1,20 @@
 import {
-  TableContainer,
-  TableHead,
+  Box,
+  Button,
+  Modal,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
-  Button,
-  Paper,
-  Box,
-  Modal,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../util/stores/authStore";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 
 export interface StudentTeamResultProps {

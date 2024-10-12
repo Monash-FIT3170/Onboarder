@@ -1,27 +1,22 @@
-import React from "react";
-import { styled, alpha, useTheme } from "@mui/material/styles";
+import HomeIcon from "@mui/icons-material/Home";
 import {
   AppBar,
   Box,
+  Breadcrumbs,
+  Button,
+  CssBaseline,
+  Divider,
+  Link,
+  Stack,
+  Switch,
   Toolbar,
   Typography,
-  CssBaseline,
-  Button,
-  Menu,
-  MenuProps,
-  Switch,
-  Stack,
-  Divider,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 import { useTheme as useCustomTheme } from "../util/ThemeContext";
-import { Breadcrumbs, Link } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { all } from "axios";
 
 const pathToNameMap: { [key: string]: string } = {
   "/": "Home",
@@ -46,7 +41,7 @@ const pathToNameMap: { [key: string]: string } = {
 };
 
 function AppBarOnBoarder() {
-  const { user, team_name, role, signOut } = useAuthStore();
+  const { team_name, role, signOut } = useAuthStore();
   const isProtectedRoute = useRouteProtectionStore(
     (state) => state.isProtectedRoute,
   );
@@ -99,7 +94,31 @@ function AppBarOnBoarder() {
           >
             Onboarder
           </Typography>
-
+          {isProtectedRoute && !isDashboard && team_name && role && (
+            <Typography
+              variant="caption"
+              component="div"
+              sx={{ marginRight: 2, marginLeft: 2 }}
+            >
+              <Typography variant="caption" component={"span"}>
+                Viewing Team:
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                {" "}
+                {team_name}
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                &nbsp;
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                as:
+              </Typography>
+              <Typography variant="caption" component={"span"}>
+                {" "}
+                {role}
+              </Typography>
+            </Typography>
+          )}
           {locationPath !== "/login" &&
           locationPath !== "/onboarder-openings" ? (
             <>

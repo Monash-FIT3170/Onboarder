@@ -1,6 +1,6 @@
-import React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import React from "react";
 import styled from "styled-components";
 
 const SpinnerWrapper = styled(Box)`

@@ -9,25 +9,24 @@ import {
   IconButton,
   Paper,
   Skeleton,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 import PermissionButton from "../components/PermissionButton";
-import Alert from "@mui/material/Alert";
 
 export interface SingleApplicationProps {
   id: number;
@@ -45,7 +44,7 @@ export interface SingleApplicationProps {
   created_at: string;
 }
 
-function ViewOpenPage() {
+function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState(null);
@@ -53,14 +52,12 @@ function ViewOpenPage() {
     [],
   );
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Constants
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Store hooks
   const authStore = useAuthStore();
@@ -96,64 +93,52 @@ function ViewOpenPage() {
 
     const fetchData = async () => {
       try {
-        setLoading(true);
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError("Failed to fetch applications. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening, navigate, BASE_API_URL, location.key]);
+  }, [selectedOpening, navigate]);
 
   // Handler functions
-  const handleSort = (column: any) => {
+  const handleSort = (column) => {
     const isAsc = sortColumn === column && sortDirection === "asc";
     setSortDirection(isAsc ? "desc" : "asc");
     setSortColumn(column);
   };
 
   const handleViewApplication = (applicationId: number) => {
-    if (!selectedOpening) {
-      setError("No opening selected. Please try again.");
-      return;
-    }
-
     setSelectedApplicant({
-      opening_name: selectedOpening.title,
-      recruitment_round_name: `${authStore.team_name} ${selectedOpening.recruitment_round_id}`,
+      opening_name: selectedOpening?.title ?? null,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
       application_id: applicationId,
-      opening_id: selectedOpening.id,
-      recruitment_round_id: selectedOpening.recruitment_round_id,
-      student_team_name: selectedOpening.student_team_name,
-      opening_title: selectedOpening.title,
-      application_count: selectedOpening.application_count,
+      opening_id: selectedOpening?.id ?? null,
+      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
+      student_team_name: selectedOpening?.student_team_name ?? null,
+      opening_title: selectedOpening?.title ?? null,
+      application_count: selectedOpening?.application_count ?? null,
     });
 
     navigate("/review-applicant");
   };
 
   const handleViewInterviewNotes = (applicationId: number) => {
-    if (!selectedOpening) {
-      setError("No opening selected. Please try again.");
-      return;
-    }
-
     setSelectedApplicant({
-      opening_name: selectedOpening.title,
-      recruitment_round_name: `${authStore.team_name} ${selectedOpening.recruitment_round_id}`,
+      opening_name: selectedOpening?.title ?? null,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
       application_id: applicationId,
-      opening_id: selectedOpening.id,
-      recruitment_round_id: selectedOpening.recruitment_round_id,
-      student_team_name: selectedOpening.student_team_name,
-      opening_title: selectedOpening.title,
-      application_count: selectedOpening.application_count,
+      opening_id: selectedOpening?.id ?? null,
+      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
+      student_team_name: selectedOpening?.student_team_name ?? null,
+      opening_title: selectedOpening?.title ?? null,
+      application_count: selectedOpening?.application_count ?? null,
     });
 
     navigate("/interview-feedback");
@@ -164,11 +149,13 @@ function ViewOpenPage() {
     navigate("/recruitment-round-details");
   };
 
-  const handleInterviewScheduling = () => {
+  const respond = () => {
+    // clearSelectedOpening();
     navigate("/interview-scheduling");
   };
 
-  const handleTaskEmailFormat = () => {
+  const respond2 = () => {
+    // clearSelectedOpening();
     navigate("/task-email-format");
   };
 
@@ -183,39 +170,18 @@ function ViewOpenPage() {
   const handleSendEmails = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${BASE_API_URL}/send-interview-emails/${selectedOpening?.id}`,
+      await axios.post(
+        `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
-
-      if (response.status === 200) {
-        setSuccessMessage(
-          response.data.message ||
-            "Interview scheduling emails sent successfully.",
-        );
-      } else {
-        throw new Error("Unexpected response status");
-      }
+      // console.log(response);
     } catch (error) {
       console.error("Error sending emails:", error);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message ||
-            "Failed to send interview scheduling emails. Please try again.",
-        );
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-      handleClose();
     }
+    setLoading(false);
+    handleClose();
   };
 
   const handleConfirmSendEmails = () => {
-    if (!selectedOpening) {
-      setError("No opening selected. Please try again.");
-      return;
-    }
     handleClickOpen();
   };
 
@@ -237,7 +203,7 @@ function ViewOpenPage() {
               alignItems: "center",
             }}
           >
-            {(application.status === "C" || application.status === "X") && (
+            {(application.status == "C" || application.status == "X") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -245,7 +211,8 @@ function ViewOpenPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} />{" "}
+            {/* Spacer to push the VIEW button to the right */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -258,34 +225,71 @@ function ViewOpenPage() {
     ));
   };
 
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/view-recruitment-round");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  const handleInterviewSchedule = () => {
+    navigate("/interview-scheduling");
+  };
+
   return (
     <div>
+      {/* Creates a button below allowing the user to add positions */}
       <div
         style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
       >
-        <IconButton onClick={handleBack}>
+        <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {selectedOpening?.title || "No Opening Selected"}
+          {selectedOpening?.title}
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
-          <Button variant="outlined" onClick={handleTaskEmailFormat}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              // console.log("Navigating to /task-email-format");
+              respond2();
+            }}
+          >
             CONFIGURE INTERVIEW SCHEDULING EMAIL
           </Button>
           <Button
             variant="contained"
             sx={{ ml: 2 }}
-            onClick={handleInterviewScheduling}
+            onClick={() => {
+              // console.log("Navigating to /interview-scheduling");
+              handleInterviewSchedule();
+            }}
           >
             INTERVIEW SCHEDULE
           </Button>
         </div>
       </div>
 
+      {/* creates a table showing all the number of applications for each recruitment round */}
       <TableContainer component={Paper}>
-        <Table aria-label="recruitment round info">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -294,8 +298,8 @@ function ViewOpenPage() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id || "N/A"}`}</TableCell>
-              <TableCell>{selectedOpening?.application_count || 0}</TableCell>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>{selectedOpening?.application_count}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -320,7 +324,8 @@ function ViewOpenPage() {
           variant="contained"
           onClick={handleConfirmSendEmails}
           disabled={
-            loading || !applications.some((item) => item.status === "C")
+            loading ||
+            applications.find((item) => item.status === "C") == undefined
           }
           style={{ marginLeft: "1rem" }}
           tooltipText="You do not have permission to send interview scheduling emails"
@@ -334,7 +339,7 @@ function ViewOpenPage() {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table aria-label="applications table">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Student Name</TableCell>
@@ -355,6 +360,7 @@ function ViewOpenPage() {
                     : "↓"}
                 </Button>
               </TableCell>
+
               <TableCell>
                 Status
                 <Button
@@ -375,14 +381,14 @@ function ViewOpenPage() {
               <TableCell>
                 Date of Submission
                 <Button
-                  onClick={() => handleSort("created_at")}
+                  onClick={() => handleSort("date")}
                   style={{
                     minWidth: "30px",
                     padding: "6px",
                     marginLeft: "5px",
                   }}
                 >
-                  {sortColumn === "created_at"
+                  {sortColumn === "date"
                     ? sortDirection === "asc"
                       ? "↓"
                       : "↑"
@@ -417,7 +423,6 @@ function ViewOpenPage() {
           </TableBody>
         </Table>
       </TableContainer>
-
       <Dialog
         open={confirmEmailModalOpen}
         onClose={handleClose}
@@ -449,28 +454,8 @@ function ViewOpenPage() {
           </PermissionButton>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={!!error || !!successMessage}
-        autoHideDuration={6000}
-        onClose={() => {
-          setError(null);
-          setSuccessMessage(null);
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setError(null);
-            setSuccessMessage(null);
-          }}
-          severity={error ? "error" : "success"}
-          sx={{ width: "100%" }}
-        >
-          {error || successMessage}
-        </Alert>
-      </Snackbar>
     </div>
   );
 }
 
-export default ViewOpenPage;
+export default OpeningDetailsPage;

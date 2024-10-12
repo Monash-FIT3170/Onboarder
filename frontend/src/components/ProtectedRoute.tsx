@@ -1,8 +1,8 @@
 // src/components/ProtectedRoute.tsx
+import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
-import { useEffect } from "react";
 import LoadingSpinner from "./LoadSpinner";
 
 const ProtectedRoute = () => {
