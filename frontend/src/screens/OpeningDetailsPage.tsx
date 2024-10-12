@@ -170,7 +170,7 @@ function OpeningDetailsPage() {
   const handleSendEmails = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
       // console.log(response);

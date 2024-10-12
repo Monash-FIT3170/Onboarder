@@ -152,7 +152,12 @@ const ViewTeamMembersPage: React.FC = () => {
           ADD MEMBER
         </PermissionButton>
       </Box>
-      <TeamMembersTable members={members} onRemove={handleRemove} />
+      <TeamMembersTable
+        members={members}
+        onRemove={handleRemove}
+        currentUserProfileId={null}
+        userRole={null}
+      />
       <InviteMemberModal
         open={isInviteModalOpen}
         onClose={handleCloseInviteModal}

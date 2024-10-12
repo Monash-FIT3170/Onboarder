@@ -38,7 +38,7 @@ const styles = {
 
 // Css style for the modal
 const styleLink = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
