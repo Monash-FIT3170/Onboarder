@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// https://vitejs.dev/config/
+// Refer to: https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -12,6 +12,7 @@ export default defineConfig({
     open: false, // Don't open browser on start
   },
   optimizeDeps: {
+    // Exclude these dependencies from the build, as they sometimes cause errors
     exclude: [
       "chunk-ZDDMMNEZ",
       "chunk-2KUE3VNV",

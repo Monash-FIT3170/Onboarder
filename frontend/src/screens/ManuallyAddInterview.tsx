@@ -1,24 +1,26 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
+import axios from "axios";
 import format from "date-fns/format";
+import getDay from "date-fns/getDay";
+import { enAU } from "date-fns/locale";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
-import getDay from "date-fns/getDay";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import withDragAndDrop, {
+  EventInteractionArgs,
+} from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { enAU } from "date-fns/locale";
-import { Typography, Button, Grid, IconButton, Box } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { useNavigate } from "react-router-dom";
 import { useApplicantStore } from "../util/stores/applicantStore";
-import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
-import { EventInteractionArgs } from "react-big-calendar/lib/addons/dragAndDrop";
+import { useOpeningStore } from "../util/stores/openingStore";
 import { getBaseAPIURL } from "../util/Util";
-import axios from "axios";
 
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
@@ -55,7 +57,14 @@ const ManuallyAddInterview: React.FC = () => {
   }, [selectedApplicant]);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
-    const newEvent = { start, end, title: "Interview" };
+    // Ensure the slot is exactly 30 minutes
+    const thirtyMinutesLater = moment(start).add(30, "minutes").toDate();
+    // Create a new event
+    const newEvent = {
+      start: start,
+      end: thirtyMinutesLater,
+      title: "Interview",
+    };
     setEventsList([...eventsList, newEvent]);
   };
 
@@ -101,13 +110,16 @@ const ManuallyAddInterview: React.FC = () => {
       alert("No interview dates selected");
       return;
     }
-    const interview_date = eventsList[0].start.toISOString();
+    const interview_date = eventsList[0].start;
+
+    // Format the date as ISO8601 with the local time zone offset
+    const formattedDate = interview_date.toISOString();
 
     try {
       const response = await axios.patch(
         `${BASE_API_URL}/application/${applicationId}`,
         {
-          interview_date,
+          interview_date: formattedDate,
           profile_id,
         },
       );
@@ -190,19 +202,27 @@ const ManuallyAddInterview: React.FC = () => {
             <DragAndDropCalendar
               localizer={localizer}
               events={eventsList}
-              startAccessor={(event: any) => new Date(event.start)}
-              endAccessor={(event: any) => new Date(event.end)}
-              style={{ height: "80vh" }}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: "75vh" }}
               defaultView="week"
               views={["week"]}
-              selectable
-              resizable
-              onSelectSlot={handleSelectSlot}
-              onEventResize={
-                handleEventResize as (
-                  args: EventInteractionArgs<object>,
-                ) => void
-              }
+              selectable={true}
+              // resizable
+              step={30} // Set the step to 30 minutes
+              timeslots={1} // Each slot is 30 minutes
+              onSelectSlot={(slotInfo) => {
+                if (eventsList.length === 0) {
+                  handleSelectSlot(slotInfo);
+                } else {
+                  alert("Only one interview slot can be selected.");
+                }
+              }}
+              // onEventResize={
+              //   handleEventResize as (
+              //     args: EventInteractionArgs<object>,
+              //   ) => void
+              // }
               onEventDrop={
                 handleEventDrop as (args: EventInteractionArgs<object>) => void
               }

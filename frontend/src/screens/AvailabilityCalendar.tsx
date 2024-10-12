@@ -162,7 +162,7 @@ const AvailabilityCalendar: React.FC = () => {
   // Check if today is past the deadline
   if (today > cutoffDate) {
     return (
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
         <h2>Preference submission has closed</h2>
         <p>
           The deadline for submitting was {format(cutoffDate, "dd/MM/yyyy")}.
@@ -174,7 +174,7 @@ const AvailabilityCalendar: React.FC = () => {
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
         <div
           style={{
             width: "100%",
