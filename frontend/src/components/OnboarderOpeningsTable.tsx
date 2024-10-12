@@ -42,7 +42,7 @@ interface onboarderOpeningTableProps {
 }
 
 const modalStyle = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -77,8 +77,8 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
 
   const generateRowFunction = (
     results: onboarderOpeningResultProps[],
-    navigate: ReturnType<typeof useNavigate>,
-    setOpeningDetails: (round_id: number, opening_id: number) => void,
+    // navigate: ReturnType<typeof useNavigate>,
+    // setOpeningDetails: (round_id: number, opening_id: number) => void,
   ) => {
     return results.map((result) => {
       const formattedDeadline = (() => {

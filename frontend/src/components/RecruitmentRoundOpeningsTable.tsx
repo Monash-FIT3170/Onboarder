@@ -26,6 +26,7 @@ export interface openingsResultProps {
   desired_skills: string[];
   applications_count: number;
   applications_pending_review: number;
+  opening_title: string;
 }
 
 interface RecruitmentRoundOpeningsTableProps {

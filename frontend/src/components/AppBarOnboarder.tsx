@@ -41,7 +41,7 @@ const pathToNameMap: { [key: string]: string } = {
 };
 
 function AppBarOnBoarder() {
-  const { user, team_name, role, signOut } = useAuthStore();
+  const { team_name, role, signOut } = useAuthStore();
   const isProtectedRoute = useRouteProtectionStore(
     (state) => state.isProtectedRoute,
   );
