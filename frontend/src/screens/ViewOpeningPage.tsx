@@ -281,30 +281,17 @@ function ViewOpenPage() {
 
       <div style={{ marginTop: "50px" }}></div>
 
-      {/* adds a table showing the number of applications for the current opening */}
-      <Typography
-        variant="h6"
-        style={{ marginLeft: "10px", marginTop: "20px" }}
-      >
-        Opening Applications
-      </Typography>
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           justifyContent: "space-between",
+          mb: 2,
           alignItems: "center",
-          marginBottom: "1rem",
         }}
       >
-        <TextField
-          style={{ width: "25%" }}
-          variant="outlined"
-          placeholder="Round Name, ApplicationDeadline, etc..."
-          size="small"
-          label="Search"
-          fullWidth
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <Typography variant="h6" component="div">
+          Opening Applications
+        </Typography>
         <PermissionButton
           action="send"
           subject="Interview"
@@ -323,7 +310,8 @@ function ViewOpenPage() {
             "Send Interview Scheduling Emails"
           )}
         </PermissionButton>
-      </div>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
