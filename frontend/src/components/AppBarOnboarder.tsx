@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 import { useTheme as useCustomTheme } from "../util/ThemeContext";
+import RoleIcon from "../util/RoleIcon";
 
 const pathToNameMap: { [key: string]: string } = {
   "/": "Home",
@@ -98,7 +99,12 @@ function AppBarOnBoarder() {
             <Typography
               variant="caption"
               component="div"
-              sx={{ marginRight: 2, marginLeft: 2 }}
+              sx={{
+                marginRight: 2,
+                marginLeft: 2,
+                display: "flex",
+                alignItems: "center",
+              }}
             >
               <Typography variant="caption" component={"span"}>
                 Viewing Team:
@@ -113,8 +119,13 @@ function AppBarOnBoarder() {
               <Typography variant="caption" component={"span"}>
                 as:
               </Typography>
-              <Typography variant="caption" component={"span"}>
+              <Typography
+                variant="caption"
+                component={"span"}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 {" "}
+                <RoleIcon role={role} />
                 {role}
               </Typography>
             </Typography>

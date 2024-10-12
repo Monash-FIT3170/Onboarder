@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useMemberStore } from "../util/stores/memberStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getBaseAPIURL } from "../util/Util";
+import RoleIcon from "../util/RoleIcon";
 // Define the structure of a Team Lead
 export interface TeamLeadProps {
   profile_id: number;
@@ -145,7 +146,12 @@ function ViewTeamLeadsPage() {
 
     return members.map((teamLead) => (
       <TableRow key={teamLead.profile_id}>
-        <TableCell>{teamLead.email}</TableCell>
+        <TableCell>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <RoleIcon role="Team Lead" />
+            {teamLead.email}
+          </div>
+        </TableCell>
         <TableCell>
           <Button
             variant="contained"
