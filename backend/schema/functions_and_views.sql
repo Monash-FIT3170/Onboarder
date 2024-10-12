@@ -60,6 +60,32 @@ AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION public.create_profile();
 
+-- Create a trigger to anonymize applications when a recruitment round is archived
+CREATE OR REPLACE FUNCTION anonymize_applications_for_archived_round()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the new status is 'R' (archived)
+    IF NEW.status = 'R' THEN
+        -- Anonymize specific fields in applications for all openings in this recruitment round
+        UPDATE public."APPLICATION" a
+        SET 
+            email = 'anonymized_' || a.id || '@example.com',
+            name = 'Anonymized Applicant ' || a.id,
+            phone = 'XXXXXXXXXX',
+            additional_info = NULL,
+            interview_date = NULL
+        FROM public."OPENING" o
+        WHERE o.recruitment_round_id = NEW.id
+          AND a.opening_id = o.id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER anonymize_applications_trigger
+AFTER UPDATE OF status ON public."RECRUITMENT_ROUND"
+FOR EACH ROW
+EXECUTE FUNCTION anonymize_applications_for_archived_round();
 
 -- +++++++++ POSTGRES VIEWS +++++++++
 
@@ -201,3 +227,4 @@ GROUP BY
     o.title,
     rr.student_team_id,
     o.id;
+
