@@ -29,6 +29,8 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
   currentUserProfileId,
   userRole,
 }) => {
+  console.log(members);
+  console.log(currentUserProfileId);
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -45,20 +47,22 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
               <TableCell>{member.email}</TableCell>
               <TableCell>{member.role}</TableCell>
               <TableCell>
-                {userRole === "O" &&
-                  member.profile_id !== currentUserProfileId && (
-                    <PermissionButton
-                      action="delete"
-                      subject="Team"
-                      onClick={() => onRemove(member.profile_id)}
-                      tooltipText="You do not have permission to remove team members"
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                    >
-                      Remove
-                    </PermissionButton>
-                  )}
+                {member.profile_id === currentUserProfileId
+                  ? "Current User"
+                  : userRole === "Owner" &&
+                    member.profile_id !== currentUserProfileId && (
+                      <PermissionButton
+                        action="delete"
+                        subject="Team"
+                        onClick={() => onRemove(member.profile_id)}
+                        tooltipText="You do not have permission to remove team members"
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                      >
+                        Remove
+                      </PermissionButton>
+                    )}
               </TableCell>
             </TableRow>
           ))}

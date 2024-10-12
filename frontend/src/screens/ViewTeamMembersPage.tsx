@@ -23,7 +23,13 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { team_id: studentTeamId, team_name, ability } = useAuthStore();
+  const {
+    team_id: studentTeamId,
+    team_name,
+    ability,
+    role,
+    profile,
+  } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -177,8 +183,8 @@ const ViewTeamMembersPage: React.FC = () => {
       <TeamMembersTable
         members={members}
         onRemove={handleRemove}
-        currentUserProfileId={null}
-        userRole={null}
+        currentUserProfileId={profile}
+        userRole={role}
       />
       <InviteMemberModal
         open={isInviteModalOpen}
