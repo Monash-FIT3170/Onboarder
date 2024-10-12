@@ -1,32 +1,32 @@
-import { useState, useEffect } from "react";
 import {
-  Grid,
-  TextField,
   Button,
-  Typography,
-  Table,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
   Paper,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  DialogTitle,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  IconButton,
-  CircularProgress,
+  TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
-import LoadingSpinner from "../components/LoadSpinner";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
+import LoadingSpinner from "../components/LoadSpinner";
 
+import PermissionButton from "../components/PermissionButton";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
-import PermissionButton from "../components/PermissionButton";
 
 interface ResultProps {
   id: number;
@@ -92,6 +92,7 @@ export default function ReviewApplicantPage() {
   useEffect(() => {
     if (applicantInformation.length > 0) {
       const status = applicantInformation[0]?.status;
+      // Allow accept/reject if status is "A" (Applicant), otherwise disable
       if (status === "A") {
         setIsDisabledAccept(false);
         setIsDisabledReject(false);
@@ -175,15 +176,15 @@ export default function ReviewApplicantPage() {
       <Typography
         variant="h5"
         component="div"
-        sx={{ width: "50%", marginTop: "30px" }}
+        sx={{ width: "50%", marginTop: "0px" }}
       >
         {" "}
         <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
-        {selectedApplicant?.opening_name}
+        {"Opening: " + selectedApplicant?.opening_name}
       </Typography>
-      <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+      <TableContainer component={Paper} sx={{ marginTop: "10px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -389,7 +390,7 @@ export default function ReviewApplicantPage() {
       <Grid
         item
         xs={12}
-        sx={{ display: "flex", justifyContent: "center", marginTop: "70px" }}
+        sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
         <PermissionButton
           action="update"

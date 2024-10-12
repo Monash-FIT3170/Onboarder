@@ -25,6 +25,10 @@ import ViewRecruitmentRoundsPage from "./screens/ViewRecruitmentRoundsPage";
 import ViewTeamLeadsPage from "./screens/ViewTeamLeadsPage";
 import ViewTeamMembersPage from "./screens/ViewTeamMembersPage";
 
+/**
+ * Main App component
+ * Ensure that you update the pathToNameMap in the AppBar when you add a new route.
+ */
 function App() {
   return (
     <ThemeProvider>

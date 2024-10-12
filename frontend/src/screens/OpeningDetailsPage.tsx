@@ -15,11 +15,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
+  Collapse,
+  Tooltip,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
@@ -52,7 +56,9 @@ function OpeningDetailsPage() {
     [],
   );
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [expandedApplicants, setExpandedApplicants] = useState(false);
+  const [expandedCandidates, setExpandedCandidates] = useState(false);
+  const [expandedRecruits, setExpandedRecruits] = useState(false);
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
 
   // Constants
@@ -62,28 +68,12 @@ function OpeningDetailsPage() {
   // Store hooks
   const authStore = useAuthStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening,
-  );
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
-
-  // Derived state
-  const sortedApplications = React.useMemo(() => {
-    if (!sortColumn) return applications;
-
-    return [...applications].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) {
-        return sortDirection === "asc" ? -1 : 1;
-      }
-      if (a[sortColumn] > b[sortColumn]) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
-      return 0;
-    });
-  }, [applications, sortColumn, sortDirection]);
-
+  const clearSelectedOpening = useOpeningStore(
+    (state) => state.clearSelectedOpening,
+  );
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
@@ -108,12 +98,6 @@ function OpeningDetailsPage() {
   }, [selectedOpening, navigate]);
 
   // Handler functions
-  const handleSort = (column) => {
-    const isAsc = sortColumn === column && sortDirection === "asc";
-    setSortDirection(isAsc ? "desc" : "asc");
-    setSortColumn(column);
-  };
-
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
@@ -185,25 +169,36 @@ function OpeningDetailsPage() {
     handleClickOpen();
   };
 
-  // Row generation function
+  const filterApplications = (status: string) =>
+    applications.filter(
+      (app) => app.status.toLowerCase() === status.toLowerCase(),
+    );
+
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
+    if (applications.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={5} align="center" sx={{ width: "20%" }}>
+            None
+          </TableCell>
+        </TableRow>
+      );
+    }
+
     return applications.map((application) => (
       <TableRow key={application.id}>
-        <TableCell>{application.name}</TableCell>
-        <TableCell>{application.email}</TableCell>
-        <TableCell>{getAppStatusText(application.status)}</TableCell>
-        <TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.name}</TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.email}</TableCell>
+        <TableCell sx={{ width: "10%" }}>
+          {getAppStatusText(application.status)}
+        </TableCell>
+        <TableCell sx={{ width: "15%" }}>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-        <TableCell>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {(application.status == "C" || application.status == "X") && (
+        <TableCell sx={{ width: "35%" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            {/* If the application is in the "C" (Candidate) or "R" (Recruit) status, show the INTERVIEW NOTES button */}
+            {(application.status === "C" || application.status === "R") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -211,8 +206,6 @@ function OpeningDetailsPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-            <Box sx={{ flexGrow: 1 }} />{" "}
-            {/* Spacer to push the VIEW button to the right */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -225,30 +218,79 @@ function OpeningDetailsPage() {
     ));
   };
 
-  useEffect(() => {
-    if (!selectedOpening) {
-      navigate("/view-recruitment-round");
-      return;
-    }
+  const renderCategorySection = (
+    title: string,
+    status: string,
+    expanded: boolean,
+    setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
+    tooltipText: string,
+  ) => {
+    const filteredApplications = filterApplications(status);
 
-    const fetchData = async () => {
-      try {
-        const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
-        );
-        setApplications(applicationsResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedOpening, navigate]);
-
-  const handleInterviewSchedule = () => {
-    navigate("/interview-scheduling");
+    return (
+      <Box sx={{ mb: 2 }}>
+        <Button
+          onClick={() => setExpanded(!expanded)}
+          fullWidth
+          sx={{
+            justifyContent: "flex-start",
+            color: "primary.main",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Tooltip title={tooltipText}>
+              <IconButton size="small" sx={{ mr: 1 }}>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ fontWeight: "bold" }}
+            >
+              {title}
+            </Typography>
+          </Box>
+          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Button>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody>
+                {loading
+                  ? [...Array(3)].map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            width={200}
+                            height={36}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : generateRowFunction(filteredApplications)}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Collapse>
+      </Box>
+    );
   };
 
   return (
@@ -279,7 +321,7 @@ function OpeningDetailsPage() {
             sx={{ ml: 2 }}
             onClick={() => {
               // console.log("Navigating to /interview-scheduling");
-              handleInterviewSchedule();
+              respond();
             }}
           >
             INTERVIEW SCHEDULE
@@ -287,9 +329,8 @@ function OpeningDetailsPage() {
         </div>
       </div>
 
-      {/* creates a table showing all the number of applications for each recruitment round */}
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+      <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -304,8 +345,6 @@ function OpeningDetailsPage() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <div style={{ marginTop: "50px" }}></div>
 
       <Box
         sx={{
@@ -339,88 +378,16 @@ function OpeningDetailsPage() {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Student Name</TableCell>
-              <TableCell>
-                Student Email
-                <Button
-                  onClick={() => handleSort("email")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "email"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-
-              <TableCell>
-                Status
-                <Button
-                  onClick={() => handleSort("status")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "status"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>
-                Date of Submission
-                <Button
-                  onClick={() => handleSort("date")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "date"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Name</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Email</TableCell>
+              <TableCell sx={{ width: "10%" }}>Status</TableCell>
+              <TableCell sx={{ width: "15%" }}>Date of Submission</TableCell>
+              <TableCell sx={{ width: "35%" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {loading
-              ? [...Array(3)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={80} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : generateRowFunction(sortedApplications)}
-          </TableBody>
         </Table>
       </TableContainer>
       <Dialog
@@ -454,6 +421,28 @@ function OpeningDetailsPage() {
           </PermissionButton>
         </DialogActions>
       </Dialog>
+
+      {renderCategorySection(
+        "Applicants",
+        "A",
+        expandedApplicants,
+        setExpandedApplicants,
+        "Applicants are students who have submitted an application.",
+      )}
+      {renderCategorySection(
+        "Candidates",
+        "C",
+        expandedCandidates,
+        setExpandedCandidates,
+        "Candidates have had their application accepted, and have made it to the interview stage.",
+      )}
+      {renderCategorySection(
+        "Recruits",
+        "R",
+        expandedRecruits,
+        setExpandedRecruits,
+        "Recruits have completed their interview and were accepted to be a part of the team.",
+      )}
     </div>
   );
 }

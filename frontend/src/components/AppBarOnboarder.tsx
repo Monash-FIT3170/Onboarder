@@ -18,6 +18,10 @@ import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 import { useTheme as useCustomTheme } from "../util/ThemeContext";
 
+/**
+ * Maps paths to names for breadcrumbs
+ * @param {string} key - path
+ */
 const pathToNameMap: { [key: string]: string } = {
   "/": "Home",
   "/dashboard": "Dashboard",
@@ -25,19 +29,20 @@ const pathToNameMap: { [key: string]: string } = {
   "/login": "Login",
   "/recruitment-round-details": "Recruitment Round Details",
   "/create-opening": "Create Opening",
-  "/view-recruitment-rounds": "View Recruitment Round",
+  "/view-recruitment-rounds": "View Recruitment Rounds",
   "/add-recruitment-round": "Add Recruitment Round",
-  "/opening-details": "View Opening",
-  "/onboarder-openings": "Applicant Openings",
+  "/opening-details": "Opening Details",
+  "/onboarder-openings": "Onboarder Openings",
   "/application-submission": "Application Submission",
-  "/review-application": "Admin Accept",
+  "/review-applicant": "Review Application",
   "/task-email-format": "Task Email Format",
   "/candidate-availability-calendar": "Availability Calendar",
-  "/view-team-member": "View Team Member",
+  "/view-team-members": "View Team Members",
   "/interview-scheduling": "View Interview Allocation",
-  "/feedback-note": "Feedback Note",
+  "/interview-feedback": "Interview Feedback",
   "/user-availability-calendar": "Availability Calendar User",
   "/view-team-leads": "View Team Leads",
+  "/manually-schedule-interview": "Manually Schedule Interview",
 };
 
 function AppBarOnBoarder() {
@@ -54,9 +59,7 @@ function AppBarOnBoarder() {
     navigate("/user-availability-calendar");
   };
 
-  console.log("Location Path: ", locationPath);
   const [pathnames, setPathnames] = useState([locationPath]);
-  console.log("Pathnames: ", pathnames);
 
   useEffect(() => {
     if (locationPath === "dashboard") {
@@ -64,16 +67,13 @@ function AppBarOnBoarder() {
     } else {
       setPathnames((prevPathnames) => {
         const newPathnames = location.pathname.split("/").filter((x) => x);
-        console.log("New Pathnames: ", newPathnames);
         const allPathnames = [...prevPathnames, ...newPathnames];
-        console.log("All Pathnames: ", allPathnames);
         const uniquePathnames = Array.from(new Set(allPathnames));
         for (let i = 0; i < uniquePathnames.length; i++) {
           if (uniquePathnames[i] === locationPath) {
             return uniquePathnames.slice(0, i + 1);
           }
         }
-        console.log("Unique Pathnames: ", uniquePathnames);
         return uniquePathnames;
       });
     }
