@@ -10,10 +10,11 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
-import InviteMemberModal from "./InviteMemberModal";
+import InviteMemberModal from "../components/InviteMemberModal";
 import axios from "axios";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const ViewTeamMembersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const ViewTeamMembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-  const { team_id: studentTeamId, team_name } = useAuthStore();
+  const { team_id: studentTeamId, team_name, ability } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -139,13 +140,17 @@ const ViewTeamMembersPage: React.FC = () => {
         <Typography variant="h4" component="h1" sx={{ flexGrow: 1 }}>
           {team_name ? `${team_name} Members` : "Team Members"}
         </Typography>
-        <Button
+
+        <PermissionButton
+          action="invite"
+          subject="Team"
           variant="contained"
           color="primary"
           onClick={handleOpenInviteModal}
+          tooltipText="You do not have permission to invite team members"
         >
           ADD MEMBER
-        </Button>
+        </PermissionButton>
       </Box>
       <TeamMembersTable members={members} onRemove={handleRemove} />
       <InviteMemberModal

@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "../util/stores/authStore";
 import React from "react";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -326,14 +327,17 @@ function Feedbacknote() {
       >
         <Grid item>
           <React.Fragment>
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Opening"
               variant="contained"
               color="primary"
               disabled={isDisabledAccept || loading}
               onClick={handleAccept}
+              tooltipText="You do not have permission to accept this candidate"
             >
               {loading ? <CircularProgress size={24} /> : "Accept Candidate"}
-            </Button>
+            </PermissionButton>
             <BootstrapDialog
               onClose={handleCloseAccept}
               aria-labelledby="customized-dialog-title"
@@ -358,14 +362,17 @@ function Feedbacknote() {
 
         <Grid item>
           <React.Fragment>
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Opening"
               variant="contained"
               color="warning"
               disabled={isDisabledReject || loading}
               onClick={handleReject}
+              tooltipText="You do not have permission to reject this candidate"
             >
               {loading ? <CircularProgress size={24} /> : "Reject Candidate"}
-            </Button>
+            </PermissionButton>
             <BootstrapDialog
               onClose={handleCloseReject}
               aria-labelledby="customized-dialog-title"

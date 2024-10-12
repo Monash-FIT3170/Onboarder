@@ -15,21 +15,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
-  Collapse,
-  Tooltip,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 export interface SingleApplicationProps {
   id: number;
@@ -55,9 +52,7 @@ function ViewOpenPage() {
     [],
   );
   const [loading, setLoading] = useState(true);
-  const [expandedApplicants, setExpandedApplicants] = useState(false);
-  const [expandedCandidates, setExpandedCandidates] = useState(false);
-  const [expandedRecruits, setExpandedRecruits] = useState(false);
+  const [search, setSearch] = useState("");
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
 
   // Constants
@@ -67,12 +62,28 @@ function ViewOpenPage() {
   // Store hooks
   const authStore = useAuthStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const setSelectedApplicant = useApplicantStore(
-    (state) => state.setSelectedApplicant,
-  );
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
+  const setSelectedApplicant = useApplicantStore(
+    (state) => state.setSelectedApplicant,
+  );
+
+  // Derived state
+  const sortedApplications = React.useMemo(() => {
+    if (!sortColumn) return applications;
+
+    return [...applications].sort((a, b) => {
+      if (a[sortColumn] < b[sortColumn]) {
+        return sortDirection === "asc" ? -1 : 1;
+      }
+      if (a[sortColumn] > b[sortColumn]) {
+        return sortDirection === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [applications, sortColumn, sortDirection]);
+
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
@@ -97,6 +108,12 @@ function ViewOpenPage() {
   }, [selectedOpening, navigate]);
 
   // Handler functions
+  const handleSort = (column) => {
+    const isAsc = sortColumn === column && sortDirection === "asc";
+    setSortDirection(isAsc ? "desc" : "asc");
+    setSortColumn(column);
+  };
+
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
@@ -168,36 +185,25 @@ function ViewOpenPage() {
     handleClickOpen();
   };
 
-  const filterApplications = (status: string) =>
-    applications.filter(
-      (app) => app.status.toLowerCase() === status.toLowerCase(),
-    );
-
+  // Row generation function
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
-    if (applications.length === 0) {
-      return (
-        <TableRow>
-          <TableCell colSpan={5} align="center" sx={{ width: "20%" }}>
-            None
-          </TableCell>
-        </TableRow>
-      );
-    }
-
     return applications.map((application) => (
       <TableRow key={application.id}>
-        <TableCell sx={{ width: "20%" }}>{application.name}</TableCell>
-        <TableCell sx={{ width: "20%" }}>{application.email}</TableCell>
-        <TableCell sx={{ width: "20%" }}>
-          {getAppStatusText(application.status)}
-        </TableCell>
-        <TableCell sx={{ width: "15%" }}>
+        <TableCell>{application.name}</TableCell>
+        <TableCell>{application.email}</TableCell>
+        <TableCell>{getAppStatusText(application.status)}</TableCell>
+        <TableCell>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-        <TableCell sx={{ width: "25%" }}>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            {/* If the application is in the "C" (Candidate) or "R" (Recruit) status, show the INTERVIEW NOTES button */}
-            {(application.status === "C" || application.status === "R") && (
+        <TableCell>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {(application.status == "C" || application.status == "X") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -205,6 +211,8 @@ function ViewOpenPage() {
                 INTERVIEW NOTES
               </Button>
             )}
+            <Box sx={{ flexGrow: 1 }} />{" "}
+            {/* Spacer to push the VIEW button to the right */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -215,81 +223,6 @@ function ViewOpenPage() {
         </TableCell>
       </TableRow>
     ));
-  };
-
-  const renderCategorySection = (
-    title: string,
-    status: string,
-    expanded: boolean,
-    setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
-    tooltipText: string,
-  ) => {
-    const filteredApplications = filterApplications(status);
-
-    return (
-      <Box sx={{ mb: 2 }}>
-        <Button
-          onClick={() => setExpanded(!expanded)}
-          fullWidth
-          sx={{
-            justifyContent: "flex-start",
-            color: "primary.main",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
-            },
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title={tooltipText}>
-              <IconButton size="small" sx={{ mr: 1 }}>
-                <InfoIcon />
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ fontWeight: "bold" }}
-            >
-              {title}
-            </Typography>
-          </Box>
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </Button>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableBody>
-                {loading
-                  ? [...Array(3)].map((_, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton variant="text" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton
-                            variant="rectangular"
-                            width={200}
-                            height={36}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  : generateRowFunction(filteredApplications)}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Collapse>
-      </Box>
-    );
   };
 
   return (
@@ -328,8 +261,9 @@ function ViewOpenPage() {
         </div>
       </div>
 
-      <TableContainer component={Paper} sx={{ mb: 4 }}>
-        <Table>
+      {/* creates a table showing all the number of applications for each recruitment round */}
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -345,6 +279,8 @@ function ViewOpenPage() {
         </Table>
       </TableContainer>
 
+      <div style={{ marginTop: "50px" }}></div>
+
       <Box
         sx={{
           display: "flex",
@@ -356,7 +292,9 @@ function ViewOpenPage() {
         <Typography variant="h6" component="div">
           Opening Applications
         </Typography>
-        <Button
+        <PermissionButton
+          action="send"
+          subject="Interview"
           variant="contained"
           onClick={handleConfirmSendEmails}
           disabled={
@@ -364,26 +302,99 @@ function ViewOpenPage() {
             applications.find((item) => item.status === "C") == undefined
           }
           style={{ marginLeft: "1rem" }}
+          tooltipText="You do not have permission to send interview scheduling emails"
         >
           {loading ? (
             <Skeleton width={100} />
           ) : (
             "Send Interview Scheduling Emails"
           )}
-        </Button>
+        </PermissionButton>
       </Box>
 
       <TableContainer component={Paper}>
-        <Table>
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ width: "20%" }}>Student Name</TableCell>
-              <TableCell sx={{ width: "20%" }}>Student Email</TableCell>
-              <TableCell sx={{ width: "20%" }}>Status</TableCell>
-              <TableCell sx={{ width: "15%" }}>Date of Submission</TableCell>
-              <TableCell sx={{ width: "25%" }}>Actions</TableCell>
+              <TableCell>Student Name</TableCell>
+              <TableCell>
+                Student Email
+                <Button
+                  onClick={() => handleSort("email")}
+                  style={{
+                    minWidth: "30px",
+                    padding: "6px",
+                    marginLeft: "5px",
+                  }}
+                >
+                  {sortColumn === "email"
+                    ? sortDirection === "asc"
+                      ? "↓"
+                      : "↑"
+                    : "↓"}
+                </Button>
+              </TableCell>
+
+              <TableCell>
+                Status
+                <Button
+                  onClick={() => handleSort("status")}
+                  style={{
+                    minWidth: "30px",
+                    padding: "6px",
+                    marginLeft: "5px",
+                  }}
+                >
+                  {sortColumn === "status"
+                    ? sortDirection === "asc"
+                      ? "↓"
+                      : "↑"
+                    : "↓"}
+                </Button>
+              </TableCell>
+              <TableCell>
+                Date of Submission
+                <Button
+                  onClick={() => handleSort("date")}
+                  style={{
+                    minWidth: "30px",
+                    padding: "6px",
+                    marginLeft: "5px",
+                  }}
+                >
+                  {sortColumn === "date"
+                    ? sortDirection === "asc"
+                      ? "↓"
+                      : "↑"
+                    : "↓"}
+                </Button>
+              </TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
+          <TableBody>
+            {loading
+              ? [...Array(3)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="rectangular" width={80} height={30} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              : generateRowFunction(sortedApplications)}
+          </TableBody>
         </Table>
       </TableContainer>
       <Dialog
@@ -405,33 +416,18 @@ function ViewOpenPage() {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSendEmails} color="primary" autoFocus>
+          <PermissionButton
+            action="send"
+            subject="Interview"
+            onClick={handleSendEmails}
+            color="primary"
+            autoFocus
+            tooltipText="You do not have permission to send interview scheduling emails"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
-
-      {renderCategorySection(
-        "Applicants",
-        "A",
-        expandedApplicants,
-        setExpandedApplicants,
-        "Applicants are students who have submitted an application.",
-      )}
-      {renderCategorySection(
-        "Candidates",
-        "C",
-        expandedCandidates,
-        setExpandedCandidates,
-        "Candidates have had their application accepted, and have made it to the interview stage.",
-      )}
-      {renderCategorySection(
-        "Recruits",
-        "R",
-        expandedRecruits,
-        setExpandedRecruits,
-        "Recruits have completed their interview and were accepted to be a part of the team.",
-      )}
     </div>
   );
 }
