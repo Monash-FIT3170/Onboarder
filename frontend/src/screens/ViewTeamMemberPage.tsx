@@ -6,6 +6,7 @@ import {
   IconButton,
   CircularProgress,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -22,50 +23,64 @@ const ViewTeamMembersPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const { team_id: studentTeamId, team_name, ability } = useAuthStore();
+  const {
+    team_id: studentTeamId,
+    team_name,
+    ability,
+    profile: currentUserProfileId,
+    role: userRole,
+  } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
       if (!studentTeamId) {
-        setError("No team selected");
+        setError("No team selected. Please choose a team first.");
         setIsLoading(false);
         return;
       }
 
       try {
+        setIsLoading(true);
         const BASE_API_URL = getBaseAPIURL();
         // First API call to get member info
         const profileTeamResponse = await axios.get(
-          `${BASE_API_URL}/student-team/${studentTeamId}/members`, // Working
+          `${BASE_API_URL}/student-team/${studentTeamId}/members`,
         );
         const profileTeamInfo = profileTeamResponse.data;
-        // console.log(profileTeamInfo);
-        if (profileTeamInfo.length === 0) {
-          throw new Error("Profile team information not found");
+
+        if (!Array.isArray(profileTeamInfo) || profileTeamInfo.length === 0) {
+          throw new Error("No team members found");
         }
 
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            // console.log(memberInfo);
             const studentResponse = await axios.get(
-              `${BASE_API_URL}/profile/${memberInfo.profile_id}`, // Working
+              `${BASE_API_URL}/profile/${memberInfo.profile_id}`,
             );
-            // const studentInfo = studentResponse.data.find(
-            //   (student: any) => student.student_team_id === team_id
-            // );
             const studentInfo = studentResponse.data[0];
-            // console.log(studentInfo);
 
-            if (studentInfo) {
-              return {
-                email: studentInfo.email,
-                role: getRoleText(memberInfo.role),
-                profile_id: memberInfo.profile_id,
-              };
+            if (!studentInfo) {
+              throw new Error(
+                `Student info not found for profile ${memberInfo.profile_id}`,
+              );
             }
-            return null;
+
+            return {
+              email: studentInfo.email,
+              role: getRoleText(memberInfo.role),
+              profile_id: memberInfo.profile_id,
+            };
           } catch (error) {
             console.error(
               `Error fetching student info for profile ${memberInfo.profile_id}:`,
@@ -83,7 +98,11 @@ const ViewTeamMembersPage: React.FC = () => {
         );
       } catch (error) {
         console.error("Error fetching team members:", error);
-        setError("Failed to fetch team members");
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch team members",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -118,15 +137,32 @@ const ViewTeamMembersPage: React.FC = () => {
     setIsInviteModalOpen(false);
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
   if (isLoading) {
-    return <CircularProgress />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">{error}</Alert>
-        <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+        <Button onClick={() => navigate("/dashboard")} sx={{ mt: 2 }}>
+          Go to Dashboard
+        </Button>
       </Box>
     );
   }
@@ -152,12 +188,37 @@ const ViewTeamMembersPage: React.FC = () => {
           ADD MEMBER
         </PermissionButton>
       </Box>
-      <TeamMembersTable members={members} onRemove={handleRemove} />
+      {members.length > 0 ? (
+        <TeamMembersTable
+          members={members}
+          onRemove={handleRemove}
+          currentUserProfileId={currentUserProfileId}
+          userRole={userRole}
+        />
+      ) : (
+        <Alert severity="info">
+          No team members found. Add members to get started!
+        </Alert>
+      )}
       <InviteMemberModal
         open={isInviteModalOpen}
         onClose={handleCloseInviteModal}
         teamId={studentTeamId}
       />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

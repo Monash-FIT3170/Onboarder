@@ -9,13 +9,13 @@ import {
   IconButton,
   Paper,
   Skeleton,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import axios from "axios";
@@ -27,6 +27,7 @@ import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 import PermissionButton from "../components/PermissionButton";
+import Alert from "@mui/material/Alert";
 
 export interface SingleApplicationProps {
   id: number;
@@ -52,8 +53,9 @@ function ViewOpenPage() {
     [],
   );
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Constants
   const BASE_API_URL = getBaseAPIURL();
@@ -93,52 +95,64 @@ function ViewOpenPage() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch applications. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening, navigate]);
+  }, [selectedOpening, navigate, BASE_API_URL]);
 
   // Handler functions
-  const handleSort = (column) => {
+  const handleSort = (column: any) => {
     const isAsc = sortColumn === column && sortDirection === "asc";
     setSortDirection(isAsc ? "desc" : "asc");
     setSortColumn(column);
   };
 
   const handleViewApplication = (applicationId: number) => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
+
     setSelectedApplicant({
-      opening_name: selectedOpening?.title ?? null,
-      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
+      opening_name: selectedOpening.title,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening.recruitment_round_id}`,
       application_id: applicationId,
-      opening_id: selectedOpening?.id ?? null,
-      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
-      student_team_name: selectedOpening?.student_team_name ?? null,
-      opening_title: selectedOpening?.title ?? null,
-      application_count: selectedOpening?.application_count ?? null,
+      opening_id: selectedOpening.id,
+      recruitment_round_id: selectedOpening.recruitment_round_id,
+      student_team_name: selectedOpening.student_team_name,
+      opening_title: selectedOpening.title,
+      application_count: selectedOpening.application_count,
     });
 
     navigate("/review-applicant");
   };
 
   const handleViewInterviewNotes = (applicationId: number) => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
+
     setSelectedApplicant({
-      opening_name: selectedOpening?.title ?? null,
-      recruitment_round_name: `${authStore.team_name} ${selectedOpening?.recruitment_round_id}`,
+      opening_name: selectedOpening.title,
+      recruitment_round_name: `${authStore.team_name} ${selectedOpening.recruitment_round_id}`,
       application_id: applicationId,
-      opening_id: selectedOpening?.id ?? null,
-      recruitment_round_id: selectedOpening?.recruitment_round_id ?? null,
-      student_team_name: selectedOpening?.student_team_name ?? null,
-      opening_title: selectedOpening?.title ?? null,
-      application_count: selectedOpening?.application_count ?? null,
+      opening_id: selectedOpening.id,
+      recruitment_round_id: selectedOpening.recruitment_round_id,
+      student_team_name: selectedOpening.student_team_name,
+      opening_title: selectedOpening.title,
+      application_count: selectedOpening.application_count,
     });
 
     navigate("/interview-feedback");
@@ -149,13 +163,11 @@ function ViewOpenPage() {
     navigate("/recruitment-round-details");
   };
 
-  const respond = () => {
-    // clearSelectedOpening();
+  const handleInterviewScheduling = () => {
     navigate("/interview-scheduling");
   };
 
-  const respond2 = () => {
-    // clearSelectedOpening();
+  const handleTaskEmailFormat = () => {
     navigate("/task-email-format");
   };
 
@@ -171,17 +183,38 @@ function ViewOpenPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
+        `${BASE_API_URL}/send-interview-emails/${selectedOpening?.id}`,
       );
-      // console.log(response);
+
+      if (response.status === 200) {
+        setSuccessMessage(
+          response.data.message ||
+            "Interview scheduling emails sent successfully.",
+        );
+      } else {
+        throw new Error("Unexpected response status");
+      }
     } catch (error) {
       console.error("Error sending emails:", error);
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message ||
+            "Failed to send interview scheduling emails. Please try again.",
+        );
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+      handleClose();
     }
-    setLoading(false);
-    handleClose();
   };
 
   const handleConfirmSendEmails = () => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
     handleClickOpen();
   };
 
@@ -203,7 +236,7 @@ function ViewOpenPage() {
               alignItems: "center",
             }}
           >
-            {(application.status == "C" || application.status == "X") && (
+            {(application.status === "C" || application.status === "X") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -211,8 +244,7 @@ function ViewOpenPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-            <Box sx={{ flexGrow: 1 }} />{" "}
-            {/* Spacer to push the VIEW button to the right */}
+            <Box sx={{ flexGrow: 1 }} />
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -227,43 +259,32 @@ function ViewOpenPage() {
 
   return (
     <div>
-      {/* Creates a button below allowing the user to add positions */}
       <div
         style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
       >
-        <IconButton onClick={() => handleBack()}>
+        <IconButton onClick={handleBack}>
           <BackIcon />
         </IconButton>
         <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {selectedOpening?.title}
+          {selectedOpening?.title || "No Opening Selected"}
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              // console.log("Navigating to /task-email-format");
-              respond2();
-            }}
-          >
+          <Button variant="outlined" onClick={handleTaskEmailFormat}>
             CONFIGURE INTERVIEW SCHEDULING EMAIL
           </Button>
           <Button
             variant="contained"
             sx={{ ml: 2 }}
-            onClick={() => {
-              // console.log("Navigating to /interview-scheduling");
-              respond();
-            }}
+            onClick={handleInterviewScheduling}
           >
             INTERVIEW SCHEDULE
           </Button>
         </div>
       </div>
 
-      {/* creates a table showing all the number of applications for each recruitment round */}
       <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+        <Table aria-label="recruitment round info">
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -272,8 +293,8 @@ function ViewOpenPage() {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
-              <TableCell>{selectedOpening?.application_count}</TableCell>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id || "N/A"}`}</TableCell>
+              <TableCell>{selectedOpening?.application_count || 0}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -298,8 +319,7 @@ function ViewOpenPage() {
           variant="contained"
           onClick={handleConfirmSendEmails}
           disabled={
-            loading ||
-            applications.find((item) => item.status === "C") == undefined
+            loading || !applications.some((item) => item.status === "C")
           }
           style={{ marginLeft: "1rem" }}
           tooltipText="You do not have permission to send interview scheduling emails"
@@ -313,7 +333,7 @@ function ViewOpenPage() {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+        <Table aria-label="applications table">
           <TableHead>
             <TableRow>
               <TableCell>Student Name</TableCell>
@@ -334,7 +354,6 @@ function ViewOpenPage() {
                     : "↓"}
                 </Button>
               </TableCell>
-
               <TableCell>
                 Status
                 <Button
@@ -355,14 +374,14 @@ function ViewOpenPage() {
               <TableCell>
                 Date of Submission
                 <Button
-                  onClick={() => handleSort("date")}
+                  onClick={() => handleSort("created_at")}
                   style={{
                     minWidth: "30px",
                     padding: "6px",
                     marginLeft: "5px",
                   }}
                 >
-                  {sortColumn === "date"
+                  {sortColumn === "created_at"
                     ? sortDirection === "asc"
                       ? "↓"
                       : "↑"
@@ -397,6 +416,7 @@ function ViewOpenPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
       <Dialog
         open={confirmEmailModalOpen}
         onClose={handleClose}
@@ -428,6 +448,26 @@ function ViewOpenPage() {
           </PermissionButton>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={!!error || !!successMessage}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(null);
+          setSuccessMessage(null);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setError(null);
+            setSuccessMessage(null);
+          }}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {error || successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

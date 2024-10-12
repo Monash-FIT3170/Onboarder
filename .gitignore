@@ -1,6 +1,7 @@
 .aws-sam
 .env
 env.json
+backend/lambda/venv
 
 # Logs
 logs

@@ -11,6 +11,9 @@ import {
   TableHead,
   TableRow,
   Paper,
+  IconButton,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import styled from "styled-components";
 // import LoadingSpinner from "../components/LoadSpinner";
@@ -21,7 +24,6 @@ import {
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 import { useNavigate } from "react-router-dom";
-import { IconButton } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
 
 const TitleWrapper = styled.div`
@@ -56,13 +58,14 @@ const generateSkeletonRows = () => {
 };
 
 function RecruitmentRoundDetailsPage() {
-  const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
+  const [openings, setOpenings] = useState<applicantOpeningResultProps[]>([]);
   const [loading, setLoading] = useState(true);
-  const [year, setYear] = useState("All");
-  const [semester, setSemester] = useState("All");
+  const [year] = useState("All");
+  const [semester] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [openingFilter, setOpeningFilter] = useState("");
-  const [teamFilter, setTeamFilter] = useState("");
+  const [openingFilter] = useState("");
+  const [teamFilter] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
 
@@ -73,23 +76,23 @@ function RecruitmentRoundDetailsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
-        setOpening(openingsResponse.data);
-        console.log(openingsResponse.data);
+        setOpenings(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch openings. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [BASE_API_URL]);
 
   const filteredOpenings = openings.filter((opening) => {
-    // console.log(opening);
-    if (openings.length != 0) {
-      // filter active
+    if (openings.length !== 0) {
       const searchMatch =
         opening.opening_title
           .toLowerCase()
@@ -108,9 +111,7 @@ function RecruitmentRoundDetailsPage() {
         opening.recruitment_round_semester.toString() === semester;
       const yearMatch =
         year === "All" || opening.recruitment_round_year.toString() === year;
-      // Only show openings for active rounds
       const statusMatch = opening.opening_status === "A";
-      // const statusMatch = true;
 
       return (
         searchMatch &&
@@ -121,7 +122,19 @@ function RecruitmentRoundDetailsPage() {
         statusMatch
       );
     }
+    return false;
   });
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 100) {
+      setSearchTerm(value);
+    }
+  };
+
+  const handleCloseError = () => {
+    setError(null);
+  };
 
   return (
     <>
@@ -145,7 +158,9 @@ function RecruitmentRoundDetailsPage() {
             variant="outlined"
             fullWidth
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
+            inputProps={{ maxLength: 100 }}
+            helperText={`${searchTerm.length}/100`}
           />
         </Grid>
         <Grid item xs={9}></Grid>
@@ -174,12 +189,27 @@ function RecruitmentRoundDetailsPage() {
               <TableBody>{generateSkeletonRows()}</TableBody>
             </Table>
           </TableContainer>
+        ) : filteredOpenings.length > 0 ? (
+          <ApplicantOpeningsTable results={filteredOpenings} />
         ) : (
-          <ApplicantOpeningsTable
-            results={filteredOpenings}
-          ></ApplicantOpeningsTable>
+          <Typography variant="body1" align="center">
+            No openings found matching your search criteria.
+          </Typography>
         )}
       </div>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

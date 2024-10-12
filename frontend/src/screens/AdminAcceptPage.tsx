@@ -18,6 +18,8 @@ import {
   DialogActions,
   IconButton,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadSpinner";
@@ -36,7 +38,6 @@ interface ResultProps {
   phone: string;
   semesters_until_completion: number;
   current_semester: number;
-  // course_enrolled: string;
   major_enrolled: string;
   additional_info: string;
   skills: string[];
@@ -46,9 +47,8 @@ interface ResultProps {
 }
 
 export default function RecruitmentPlatform() {
-  const [applicantInformation, setApplicantInformation] = useState<
-    ResultProps[]
-  >([]);
+  const [applicantInformation, setApplicantInformation] =
+    useState<ResultProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [dialogParam, setDialogParam] = useState("");
@@ -58,6 +58,7 @@ export default function RecruitmentPlatform() {
   const [isDisabledAccept, setIsDisabledAccept] = useState(true);
   const [isDisabledReject, setIsDisabledReject] = useState(true);
   const BASE_API_URL = getBaseAPIURL();
+  const [error, setError] = useState<string | null>(null);
 
   const selectedApplicant = useApplicantStore(
     (state) => state.selectedApplicant,
@@ -69,29 +70,37 @@ export default function RecruitmentPlatform() {
   useEffect(() => {
     const fetchData = async () => {
       if (!selectedApplicant?.application_id) {
-        console.error("No application ID selected");
+        setError("No application ID selected");
         navigate("/opening-details");
         return;
       }
 
       try {
         const applicantResponse = await axios.get(
-          `${BASE_API_URL}/application/${selectedApplicant?.application_id}`, // Working
+          `${BASE_API_URL}/application/${selectedApplicant.application_id}`,
         );
         setApplicantInformation(applicantResponse.data);
       } catch (error) {
-        console.error("Error fetching applicant data:", error);
+        if (axios.isAxiosError(error)) {
+          setError(
+            `Error fetching applicant data: ${error.response?.data.message || error.message}`,
+          );
+        } else {
+          setError(
+            "An unexpected error occurred while fetching applicant data",
+          );
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedApplicant]);
+  }, [selectedApplicant, navigate, BASE_API_URL]);
 
   useEffect(() => {
-    if (applicantInformation.length > 0) {
-      const status = applicantInformation[0]?.status;
+    if (applicantInformation) {
+      const status = applicantInformation.status;
       if (status === "A") {
         setIsDisabledAccept(false);
         setIsDisabledReject(false);
@@ -99,67 +108,53 @@ export default function RecruitmentPlatform() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        setError(`Invalid User Status: ${status}`);
       }
     }
   }, [applicantInformation]);
 
-  const handleAccept = async (event: any) => {
-    event.preventDefault();
-    setLoadingAccept(true);
+  const handleStatusUpdate = async (newStatus: "C" | "X") => {
+    const action = newStatus === "C" ? "accepting" : "rejecting";
+    const setLoading = newStatus === "C" ? setLoadingAccept : setLoadingReject;
+
+    setLoading(true);
+    setError(null);
 
     try {
-      const submissionData = {
-        status: "C",
-      };
       const response = await axios.patch(
-        `${BASE_API_URL}/application/${selectedApplicant?.application_id}/`, // Working
-        submissionData,
+        `${BASE_API_URL}/application/${selectedApplicant?.application_id}/`,
+        { status: newStatus },
       );
+
       if (response.status === 200) {
-        // console.log(response);
-        setDialogParam("Applicant Accepted!");
+        setDialogParam(
+          `Applicant ${newStatus === "C" ? "Accepted" : "Rejected"}!`,
+        );
+        setOpen(true);
       } else {
-        // console.log(response);
-        setDialogParam("There was an error accepting the applicant.");
+        throw new Error(`Unexpected response status: ${response.status}`);
       }
     } catch (error) {
-      console.error("There was an error!", error);
-      setDialogParam("There was an error accepting the applicant.");
+      if (axios.isAxiosError(error)) {
+        setError(
+          `Error ${action} the applicant: ${error.response?.data.message || error.message}`,
+        );
+      } else {
+        setError(`An unexpected error occurred while ${action} the applicant`);
+      }
     } finally {
-      setOpen(true);
-      setLoadingAccept(false);
+      setLoading(false);
     }
-
-    clearSelectedApplicant();
   };
 
-  const handleReject = async (event: any) => {
+  const handleAccept = (event: React.MouseEvent) => {
     event.preventDefault();
-    setLoadingReject(true);
+    handleStatusUpdate("C");
+  };
 
-    try {
-      const submissionData = {
-        status: "X",
-      };
-      const response = await axios.patch(
-        `${BASE_API_URL}/application/${selectedApplicant?.application_id}/`, // Working
-        submissionData,
-      );
-      if (response.status === 200) {
-        // console.log(response);
-        setDialogParam("Applicant Rejected!");
-      } else {
-        // console.log(response);
-        setDialogParam("There was an error rejecting the applicant.");
-      }
-    } catch (error) {
-      console.error("There was an error!", error);
-      setDialogParam("There was an error rejecting the applicant.");
-    } finally {
-      setOpen(true);
-      setLoadingReject(false);
-    }
+  const handleReject = (event: React.MouseEvent) => {
+    event.preventDefault();
+    handleStatusUpdate("X");
   };
 
   const handleBack = () => {
@@ -167,9 +162,20 @@ export default function RecruitmentPlatform() {
     navigate("/opening-details");
   };
 
+  const handleCloseError = () => {
+    setError(null);
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  if (!applicantInformation) {
+    return (
+      <Typography color="error">No applicant information available</Typography>
+    );
+  }
+
   return (
     <>
       <Typography
@@ -177,8 +183,7 @@ export default function RecruitmentPlatform() {
         component="div"
         sx={{ width: "50%", marginTop: "30px" }}
       >
-        {" "}
-        <IconButton onClick={() => handleBack()}>
+        <IconButton onClick={handleBack}>
           <BackIcon />
         </IconButton>
         {selectedApplicant?.opening_name}
@@ -195,7 +200,7 @@ export default function RecruitmentPlatform() {
             <TableRow>
               <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
               <TableCell>
-                {getAppStatusText(applicantInformation[0]?.status)}
+                {getAppStatusText(applicantInformation.status)}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -216,7 +221,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="name"
             label="Name"
-            defaultValue={`${applicantInformation[0]?.name}`}
+            defaultValue={`${applicantInformation.name}`}
             fullWidth
             disabled
             sx={{
@@ -234,7 +239,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="email"
             label="Email"
-            defaultValue={`${applicantInformation[0]?.email}`}
+            defaultValue={`${applicantInformation.email}`}
             disabled
             fullWidth
             sx={{
@@ -252,7 +257,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="phone-number"
             label="Phone Number"
-            defaultValue={`${applicantInformation[0]?.phone}`}
+            defaultValue={`${applicantInformation.phone}`}
             disabled
             fullWidth
             sx={{
@@ -270,7 +275,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Additional-information"
             label="Additional Information"
-            defaultValue={`${applicantInformation[0]?.additional_info}`}
+            defaultValue={`${applicantInformation.additional_info}`}
             disabled
             fullWidth
             sx={{
@@ -299,7 +304,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Course-name"
             label="Course Name"
-            defaultValue={`${applicantInformation[0]?.course_name}`}
+            defaultValue={`${applicantInformation.course_name}`}
             disabled
             fullWidth
             sx={{
@@ -308,7 +313,7 @@ export default function RecruitmentPlatform() {
                 color: "black",
               },
               "& .MuiInputLabel-root.Mui-disabled": {
-                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
+                color: "rgba(0, 0, 0, 0.6)",
               },
             }}
           />
@@ -317,7 +322,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Specialisation"
             label="Major"
-            defaultValue={`${applicantInformation[0]?.major_enrolled}`}
+            defaultValue={`${applicantInformation.major_enrolled}`}
             disabled
             fullWidth
             sx={{
@@ -326,7 +331,7 @@ export default function RecruitmentPlatform() {
                 color: "black",
               },
               "& .MuiInputLabel-root.Mui-disabled": {
-                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
+                color: "rgba(0, 0, 0, 0.6)",
               },
             }}
           />
@@ -335,7 +340,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Skills"
             label="Skills"
-            defaultValue={`${applicantInformation[0]?.skills}`}
+            defaultValue={`${applicantInformation.skills}`}
             disabled
             fullWidth
             sx={{
@@ -353,7 +358,7 @@ export default function RecruitmentPlatform() {
           <TextField
             id="Semesters remaining"
             label="Semesters Remaining"
-            defaultValue={`${applicantInformation[0]?.semesters_until_completion}`}
+            defaultValue={`${applicantInformation.semesters_until_completion}`}
             disabled
             fullWidth
             sx={{
@@ -372,7 +377,7 @@ export default function RecruitmentPlatform() {
             fullWidth
             id="Current semester"
             label="Current Semester"
-            defaultValue={`${applicantInformation[0]?.current_semester}`}
+            defaultValue={`${applicantInformation.current_semester}`}
             disabled
             sx={{
               "& .MuiInputBase-input.Mui-disabled": {
@@ -421,10 +426,23 @@ export default function RecruitmentPlatform() {
             <DialogContentText>{dialogParam}</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => handleBack()}>CLOSE</Button>
+            <Button onClick={handleBack}>CLOSE</Button>
           </DialogActions>
         </Dialog>
       </Grid>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

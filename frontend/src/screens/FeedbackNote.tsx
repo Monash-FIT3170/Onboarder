@@ -17,6 +17,8 @@ import {
   TableContainer,
   TableRow,
   Paper,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -78,36 +80,50 @@ function Feedbacknote() {
 
   const APPLICATION_URL = `${BASE_API_URL}/application/${selectedApplicant?.application_id}`;
 
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [scoreError, setScoreError] = useState<string | null>(null);
+
   const handleAccept = async () => {
     try {
-      await axios.patch(APPLICATION_URL, {
-        status: "R",
-      });
+      setLoading(true);
+      await axios.patch(APPLICATION_URL, { status: "R" });
+      setSuccessMessage("Candidate accepted successfully");
+      setOpenAccept(true);
     } catch (error) {
       console.error("There was an error!", error);
+      setError("Failed to accept candidate. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setOpenAccept(true);
   };
+
   const handleReject = async () => {
     try {
-      await axios.patch(APPLICATION_URL, {
-        status: "X",
-      });
+      setLoading(true);
+      await axios.patch(APPLICATION_URL, { status: "X" });
+      setSuccessMessage("Candidate rejected successfully");
+      setOpenReject(true);
     } catch (error) {
       console.error("There was an error!", error);
+      setError("Failed to reject candidate. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setOpenReject(true);
   };
+
   const handleCloseAccept = () => {
     setOpenAccept(false);
     handleUpdate();
     navigate("/opening-details");
   };
+
   const handleCloseReject = () => {
     setOpenReject(false);
     handleUpdate();
     navigate("/opening-details");
   };
+
   const authStore = useAuthStore();
 
   const handleBack = () => {
@@ -117,29 +133,47 @@ function Feedbacknote() {
   };
 
   const handleUpdate = () => {
+    if (!validateScore(score)) {
+      return;
+    }
+
     const submissionData = {
-      interview_score: score,
+      interview_score: Number(score),
       interview_notes: feedback,
     };
 
+    setLoading(true);
     axios
       .patch(
         `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         submissionData,
       )
-      .then((response) => {
-        // console.log(response);
-        // setOpen(true);
-        // setIsSuccessful(true);
+      .then(() => {
+        setSuccessMessage("Feedback updated successfully");
       })
       .catch((error) => {
         console.error("There was an error!", error);
-        // setOpen(true);
-        // setIsSuccessful(false);
+        setError("Failed to update feedback. Please try again.");
       })
       .finally(() => {
-        // setIsSubmitting(false);
+        setLoading(false);
       });
+  };
+
+  const validateScore = (value: string) => {
+    const numValue = Number(value);
+    if (isNaN(numValue) || numValue < 0 || numValue > 10) {
+      setScoreError("Score must be a number between 0 and 10");
+      return false;
+    }
+    setScoreError(null);
+    return true;
+  };
+
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setScore(value);
+    validateScore(value);
   };
 
   useEffect(() => {
@@ -178,7 +212,7 @@ function Feedbacknote() {
     };
 
     fetchData();
-  }, [selectedApplicant]);
+  }, [selectedApplicant, BASE_API_URL, navigate]);
 
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState("");
@@ -285,8 +319,10 @@ function Feedbacknote() {
               id="outlined"
               label="Out of 10"
               variant="filled"
-              defaultValue={applicantInformation[0]?.interview_score}
-              onChange={(e) => setScore(e.target.value)}
+              value={score}
+              onChange={handleScoreChange}
+              error={!!scoreError}
+              helperText={scoreError}
             />
           </div>
         </Grid>
@@ -307,7 +343,7 @@ function Feedbacknote() {
             <TextField
               fullWidth
               label="Feedback note"
-              defaultValue={applicantInformation[0]?.interview_notes}
+              value={feedback}
               variant="filled"
               multiline
               rows={5}
@@ -395,6 +431,25 @@ function Feedbacknote() {
           </React.Fragment>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={!!error || !!successMessage}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(null);
+          setSuccessMessage(null);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setError(null);
+            setSuccessMessage(null);
+          }}
+          severity={error ? "error" : "success"}
+        >
+          {error || successMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

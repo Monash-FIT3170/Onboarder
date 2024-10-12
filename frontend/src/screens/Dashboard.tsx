@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import {
   DashboardTable,
   StudentTeamResultProps,
@@ -8,7 +8,7 @@ import styled from "styled-components";
 import AddTeamModal from "./AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
 const TitleWrap = styled.div`
@@ -23,9 +23,15 @@ const ButtonStyle = styled.div`
   margin-bottom: 20px;
 `;
 
+interface ErrorState {
+  message: string;
+  severity: "error" | "warning" | "info" | "success";
+}
+
 const Dashboard: React.FC = () => {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ErrorState | null>(null);
   const BASE_API_URL = getBaseAPIURL();
   const authStore = useAuthStore();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
@@ -36,20 +42,24 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         // let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
+        setLoading(true);
         let profileId = profile;
 
         if (!profileId) {
           profileId = await authStore.fetchProfile();
         }
-        console.log("Profile ID: ", profileId);
+
+        if (!profileId) {
+          throw new Error("Failed to fetch profile ID");
+        }
 
         const rolesResponse = await axios.get(
-          `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
+          `${BASE_API_URL}/profile/${profileId}/student-teams`,
         );
-        // console.log(rolesResponse.data);
+
         const tableData = rolesResponse.data
           .map((role: any) => ({
-            id: role.profile_id, // Assuming the API returns a user id
+            id: role.profile_id,
             student_team_id: role.student_team_id,
             student_team_name: role.student_team_name,
             user_team_role:
@@ -72,18 +82,21 @@ const Dashboard: React.FC = () => {
               roleRanking[a.user_team_role] - roleRanking[b.user_team_role]
             );
           });
-        // console.log(tableData);
 
         setStudentTeams(tableData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError({
+          message: "Failed to fetch student teams. Please try again later.",
+          severity: "error",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [isAddTeamModalOpen]);
+  }, [isAddTeamModalOpen, BASE_API_URL, authStore, profile, setStudentTeams]);
 
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);
@@ -98,6 +111,10 @@ const Dashboard: React.FC = () => {
     teamDescription: string,
   ) => {
     try {
+      if (!teamName.trim() || !teamDescription.trim()) {
+        throw new Error("Team name and description are required.");
+      }
+
       const response = await axios.post(`${BASE_API_URL}/student-team`, {
         name: teamName,
         description: teamDescription,
@@ -117,12 +134,38 @@ const Dashboard: React.FC = () => {
         user_team_role: "Owner",
         student_team_owner: user.email,
         student_team_description: teamDescription,
+        student_team_meeting_link: "", // TODO: Add meeting link
       };
 
       setStudentTeams([...studentTeams, newStudentTeam]);
+      setError({
+        message: "Team created successfully!",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error submitting team:", error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        setError({
+          message:
+            axiosError.response?.data?.message ||
+            "Failed to create team. Please try again.",
+          severity: "error",
+        });
+      } else {
+        setError({
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred.",
+          severity: "error",
+        });
+      }
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setError(null);
   };
 
   return (
@@ -138,12 +181,30 @@ const Dashboard: React.FC = () => {
           Add Team
         </Button>
       </ButtonStyle>
-      <DashboardTable results={studentTeams} />
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <DashboardTable results={studentTeams} />
+      )}
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmitTeam}
       />
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={error?.severity}
+          sx={{ width: "100%" }}
+        >
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Typography,
   Table,
@@ -8,148 +8,118 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Skeleton,
   Box,
   IconButton,
+  Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useMemberStore } from "../util/stores/memberStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import PermissionButton from "../components/PermissionButton";
+
+interface RoundInfo {
+  id: number;
+  round_name: string;
+}
+
+interface Opening {
+  id: number;
+  round_name: string;
+  opening_title: string;
+  student_team_name: string;
+  recruitment_round_id: number;
+}
+
+interface AllocatedMember {
+  id: number;
+  opening_id: number;
+  team_leads_allocated: number;
+}
+
+interface Assignment {
+  id: number;
+  opening_id: number;
+  profile_id: number;
+}
 
 const AllocateTeamLeads = () => {
   const [openings, setOpenings] = useState<any[]>([]);
   const [counts, setCounts] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const BASE_API_URL = getBaseAPIURL();
-  // const { teamLeadId } = useParams();
 
   const navigate = useNavigate();
-  // const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
   const selectedMember = useMemberStore((state) => state.selectedMember);
   const { team_id } = useAuthStore();
   const teamLeadId = selectedMember?.id;
 
-  const handleAllocate = async (openingId: number) => {
-    if (!teamLeadId || !openingId) {
-      alert("Please fill in all fields " + teamLeadId + " " + openingId);
-      return;
-    }
+  const handleApiError = useCallback(
+    (error: unknown, defaultMessage: string) => {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        setError(
+          axiosError.response?.data?.message ||
+            axiosError.message ||
+            defaultMessage,
+        );
+      } else {
+        setError(defaultMessage);
+      }
+    },
+    [],
+  );
 
-    setLoading(true);
-    try {
-      const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign`;
-      await axios.post(API_URL, {
-        profile_id: teamLeadId,
-      });
-      // console.log("Team lead allocated successfully");
-      // Refresh the openings list after allocation
-    } catch (error) {
-      console.error("Error allocating team lead:", error);
-    } finally {
-      fetchAllocationRowsData();
-      setLoading(false);
-    }
-  };
-
-  const handleDeAllocate = async (openingId: number) => {
-    if (!teamLeadId || !openingId) {
-      alert("Please fill in all fields " + teamLeadId + " " + openingId);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`;
-      await axios.delete(API_URL);
-      // console.log("Team lead allocated successfully");
-      // Refresh the openings list after allocation
-    } catch (error) {
-      console.error("Error allocating team lead:", error);
-    } finally {
-      fetchAllocationRowsData();
-      setLoading(false);
-    }
-  };
-
-  interface RoundInfo {
-    id: number;
-    round_name: string;
-  }
-
-  interface Opening {
-    id: number;
-    round_name: string;
-    opening_title: string;
-    student_team_name: string;
-    recruitment_round_id: number;
-  }
-
-  interface AllocatedMember {
-    id: number;
-    opening_id: number;
-    team_leads_allocated: number;
-  }
-
-  interface Assignment {
-    id: number;
-    opening_id: number;
-    profile_id: number;
-  }
-
-  const fetchRoundInfo = async (teamId: number): Promise<RoundInfo[]> => {
-    const response = await axios.get(
-      `${BASE_API_URL}/student-team/${teamId}/recruitment-round`,
-    );
-    if (response.data.length === 0) {
-      throw new Error("Profile team information not found");
-    }
-    return response.data;
-  };
-
-  const fetchOpenings = async (roundId: number): Promise<Opening[]> => {
-    const response = await axios.get(
-      `${BASE_API_URL}/recruitment-round/${roundId}/opening`,
-    );
-    return response.data;
-  };
-
-  const fetchLeadCounts = async (
-    openingId: number,
-  ): Promise<AllocatedMember[]> => {
-    const response = await axios.get(
-      `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
-    );
-    // console.log("Lead counts response (Allocated Member");
-    // console.log(response.data);
-    return response.data;
-  };
-
-  const fetchAssignments = async (
-    openingId: number,
-    teamLeadId: number,
-  ): Promise<Assignment[]> => {
-    const response = await axios.get(
-      `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
-    );
-    // console.log("Assignments response");
-    // console.log(response.data);
-    return response.data;
-  };
-
-  const fetchAllocationRowsData = async () => {
+  const fetchAllocationRowsData = useCallback(async () => {
     if (!team_id) {
-      console.error("No team selected");
+      setError("No team selected. Please select a team and try again.");
       setLoading(false);
       return;
     }
 
+    setError(null);
     try {
+      const fetchRoundInfo = async (teamId: number): Promise<RoundInfo[]> => {
+        const response = await axios.get(
+          `${BASE_API_URL}/student-team/${teamId}/recruitment-round`,
+        );
+        if (response.data.length === 0) {
+          throw new Error("Profile team information not found");
+        }
+        return response.data;
+      };
+
+      const fetchOpenings = async (roundId: number): Promise<Opening[]> => {
+        const response = await axios.get(
+          `${BASE_API_URL}/recruitment-round/${roundId}/opening`,
+        );
+        return response.data;
+      };
+
+      const fetchLeadCounts = async (
+        openingId: number,
+      ): Promise<AllocatedMember[]> => {
+        const response = await axios.get(
+          `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
+        );
+        return response.data;
+      };
+
+      const fetchAssignments = async (
+        openingId: number,
+        teamLeadId: number,
+      ): Promise<Assignment[]> => {
+        const response = await axios.get(
+          `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
+        );
+        return response.data;
+      };
+
       const roundInfo = await fetchRoundInfo(team_id);
 
       const openingsResults = await Promise.allSettled(
@@ -184,28 +154,78 @@ const AllocateTeamLeads = () => {
 
       setCounts(allCounts);
 
-      const assignmentsResults = await Promise.allSettled(
-        allOpenings.map((opening) => fetchAssignments(opening.id, teamLeadId)),
-      );
+      if (teamLeadId) {
+        const assignmentsResults = await Promise.allSettled(
+          allOpenings.map((opening) =>
+            fetchAssignments(opening.id, teamLeadId),
+          ),
+        );
 
-      const allAssignments = assignmentsResults
-        .filter(
-          (result): result is PromiseFulfilledResult<Assignment[]> =>
-            result.status === "fulfilled",
-        )
-        .flatMap((result) => result.value);
+        const allAssignments = assignmentsResults
+          .filter(
+            (result): result is PromiseFulfilledResult<Assignment[]> =>
+              result.status === "fulfilled",
+          )
+          .flatMap((result) => result.value);
 
-      setAssignments(allAssignments);
+        setAssignments(allAssignments);
+      }
     } catch (error) {
-      console.error("Error fetching team openings:", error);
+      handleApiError(error, "Error fetching team openings");
     } finally {
       setLoading(false);
     }
-  };
+  }, [team_id, teamLeadId, BASE_API_URL, handleApiError]);
+
+  const handleAllocate = useCallback(
+    async (openingId: number) => {
+      if (!teamLeadId || !openingId) {
+        setError("Invalid team lead or opening. Please try again.");
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
+        const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign`;
+        await axios.post(API_URL, {
+          profile_id: teamLeadId,
+        });
+        await fetchAllocationRowsData();
+      } catch (error) {
+        handleApiError(error, "Error allocating team lead");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [BASE_API_URL, teamLeadId, fetchAllocationRowsData, handleApiError],
+  );
+
+  const handleDeAllocate = useCallback(
+    async (openingId: number) => {
+      if (!teamLeadId || !openingId) {
+        setError("Invalid team lead or opening. Please try again.");
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
+        const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`;
+        await axios.delete(API_URL);
+        await fetchAllocationRowsData();
+      } catch (error) {
+        handleApiError(error, "Error deallocating team lead");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [BASE_API_URL, teamLeadId, fetchAllocationRowsData, handleApiError],
+  );
 
   useEffect(() => {
     fetchAllocationRowsData();
-  }, [team_id]);
+  }, [fetchAllocationRowsData]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -223,8 +243,15 @@ const AllocateTeamLeads = () => {
         alignItems="center"
         marginBottom="10px"
       >
-        <Typography variant="h6">{selectedMember?.email}</Typography>
+        <Typography variant="h6">
+          {selectedMember?.email || "No member selected"}
+        </Typography>
       </Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <TableContainer component={Paper}>
         <Table aria-label="openings table">
           <TableHead>
@@ -261,7 +288,7 @@ const AllocateTeamLeads = () => {
                   );
                   const allocatedCount =
                     counts.find((item) => item.opening_id === opening.id)
-                      .team_leads_allocated || 0;
+                      ?.team_leads_allocated || 0;
                   return (
                     <TableRow key={opening.id}>
                       <TableCell>
@@ -279,6 +306,7 @@ const AllocateTeamLeads = () => {
                             variant="contained"
                             onClick={() => handleAllocate(opening.id)}
                             tooltipText="You do not have permission to allocate team leads"
+                            disabled={!teamLeadId}
                           >
                             Allocate
                           </PermissionButton>
@@ -289,6 +317,7 @@ const AllocateTeamLeads = () => {
                             variant="outlined"
                             onClick={() => handleDeAllocate(opening.id)}
                             tooltipText="You do not have permission to deallocate team leads"
+                            disabled={!teamLeadId}
                           >
                             Deallocate
                           </PermissionButton>

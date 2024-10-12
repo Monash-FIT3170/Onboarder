@@ -13,6 +13,7 @@ import {
   Skeleton,
   Button,
   IconButton,
+  Alert,
 } from "@mui/material";
 import { useAuthStore } from "../util/stores/authStore";
 import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
@@ -36,14 +37,15 @@ function ViewTeamLeads() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
   // const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch the team leads data from the API
   useEffect(() => {
     const fetchTeamMembers = async () => {
       const BASE_API_URL = getBaseAPIURL();
       if (!team_id) {
-        // setError("No team selected");
-        // setIsLoading(false);
+        setError("No team selected");
+        setLoading(false);
         return;
       }
 
@@ -96,7 +98,7 @@ function ViewTeamLeads() {
         );
       } catch (error) {
         console.error("Error fetching team members:", error);
-        // setError("Failed to fetch team members");
+        setError("Failed to fetch team members. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -112,6 +114,54 @@ function ViewTeamLeads() {
     });
     navigate("/allocate-team-leads");
   };
+
+  const renderTableContent = () => {
+    if (loading) {
+      return (
+        <>
+          {[...Array(5)].map((_, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Skeleton animation="wave" height={40} />
+              </TableCell>
+              <TableCell>
+                <Skeleton animation="wave" height={40} width={100} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </>
+      );
+    }
+
+    if (members.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={2}>
+            <Typography align="center">No team leads found.</Typography>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return members.map((teamLead) => (
+      <TableRow key={teamLead.profile_id}>
+        <TableCell>{teamLead.email}</TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => handleView(teamLead.profile_id, teamLead.email)}
+          >
+            View
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
   return (
     <div style={{ padding: "20px" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -138,40 +188,7 @@ function ViewTeamLeads() {
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {loading
-              ? [...Array(5)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={100} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : members.map((teamLead) => (
-                  <TableRow key={teamLead.profile_id}>
-                    <TableCell>{teamLead.email}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        onClick={() =>
-                          handleView(teamLead.profile_id, teamLead.email)
-                        }
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
+          <TableBody>{renderTableContent()}</TableBody>
         </Table>
       </TableContainer>
     </div>
