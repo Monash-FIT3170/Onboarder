@@ -57,7 +57,7 @@ interface ResultProps {
   interview_score: number;
 }
 
-function Feedbacknote() {
+function InterviewFeedbackPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [openAccept, setOpenAccept] = React.useState(false);
@@ -399,4 +399,4 @@ function Feedbacknote() {
   );
 }
 
-export default Feedbacknote;
+export default InterviewFeedbackPage;

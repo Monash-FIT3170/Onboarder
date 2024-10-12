@@ -44,7 +44,7 @@ export interface SingleApplicationProps {
   created_at: string;
 }
 
-function ViewOpenPage() {
+function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState(null);
@@ -170,7 +170,7 @@ function ViewOpenPage() {
   const handleSendEmails = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
       // console.log(response);
@@ -225,6 +225,32 @@ function ViewOpenPage() {
     ));
   };
 
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/view-recruitment-round");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+        );
+        setApplications(applicationsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  const handleInterviewSchedule = () => {
+    navigate("/interview-scheduling");
+  };
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
@@ -253,7 +279,7 @@ function ViewOpenPage() {
             sx={{ ml: 2 }}
             onClick={() => {
               // console.log("Navigating to /interview-scheduling");
-              respond();
+              handleInterviewSchedule();
             }}
           >
             INTERVIEW SCHEDULE
@@ -432,4 +458,4 @@ function ViewOpenPage() {
   );
 }
 
-export default ViewOpenPage;
+export default OpeningDetailsPage;

@@ -1,11 +1,11 @@
 import {
-  TableContainer,
-  TableHead,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
 import React from "react";
 import { formatDeadline, getStatusText } from "../util/Util";
@@ -23,7 +23,7 @@ export interface SingleRoundResultProps {
   openings_count: number;
 }
 
-interface SingleRoundTableProps {
+interface RoundDetailsTableProps {
   results: SingleRoundResultProps[];
 }
 
@@ -46,8 +46,8 @@ const generateTableRows = (results: SingleRoundResultProps[]) => {
   ));
 };
 
-export const SingleRoundTable: React.FC<SingleRoundTableProps> = (
-  props: SingleRoundTableProps,
+export const RoundDetailsTable: React.FC<RoundDetailsTableProps> = (
+  props: RoundDetailsTableProps,
 ) => {
   return (
     <>

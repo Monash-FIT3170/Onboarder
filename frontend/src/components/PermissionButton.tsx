@@ -1,7 +1,7 @@
 import { Button, Tooltip } from "@mui/material";
-import { ReactNode, CSSProperties } from "react";
-import { useAuthStore } from "../util/stores/authStore";
+import { CSSProperties, ReactNode } from "react";
 import { Actions, Subjects } from "../util/abilities";
+import { useAuthStore } from "../util/stores/authStore";
 
 interface PermissionButtonProps {
   action: Actions;
