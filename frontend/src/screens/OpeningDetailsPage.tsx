@@ -18,9 +18,11 @@ import {
   Typography,
   Collapse,
   Tooltip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InfoIcon from "@mui/icons-material/Info";
@@ -51,7 +53,7 @@ export interface SingleApplicationProps {
 function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState(null);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
@@ -60,6 +62,8 @@ function OpeningDetailsPage() {
   const [expandedCandidates, setExpandedCandidates] = useState(false);
   const [expandedRecruits, setExpandedRecruits] = useState(false);
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Constants
   const BASE_API_URL = getBaseAPIURL();
@@ -71,6 +75,31 @@ function OpeningDetailsPage() {
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
+
+  // Derived state
+  const sortedApplications = React.useMemo(() => {
+    if (!sortColumn) return applications;
+
+    return [...applications].sort((a, b) => {
+      const compareValues = (aVal: any, bVal: any) => {
+        if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      };
+
+      switch (sortColumn) {
+        case "email":
+          return compareValues(a.email, b.email);
+        case "status":
+          return compareValues(a.status, b.status);
+        case "date":
+          return compareValues(new Date(a.created_at), new Date(b.created_at));
+        default:
+          return 0;
+      }
+    });
+  }, [applications, sortColumn, sortDirection]);
+
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
@@ -83,21 +112,33 @@ function OpeningDetailsPage() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch applications. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening, navigate]);
+  }, [selectedOpening, navigate, BASE_API_URL]);
 
   // Handler functions
+  const handleSort = useCallback(
+    (column: string) => {
+      setSortDirection((prev) =>
+        sortColumn === column && prev === "asc" ? "desc" : "asc",
+      );
+      setSortColumn(column);
+    },
+    [sortColumn],
+  );
+
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
@@ -152,17 +193,24 @@ function OpeningDetailsPage() {
   };
 
   const handleSendEmails = async () => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
+
     setLoading(true);
     try {
       await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
-      // console.log(response);
+      setSuccessMessage("Interview scheduling emails sent successfully.");
     } catch (error) {
       console.error("Error sending emails:", error);
+      setError("Failed to send interview scheduling emails. Please try again.");
+    } finally {
+      setLoading(false);
+      handleClose();
     }
-    setLoading(false);
-    handleClose();
   };
 
   const handleConfirmSendEmails = () => {
@@ -291,6 +339,11 @@ function OpeningDetailsPage() {
         </Collapse>
       </Box>
     );
+  };
+
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccessMessage(null);
   };
 
   return (
@@ -447,6 +500,32 @@ function OpeningDetailsPage() {
         setExpandedRecruits,
         "Recruits have completed their interview and were accepted to be a part of the team.",
       )}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

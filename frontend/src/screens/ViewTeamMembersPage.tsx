@@ -6,6 +6,7 @@ import {
   IconButton,
   CircularProgress,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -22,8 +23,23 @@ const ViewTeamMembersPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "info" | "warning";
+  }>({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
-  const { team_id: studentTeamId, team_name, ability } = useAuthStore();
+  const {
+    team_id: studentTeamId,
+    team_name,
+    ability,
+    role,
+    profile,
+  } = useAuthStore();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -105,9 +121,31 @@ const ViewTeamMembersPage: React.FC = () => {
     }
   };
 
-  const handleRemove = (profileId: number) => {
-    // Implement remove functionality
-    // console.log(`Removing member with profile ID: ${profileId}`);
+  const handleRemove = async (profileId: number) => {
+    if (!studentTeamId) return;
+
+    try {
+      const BASE_API_URL = getBaseAPIURL();
+      await axios.delete(
+        `${BASE_API_URL}/student-team/${studentTeamId}/members/${profileId}`,
+      );
+
+      // Remove the member from the local state
+      setMembers(members.filter((member) => member.profile_id !== profileId));
+
+      setSnackbar({
+        open: true,
+        message: "Team member removed successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error removing team member:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to remove team member",
+        severity: "error",
+      });
+    }
   };
 
   const handleOpenInviteModal = () => {
@@ -118,13 +156,23 @@ const ViewTeamMembersPage: React.FC = () => {
     setIsInviteModalOpen(false);
   };
 
+  const handleCloseSnackbar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   if (isLoading) {
     return <CircularProgress />;
   }
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="error">{error}</Alert>
         <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
       </Box>
@@ -132,7 +180,7 @@ const ViewTeamMembersPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
           <ArrowBackIcon />
@@ -155,14 +203,28 @@ const ViewTeamMembersPage: React.FC = () => {
       <TeamMembersTable
         members={members}
         onRemove={handleRemove}
-        currentUserProfileId={null}
-        userRole={null}
+        currentUserProfileId={profile}
+        userRole={role}
       />
       <InviteMemberModal
         open={isInviteModalOpen}
         onClose={handleCloseInviteModal}
         teamId={studentTeamId}
       />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

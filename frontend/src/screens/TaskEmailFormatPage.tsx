@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -5,59 +6,91 @@ import {
   Button,
   Switch,
   FormControlLabel,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getBaseAPIURL } from "../util/Util";
 import PermissionButton from "../components/PermissionButton";
 
-const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
+const TaskEmailFormatPage: React.FC = () => {
   const [taskOn, setTaskOn] = useState(false);
   const [emailBody, setEmailBody] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [emailBodyError, setEmailBodyError] = useState("");
+
   const BASE_API_URL = getBaseAPIURL();
-  // const [loading, setLoading] = useState(true);
-  // const [open, setOpen] = useState(false);
-  const [dialogParam, setDialogParam] = useState("");
+  const navigate = useNavigate();
+  const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskOn(event.target.checked);
   };
-  const navigate = useNavigate();
-  const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
   const handleBack = () => {
-    // clearSelectedOpening();
     navigate("/opening-details");
   };
-  const handleConfirm = async (event: any) => {
+
+  const validateEmailBody = (body: string): boolean => {
+    if (taskOn && body.trim().length === 0) {
+      setEmailBodyError("Email body is required when task is enabled");
+      return false;
+    }
+    if (body.length > 1000) {
+      setEmailBodyError("Email body must be less than 1000 characters");
+      return false;
+    }
+    setEmailBodyError("");
+    return true;
+  };
+
+  const handleConfirm = async (event: React.FormEvent) => {
     event.preventDefault();
-    // setLoading(true);
+    if (!validateEmailBody(emailBody)) return;
+
+    setLoading(true);
     const submissionData = {
       task_enabled: taskOn,
       task_email_format: emailBody,
     };
+
     try {
       const response = await axios.patch(
-        `${BASE_API_URL}/opening/${selectedOpening.id}`, // Working
+        `${BASE_API_URL}/opening/${selectedOpening?.id}`,
         submissionData,
       );
-      if (response.status === 201) {
-        // console.log(response);
-        setDialogParam("Task Updated!");
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Task Updated!",
+          severity: "success",
+        });
+        setTimeout(handleBack, 2000);
       } else {
-        // console.log(response);
-        setDialogParam("There was an error updating the email.");
+        throw new Error("Unexpected response status");
       }
     } catch (error) {
       console.error("There was an error!", error);
+      setSnackbar({
+        open: true,
+        message:
+          "There was an error updating the email template. Please try again.",
+        severity: "error",
+      });
     } finally {
-      //   setOpen(true);
-      //   setLoading(false);
-      handleBack();
+      setLoading(false);
     }
   };
 
@@ -68,22 +101,42 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
         navigate("/opening-details");
         return;
       }
+
       try {
         const openingResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}`, // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}`,
         );
-        console.log(openingResponse);
         setEmailBody(openingResponse.data[0].opening_task_email_format);
         setTaskOn(openingResponse.data[0].opening_task_enabled);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
+        setSnackbar({
+          open: true,
+          message: "Error loading data. Please try again.",
+          severity: "error",
+        });
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening]);
+  }, [selectedOpening, BASE_API_URL, navigate]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
@@ -136,11 +189,17 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
       <TextField
         label="Task Body"
         value={emailBody}
-        onChange={(e) => setEmailBody(e.target.value)}
+        onChange={(e) => {
+          setEmailBody(e.target.value);
+          validateEmailBody(e.target.value);
+        }}
+        onBlur={() => validateEmailBody(emailBody)}
         fullWidth
         multiline
         rows={4}
         sx={{ marginBottom: "20px" }}
+        error={!!emailBodyError}
+        helperText={emailBodyError}
       />
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -151,13 +210,33 @@ const TaskEmailFormatPage: React.FC = (): React.ReactNode => {
           color="primary"
           onClick={handleConfirm}
           tooltipText="You do not have permission to configure the task email"
+          disabled={loading}
         >
-          Confirm
+          {loading ? <CircularProgress size={24} /> : "Confirm"}
         </PermissionButton>
-        <Button variant="outlined" color="secondary" onClick={handleBack}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleBack}
+          disabled={loading}
+        >
           Cancel
         </Button>
       </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
