@@ -1,27 +1,22 @@
-import React from "react";
-import { styled, alpha, useTheme } from "@mui/material/styles";
+import HomeIcon from "@mui/icons-material/Home";
 import {
   AppBar,
   Box,
+  Breadcrumbs,
+  Button,
+  CssBaseline,
+  Divider,
+  Link,
+  Stack,
+  Switch,
   Toolbar,
   Typography,
-  CssBaseline,
-  Button,
-  Menu,
-  MenuProps,
-  Switch,
-  Stack,
-  Divider,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRouteProtectionStore } from "../util/stores/routeProtectionStore";
 import { useTheme as useCustomTheme } from "../util/ThemeContext";
-import { Breadcrumbs, Link } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { all } from "axios";
 
 const pathToNameMap: { [key: string]: string } = {
   "/": "Home",

@@ -45,7 +45,7 @@ interface ResultProps {
   course_name: string;
 }
 
-export default function RecruitmentPlatform() {
+export default function ReviewApplicantPage() {
   const [applicantInformation, setApplicantInformation] = useState<
     ResultProps[]
   >([]);

@@ -44,7 +44,7 @@ export interface SingleApplicationProps {
   created_at: string;
 }
 
-function ViewOpenPage() {
+function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState(null);
@@ -227,7 +227,7 @@ function ViewOpenPage() {
 
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewrecruitmentround");
+      navigate("/view-recruitment-round");
       return;
     }
 
@@ -458,4 +458,4 @@ function ViewOpenPage() {
   );
 }
 
-export default ViewOpenPage;
+export default OpeningDetailsPage;

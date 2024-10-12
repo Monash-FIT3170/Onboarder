@@ -42,7 +42,7 @@ interface Event {
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const ManuallyAddInterview: React.FC = () => {
+const ManuallyScheduleInterviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { selectedApplicant } = useApplicantStore();
   const { selectedOpening } = useOpeningStore();
@@ -229,4 +229,4 @@ const ManuallyAddInterview: React.FC = () => {
   );
 };
 
-export default ManuallyAddInterview;
+export default ManuallyScheduleInterviewPage;

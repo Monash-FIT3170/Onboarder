@@ -39,7 +39,7 @@ interface Event {
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const AvailabilityCalendar: React.FC = () => {
+const CandidateAvailabilityCalendarPage: React.FC = () => {
   // State to manage the list of events
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
@@ -236,4 +236,4 @@ const AvailabilityCalendar: React.FC = () => {
   );
 };
 
-export default AvailabilityCalendar;
+export default CandidateAvailabilityCalendarPage;

@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Skeleton,
   Box,
   IconButton,
@@ -21,7 +20,7 @@ import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import PermissionButton from "../components/PermissionButton";
 
-const AllocateTeamLeads = () => {
+const AllocateTeamLeadsPage = () => {
   const [openings, setOpenings] = useState<any[]>([]);
   const [counts, setCounts] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -304,4 +303,4 @@ const AllocateTeamLeads = () => {
   );
 };
 
-export default AllocateTeamLeads;
+export default AllocateTeamLeadsPage;

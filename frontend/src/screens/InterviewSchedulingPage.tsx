@@ -84,7 +84,7 @@ export interface RoundProps {
   interview_period: string[]; // period
 }
 
-const ViewInterviewAllocation = () => {
+const InterviewSchedulingPage = () => {
   // State hooks
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -166,7 +166,7 @@ const ViewInterviewAllocation = () => {
 
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewopen");
+      navigate("/opening-details");
       return;
     }
 
@@ -309,7 +309,7 @@ const ViewInterviewAllocation = () => {
                 application_count: null,
                 interview_date: application.interview_date,
               });
-              navigate(`/manually-add-interview`);
+              navigate(`/manually-schedule-interview`);
             }}
             disabled={loading}
           >
@@ -449,4 +449,4 @@ const ViewInterviewAllocation = () => {
   );
 };
 
-export default ViewInterviewAllocation;
+export default InterviewSchedulingPage;

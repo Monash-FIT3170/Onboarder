@@ -48,7 +48,7 @@ const styleLink = {
   p: 4,
 };
 
-const ViewRecruitmentRoundPage = () => {
+const ViewRecruitmentRoundsPage = () => {
   // State hooks
   // Modal Link modify
   const [urlLink, setUrlLink] = useState("");
@@ -61,7 +61,7 @@ const ViewRecruitmentRoundPage = () => {
   const [loading, setLoading] = useState(true);
 
   const handleAddRoundClick = () => {
-    navigate("/addrecruitmentround");
+    navigate("/add-recruitment-round");
   };
 
   // Constants
@@ -473,4 +473,4 @@ const ViewRecruitmentRoundPage = () => {
   );
 };
 
-export default ViewRecruitmentRoundPage;
+export default ViewRecruitmentRoundsPage;

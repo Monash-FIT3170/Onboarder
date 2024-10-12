@@ -19,14 +19,14 @@ import {
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
 import {
-  OpeningsTable,
+  RecruitmentRoundOpeningsTable,
   openingsResultProps,
-} from "../components/OpeningsTable";
+} from "../components/RecruitmentRoundOpeningsTable";
 import axios from "axios";
 import {
-  SingleRoundTable,
+  RoundDetailsTable,
   SingleRoundResultProps,
-} from "../components/SingleRoundTable";
+} from "../components/RoundDetailsTable";
 import { useNavigate } from "react-router-dom";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
@@ -320,7 +320,7 @@ function RecruitmentRoundDetailsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <SingleRoundTable results={rounds} />
+          <RoundDetailsTable results={rounds} />
         )}
       </div>
 
@@ -388,7 +388,10 @@ function RecruitmentRoundDetailsPage() {
           </TableContainer>
         ) : (
           /* Openings Table Component */
-          <OpeningsTable results={openings} viewHandler={handleView} />
+          <RecruitmentRoundOpeningsTable
+            results={openings}
+            viewHandler={handleView}
+          />
         )}
       </div>
       <Modal

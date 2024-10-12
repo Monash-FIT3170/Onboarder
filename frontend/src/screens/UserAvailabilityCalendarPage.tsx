@@ -38,7 +38,7 @@ interface Event {
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const AvailabilityCalendarUser: React.FC = () => {
+const UserAvailabilityCalendarPage: React.FC = () => {
   // State hooks
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const [interviewDates, setInterviewDates] = useState<Event[]>([]);
@@ -259,4 +259,4 @@ const AvailabilityCalendarUser: React.FC = () => {
   );
 };
 
-export default AvailabilityCalendarUser;
+export default UserAvailabilityCalendarPage;

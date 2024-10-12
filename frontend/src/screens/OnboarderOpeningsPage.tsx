@@ -15,9 +15,9 @@ import {
 import styled from "styled-components";
 // import LoadingSpinner from "../components/LoadSpinner";
 import {
-  ApplicantOpeningsTable,
-  applicantOpeningResultProps,
-} from "../components/ApplicantOpeningsTable";
+  OnboarderOpeningsTable,
+  onboarderOpeningResultProps,
+} from "../components/OnboarderOpeningsTable";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +56,7 @@ const generateSkeletonRows = () => {
 };
 
 function OnboarderOpeningsPage() {
-  const [openings, setOpening] = useState<applicantOpeningResultProps[]>([]);
+  const [openings, setOpening] = useState<onboarderOpeningResultProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState("All");
   const [semester, setSemester] = useState("All");
@@ -175,9 +175,9 @@ function OnboarderOpeningsPage() {
             </Table>
           </TableContainer>
         ) : (
-          <ApplicantOpeningsTable
+          <OnboarderOpeningsTable
             results={filteredOpenings}
-          ></ApplicantOpeningsTable>
+          ></OnboarderOpeningsTable>
         )}
       </div>
     </>
