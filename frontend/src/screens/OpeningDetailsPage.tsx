@@ -15,11 +15,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
@@ -47,13 +48,14 @@ export interface SingleApplicationProps {
 function OpeningDetailsPage() {
   // State hooks
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState(null);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Constants
   const BASE_API_URL = getBaseAPIURL();
@@ -74,13 +76,22 @@ function OpeningDetailsPage() {
     if (!sortColumn) return applications;
 
     return [...applications].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) {
-        return sortDirection === "asc" ? -1 : 1;
+      const compareValues = (aVal: any, bVal: any) => {
+        if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      };
+
+      switch (sortColumn) {
+        case "email":
+          return compareValues(a.email, b.email);
+        case "status":
+          return compareValues(a.status, b.status);
+        case "date":
+          return compareValues(new Date(a.created_at), new Date(b.created_at));
+        default:
+          return 0;
       }
-      if (a[sortColumn] > b[sortColumn]) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
-      return 0;
     });
   }, [applications, sortColumn, sortDirection]);
 
@@ -93,26 +104,32 @@ function OpeningDetailsPage() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch applications. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening, navigate]);
+  }, [selectedOpening, navigate, BASE_API_URL]);
 
   // Handler functions
-  const handleSort = (column) => {
-    const isAsc = sortColumn === column && sortDirection === "asc";
-    setSortDirection(isAsc ? "desc" : "asc");
-    setSortColumn(column);
-  };
+  const handleSort = useCallback(
+    (column: string) => {
+      setSortDirection((prev) =>
+        sortColumn === column && prev === "asc" ? "desc" : "asc",
+      );
+      setSortColumn(column);
+    },
+    [sortColumn],
+  );
 
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
@@ -168,17 +185,24 @@ function OpeningDetailsPage() {
   };
 
   const handleSendEmails = async () => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
+
     setLoading(true);
     try {
       await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
-      // console.log(response);
+      setSuccessMessage("Interview scheduling emails sent successfully.");
     } catch (error) {
       console.error("Error sending emails:", error);
+      setError("Failed to send interview scheduling emails. Please try again.");
+    } finally {
+      setLoading(false);
+      handleClose();
     }
-    setLoading(false);
-    handleClose();
   };
 
   const handleConfirmSendEmails = () => {
@@ -225,30 +249,13 @@ function OpeningDetailsPage() {
     ));
   };
 
-  useEffect(() => {
-    if (!selectedOpening) {
-      navigate("/view-recruitment-round");
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
-        );
-        setApplications(applicationsResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedOpening, navigate]);
-
   const handleInterviewSchedule = () => {
     navigate("/interview-scheduling");
+  };
+
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccessMessage(null);
   };
 
   return (
@@ -339,7 +346,7 @@ function OpeningDetailsPage() {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+        <Table aria-label="applications table">
           <TableHead>
             <TableRow>
               <TableCell>Student Name</TableCell>
@@ -347,6 +354,7 @@ function OpeningDetailsPage() {
                 Student Email
                 <Button
                   onClick={() => handleSort("email")}
+                  aria-label={`Sort by email ${sortColumn === "email" ? (sortDirection === "asc" ? "descending" : "ascending") : ""}`}
                   style={{
                     minWidth: "30px",
                     padding: "6px",
@@ -360,7 +368,6 @@ function OpeningDetailsPage() {
                     : "↓"}
                 </Button>
               </TableCell>
-
               <TableCell>
                 Status
                 <Button
@@ -399,27 +406,23 @@ function OpeningDetailsPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading
-              ? [...Array(3)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={80} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : generateRowFunction(sortedApplications)}
+            {loading ? (
+              [...Array(3)].map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell colSpan={5}>
+                    <Skeleton variant="rectangular" height={30} />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : sortedApplications.length > 0 ? (
+              generateRowFunction(sortedApplications)
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No applications found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -454,6 +457,32 @@ function OpeningDetailsPage() {
           </PermissionButton>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
