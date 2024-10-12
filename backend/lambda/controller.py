@@ -94,6 +94,14 @@ def delete_application(application_id):
         "id", application_id).execute()
     return response.data
 
+def get_application_by_email_and_opening(email, opening_id):
+    try:
+        result = supabase.table("APPLICATION").select("*").eq("email", email).eq("opening_id", opening_id).execute()
+        return result.data[0] if result.data else None
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
 
 # -------------- ALL TEAM LEAD APPLICATION ASSIGNMENT CONTROLLERS --------------
 

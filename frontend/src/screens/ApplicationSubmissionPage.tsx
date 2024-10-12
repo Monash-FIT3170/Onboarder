@@ -72,7 +72,10 @@ function ApplicationSubmissionPage() {
   });
   const [errors, setErrors] = useState<
     Partial<
-      Record<keyof typeof formData | "fetchOpening" | "fetchRound", string>
+      Record<
+        keyof typeof formData | "fetchOpening" | "fetchRound" | "submission",
+        string
+      >
     >
   >({});
   const BASE_API_URL = getBaseAPIURL();
@@ -202,6 +205,18 @@ function ApplicationSubmissionPage() {
       console.error("Error submitting application:", error);
       setOpen(true);
       setIsSuccessful(false);
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          submission: "You have already applied for this position.",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          submission:
+            "There was an error in lodging your application. Please try again later.",
+        }));
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -424,20 +439,23 @@ function ApplicationSubmissionPage() {
         <DialogTitle>
           {dialogParam
             ? "Application Successful!"
-            : "Error in Application Submission!"}
+            : "Application Submission Error"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {dialogParam
               ? "Your application has been successfully lodged. We will get back to you soon."
-              : "There was an error in lodging your application. Please try again later!"}
+              : errors.submission ||
+                "There was an error in lodging your application. Please try again later!"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/onboarder-openings");
+              if (dialogParam) {
+                navigate("/onboarder-openings");
+              }
             }}
           >
             CLOSE
