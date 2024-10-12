@@ -24,6 +24,7 @@ import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import PermissionButton from "../components/PermissionButton";
 
 // Css file
 const TitleWrapper = styled.div`
@@ -336,23 +337,29 @@ const ViewInterviewAllocation = () => {
         </Box>
         {/* button to send interivew and schedule intervies */}
         <Box display="flex" alignItems="center">
-          <Button
+          <PermissionButton
+            action="send"
+            subject="Interview"
             variant="contained"
             onClick={handleSendInvite}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
+            tooltipText="You do not have permission to send interview invites"
           >
             {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
-          </Button>
+          </PermissionButton>
 
-          <Button
+          <PermissionButton
+            action="schedule"
+            subject="Interview"
             variant="contained"
             onClick={handleScheduleInterviews}
             disabled={loading}
             style={{ marginLeft: "1rem" }}
+            tooltipText="You do not have permission to schedule interviews"
           >
             {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
-          </Button>
+          </PermissionButton>
         </Box>
       </Box>
       <PaddingBox>

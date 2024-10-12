@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "./PermissionButton";
 
 interface InviteMemberModalProps {
   open: boolean;
@@ -149,14 +150,18 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             <Button onClick={onClose} color="primary">
               Cancel
             </Button>
-            <Button
+            <PermissionButton
+              action="invite"
+              subject="Team"
               type="submit"
               variant="contained"
               color="primary"
               disabled={isLoading}
+              onClick={() => {}}
+              tooltipText="You do not have permission to add a team member"
             >
               {isLoading ? <CircularProgress size={24} /> : "Add Member"}
-            </Button>
+            </PermissionButton>
           </DialogActions>
         </form>
       </Dialog>
