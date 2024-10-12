@@ -119,8 +119,7 @@ function AppBarOnBoarder() {
               </Typography>
             </Typography>
           )}
-          {locationPath !== "/login" &&
-          locationPath !== "/onboarder-openings" ? (
+          {locationPath !== "login" && locationPath !== "onboarder-openings" ? (
             <>
               <Box sx={{ flexGrow: 1 }}></Box>
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -161,41 +160,43 @@ function AppBarOnBoarder() {
           </Stack>
         </Toolbar>
       </AppBar>
-      <Breadcrumbs aria-label="breadcrumb" sx={{ ml: 2, mt: 2, flexGrow: 1 }}>
-        {pathnames.map((value, index) => {
-          const isLast = index === pathnames.length - 1;
-          const isFirst = index === 0;
-          return isFirst && isLast ? (
-            <Typography
-              sx={{
-                color: "text.primary",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-              {pathToNameMap[`/${value}`] + " /"}
-            </Typography>
-          ) : isLast ? (
-            <Typography sx={{ color: "text.primary" }}>
-              {pathToNameMap[`/${value}`]}
-            </Typography>
-          ) : isFirst ? (
-            <Link
-              underline="hover"
-              color="inherit"
-              sx={{ display: "flex", alignItems: "center" }}
-            >
-              <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-              {pathToNameMap[`/${value}`]}
-            </Link>
-          ) : (
-            <Link underline="hover" color="inherit">
-              {pathToNameMap[`/${value}`]}
-            </Link>
-          );
-        })}
-      </Breadcrumbs>
+      {isProtectedRoute && !isDashboard && team_name && role && (
+        <Breadcrumbs aria-label="breadcrumb" sx={{ ml: 2, mt: 2, flexGrow: 1 }}>
+          {pathnames.map((value, index) => {
+            const isLast = index === pathnames.length - 1;
+            const isFirst = index === 0;
+            return isFirst && isLast ? (
+              <Typography
+                sx={{
+                  color: "text.primary",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                {pathToNameMap[`/${value}`] + " /"}
+              </Typography>
+            ) : isLast ? (
+              <Typography sx={{ color: "text.primary" }}>
+                {pathToNameMap[`/${value}`]}
+              </Typography>
+            ) : isFirst ? (
+              <Link
+                underline="hover"
+                color="inherit"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                {pathToNameMap[`/${value}`]}
+              </Link>
+            ) : (
+              <Link underline="hover" color="inherit">
+                {pathToNameMap[`/${value}`]}
+              </Link>
+            );
+          })}
+        </Breadcrumbs>
+      )}
     </Box>
   );
 }

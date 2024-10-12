@@ -101,7 +101,7 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
           </TableCell>
           <TableCell>{`${formattedDeadline}`}</TableCell>
           <TableCell>{`${result.student_team_name}`}</TableCell>
-          <TableCell>{`Semester ${result.recruitment_round_semester}`}</TableCell>
+          <TableCell>{`${result.recruitment_round_semester}`}</TableCell>
           <TableCell>{`${result.recruitment_round_year}`}</TableCell>
           <TableCell>
             <Button
