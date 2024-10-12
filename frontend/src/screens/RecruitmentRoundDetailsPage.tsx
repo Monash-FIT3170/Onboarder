@@ -278,7 +278,7 @@ function RecruitmentRoundDetailsPage() {
         )}
       </HeadWrapper>
 
-      <div style={{ marginTop: "40px" }}>
+      <div style={{ marginTop: "16px" }}>
         {loading ? (
           <TableContainer component={Paper}>
             <Table>
@@ -312,7 +312,7 @@ function RecruitmentRoundDetailsPage() {
           display: "flex",
           flexDirection: "column",
           rowGap: "20px",
-          marginTop: "100px",
+          marginTop: "16px",
         }}
       >
         <OpeningsWrapper>

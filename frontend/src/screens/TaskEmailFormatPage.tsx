@@ -71,7 +71,7 @@ const TaskEmailFormatPage: React.FC = () => {
         `${BASE_API_URL}/opening/${selectedOpening?.id}`,
         submissionData,
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         setSnackbar({
           open: true,
           message: "Task Updated!",
@@ -85,7 +85,8 @@ const TaskEmailFormatPage: React.FC = () => {
       console.error("There was an error!", error);
       setSnackbar({
         open: true,
-        message: "There was an error updating the email. Please try again.",
+        message:
+          "There was an error updating the email template. Please try again.",
         severity: "error",
       });
     } finally {
