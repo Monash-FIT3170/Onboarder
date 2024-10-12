@@ -11,15 +11,16 @@ import {
   Box,
   IconButton,
   Skeleton,
-  Alert,
-  CircularProgress,
+  Button,
 } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
+import { useApplicantStore } from "../util/stores/applicantStore";
+import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
 import { useStudentTeamStore } from "../util/stores/studentTeamStore";
@@ -83,7 +84,7 @@ export interface RoundProps {
   interview_period: string[]; // period
 }
 
-const ViewInterviewAllocation = () => {
+const InterviewSchedulingPage = () => {
   // State hooks
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -92,13 +93,11 @@ const ViewInterviewAllocation = () => {
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
-  const [sendInviteLoading, setSendInviteLoading] = useState(false);
-  const [scheduleInterviewsLoading, setScheduleInterviewsLoading] =
-    useState(false);
-
-  // Constants
-  const navigate = useNavigate();
-  const BASE_API_URL = getBaseAPIURL();
+  const authStore = useAuthStore();
+  const { setSelectedApplicant, selectedApplicant } = useApplicantStore();
+  const recruitmentDetails = useRecruitmentStore(
+    (state) => state.recruitmentDetails,
+  );
   const filteredApplications = applications.filter((application) =>
     application.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -109,38 +108,70 @@ const ViewInterviewAllocation = () => {
     (app) => app.interview_date == null,
   ).length;
 
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
+
   // Store hooks
-  const authStore = useAuthStore();
   const studentTeamStore = useStudentTeamStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // Effect hooks
+  useEffect(() => {
+    if (!selectedOpening) {
+      navigate("/opening-details");
+      return;
+    }
+
+    const fetchData = async () => {
+      // Get application info
+      try {
+        const applicationsResponse = await axios.get(
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
+        );
+        console.log("App response: ", applicationsResponse);
+        setApplications(applicationsResponse.data);
+        const roundResponse = await axios.get(
+          `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
+        );
+
+        setRound(roundResponse.data[0]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedOpening, navigate]);
+
+  const fetchData = async () => {
     try {
-      const [applicationsResponse, roundResponse] = await Promise.all([
-        axios.get(`${BASE_API_URL}/opening/${selectedOpening?.id}/application`),
-        axios.get(
-          `${BASE_API_URL}/recruitment-round/${selectedOpening?.recruitment_round_id}/`,
-        ),
-      ]);
+      const applicationsResponse = await axios.get(
+        `${BASE_API_URL}/opening/${selectedOpening?.id}/application`,
+      );
+      // console.log(applicationsResponse);
       setApplications(applicationsResponse.data);
+      const roundResponse = await axios.get(
+        `${BASE_API_URL}/recruitment-round/${selectedOpening?.recruitment_round_id}/`,
+      );
+      console.log(roundResponse);
       setRound(roundResponse.data[0]);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again later.");
     } finally {
       setLoading(false);
     }
-  }, [selectedOpening, BASE_API_URL]);
+  };
 
   useEffect(() => {
     if (!selectedOpening) {
-      navigate("/viewopen");
+      navigate("/opening-details");
       return;
     }
+
     fetchData();
-  }, [selectedOpening, navigate, fetchData]);
+  }, [selectedOpening, navigate]);
 
   // Mapping function
   const mapToInterviewEventProps = (
@@ -175,57 +206,70 @@ const ViewInterviewAllocation = () => {
 
   // Handler functions
   // Send invites to all applicants with interview dates
-  const handleSendInvite = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (!applications.length) {
-      setError("No applications found.");
+  const handleSendInvite = async (e: any) => {
+    if (!applications) {
+      alert("No applications found.");
       return;
     }
     const invitees_interviewers = applications.filter(
       (value) => value.interview_date !== null,
     );
-    if (!invitees_interviewers.length) {
-      setError("No applicants with interview dates found.");
+    if (!invitees_interviewers) {
+      alert("No applicants with interview dates found.");
       return;
     }
 
     const eventData = mapToInterviewEventProps(invitees_interviewers);
 
-    setSendInviteLoading(true);
-    setError(null);
+    e.preventDefault();
+    setLoading(true);
     try {
-      await axios.post(`${BASE_API_URL}/create-calendar-events`, eventData);
+      // Call the lambda function
+      const calendarInvitesResponse = await axios.post(
+        `${BASE_API_URL}/create-calendar-events`,
+        eventData,
+      );
+      // Notify user of successful submission
       alert("Google Calendar Invites have been sent to all candidates.");
+      setLoading(false);
+
+      // clear your form fields.
     } catch (error) {
-      console.error("Error sending invites:", error);
-      setError("Failed to send invites. Please try again later.");
+      console.log(error);
+      alert("Oops! Something went wrong. Please try again later.");
+      setLoading(false);
     } finally {
-      setSendInviteLoading(false);
+      setLoading(false);
     }
   };
 
   const handleScheduleInterviews = async () => {
-    setScheduleInterviewsLoading(true);
+    setLoading(true);
     setError(null);
     try {
-      await axios.post(
+      const res = await axios.post(
         `${BASE_API_URL}/opening/${selectedOpening?.id}/schedule-interviews/`,
       );
-      await fetchData();
+      console.log("res", res);
+      fetchData();
     } catch (err) {
+      // setError(err.message || "An error occurred while scheduling interviews");
       if (axios.isAxiosError(err)) {
-        console.error("Error response:", err.response);
+        console.error("Error response data:", err.response?.data);
+        console.error("Error response status:", err.response?.status);
+        console.error("Error response headers:", err.response?.headers);
         setError(
           err.response?.data?.message ||
             "An error occurred while scheduling interviews",
         );
       } else {
-        console.error("Error:", err);
-        setError("An unexpected error occurred while scheduling interviews");
+        console.error("Error message:", err.message);
+        setError(
+          err.message || "An error occurred while scheduling interviews",
+        );
       }
-    } finally {
-      setScheduleInterviewsLoading(false);
     }
+    setLoading(false);
   };
 
   // Row generation function
@@ -249,6 +293,29 @@ const ViewInterviewAllocation = () => {
               })
             : "No Interview Scheduled"}
         </TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setSelectedApplicant({
+                opening_title: selectedOpening?.title || null,
+                recruitment_round_name: recruitmentDetails.roundName,
+                applicant_email: application.email,
+                opening_name: selectedOpening?.title || null,
+                application_id: application.id,
+                opening_id: selectedOpening?.id || null,
+                recruitment_round_id: recruitmentDetails.roundId,
+                student_team_name: selectedOpening?.student_team_name || null,
+                application_count: null,
+                interview_date: application.interview_date,
+              });
+              navigate(`/manually-schedule-interview`);
+            }}
+            disabled={loading}
+          >
+            Manually Add Interview
+          </Button>
+        </TableCell>
       </TableRow>
     ));
   };
@@ -257,9 +324,9 @@ const ViewInterviewAllocation = () => {
     <>
       <TitleWrapper>
         {/* The title */}
-        <Typography variant="h4">Candidate Submission Status</Typography>
+        <Typography variant="h4">Candiate Submission Status</Typography>
       </TitleWrapper>
-      <PaddingBox />
+      <PaddingBox></PaddingBox>
       {/* The button */}
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
@@ -277,15 +344,11 @@ const ViewInterviewAllocation = () => {
             subject="Interview"
             variant="contained"
             onClick={handleSendInvite}
-            disabled={sendInviteLoading || loading}
+            disabled={loading}
             style={{ marginLeft: "1rem" }}
             tooltipText="You do not have permission to send interview invites"
           >
-            {sendInviteLoading ? (
-              <CircularProgress size={24} />
-            ) : (
-              "SEND INTERVIEW INVITES"
-            )}
+            {loading ? <Skeleton width={100} /> : "SEND INTERVIEW INVITES"}
           </PermissionButton>
 
           <PermissionButton
@@ -293,98 +356,92 @@ const ViewInterviewAllocation = () => {
             subject="Interview"
             variant="contained"
             onClick={handleScheduleInterviews}
-            disabled={scheduleInterviewsLoading || loading}
+            disabled={loading}
             style={{ marginLeft: "1rem" }}
             tooltipText="You do not have permission to schedule interviews"
           >
-            {scheduleInterviewsLoading ? (
-              <CircularProgress size={24} />
-            ) : (
-              "Schedule Interviews"
-            )}
+            {loading ? <Skeleton width={100} /> : "Schedule Interviews"}
           </PermissionButton>
         </Box>
       </Box>
       <PaddingBox>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
+        <PaddingBox></PaddingBox>
+        {/* The table of the of the interview avaliability */}
         <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="recruitment round info">
-            <TableHead>
-              <TableRow>
-                <TableCell>Recruitment Round</TableCell>
-                <TableCell>Interview Preference Deadline</TableCell>
-                <TableCell>Interviews Scheduled</TableCell>
-                <TableCell>Interviews Not Scheduled</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
-                <TableCell>
-                  {round?.interview_preference_deadline
-                    ? new Date(
-                        round.interview_preference_deadline,
-                      ).toLocaleString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })
-                    : "No Deadline"}
-                </TableCell>
-                <TableCell>{interviewScheduledCount}</TableCell>
-                <TableCell>{interviewNotScheduledCount}</TableCell>
-              </TableRow>
-            </TableBody>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableRow>
+              <TableCell>Recruitment Round</TableCell>
+              <TableCell>Interview Preference Deadline</TableCell>
+              <TableCell>Interviews Scheduled</TableCell>
+              <TableCell>Interviews Not Scheduled</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>{`${authStore.team_name} ${selectedOpening?.recruitment_round_id}`}</TableCell>
+              <TableCell>
+                {round?.interview_preference_deadline
+                  ? new Date(
+                      round.interview_preference_deadline,
+                    ).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  : "No Deadline"}
+              </TableCell>
+              <TableCell>{interviewScheduledCount}</TableCell>
+              <TableCell>{interviewNotScheduledCount}</TableCell>
+            </TableRow>
           </Table>
         </TableContainer>
-        <PaddingBox />
+        <PaddingBox></PaddingBox>
         <TextField
           id="outlined-search"
-          label="Search by name"
+          label="Search"
           type="search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          fullWidth
-          margin="normal"
+          value={searchTerm} //
+          onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
         />
       </PaddingBox>
 
       <TableContainer component={Paper}>
-        <Table aria-label="applications table">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Applicant Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Interview Preference Submitted</TableCell>
               <TableCell>Interview Date</TableCell>
+              <TableCell>Manually Schedule Interview</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading
-              ? [...Array(3)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={80} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : generateRowFunction(filteredApplications)}
+            {
+              loading
+                ? [...Array(3)].map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          width={80}
+                          height={30}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : generateRowFunction(filteredApplications) // puts student info into table
+            }
           </TableBody>
         </Table>
       </TableContainer>
@@ -392,4 +449,4 @@ const ViewInterviewAllocation = () => {
   );
 };
 
-export default ViewInterviewAllocation;
+export default InterviewSchedulingPage;

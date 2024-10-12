@@ -13,8 +13,6 @@ import {
   Typography,
   Skeleton,
   IconButton,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import axios from "axios";
 import Modal from "@mui/material/Modal";
@@ -28,9 +26,19 @@ import { getBaseAPIURL } from "../util/Util";
 import React from "react";
 import PermissionButton from "../components/PermissionButton";
 
+// Css style file
+const styles = {
+  scrollableTableBody: {
+    height: "calc(100vh - 650px)",
+    minHeight: "300px",
+    overflowY: "auto",
+    display: "block",
+  },
+};
+
 // Css style for the modal
 const styleLink = {
-  position: "absolute" as const as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -40,7 +48,7 @@ const styleLink = {
   p: 4,
 };
 
-const ViewRecruitmentRoundPage = () => {
+const ViewRecruitmentRoundsPage = () => {
   // State hooks
   // Modal Link modify
   const [urlLink, setUrlLink] = useState("");
@@ -53,12 +61,8 @@ const ViewRecruitmentRoundPage = () => {
   const [loading, setLoading] = useState(true);
 
   const handleAddRoundClick = () => {
-    navigate("/addrecruitmentround");
+    navigate("/add-recruitment-round");
   };
-
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [urlLinkError, setUrlLinkError] = useState<string | null>(null);
 
   // Constants
   enum Status {
@@ -83,24 +87,23 @@ const ViewRecruitmentRoundPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(API_URL);
+
         setData(response.data);
-        const teamMeetingLink =
+        setUrlLink(
           studentTeamStore.studentTeams.find(
             (item) => item.student_team_id === authStore.team_id,
-          )?.student_team_meeting_link || "";
-        setUrlLink(teamMeetingLink);
+          )?.student_team_meeting_link || "",
+        );
       } catch (error) {
-        console.error("There was an error fetching data!", error);
-        setError("Failed to load recruitment rounds. Please try again later.");
+        console.error("There was an error!", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [API_URL, authStore.team_id, studentTeamStore.studentTeams]);
+  }, []);
 
   // Handler functions
 
@@ -117,43 +120,16 @@ const ViewRecruitmentRoundPage = () => {
   };
 
   const handleEditLink = async () => {
-    if (!isValidUrl(urlLink)) {
-      setUrlLinkError("Please enter a valid URL");
-      return;
-    }
-
     try {
-      setLoading(true);
-      await axios.patch(`${BASE_API_URL}/student-team/${studentTeamId}`, {
-        meeting_link: urlLink,
-      });
-      setSuccessMessage("Meeting link updated successfully");
-      handleCloseLink();
+      const response = await axios.patch(
+        `${BASE_API_URL}/student-team/${studentTeamId}`,
+        { meeting_link: urlLink },
+      );
     } catch (error) {
-      console.error("There was an error updating the meeting link!", error);
-      setError("Failed to update meeting link. Please try again.");
+      console.error("There was an error!", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const isValidUrl = (url: string) => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleUrlLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUrlLink(e.target.value);
-    setUrlLinkError(null);
-  };
-
-  const handleCloseSnackbar = () => {
-    setError(null);
-    setSuccessMessage(null);
   };
 
   const handleAllocateTeamLeads = () => {
@@ -229,9 +205,7 @@ const ViewRecruitmentRoundPage = () => {
                         fullWidth
                         variant="filled"
                         value={urlLink}
-                        onChange={handleUrlLinkChange}
-                        error={!!urlLinkError}
-                        helperText={urlLinkError}
+                        onChange={(e) => setUrlLink(e.target.value)}
                       />
                     </Grid>
                   </Grid>
@@ -268,10 +242,9 @@ const ViewRecruitmentRoundPage = () => {
                       subject="Interview"
                       variant="contained"
                       onClick={handleEditLink}
-                      disabled={loading}
                       tooltipText="You do not have permission to update the interview link"
                     >
-                      {loading ? "Saving..." : "Save"}
+                      Save
                     </PermissionButton>
                     <Button variant="contained" onClick={handleCloseLink}>
                       Cancel
@@ -358,15 +331,7 @@ const ViewRecruitmentRoundPage = () => {
             </Grid>
           </Grid>
 
-          <TableContainer
-            component={Paper}
-            sx={{
-              height: "calc(100vh - 650px)",
-              minHeight: "300px",
-              overflowY: "auto",
-              display: "block",
-            }}
-          >
+          <TableContainer component={Paper} style={styles.scrollableTableBody}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
@@ -503,22 +468,9 @@ const ViewRecruitmentRoundPage = () => {
             </Table>
           </TableContainer>
         </section>
-        <Snackbar
-          open={!!error || !!successMessage}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={error ? "error" : "success"}
-            sx={{ width: "100%" }}
-          >
-            {error || successMessage}
-          </Alert>
-        </Snackbar>
       </main>
     </div>
   );
 };
 
-export default ViewRecruitmentRoundPage;
+export default ViewRecruitmentRoundsPage;

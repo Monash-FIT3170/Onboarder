@@ -38,7 +38,7 @@ interface Event {
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const AvailabilityCalendarUser: React.FC = () => {
+const UserAvailabilityCalendarPage: React.FC = () => {
   // State hooks
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const [interviewDates, setInterviewDates] = useState<Event[]>([]);
@@ -47,7 +47,7 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   // Constants
   const navigate = useNavigate();
-  const scrollToTime = new Date();
+
   const BASE_API_URL = getBaseAPIURL();
 
   // Store hooks
@@ -195,6 +195,7 @@ const AvailabilityCalendarUser: React.FC = () => {
   };
 
   // Calendar configuration
+  const scrollToTime = new Date();
   scrollToTime.setHours(9, 0, 0);
 
   const eventStyleGetter = (event) => {
@@ -213,7 +214,7 @@ const AvailabilityCalendarUser: React.FC = () => {
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
         <Grid container alignItems="center" spacing={2}>
           <Grid item>
             <IconButton onClick={() => navigate("/dashboard")} sx={{ mr: 2 }}>
@@ -285,4 +286,4 @@ const AvailabilityCalendarUser: React.FC = () => {
   );
 };
 
-export default AvailabilityCalendarUser;
+export default UserAvailabilityCalendarPage;
