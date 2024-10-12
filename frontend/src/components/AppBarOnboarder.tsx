@@ -161,7 +161,7 @@ function AppBarOnBoarder() {
         </Toolbar>
       </AppBar>
       {isProtectedRoute && !isDashboard && team_name && role && (
-        <Breadcrumbs aria-label="breadcrumb" sx={{ ml: 2, mt: 2, flexGrow: 1 }}>
+        <Breadcrumbs aria-label="breadcrumb" sx={{ ml: 2, mt: 1, flexGrow: 1 }}>
           {pathnames.map((value, index) => {
             const isLast = index === pathnames.length - 1;
             const isFirst = index === 0;
@@ -177,7 +177,7 @@ function AppBarOnBoarder() {
                 {pathToNameMap[`/${value}`] + " /"}
               </Typography>
             ) : isLast ? (
-              <Typography sx={{ color: "text.primary" }}>
+              <Typography sx={{ color: "text.primary" }} variant="body2">
                 {pathToNameMap[`/${value}`]}
               </Typography>
             ) : isFirst ? (
@@ -185,12 +185,13 @@ function AppBarOnBoarder() {
                 underline="hover"
                 color="inherit"
                 sx={{ display: "flex", alignItems: "center" }}
+                variant="body2"
               >
                 <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
                 {pathToNameMap[`/${value}`]}
               </Link>
             ) : (
-              <Link underline="hover" color="inherit">
+              <Link underline="hover" color="inherit" variant="body2">
                 {pathToNameMap[`/${value}`]}
               </Link>
             );

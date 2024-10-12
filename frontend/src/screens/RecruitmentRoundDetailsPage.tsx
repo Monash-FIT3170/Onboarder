@@ -424,7 +424,7 @@ function RecruitmentRoundDetailsPage() {
           <Button
             variant="outlined"
             onClick={handleCloseModal}
-            sx={{ mt: 2, mr: 1 }}
+            sx={{ mt: 1, mr: 1 }}
           >
             Cancel
           </Button>
@@ -433,7 +433,7 @@ function RecruitmentRoundDetailsPage() {
             subject="Round"
             variant="contained"
             onClick={handleConfirm}
-            sx={{ mt: 2 }}
+            sx={{ mt: 1 }}
             tooltipText="You do not have permission to archive this round"
           >
             Confirm

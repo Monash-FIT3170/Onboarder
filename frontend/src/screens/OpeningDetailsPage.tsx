@@ -297,7 +297,11 @@ function OpeningDetailsPage() {
     <div>
       {/* Creates a button below allowing the user to add positions */}
       <div
-        style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "0px 0px 10px",
+        }}
       >
         <IconButton onClick={() => handleBack()}>
           <BackIcon />
