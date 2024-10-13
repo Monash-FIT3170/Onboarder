@@ -134,10 +134,10 @@ function OnboarderOpeningsPage() {
 
       <Grid
         container
-        spacing={2}
+        spacing={1}
         alignItems="center"
         justifyContent="center"
-        marginTop="10px"
+        marginTop="8px"
       >
         <Grid item xs={3}>
           <TextField
@@ -154,8 +154,8 @@ function OnboarderOpeningsPage() {
         style={{
           display: "flex",
           flexDirection: "column",
-          rowGap: "20px",
-          marginTop: "30px",
+          rowGap: "8px",
+          marginTop: "16px",
         }}
       >
         {loading ? (

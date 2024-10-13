@@ -75,11 +75,7 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
     setSelectedTeam(null);
   };
 
-  const generateRowFunction = (
-    results: onboarderOpeningResultProps[],
-    // navigate: ReturnType<typeof useNavigate>,
-    // setOpeningDetails: (round_id: number, opening_id: number) => void,
-  ) => {
+  const generateRowFunction = (results: onboarderOpeningResultProps[]) => {
     return results.map((result) => {
       const formattedDeadline = (() => {
         const date = new Date(result.recruitment_round_deadline);
@@ -106,7 +102,7 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
           <TableCell>
             <Button
               variant="contained"
-              style={{ marginRight: "10px", padding: 2 }}
+              style={{ marginRight: "10px" }}
               onClick={() => {
                 handleApply(result.id, result.recruitment_round_id);
               }}
@@ -115,7 +111,7 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
             </Button>
             <Button
               variant="outlined"
-              style={{ padding: 2 }}
+              // style={{ padding: 2 }}
               onClick={() => handleTeamInfoClick(result)}
             >
               View Team Info
@@ -140,9 +136,7 @@ export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
               <TableCell> Actions </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {generateRowFunction(props.results, navigate, setOpeningDetails)}
-          </TableBody>
+          <TableBody>{generateRowFunction(props.results)}</TableBody>
         </Table>
       </TableContainer>
 
