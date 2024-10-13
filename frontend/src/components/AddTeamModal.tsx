@@ -41,6 +41,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
               autoFocus
               margin="dense"
               label="Team name"
+              placeholder="E.g. MCAV"
               type="text"
               fullWidth
               variant="outlined"
@@ -55,6 +56,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
               type="text"
               fullWidth
               variant="outlined"
+              placeholder="E.g. Monash Connected Autonomous Vehicle"
               multiline
               rows={4}
               value={teamDescription}

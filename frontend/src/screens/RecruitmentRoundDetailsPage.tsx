@@ -185,6 +185,8 @@ function RecruitmentRoundDetailsPage() {
     student_team_name: string,
     title: string,
     application_count: number,
+    interview_allocation_status: string,
+    calendar_invites_sent: boolean,
   ) => {
     setSelectedOpening({
       id,
@@ -192,6 +194,8 @@ function RecruitmentRoundDetailsPage() {
       student_team_name,
       title,
       application_count,
+      interview_allocation_status,
+      calendar_invites_sent,
     });
     navigate("/opening-details");
   };

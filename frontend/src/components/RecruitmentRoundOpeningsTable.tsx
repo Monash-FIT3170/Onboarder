@@ -27,6 +27,8 @@ export interface openingsResultProps {
   applications_count: number;
   applications_pending_review: number;
   opening_title: string;
+  interview_allocation_status: string;
+  calendar_invites_sent: boolean;
 }
 
 interface RecruitmentRoundOpeningsTableProps {
@@ -48,6 +50,8 @@ const generateRowFunction = (
     student_team_name: string,
     title: string,
     applications_count: number,
+    interview_allocation_status: string,
+    calendar_invites_sent: boolean,
   ) => void,
 ) => {
   return results.map((result) => {
@@ -73,6 +77,8 @@ const generateRowFunction = (
                 result.student_team_name,
                 result.opening_title,
                 result.applications_count,
+                result.interview_allocation_status,
+                result.calendar_invites_sent,
               )
             }
           >
