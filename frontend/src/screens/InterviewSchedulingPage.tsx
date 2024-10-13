@@ -13,6 +13,8 @@ import {
   Skeleton,
   Button,
   Tooltip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
@@ -101,6 +103,26 @@ const InterviewSchedulingPage = () => {
   const availabilitySubmittedCount = applications.filter(
     (app) => app.candidate_availability != null,
   ).length;
+
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "info" | "warning";
+  }>({
+    open: false,
+    message: "",
+    severity: "info",
+  });
+
+  const handleCloseSnackbar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const navigate = useNavigate();
   const BASE_API_URL = getBaseAPIURL();
@@ -194,6 +216,7 @@ const InterviewSchedulingPage = () => {
         interviewers: [application.profile.email],
         organizer_name: authStore.team_name,
         meeting_link: meeting_link,
+        opening_id: selectedOpening?.id || 0,
       };
     });
   };
@@ -219,12 +242,22 @@ const InterviewSchedulingPage = () => {
     setLoading(true);
     try {
       // Call the lambda function
-      await axios.post(`${BASE_API_URL}/create-calendar-events`, eventData);
-      // Notify user of successful submission
-      alert("Google Calendar Invites have been sent to all candidates.");
-      setLoading(false);
+      const response = await axios.post(
+        `${BASE_API_URL}/create-calendar-events`,
+        eventData,
+      );
 
-      // clear your form fields.
+      const failedInvites = response.data.results.filter(
+        (result: any) => result.success === false,
+      );
+
+      if (failedInvites.length > 0) {
+        alert("Error: Some Google Calendar Invites failed to send.");
+      } else {
+        // Notify user of successful submission
+        alert("Google Calendar Invites have been sent to all candidates.");
+      }
+      setLoading(false);
     } catch (error) {
       console.error("Error sending calendar invites");
       alert("Oops! Something went wrong. Please try again later.");
@@ -238,10 +271,27 @@ const InterviewSchedulingPage = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post(
+      const response = await axios.post(
         `${BASE_API_URL}/opening/${selectedOpening?.id}/schedule-interviews/`,
       );
+
+      if (response.data.optimisationSuccess === false) {
+        setError("Optimisation script failed");
+        setSnackbar({
+          open: true,
+          message: "Optimisation script failed",
+          severity: "error",
+        });
+        setLoading(false);
+        return false;
+      }
+
       fetchData();
+      setSnackbar({
+        open: true,
+        message: "Successfully scheduled interviews",
+        severity: "success",
+      });
     } catch (err) {
       // setError(err.message || "An error occurred while scheduling interviews");
       if (axios.isAxiosError(err)) {
@@ -252,6 +302,11 @@ const InterviewSchedulingPage = () => {
           err.response?.data?.message ||
             "An error occurred while scheduling interviews",
         );
+        setSnackbar({
+          open: true,
+          message: "An error occurred while scheduling interviews",
+          severity: "error",
+        });
       } else {
         console.error("Error message:", err.message);
         setError(
@@ -426,11 +481,11 @@ const InterviewSchedulingPage = () => {
             </TableCell>
             <TableCell>
               {interviewScheduledCount > 0
-                ? "Yes ( " +
+                ? "Yes (" +
                   interviewScheduledCount +
                   "/" +
                   (interviewScheduledCount + interviewNotScheduledCount) +
-                  " )"
+                  ")"
                 : "No"}
             </TableCell>
             <TableCell>
@@ -439,7 +494,7 @@ const InterviewSchedulingPage = () => {
           </TableRow>
         </Table>
       </TableContainer>
-      <Box display="flex" justifyContent="space-between" sx={{ mt: 2, mb: 0 }}>
+      <Box display="flex" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
         <Box display="flex" alignItems="center">
           <Typography variant="h5">Candidates</Typography>
         </Box>
@@ -488,11 +543,25 @@ const InterviewSchedulingPage = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                : generateRowFunction(applications) // puts student info into table
+                : generateRowFunction(filteredApplications) // puts student info into table
             }
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

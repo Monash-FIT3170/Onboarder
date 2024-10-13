@@ -297,6 +297,8 @@ If you would like to try run the algorithm, you will need a python virtual envir
    python -m venv venv
    ```
 
+   You may need to use `python3` instead of `python`
+
 3. Then activate it:
 
    ```bash

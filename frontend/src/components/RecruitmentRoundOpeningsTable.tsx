@@ -54,40 +54,42 @@ const generateRowFunction = (
     calendar_invites_sent: boolean,
   ) => void,
 ) => {
-  return results.map((result) => {
-    return (
-      <TableRow
-        key={result.title}
-        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-      >
-        <TableCell component="th" scope="row">
-          {result.opening_title}
-        </TableCell>
-        <TableCell>{result.applications_count}</TableCell>
-        {/* <TableCell>
-          {result.applications_pending_review} Applications Pending Review
-        </TableCell> */}
-        <TableCell>
-          <Button
-            variant="contained"
-            onClick={() =>
-              viewHandler(
-                result.id,
-                result.recruitment_round_id,
-                result.student_team_name,
-                result.opening_title,
-                result.applications_count,
-                result.interview_allocation_status,
-                result.calendar_invites_sent,
-              )
-            }
-          >
-            View Opening
-          </Button>
-        </TableCell>
-      </TableRow>
-    );
-  });
+  return results
+    .sort((a, b) => a.id - b.id)
+    .map((result) => {
+      return (
+        <TableRow
+          key={result.id}
+          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+        >
+          <TableCell component="th" scope="row">
+            {result.opening_title}
+          </TableCell>
+          <TableCell>{result.applications_count}</TableCell>
+          {/* <TableCell>
+            {result.applications_pending_review} Applications Pending Review
+          </TableCell> */}
+          <TableCell>
+            <Button
+              variant="contained"
+              onClick={() =>
+                viewHandler(
+                  result.id,
+                  result.recruitment_round_id,
+                  result.student_team_name,
+                  result.opening_title,
+                  result.applications_count,
+                  result.interview_allocation_status,
+                  result.calendar_invites_sent,
+                )
+              }
+            >
+              View Opening
+            </Button>
+          </TableCell>
+        </TableRow>
+      );
+    });
 };
 
 export function RecruitmentRoundOpeningsTable(

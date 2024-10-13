@@ -214,6 +214,7 @@ def schedule_interviews(opening_id):
         import optimisation
         event = json.dumps({'Records': [{'body': {'opening_id': opening_id}}]})
         optimisation.lambda_handler(event, {})
+        
     else:
         print('Running on AWS')
         sqs.post(body)

@@ -299,7 +299,7 @@ function OpeningDetailsPage() {
               component="div"
               // sx={{ fontWeight: "bold" }}
             >
-              {title}
+              {title + " (" + filteredApplications.length + ")"}
             </Typography>
           </Box>
           {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
