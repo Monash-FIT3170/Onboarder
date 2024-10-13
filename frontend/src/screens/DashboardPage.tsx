@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
-import {
-  DashboardTable,
-  StudentTeamResultProps,
-} from "../components/DashboardTable";
+import { DashboardTable } from "../components/DashboardTable";
 import styled from "styled-components";
 import AddTeamModal from "../components/AddTeamModal";
 import { useAuthStore } from "../util/stores/authStore";
@@ -25,65 +22,10 @@ const ButtonStyle = styled.div`
 
 const DashboardPage: React.FC = () => {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const BASE_API_URL = getBaseAPIURL();
-  const authStore = useAuthStore();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
 
-  const { user, profile } = useAuthStore();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // let profileId: string | null = "1"; // Replace with actual profile id fetching logic, this is for demo only (delete this line and uncomment below line)
-        let profileId = profile;
-
-        if (!profileId) {
-          profileId = await authStore.fetchProfile();
-        }
-        console.log("Profile ID: ", profileId);
-
-        const rolesResponse = await axios.get(
-          `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
-        );
-        // console.log(rolesResponse.data);
-        const tableData = rolesResponse.data
-          .map((role: any) => ({
-            id: role.profile_id, // Assuming the API returns a user id
-            student_team_id: role.student_team_id,
-            student_team_name: role.student_team_name,
-            user_team_role:
-              role.your_role === "O"
-                ? "Owner"
-                : role.your_role === "A"
-                  ? "Admin"
-                  : "Team Lead",
-            student_team_owner: role.owner_email,
-            student_team_description: role.student_team_description,
-            student_team_meeting_link: role.student_team_meeting_link,
-          }))
-          .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
-            const roleRanking: { [key: string]: number } = {
-              Owner: 0,
-              Admin: 1,
-              "Team Lead": 2,
-            };
-            return (
-              roleRanking[a.user_team_role] - roleRanking[b.user_team_role]
-            );
-          });
-        // console.log(tableData);
-
-        setStudentTeams(tableData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [isAddTeamModalOpen]);
+  const { user } = useAuthStore();
 
   const handleAddTeamClick = () => {
     setIsAddTeamModalOpen(true);

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import PermissionButton from "./PermissionButton";
+import RoleIcon from "../util/RoleIcon";
 
 interface TeamMember {
   email: string;
@@ -45,7 +46,12 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
           {members.map((member) => (
             <TableRow key={member.profile_id}>
               <TableCell>{member.email}</TableCell>
-              <TableCell>{member.role}</TableCell>
+              <TableCell>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <RoleIcon role={member.role} />
+                  {member.role}
+                </div>
+              </TableCell>
               <TableCell>
                 {member.profile_id === currentUserProfileId
                   ? "Current User"
