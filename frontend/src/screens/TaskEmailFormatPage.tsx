@@ -140,11 +140,11 @@ const TaskEmailFormatPage: React.FC = () => {
 
   return (
     <Box sx={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <Typography variant="h5" sx={{ marginBottom: "20px" }}>
+      <Typography variant="h4" sx={{ marginBottom: "20px" }}>
         Email Configuration
       </Typography>
 
-      <Typography variant="h6" sx={{ marginBottom: "20px" }}>
+      <Typography variant="h5" sx={{ marginBottom: "20px" }}>
         Email Format
       </Typography>
 
@@ -180,7 +180,7 @@ const TaskEmailFormatPage: React.FC = () => {
           marginBottom: "20px",
         }}
       >
-        <Typography variant="h6">Task Details (Optional)</Typography>
+        <Typography variant="h5">Task Details (Optional)</Typography>
         <FormControlLabel
           control={<Switch checked={taskOn} onChange={handleToggle} />}
           label="Task On?"

@@ -143,7 +143,10 @@ const InterviewSchedulingPage = () => {
       const applicationsResponse = await axios.get(
         `${BASE_API_URL}/opening/${selectedOpening?.id}/application`,
       );
-      setApplications(applicationsResponse.data);
+      const onlyCandidate = applicationsResponse.data.filter(
+        (app) => app.status == "C",
+      );
+      setApplications(onlyCandidate);
       const roundResponse = await axios.get(
         `${BASE_API_URL}/recruitment-round/${selectedOpening?.recruitment_round_id}/`,
       );
@@ -216,10 +219,7 @@ const InterviewSchedulingPage = () => {
     setLoading(true);
     try {
       // Call the lambda function
-      const calendarInvitesResponse = await axios.post(
-        `${BASE_API_URL}/create-calendar-events`,
-        eventData,
-      );
+      await axios.post(`${BASE_API_URL}/create-calendar-events`, eventData);
       // Notify user of successful submission
       alert("Google Calendar Invites have been sent to all candidates.");
       setLoading(false);
@@ -284,6 +284,9 @@ const InterviewSchedulingPage = () => {
                 hour12: true,
               })
             : "No Interview Scheduled"}
+        </TableCell>
+        <TableCell>
+          {application?.profile?.email || "No Interviewer Allocated"}
         </TableCell>
         <TableCell>
           <Button
@@ -436,14 +439,19 @@ const InterviewSchedulingPage = () => {
           </TableRow>
         </Table>
       </TableContainer>
-      <TextField
-        id="outlined-search"
-        label="Search"
-        type="search"
-        value={searchTerm}
-        sx={{ mt: 1, mb: 1, width: "25%" }} // Set width to 100%
-        onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
-      />
+      <Box display="flex" justifyContent="space-between" sx={{ mt: 2, mb: 0 }}>
+        <Box display="flex" alignItems="center">
+          <Typography variant="h5">Candidates</Typography>
+        </Box>
+        <TextField
+          id="outlined-search"
+          label="Search"
+          type="search"
+          value={searchTerm}
+          sx={{ width: "25%" }}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </Box>
 
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
@@ -453,7 +461,8 @@ const InterviewSchedulingPage = () => {
               <TableCell>Email</TableCell>
               <TableCell>Interview Preference Submitted</TableCell>
               <TableCell>Interview Date</TableCell>
-              <TableCell>Manually Schedule Interview</TableCell>
+              <TableCell>Interviewer</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -479,7 +488,7 @@ const InterviewSchedulingPage = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                : generateRowFunction(filteredApplications) // puts student info into table
+                : generateRowFunction(applications) // puts student info into table
             }
           </TableBody>
         </Table>

@@ -227,8 +227,8 @@ function ApplicationSubmissionPage() {
       <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
-      <Typography variant="h5" component="div">
-        {opening?.opening_title}
+      <Typography variant="h4" component="div">
+        {"Opening: " + opening?.opening_title}
       </Typography>
       <Typography variant="body1" component="div">
         Description: {opening?.opening_description}

@@ -25,6 +25,7 @@ import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
 import React from "react";
 import PermissionButton from "../components/PermissionButton";
+import ConfigureInterviewLinkModal from "../components/ConfigureInterviewLinkModal";
 
 // Css style file
 const styles = {
@@ -53,9 +54,9 @@ const ViewRecruitmentRoundsPage = () => {
   // State hooks
   // Modal Link modify
   const [urlLink, setUrlLink] = useState("");
-  const [openLink, setOpenLink] = React.useState(false);
+  const [isEditLinkModalOpen, setOpenLink] = React.useState(false);
   const handleOpenLink = () => setOpenLink(true);
-  const handleCloseLink = () => setOpenLink(false);
+  const handleCloseLinkModal = () => setOpenLink(false);
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const [data, setData] = useState([]);
@@ -120,19 +121,6 @@ const ViewRecruitmentRoundsPage = () => {
     navigate("/recruitment-round-details");
   };
 
-  const handleEditLink = async () => {
-    try {
-      const response = await axios.patch(
-        `${BASE_API_URL}/student-team/${studentTeamId}`,
-        { meeting_link: urlLink },
-      );
-    } catch (error) {
-      console.error("There was an error!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleAllocateTeamLeads = () => {
     navigate("/view-team-leads");
   };
@@ -143,6 +131,18 @@ const ViewRecruitmentRoundsPage = () => {
 
   const handleBack = () => {
     navigate("/dashboard");
+  };
+
+  const handleEditLink = async (urlLink: string) => {
+    try {
+      await axios.patch(`${BASE_API_URL}/student-team/${studentTeamId}`, {
+        meeting_link: urlLink,
+      });
+    } catch (error) {
+      console.error("There was an error!", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filterData = (round: any) => {
@@ -180,82 +180,12 @@ const ViewRecruitmentRoundsPage = () => {
             </Typography>
           </Box>
           <Grid>
-            <Modal
-              open={openLink}
-              onClose={handleCloseLink}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={styleLink}>
-                <Typography
-                  id="modal-modal-title"
-                  variant="h4"
-                  component="h2"
-                  align="center"
-                >
-                  CONFIGURE INTERVIEW LINK
-                </Typography>
-                <Grid>
-                  <Grid alignItems="center" justifyContent="flex-start">
-                    <Grid item xs={10} sm={10}>
-                      <h3 style={{ fontWeight: "normal" }}>
-                        Enter URL Here (Optional):
-                      </h3>
-                      <TextField
-                        placeholder="https://zoom-example.com"
-                        id="outlined-multiline-static"
-                        label="Global Meeting URL"
-                        fullWidth
-                        variant="filled"
-                        value={urlLink}
-                        onChange={(e) => setUrlLink(e.target.value)}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={30} sm={30} marginLeft={0}>
-                  <Grid
-                    spacing={1}
-                    alignItems="center"
-                    justifyContent="flex-start"
-                  >
-                    <Grid item xs={10} sm={10}>
-                      <Box mt={2}>
-                        <Typography variant="body1" component="p" paragraph>
-                          Onboarder does not generate zoom/meeting links.
-                          <br />
-                          To add a global/reusable meeting link, please enter
-                          the link here.
-                          <br />
-                          This will be used as meeting link for all interviews
-                          that your team conducts.
-                          <br />
-                          Alternatively, you can assign individual links on
-                          Google Calendar after you have sent out the event
-                          invites.
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} sm={12} mt={4}>
-                  <Box display="flex" justifyContent="center" gap={2}>
-                    <PermissionButton
-                      action="update"
-                      subject="Interview"
-                      variant="contained"
-                      onClick={handleEditLink}
-                      tooltipText="You do not have permission to update the interview link"
-                    >
-                      Save
-                    </PermissionButton>
-                    <Button variant="contained" onClick={handleCloseLink}>
-                      Cancel
-                    </Button>
-                  </Box>
-                </Grid>
-              </Box>
-            </Modal>
+            <ConfigureInterviewLinkModal
+              open={isEditLinkModalOpen}
+              onClose={handleCloseLinkModal}
+              onEditLink={handleEditLink}
+              urlLinkIn={urlLink}
+            />
           </Grid>
 
           <Box>

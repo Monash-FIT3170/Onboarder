@@ -58,55 +58,64 @@ INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUE
 -- Insert recruitment rounds
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, application_deadline, status, interview_preference_deadline, interview_period) VALUES
     -- MCAV (id: 1)
+    -- MCAV 1
     (1, 'S1', 2024, '2024-10-06 23:59:59+11:00', 'A', '2024-10-08 23:59:59+11:00', ARRAY['2024-10-10T00:00:00.000+11:00','2024-10-12T23:59:59.999+11:00']),  -- Active
+    -- MCAV 2
     (1, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Inactive
-    (1, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Inactive
+    -- MCAV 3
+    (1, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'R', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Archived
+    -- MCAV 4
     (1, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  -- Archived
 
     -- MNR (id: 2)
-    (2, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  
-    (2, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  
-    (2, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  
-    (2, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  
+    (2, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  
+    (2, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  
+    (2, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  
+    (2, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  
 
     -- MMS (id: 3)
-    (3, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),
-    (3, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),
-    (3, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),
-    (3, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),
+    (3, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),
+    (3, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),
+    (3, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),
+    (3, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),
 
     -- Team Delta (id: 4)
-    (4, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']), 
-    (4, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']), 
-    (4, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']), 
-    (4, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']); 
+    (4, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'R', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']), 
+    (4, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'R', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']), 
+    (4, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'A', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']), 
+    (4, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'I', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']); 
 
     
 -- Insert openings
 INSERT INTO public."OPENING" (recruitment_round_id, title, description, status, required_skills, desired_skills, task_email_format, task_enabled, interview_allocation_status) VALUES
-    -- MCAV, S1 2023 (Archived)
-    (1, 'Junior Developer', 'Entry-level software development position', 'R', ARRAY['Java', 'Git'], ARRAY['Spring Boot', 'REST APIs'], 'Please complete the coding task: {}', TRUE, 'S'),
-    (1, 'UI/UX Designer', 'Design user interfaces for web applications', 'R', ARRAY['Figma', 'Adobe XD'], ARRAY['HTML', 'CSS'], 'Create a mockup for: {}', TRUE, 'S'),
-    (1, 'Data Analyst', 'Entry-level data analysis role', 'R', ARRAY['Python', 'SQL'], ARRAY['Tableau', 'R'], 'Analyze the following dataset: {}', TRUE, 'S'),
-    (1, 'QA Tester', 'Software testing and quality assurance', 'R', ARRAY['Selenium', 'JUnit'], ARRAY['Jenkins', 'JIRA'], 'Develop test cases for: {}', FALSE, 'S'),
-
-    -- MCAV, S2 2023 (Archived)
-    (2, 'Frontend Developer', 'Build responsive web applications', 'R', ARRAY['JavaScript', 'React'], ARRAY['TypeScript', 'Redux'], 'Implement a React component for: {}', TRUE, 'S'),
-    (2, 'Backend Developer', 'Develop server-side applications', 'R', ARRAY['Node.js', 'Express'], ARRAY['MongoDB', 'GraphQL'], 'Create an API endpoint for: {}', TRUE, 'S'),
-    (2, 'DevOps Engineer', 'Manage CI/CD pipelines and infrastructure', 'R', ARRAY['Docker', 'Kubernetes'], ARRAY['AWS', 'Terraform'], 'Set up a deployment pipeline for: {}', FALSE, 'S'),
-    (2, 'Machine Learning Engineer', 'Develop and deploy ML models', 'R', ARRAY['Python', 'TensorFlow'], ARRAY['PyTorch', 'Scikit-learn'], 'Train a model to predict: {}', TRUE, 'S'),
-
     -- MCAV, S2 2024 (Active)
-    (3, 'Full Stack Developer', 'End-to-end web application development', 'A', ARRAY['JavaScript', 'Python', 'SQL'], ARRAY['React', 'Django', 'PostgreSQL'], 'Build a full-stack app for: {}', TRUE, 'N'),
-    (3, 'Mobile App Developer', 'Develop cross-platform mobile applications', 'A', ARRAY['React Native', 'JavaScript'], ARRAY['iOS', 'Android'], 'Create a mobile app prototype for: {}', TRUE, 'N'),
-    (3, 'Cloud Architect', 'Design and implement cloud solutions', 'A', ARRAY['AWS', 'Azure'], ARRAY['GCP', 'Serverless'], 'Architect a cloud solution for: {}', FALSE, 'N'),
-    (3, 'Data Engineer', 'Build data pipelines and infrastructure', 'A', ARRAY['Python', 'SQL', 'Airflow'], ARRAY['Spark', 'Kafka'], 'Design a data pipeline for: {}', TRUE, 'N'),
+    -- Unscheduled, No avail
+    (1, 'Full Stack Developer', 'End-to-end web application development', 'A', ARRAY['JavaScript', 'Python', 'SQL'], ARRAY['React', 'Django', 'PostgreSQL'], 'Build a full-stack app for: {}', FALSE, 'N'),
+    -- Unscheduled, Avail
+    (1, 'Mobile App Developer', 'Develop cross-platform mobile applications', 'A', ARRAY['React Native', 'JavaScript'], ARRAY['iOS', 'Android'], 'Create a mobile app prototype for: {}', FALSE, 'N'),
+    -- Scheduled, Avail
+    (1, 'Cloud Architect', 'Design and implement cloud solutions', 'A', ARRAY['AWS', 'Azure'], ARRAY['GCP', 'Serverless'], 'Architect a cloud solution for: {}', FALSE, 'S'),
+    -- Scheduled, Emails Sent
+    (1, 'Data Engineer', 'Build data pipelines and infrastructure', 'A', ARRAY['Python', 'SQL', 'Airflow'], ARRAY['Spark', 'Kafka'], 'Design a data pipeline for: {}', FALSE, 'S'),
 
     -- MCAV, S1 2025 (Inactive, Future)
-    (4, 'AI Research Intern', 'Assist in cutting-edge AI research projects', 'I', ARRAY['Python', 'Machine Learning'], ARRAY['NLP', 'Computer Vision'], 'Propose a research project on: {}', TRUE, 'N'),
-    (4, 'Blockchain Developer', 'Develop decentralized applications', 'I', ARRAY['Solidity', 'Ethereum'], ARRAY['Web3.js', 'Smart Contracts'], 'Create a simple smart contract for: {}', TRUE, 'N'),
-    (4, 'VR/AR Developer', 'Create immersive virtual and augmented reality experiences', 'I', ARRAY['Unity', 'C#'], ARRAY['AR Kit', 'VR Hardware'], 'Design a VR/AR prototype for: {}', TRUE, 'N'),
-    (4, 'Quantum Computing Researcher', 'Explore quantum algorithms and applications', 'I', ARRAY['Quantum Mechanics', 'Linear Algebra'], ARRAY['Qiskit', 'Q#'], 'Simulate a quantum circuit for: {}', FALSE, 'N'),
+    (2, 'AI Research Intern', 'Assist in cutting-edge AI research projects', 'I', ARRAY['Python', 'Machine Learning'], ARRAY['NLP', 'Computer Vision'], 'Propose a research project on: {}', TRUE, 'N'),
+    (2, 'Blockchain Developer', 'Develop decentralized applications', 'I', ARRAY['Solidity', 'Ethereum'], ARRAY['Web3.js', 'Smart Contracts'], 'Create a simple smart contract for: {}', TRUE, 'N'),
+    (2, 'VR/AR Developer', 'Create immersive virtual and augmented reality experiences', 'I', ARRAY['Unity', 'C#'], ARRAY['AR Kit', 'VR Hardware'], 'Design a VR/AR prototype for: {}', TRUE, 'N'),
+    (2, 'Quantum Computing Researcher', 'Explore quantum algorithms and applications', 'I', ARRAY['Quantum Mechanics', 'Linear Algebra'], ARRAY['Qiskit', 'Q#'], 'Simulate a quantum circuit for: {}', FALSE, 'N'),
+    -- MCAV, S1 2023 (Archived)
+    (3, 'Junior Developer', 'Entry-level software development position', 'R', ARRAY['Java', 'Git'], ARRAY['Spring Boot', 'REST APIs'], 'Please complete the coding task: {}', TRUE, 'S'),
+    (3, 'UI/UX Designer', 'Design user interfaces for web applications', 'R', ARRAY['Figma', 'Adobe XD'], ARRAY['HTML', 'CSS'], 'Create a mockup for: {}', TRUE, 'S'),
+    (3, 'Data Analyst', 'Entry-level data analysis role', 'R', ARRAY['Python', 'SQL'], ARRAY['Tableau', 'R'], 'Analyze the following dataset: {}', TRUE, 'S'),
+    (3, 'QA Tester', 'Software testing and quality assurance', 'R', ARRAY['Selenium', 'JUnit'], ARRAY['Jenkins', 'JIRA'], 'Develop test cases for: {}', FALSE, 'S'),
+
+    -- MCAV, S2 2023 (Archived)
+    (4, 'Frontend Developer', 'Build responsive web applications', 'R', ARRAY['JavaScript', 'React'], ARRAY['TypeScript', 'Redux'], 'Implement a React component for: {}', TRUE, 'S'),
+    (4, 'Backend Developer', 'Develop server-side applications', 'R', ARRAY['Node.js', 'Express'], ARRAY['MongoDB', 'GraphQL'], 'Create an API endpoint for: {}', TRUE, 'S'),
+    (4, 'DevOps Engineer', 'Manage CI/CD pipelines and infrastructure', 'R', ARRAY['Docker', 'Kubernetes'], ARRAY['AWS', 'Terraform'], 'Set up a deployment pipeline for: {}', FALSE, 'S'),
+    (4, 'Machine Learning Engineer', 'Develop and deploy ML models', 'R', ARRAY['Python', 'TensorFlow'], ARRAY['PyTorch', 'Scikit-learn'], 'Train a model to predict: {}', TRUE, 'S'),
+
+
 
     -- MNR, S1 2023 (Archived)
     (5, 'Data Scientist', 'Analyze complex datasets and build predictive models', 'R', ARRAY['Python', 'R', 'Machine Learning'], ARRAY['Deep Learning', 'NLP'], 'Develop a predictive model for: {}', TRUE, 'S'),
@@ -206,14 +215,37 @@ RETURNS TABLE (
     major_enrolled VARCHAR,
     additional_info VARCHAR,  -- Changed from TEXT to VARCHAR
     skills VARCHAR[],
-    candidate_availability VARCHAR[]
+    candidate_availability VARCHAR[],
+    interview_date TIMESTAMP WITH TIME ZONE, 
+    status VARCHAR,
+    profile_id INTEGER
 ) AS $$
 BEGIN
     RETURN QUERY VALUES
-    ('applicant1@example.com'::VARCHAR, 'John Smith'::VARCHAR, '+1-123-456-7890'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Computer Science'::VARCHAR, 'Interested in software development'::VARCHAR, ARRAY['Python', 'Java']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[]),
-    ('applicant2@example.com'::VARCHAR, 'Jane Doe'::VARCHAR, '+1-234-567-8901'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Data Science'::VARCHAR, 'Passionate about data analysis'::VARCHAR, ARRAY['R', 'SQL']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[]),
-    -- ... (repeat for all 20 applicants, ensuring all types are cast correctly)
-    ('applicant20@example.com'::VARCHAR, 'Charlotte Walker'::VARCHAR, '+1-012-345-6780'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Business Administration'::VARCHAR, 'Experienced in ERP systems'::VARCHAR, ARRAY['SAP', 'Oracle']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[]);
+    -- Opening 1 (Unscheduled, no avail)
+    ('applicant1@example.com'::VARCHAR, 'John Smith'::VARCHAR, '+1-123-456-7890'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Computer Science'::VARCHAR, 'Interested in software development'::VARCHAR, ARRAY['Python', 'Java']::VARCHAR[], NULL, NULL, 'A'::VARCHAR(1), NULL),
+    ('applicant2@example.com'::VARCHAR, 'Jane Doe'::VARCHAR, '+1-234-567-8900'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Data Science'::VARCHAR, 'Passionate about data analysis'::VARCHAR, ARRAY['R', 'SQL']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
+    ('applicant3@example.com'::VARCHAR, 'Michael Johnson'::VARCHAR, '+1-345-678-9010'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Business Administration'::VARCHAR, 'Interested in project management'::VARCHAR, ARRAY['Agile ', 'Scrum']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
+    ('applicant4@example.com'::VARCHAR, 'Emily Brown'::VARCHAR, '+1-456-789-0120'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about AI and machine learning'::VARCHAR, ARRAY['Python', 'TensorFlow']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
+    ('applicant5@example.com'::VARCHAR, 'David Wilson'::VARCHAR, '+1-567-890-1230'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Computer Science'::VARCHAR, 'Experienced in web development'::VARCHAR, ARRAY['JavaScript', 'React']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
+    -- Opening 2 (Unscheduled, avail)
+    ('applicant6@example.com'::VARCHAR, 'Sarah Davis'::VARCHAR, '+1-678-901-2340'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Data Science'::VARCHAR, 'Skilled in data visualization'::VARCHAR, ARRAY['Python', 'Tableau']::VARCHAR[], NULL, NULL, 'A', NULL),
+    ('applicant7@example.com'::VARCHAR, 'Daniel Taylor'::VARCHAR, '+1-789-012-3450'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Computer Science'::VARCHAR, 'Passionate about cybersecurity'::VARCHAR, ARRAY['C++', 'Network Security']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant8@example.com'::VARCHAR, 'Olivia Anderson'::VARCHAR, '+1-890-123-4560'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Business Administration'::VARCHAR, 'Interested in IT project management'::VARCHAR, ARRAY['JIRA', 'MS Project']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant9@example.com'::VARCHAR, 'Matthew Thomas'::VARCHAR, '+1-901-234-5670'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about mobile app development'::VARCHAR, ARRAY['Swift', 'Kotlin']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant10@example.com'::VARCHAR, 'Sophia Jackson'::VARCHAR, '+1-012-345-6780'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Data Science'::VARCHAR, 'Experienced in big data technologies'::VARCHAR, ARRAY['Hadoop', 'Spark']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    -- Opening 3 (Scheduled, avail)
+    ('applicant11@example.com'::VARCHAR, 'William White'::VARCHAR, '+1-123-456-7890'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Computer Science'::VARCHAR, 'Interested in cloud computing'::VARCHAR, ARRAY['AWS', 'Azure']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-15 09:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
+    ('applicant12@example.com'::VARCHAR, 'Ava Harris'::VARCHAR, '+1-234-567-8900'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Business Administration'::VARCHAR, 'Passionate about business analytics'::VARCHAR, ARRAY['Excel', 'Power BI']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-15 11:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 2),
+    ('applicant13@example.com'::VARCHAR, 'James Martin'::VARCHAR, '+1-345-678-9010'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Computer Science'::VARCHAR, 'Skilled in database management'::VARCHAR, ARRAY['SQL', 'MongoDB']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-16 10:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
+    ('applicant14@example.com'::VARCHAR, 'Isabella Thompson'::VARCHAR, '+1-456-789-0120'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Data Science'::VARCHAR, 'Enthusiastic about machine learning'::VARCHAR, ARRAY['Python', 'Scikit-learn']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-16 12:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 2),
+    ('applicant15@example.com'::VARCHAR, 'Benjamin Garcia'::VARCHAR, '+1-567-890-1230'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Computer Science'::VARCHAR, 'Experienced in DevOps'::VARCHAR, ARRAY['Docker', 'Jenkins']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
+    -- Opening 4 (Scheduled, avail, emails sent, accepted candidate)
+    ('applicant16@example.com'::VARCHAR, 'Mia Robinson'::VARCHAR, '+1-678-901-2340'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Business Administration'::VARCHAR, 'Interested in IT consulting'::VARCHAR, ARRAY['Business Analysis', 'ITIL']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'R'::VARCHAR, 3),
+    ('applicant17@example.com'::VARCHAR, 'Ethan Clark'::VARCHAR, '+1-789-012-3450'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Computer Science'::VARCHAR, 'Passionate about game development'::VARCHAR, ARRAY['Unity', 'C#']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'R'::VARCHAR, 4),
+    ('applicant18@example.com'::VARCHAR, 'Amelia Rodriguez'::VARCHAR, '+1-890-123-4560'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Data Science'::VARCHAR, 'Skilled in data mining'::VARCHAR, ARRAY['R', 'Python']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'R'::VARCHAR, 3),
+    ('applicant19@example.com'::VARCHAR, 'Alexander Lee'::VARCHAR, '+1-901-234-5670'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about IoT development'::VARCHAR, ARRAY['Raspberry Pi', 'Arduino']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'X'::VARCHAR, 3),
+    ('applicant20@example.com'::VARCHAR, 'Charlotte Walker'::VARCHAR, '+1-012-345-6780'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Business Administration'::VARCHAR, 'Experienced in ERP systems'::VARCHAR, ARRAY['SAP', 'Oracle']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'X'::VARCHAR, 4);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -236,8 +268,7 @@ BEGIN
             ) VALUES (
                 opening_rec.id, app_rec.email, app_rec.name, app_rec.phone, app_rec.semesters_until_completion,
                 app_rec.course_name, app_rec.current_semester, app_rec.major_enrolled, app_rec.additional_info,
-                app_rec.skills, app_rec.candidate_availability,
-                NULL, NULL, NULL, 'A', NULL
+                app_rec.skills, app_rec.candidate_availability, app_rec.interview_date, NULL, NULL, app_rec.status, app.profile_id
             ) ON CONFLICT (opening_id, email) DO NOTHING;
 
             app_counter := app_counter + 1;

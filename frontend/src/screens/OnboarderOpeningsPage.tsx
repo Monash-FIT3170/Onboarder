@@ -127,7 +127,7 @@ function OnboarderOpeningsPage() {
         <IconButton onClick={handleBack} sx={{ mr: 2 }}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5">Student Team Openings</Typography>
+        <Typography variant="h4">Student Team Openings</Typography>
       </TitleWrapper>
 
       <Grid

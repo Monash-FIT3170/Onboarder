@@ -177,7 +177,7 @@ function ViewTeamLeadsPage() {
         alignItems="center"
         marginBottom="10px"
       >
-        <Typography variant="h6">List of Team Leads</Typography>
+        <Typography variant="h5">List of Team Leads</Typography>
       </Box>
       <TableContainer component={Paper}>
         <Table aria-label="openings table">
