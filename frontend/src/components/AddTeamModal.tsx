@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Grid,
 } from "@mui/material";
-import PermissionButton from "./PermissionButton";
+// import PermissionButton from "./PermissionButton";
 
 interface AddTeamModalProps {
   open: boolean;
@@ -64,19 +64,22 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error" variant="contained">
-          Cancel
-        </Button>
-        <PermissionButton
+        {/* <PermissionButton
           action="create"
-          subject="Opening"
+          subject="Team"
           onClick={handleSubmit}
           color="primary"
           variant="contained"
           tooltipText="You do not have permission to create a team"
         >
           Create
-        </PermissionButton>
+        </PermissionButton> */}
+        <Button onClick={handleSubmit} color="primary" variant="contained">
+          Create
+        </Button>
+        <Button onClick={onClose} variant="outlined">
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

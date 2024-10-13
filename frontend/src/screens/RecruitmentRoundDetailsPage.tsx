@@ -216,7 +216,7 @@ function RecruitmentRoundDetailsPage() {
               <BackIcon />
             )}
           </IconButton>
-          <Typography variant="h5">
+          <Typography variant="h4">
             {loading ? (
               <Skeleton width={200} />
             ) : (
@@ -316,7 +316,7 @@ function RecruitmentRoundDetailsPage() {
         }}
       >
         <OpeningsWrapper>
-          <Typography variant="h6">
+          <Typography variant="h5">
             {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
           </Typography>
           <PermissionButton

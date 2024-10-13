@@ -110,7 +110,7 @@ function AppBarOnBoarder() {
                 Viewing Team:
               </Typography>
               <Typography variant="caption" component={"span"}>
-                {" "}
+                &nbsp;
                 {team_name}
               </Typography>
               <Typography variant="caption" component={"span"}>

@@ -1196,6 +1196,7 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
             interviewer_emails = interview['interviewers']
             organizer_name = interview['organizer_name']
             meeting_link = interview['meeting_link']
+            opening_id = interview['opening_id']
 
             if not isinstance(interviewer_emails, list):
                 raise ValueError(
@@ -1218,7 +1219,8 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
                 end_time,
                 organizer_name,
                 organizer_email,
-                meeting_link
+                meeting_link,
+                opening_id
             )
 
             if event:

@@ -76,29 +76,29 @@ function OpeningDetailsPage() {
     (state) => state.setSelectedApplicant,
   );
 
-  // Derived state
-  const sortedApplications = React.useMemo(() => {
-    if (!sortColumn) return applications;
+  // // Derived state
+  // const sortedApplications = React.useMemo(() => {
+  //   if (!sortColumn) return applications;
 
-    return [...applications].sort((a, b) => {
-      const compareValues = (aVal: any, bVal: any) => {
-        if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
-        if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      };
+  //   return [...applications].sort((a, b) => {
+  //     const compareValues = (aVal: any, bVal: any) => {
+  //       if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
+  //       if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
+  //       return 0;
+  //     };
 
-      switch (sortColumn) {
-        case "email":
-          return compareValues(a.email, b.email);
-        case "status":
-          return compareValues(a.status, b.status);
-        case "date":
-          return compareValues(new Date(a.created_at), new Date(b.created_at));
-        default:
-          return 0;
-      }
-    });
-  }, [applications, sortColumn, sortDirection]);
+  //     switch (sortColumn) {
+  //       case "email":
+  //         return compareValues(a.email, b.email);
+  //       case "status":
+  //         return compareValues(a.status, b.status);
+  //       case "date":
+  //         return compareValues(new Date(a.created_at), new Date(b.created_at));
+  //       default:
+  //         return 0;
+  //     }
+  //   });
+  // }, [applications, sortColumn, sortDirection]);
 
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
@@ -129,15 +129,15 @@ function OpeningDetailsPage() {
   }, [selectedOpening, navigate, BASE_API_URL]);
 
   // Handler functions
-  const handleSort = useCallback(
-    (column: string) => {
-      setSortDirection((prev) =>
-        sortColumn === column && prev === "asc" ? "desc" : "asc",
-      );
-      setSortColumn(column);
-    },
-    [sortColumn],
-  );
+  // const handleSort = useCallback(
+  //   (column: string) => {
+  //     setSortDirection((prev) =>
+  //       sortColumn === column && prev === "asc" ? "desc" : "asc",
+  //     );
+  //     setSortColumn(column);
+  //   },
+  //   [sortColumn],
+  // );
 
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
@@ -226,7 +226,7 @@ function OpeningDetailsPage() {
     if (applications.length === 0) {
       return (
         <TableRow>
-          <TableCell colSpan={5} align="center" sx={{ width: "20%" }}>
+          <TableCell colSpan={5} align="left" sx={{ width: "20%" }}>
             None
           </TableCell>
         </TableRow>
@@ -276,16 +276,16 @@ function OpeningDetailsPage() {
     const filteredApplications = filterApplications(status);
 
     return (
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mt: 2 }}>
         <Button
           onClick={() => setExpanded(!expanded)}
           fullWidth
           sx={{
             justifyContent: "flex-start",
-            color: "primary.main",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
-            },
+            // color: "primary.main",
+            // "&:hover": {
+            //   backgroundColor: "rgba(0, 0, 0, 0.04)",
+            // },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -297,7 +297,7 @@ function OpeningDetailsPage() {
             <Typography
               variant="h6"
               component="div"
-              sx={{ fontWeight: "bold" }}
+              // sx={{ fontWeight: "bold" }}
             >
               {title}
             </Typography>
@@ -353,14 +353,14 @@ function OpeningDetailsPage() {
         style={{
           display: "flex",
           alignItems: "center",
-          margin: "0px 0px 10px",
+          margin: "0px 0px 8px",
         }}
       >
         <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {selectedOpening?.title}
+        <Typography variant="h4" style={{ marginLeft: "10px" }}>
+          {"Opening: " + selectedOpening?.title}
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
@@ -384,7 +384,7 @@ function OpeningDetailsPage() {
         </div>
       </div>
 
-      <TableContainer component={Paper} sx={{ mb: 4 }}>
+      <TableContainer component={Paper} sx={{ mb: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -409,27 +409,39 @@ function OpeningDetailsPage() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h6" component="div">
+        <Typography variant="h5" component="div">
           Opening Applications
         </Typography>
-        <PermissionButton
-          action="send"
-          subject="Interview"
-          variant="contained"
-          onClick={handleConfirmSendEmails}
-          disabled={
-            loading ||
+
+        <Tooltip
+          title={
             applications.find((item) => item.status === "C") == undefined
+              ? "There are no candidates to send interview scheduling emails to. Accept applications to send emails."
+              : ""
           }
-          style={{ marginLeft: "1rem" }}
-          tooltipText="You do not have permission to send interview scheduling emails"
+          arrow
         >
-          {loading ? (
-            <Skeleton width={100} />
-          ) : (
-            "Send Interview Scheduling Emails"
-          )}
-        </PermissionButton>
+          <span>
+            <PermissionButton
+              action="send"
+              subject="Interview"
+              variant="contained"
+              onClick={handleConfirmSendEmails}
+              disabled={
+                loading ||
+                applications.find((item) => item.status === "C") == undefined
+              }
+              style={{ marginLeft: "1rem" }}
+              tooltipText="You do not have permission to send interview scheduling emails"
+            >
+              {loading ? (
+                <Skeleton width={100} />
+              ) : (
+                "Send Interview Scheduling Emails"
+              )}
+            </PermissionButton>
+          </span>
+        </Tooltip>
       </Box>
 
       <TableContainer component={Paper}>

@@ -170,27 +170,29 @@ export default function ReviewApplicantPage() {
   return (
     <>
       <Typography
-        variant="h5"
+        variant="h4"
         component="div"
         sx={{ width: "50%", marginTop: "0px" }}
       >
         {" "}
-        <IconButton onClick={() => handleBack()}>
+        <IconButton onClick={() => handleBack()} sx={{ mr: 1 }}>
           <BackIcon />
         </IconButton>
-        {"Opening: " + selectedApplicant?.opening_name}
+        Review Application
       </Typography>
       <TableContainer component={Paper} sx={{ marginTop: "10px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
+              <TableCell>Opening</TableCell>
               <TableCell>Application Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
               <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+              <TableCell>{selectedApplicant?.opening_name}</TableCell>
               <TableCell>
                 {getAppStatusText(applicantInformation[0]?.status)}
               </TableCell>
@@ -263,11 +265,29 @@ export default function ReviewApplicantPage() {
             }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <TextField
             id="Additional-information"
             label="Additional Information"
             defaultValue={`${applicantInformation[0]?.additional_info}`}
+            disabled
+            fullWidth
+            sx={{
+              "& .MuiInputBase-input.Mui-disabled": {
+                WebkitTextFillColor: "black",
+                color: "black",
+              },
+              "& .MuiInputLabel-root.Mui-disabled": {
+                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            id="Skills"
+            label="Skills"
+            defaultValue={`${applicantInformation[0]?.skills}`}
             disabled
             fullWidth
             sx={{
@@ -330,24 +350,6 @@ export default function ReviewApplicantPage() {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            id="Skills"
-            label="Skills"
-            defaultValue={`${applicantInformation[0]?.skills}`}
-            disabled
-            fullWidth
-            sx={{
-              "& .MuiInputBase-input.Mui-disabled": {
-                WebkitTextFillColor: "black",
-                color: "black",
-              },
-              "& .MuiInputLabel-root.Mui-disabled": {
-                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
-              },
-            }}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
             id="Semesters remaining"
             label="Semesters Remaining"
             defaultValue={`${applicantInformation[0]?.semesters_until_completion}`}
@@ -364,7 +366,7 @@ export default function ReviewApplicantPage() {
             }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <TextField
             fullWidth
             id="Current semester"

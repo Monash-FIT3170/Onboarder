@@ -162,8 +162,6 @@ const ViewRecruitmentRoundsPage = () => {
     );
   };
 
-  console.log(studentTeamStore.studentTeams);
-
   return (
     <div>
       <main>

@@ -30,7 +30,7 @@ export interface StudentTeamResultProps {
 }
 
 export interface DashboardTableProps {
-  results: StudentTeamResultProps[];
+  newTeam: StudentTeamResultProps[];
 }
 
 const modalStyle = {
@@ -110,7 +110,7 @@ const generateRowFunction = (
   );
 };
 
-export function DashboardTable() {
+export function DashboardTable({ newTeam }: DashboardTableProps) {
   // State hooks
 
   const [loading, setLoading] = useState(true);
@@ -174,7 +174,7 @@ export function DashboardTable() {
     } finally {
       setLoading(false);
     }
-  }, [BASE_API_URL]);
+  }, [BASE_API_URL, newTeam]);
 
   useEffect(() => {
     fetchTeams();

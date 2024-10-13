@@ -265,6 +265,8 @@ This is used for deployment. Having it blank means that the codebase will use a 
 
    `python pre-process-seed.py`
 
+   you might have to use `python3` instead of `python`
+
    then
 
    `supabase start` or `npx supabase start`
