@@ -46,7 +46,6 @@ const AllocateTeamLeadsPage = () => {
       await axios.post(API_URL, {
         profile_id: teamLeadId,
       });
-      // console.log("Team lead allocated successfully");
       // Refresh the openings list after allocation
     } catch (error) {
       console.error("Error allocating team lead:", error);
@@ -66,7 +65,6 @@ const AllocateTeamLeadsPage = () => {
     try {
       const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`;
       await axios.delete(API_URL);
-      // console.log("Team lead allocated successfully");
       // Refresh the openings list after allocation
     } catch (error) {
       console.error("Error allocating team lead:", error);
@@ -124,8 +122,6 @@ const AllocateTeamLeadsPage = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
     );
-    // console.log("Lead counts response (Allocated Member");
-    // console.log(response.data);
     return response.data;
   };
 
@@ -136,8 +132,6 @@ const AllocateTeamLeadsPage = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
     );
-    // console.log("Assignments response");
-    // console.log(response.data);
     return response.data;
   };
 

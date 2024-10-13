@@ -25,7 +25,6 @@ function BackIcon() {
       <ArrowBackOutlinedIcon
         color="primary"
         // onClick={() => {
-        //   console.log("Back Button working");
         // }}
       />
     </BackIconWrapper>

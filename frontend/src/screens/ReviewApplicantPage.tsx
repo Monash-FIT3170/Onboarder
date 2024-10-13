@@ -100,7 +100,7 @@ export default function ReviewApplicantPage() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        console.error("Invalid User Status: ", status);
       }
     }
   }, [applicantInformation]);
@@ -118,10 +118,8 @@ export default function ReviewApplicantPage() {
         submissionData,
       );
       if (response.status === 200) {
-        // console.log(response);
         setDialogParam("Applicant Accepted!");
       } else {
-        // console.log(response);
         setDialogParam("There was an error accepting the applicant.");
       }
     } catch (error) {
@@ -148,10 +146,8 @@ export default function ReviewApplicantPage() {
         submissionData,
       );
       if (response.status === 200) {
-        // console.log(response);
         setDialogParam("Applicant Rejected!");
       } else {
-        // console.log(response);
         setDialogParam("There was an error rejecting the applicant.");
       }
     } catch (error) {

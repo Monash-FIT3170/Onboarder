@@ -133,9 +133,6 @@ function InterviewFeedbackPage() {
   };
 
   const handleUpdate = () => {
-    console.log("Updating feedback for applicant");
-    console.log("Score: ", score);
-    console.log("Feedback: ", feedback);
     if (!validateScore(score)) {
       return;
     }
@@ -194,7 +191,7 @@ function InterviewFeedbackPage() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        console.error("Invalid User Status: ", status);
       }
     }
   }, [applicantInformation, openAccept, openReject]);
@@ -210,7 +207,6 @@ function InterviewFeedbackPage() {
         const applicantResponse = await axios.get(
           `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
-        console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
         setFeedback(applicantResponse.data[0]?.interview_notes);
         setScore(applicantResponse.data[0]?.interview_score);

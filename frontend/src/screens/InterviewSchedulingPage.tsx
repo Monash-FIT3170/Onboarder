@@ -128,7 +128,6 @@ const InterviewSchedulingPage = () => {
         const applicationsResponse = await axios.get(
           `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
-        console.log("App response: ", applicationsResponse);
         setApplications(applicationsResponse.data);
         const roundResponse = await axios.get(
           `${BASE_API_URL}/recruitment-round/${selectedOpening.recruitment_round_id}/`,
@@ -150,12 +149,10 @@ const InterviewSchedulingPage = () => {
       const applicationsResponse = await axios.get(
         `${BASE_API_URL}/opening/${selectedOpening?.id}/application`,
       );
-      // console.log(applicationsResponse);
       setApplications(applicationsResponse.data);
       const roundResponse = await axios.get(
         `${BASE_API_URL}/recruitment-round/${selectedOpening?.recruitment_round_id}/`,
       );
-      console.log(roundResponse);
       setRound(roundResponse.data[0]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -235,7 +232,7 @@ const InterviewSchedulingPage = () => {
 
       // clear your form fields.
     } catch (error) {
-      console.log(error);
+      console.error("Error sending calendar invites");
       alert("Oops! Something went wrong. Please try again later.");
       setLoading(false);
     } finally {
@@ -247,10 +244,9 @@ const InterviewSchedulingPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post(
+      await axios.post(
         `${BASE_API_URL}/opening/${selectedOpening?.id}/schedule-interviews/`,
       );
-      console.log("res", res);
       fetchData();
     } catch (err) {
       // setError(err.message || "An error occurred while scheduling interviews");

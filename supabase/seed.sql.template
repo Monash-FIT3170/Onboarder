@@ -15,67 +15,67 @@ INSERT INTO public."PROFILE" (email, interview_availability) VALUES
 
 -- Insert student teams
 INSERT INTO public."STUDENT_TEAM" (name, description) VALUES
-    ('Team Alpha', 'Software Development Team'), -- Team 1
-    ('Team Bravo', 'Data Analysis Team'), -- Team 2
-    ('Team Charlie', 'Project Management Team'), -- Team 3
-    ('Team Delta', 'DevOps Team'); -- Team 4
+    ('MCAV', 'Monash Connected Autonomous Vehicle'), -- Team 1
+    ('MNR', 'Monash Nova Rover'), -- Team 2
+    ('MMS', 'Monash Motorsport'), -- Team 3
+    ('MDN', 'Monash DeepNeuron'); -- Team 4
 
--- Add meeting link to Team Alpha
+-- Add meeting link to MCAV
 UPDATE public."STUDENT_TEAM" SET meeting_link = 'https://monash.zoom.us/j/1234567890' WHERE id = 1;
 
 -- Assign profiles to teams
 INSERT INTO public."PROFILE_TEAM_INFO" (profile_id, student_team_id, role) VALUES
     -- You
-    (1, 1, 'O'),  -- Owner of Team Alpha
-    (1, 2, 'A'),  -- Admin of Team Bravo
-    (1, 3, 'T'),  -- Team Lead of Team Charlie
-    (1, 4, 'A'),  -- Admin of Team Delta
+    (1, 1, 'O'),  -- Owner of MCAV
+    (1, 2, 'A'),  -- Admin of MNR
+    (1, 3, 'T'),  -- Team Lead of MMS
+    (1, 4, 'A'),  -- Admin of MDN
 
     -- random 1
-    (2, 1, 'T'),  -- Team Lead of Team Alpha
-    (2, 2, 'O'),  -- Owner of Team Bravo
-    (2, 3, 'A'),  -- Admin of Team Charlie
-    (2, 4, 'T'),  -- Team Lead of Team Delta
+    (2, 1, 'T'),  -- Team Lead of MCAV
+    (2, 2, 'O'),  -- Owner of MNR
+    (2, 3, 'A'),  -- Admin of MMS
+    (2, 4, 'T'),  -- Team Lead of MDN
 
     -- random 2
-    (3, 1, 'T'),  -- Team Lead of Team Alpha
-    (3, 2, 'T'),  -- Team Lead of Team Bravo
-    (3, 3, 'O'),  -- Owner of Team Charlie
-    (3, 4, 'A'),  -- Admin of Team Delta
+    (3, 1, 'T'),  -- Team Lead of MCAV
+    (3, 2, 'T'),  -- Team Lead of MNR
+    (3, 3, 'O'),  -- Owner of MMS
+    (3, 4, 'A'),  -- Admin of MDN
 
     -- random 3
-    (4, 1, 'T'),  -- Team Lead of Team Alpha
-    (4, 2, 'A'),  -- Admin of Team Bravo
-    (4, 3, 'T'),  -- Team Lead of Team Charlie
-    (4, 4, 'O'),  -- Owner of Team Delta
+    (4, 1, 'T'),  -- Team Lead of MCAV
+    (4, 2, 'A'),  -- Admin of MNR
+    (4, 3, 'T'),  -- Team Lead of MMS
+    (4, 4, 'O'),  -- Owner of MDN
     
     -- random 4
-    (5, 1, 'A'),  -- Team Lead of Team Alpha
-    (5, 2, 'T'),  -- Team Lead of Team Bravo
-    (5, 3, 'T'),  -- Team Lead of Team Charlie
-    (5, 4, 'T');  -- Team Lead of Team Delta
+    (5, 1, 'A'),  -- Team Lead of MCAV
+    (5, 2, 'T'),  -- Team Lead of MNR
+    (5, 3, 'T'),  -- Team Lead of MMS
+    (5, 4, 'T');  -- Team Lead of MDN
 
 -- Insert recruitment rounds
 INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, application_deadline, status, interview_preference_deadline, interview_period) VALUES
-    -- Team Alpha (id: 1)
+    -- MCAV (id: 1)
     (1, 'S1', 2024, '2024-10-06 23:59:59+11:00', 'A', '2024-10-08 23:59:59+11:00', ARRAY['2024-10-10T00:00:00.000+11:00','2024-10-12T23:59:59.999+11:00']),  -- Active
     (1, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  -- Inactive
     (1, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  -- Inactive
     (1, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  -- Archived
 
-    -- Team Bravo (id: 2)
+    -- MNR (id: 2)
     (2, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),  
     (2, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),  
     (2, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),  
     (2, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),  
 
-    -- Team Charlie (id: 3)
+    -- MMS (id: 3)
     (3, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']),
     (3, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']),
     (3, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']),
     (3, 'S1', 2025, '2025-02-28 23:59:59+11:00', 'R', '2025-03-07 23:59:59+11:00', ARRAY['2025-03-15T00:00:00.000+11:00','2025-03-25T23:59:59.999+11:00']),
 
-    -- Team Delta (id: 4)
+    -- MDN (id: 4)
     (4, 'S1', 2023, '2023-02-28 23:59:59+11:00', 'A', '2023-03-07 23:59:59+11:00', ARRAY['2023-03-15T00:00:00.000+11:00','2023-03-25T23:59:59.999+11:00']), 
     (4, 'S2', 2023, '2023-07-31 23:59:59+10:00', 'I', '2023-08-07 23:59:59+10:00', ARRAY['2023-08-15T00:00:00.000+10:00','2023-08-25T23:59:59.999+10:00']), 
     (4, 'S2', 2024, '2024-07-31 23:59:59+10:00', 'I', '2024-08-07 23:59:59+10:00', ARRAY['2024-08-15T00:00:00.000+10:00','2024-08-25T23:59:59.999+10:00']), 
@@ -84,97 +84,97 @@ INSERT INTO public."RECRUITMENT_ROUND" (student_team_id, semester, year, applica
     
 -- Insert openings
 INSERT INTO public."OPENING" (recruitment_round_id, title, description, status, required_skills, desired_skills, task_email_format, task_enabled, interview_allocation_status) VALUES
-    -- Team Alpha, S1 2023 (Archived)
+    -- MCAV, S1 2023 (Archived)
     (1, 'Junior Developer', 'Entry-level software development position', 'R', ARRAY['Java', 'Git'], ARRAY['Spring Boot', 'REST APIs'], 'Please complete the coding task: {}', TRUE, 'S'),
     (1, 'UI/UX Designer', 'Design user interfaces for web applications', 'R', ARRAY['Figma', 'Adobe XD'], ARRAY['HTML', 'CSS'], 'Create a mockup for: {}', TRUE, 'S'),
     (1, 'Data Analyst', 'Entry-level data analysis role', 'R', ARRAY['Python', 'SQL'], ARRAY['Tableau', 'R'], 'Analyze the following dataset: {}', TRUE, 'S'),
     (1, 'QA Tester', 'Software testing and quality assurance', 'R', ARRAY['Selenium', 'JUnit'], ARRAY['Jenkins', 'JIRA'], 'Develop test cases for: {}', FALSE, 'S'),
 
-    -- Team Alpha, S2 2023 (Archived)
+    -- MCAV, S2 2023 (Archived)
     (2, 'Frontend Developer', 'Build responsive web applications', 'R', ARRAY['JavaScript', 'React'], ARRAY['TypeScript', 'Redux'], 'Implement a React component for: {}', TRUE, 'S'),
     (2, 'Backend Developer', 'Develop server-side applications', 'R', ARRAY['Node.js', 'Express'], ARRAY['MongoDB', 'GraphQL'], 'Create an API endpoint for: {}', TRUE, 'S'),
     (2, 'DevOps Engineer', 'Manage CI/CD pipelines and infrastructure', 'R', ARRAY['Docker', 'Kubernetes'], ARRAY['AWS', 'Terraform'], 'Set up a deployment pipeline for: {}', FALSE, 'S'),
     (2, 'Machine Learning Engineer', 'Develop and deploy ML models', 'R', ARRAY['Python', 'TensorFlow'], ARRAY['PyTorch', 'Scikit-learn'], 'Train a model to predict: {}', TRUE, 'S'),
 
-    -- Team Alpha, S2 2024 (Active)
+    -- MCAV, S2 2024 (Active)
     (3, 'Full Stack Developer', 'End-to-end web application development', 'A', ARRAY['JavaScript', 'Python', 'SQL'], ARRAY['React', 'Django', 'PostgreSQL'], 'Build a full-stack app for: {}', TRUE, 'N'),
     (3, 'Mobile App Developer', 'Develop cross-platform mobile applications', 'A', ARRAY['React Native', 'JavaScript'], ARRAY['iOS', 'Android'], 'Create a mobile app prototype for: {}', TRUE, 'N'),
     (3, 'Cloud Architect', 'Design and implement cloud solutions', 'A', ARRAY['AWS', 'Azure'], ARRAY['GCP', 'Serverless'], 'Architect a cloud solution for: {}', FALSE, 'N'),
     (3, 'Data Engineer', 'Build data pipelines and infrastructure', 'A', ARRAY['Python', 'SQL', 'Airflow'], ARRAY['Spark', 'Kafka'], 'Design a data pipeline for: {}', TRUE, 'N'),
 
-    -- Team Alpha, S1 2025 (Inactive, Future)
+    -- MCAV, S1 2025 (Inactive, Future)
     (4, 'AI Research Intern', 'Assist in cutting-edge AI research projects', 'I', ARRAY['Python', 'Machine Learning'], ARRAY['NLP', 'Computer Vision'], 'Propose a research project on: {}', TRUE, 'N'),
     (4, 'Blockchain Developer', 'Develop decentralized applications', 'I', ARRAY['Solidity', 'Ethereum'], ARRAY['Web3.js', 'Smart Contracts'], 'Create a simple smart contract for: {}', TRUE, 'N'),
     (4, 'VR/AR Developer', 'Create immersive virtual and augmented reality experiences', 'I', ARRAY['Unity', 'C#'], ARRAY['AR Kit', 'VR Hardware'], 'Design a VR/AR prototype for: {}', TRUE, 'N'),
     (4, 'Quantum Computing Researcher', 'Explore quantum algorithms and applications', 'I', ARRAY['Quantum Mechanics', 'Linear Algebra'], ARRAY['Qiskit', 'Q#'], 'Simulate a quantum circuit for: {}', FALSE, 'N'),
 
-    -- Team Bravo, S1 2023 (Archived)
+    -- MNR, S1 2023 (Archived)
     (5, 'Data Scientist', 'Analyze complex datasets and build predictive models', 'R', ARRAY['Python', 'R', 'Machine Learning'], ARRAY['Deep Learning', 'NLP'], 'Develop a predictive model for: {}', TRUE, 'S'),
     (5, 'Business Intelligence Analyst', 'Create reports and dashboards for decision-making', 'R', ARRAY['SQL', 'Tableau'], ARRAY['Power BI', 'Excel'], 'Design a dashboard for: {}', TRUE, 'S'),
     (5, 'Data Engineer', 'Build and maintain data pipelines', 'R', ARRAY['Python', 'SQL', 'ETL'], ARRAY['Apache Spark', 'Airflow'], 'Implement a data pipeline for: {}', TRUE, 'S'),
     (5, 'Statistical Analyst', 'Perform statistical analysis on various datasets', 'R', ARRAY['R', 'SPSS'], ARRAY['SAS', 'Stata'], 'Conduct statistical analysis on: {}', FALSE, 'S'),
 
-    -- Team Bravo, S2 2023 (Archived)
+    -- MNR, S2 2023 (Archived)
     (6, 'Machine Learning Engineer', 'Develop and deploy machine learning models', 'R', ARRAY['Python', 'TensorFlow', 'Scikit-learn'], ARRAY['Keras', 'PyTorch'], 'Build an ML model to predict: {}', TRUE, 'S'),
     (6, 'Big Data Architect', 'Design scalable big data solutions', 'R', ARRAY['Hadoop', 'Spark'], ARRAY['Hive', 'Cassandra'], 'Architect a big data solution for: {}', FALSE, 'S'),
     (6, 'Data Governance Specialist', 'Implement data governance policies and procedures', 'R', ARRAY['Data Management', 'Compliance'], ARRAY['GDPR', 'Data Quality'], 'Create a data governance plan for: {}', FALSE, 'S'),
     (6, 'Natural Language Processing Engineer', 'Develop NLP models and applications', 'R', ARRAY['Python', 'NLTK', 'SpaCy'], ARRAY['Transformers', 'Bert'], 'Implement an NLP solution for: {}', TRUE, 'S'),
 
-    -- Team Bravo, S2 2024 (Active)
+    -- MNR, S2 2024 (Active)
     (7, 'AI Ethics Researcher', 'Investigate ethical implications of AI systems', 'A', ARRAY['AI', 'Ethics', 'Research Methods'], ARRAY['Philosophy', 'Policy Analysis'], 'Analyze the ethical implications of: {}', FALSE, 'N'),
     (7, 'Computer Vision Specialist', 'Develop image and video analysis solutions', 'A', ARRAY['Python', 'OpenCV', 'Deep Learning'], ARRAY['TensorFlow', 'YOLO'], 'Create a computer vision model for: {}', TRUE, 'N'),
     (7, 'Data Privacy Officer', 'Ensure compliance with data protection regulations', 'A', ARRAY['GDPR', 'Data Protection'], ARRAY['CCPA', 'ISO 27001'], 'Develop a privacy policy for: {}', FALSE, 'N'),
     (7, 'Quantum Machine Learning Researcher', 'Explore quantum approaches to machine learning', 'A', ARRAY['Quantum Computing', 'Machine Learning'], ARRAY['Qiskit', 'PennyLane'], 'Design a quantum ML algorithm for: {}', TRUE, 'N'),
 
-    -- Team Bravo, S1 2025 (Inactive, Future)
+    -- MNR, S1 2025 (Inactive, Future)
     (8, 'Augmented Analytics Specialist', 'Develop AI-driven analytics tools', 'I', ARRAY['Machine Learning', 'Data Visualization'], ARRAY['AutoML', 'NLP'], 'Design an augmented analytics tool for: {}', TRUE, 'N'),
     (8, 'Robotics Data Scientist', 'Analyze data from robotic systems', 'I', ARRAY['Python', 'ROS', 'Machine Learning'], ARRAY['Computer Vision', 'Sensor Fusion'], 'Create a data analysis pipeline for robots that: {}', TRUE, 'N'),
     (8, 'Bioinformatics Analyst', 'Analyze biological data using computational methods', 'I', ARRAY['Python', 'R', 'Bioinformatics'], ARRAY['Genomics', 'Proteomics'], 'Analyze the following genomic dataset: {}', FALSE, 'N'),
     (8, 'Federated Learning Engineer', 'Develop privacy-preserving machine learning systems', 'I', ARRAY['Python', 'Machine Learning', 'Cryptography'], ARRAY['TensorFlow Federated', 'PySyft'], 'Implement a federated learning system for: {}', TRUE, 'N'),
 
-    -- Team Charlie, S1 2023 (Archived)
+    -- MMS, S1 2023 (Archived)
     (9, 'Junior Project Manager', 'Assist in managing software development projects', 'R', ARRAY['Agile', 'Jira'], ARRAY['Scrum', 'MS Project'], 'Create a project plan for: {}', TRUE, 'S'),
     (9, 'Business Analyst', 'Analyze business processes and requirements', 'R', ARRAY['Requirements Gathering', 'UML'], ARRAY['SQL', 'Tableau'], 'Perform a business analysis for: {}', TRUE, 'S'),
     (9, 'Scrum Master', 'Facilitate Agile processes and team collaboration', 'R', ARRAY['Scrum', 'Agile'], ARRAY['Kanban', 'Confluence'], 'Design a sprint plan for: {}', FALSE, 'S'),
     (9, 'Product Owner', 'Manage product backlog and prioritize features', 'R', ARRAY['Product Management', 'User Stories'], ARRAY['Agile', 'Market Research'], 'Develop a product roadmap for: {}', TRUE, 'S'),
 
-    -- Team Charlie, S2 2023 (Archived)
+    -- MMS, S2 2023 (Archived)
     (10, 'Technical Project Manager', 'Lead complex technical projects', 'R', ARRAY['Project Management', 'Software Development'], ARRAY['DevOps', 'Cloud Technologies'], 'Develop a project execution plan for: {}', TRUE, 'S'),
     (10, 'Agile Coach', 'Guide teams in Agile methodologies', 'R', ARRAY['Agile', 'Coaching'], ARRAY['SAFe', 'LeSS'], 'Design an Agile transformation plan for: {}', TRUE, 'S'),
     (10, 'Risk Management Specialist', 'Identify and mitigate project risks', 'R', ARRAY['Risk Management', 'PMBOK'], ARRAY['Monte Carlo Simulation', 'Decision Trees'], 'Conduct a risk assessment for: {}', FALSE, 'S'),
     (10, 'Quality Assurance Manager', 'Oversee software quality processes', 'R', ARRAY['QA Methodologies', 'Test Planning'], ARRAY['Automated Testing', 'Performance Testing'], 'Develop a QA strategy for: {}', TRUE, 'S'),
 
-    -- Team Charlie, S2 2024 (Active)
+    -- MMS, S2 2024 (Active)
     (11, 'Digital Transformation Manager', 'Lead digital transformation initiatives', 'A', ARRAY['Change Management', 'Digital Technologies'], ARRAY['AI/ML', 'Cloud Computing'], 'Propose a digital transformation strategy for: {}', TRUE, 'N'),
     (11, 'Agile Portfolio Manager', 'Manage portfolio of Agile projects', 'A', ARRAY['Portfolio Management', 'Agile'], ARRAY['SAFe', 'Financial Planning'], 'Develop an Agile portfolio plan for: {}', TRUE, 'N'),
     (11, 'Project Management Office (PMO) Analyst', 'Support PMO operations and project governance', 'A', ARRAY['PMO', 'Project Management'], ARRAY['Data Analysis', 'Process Improvement'], 'Design a PMO dashboard for: {}', FALSE, 'N'),
     (11, 'Lean Six Sigma Specialist', 'Implement process improvement initiatives', 'A', ARRAY['Lean', 'Six Sigma'], ARRAY['Process Mapping', 'Statistical Analysis'], 'Conduct a process improvement analysis for: {}', TRUE, 'N'),
 
-    -- Team Charlie, S1 2025 (Inactive, Future)
+    -- MMS, S1 2025 (Inactive, Future)
     (12, 'AI Project Manager', 'Manage AI and machine learning projects', 'I', ARRAY['Project Management', 'AI/ML'], ARRAY['Data Science', 'Ethics in AI'], 'Develop a project plan for an AI initiative: {}', TRUE, 'N'),
     (12, 'Sustainability Project Coordinator', 'Coordinate sustainability-focused projects', 'I', ARRAY['Project Management', 'Sustainability'], ARRAY['Environmental Science', 'CSR'], 'Create a sustainability project proposal for: {}', TRUE, 'N'),
     (12, 'Remote Team Management Specialist', 'Optimize management of distributed teams', 'I', ARRAY['Remote Team Management', 'Collaboration Tools'], ARRAY['Cultural Intelligence', 'Virtual Team Building'], 'Design a remote work policy for: {}', FALSE, 'N'),
     (12, 'Innovation Program Manager', 'Lead programs fostering innovation', 'I', ARRAY['Innovation Management', 'Design Thinking'], ARRAY['Agile', 'R&D Management'], 'Develop an innovation program for: {}', TRUE, 'N'),
 
-    -- Team Delta, S1 2023 (Archived)
+    -- MDN, S1 2023 (Archived)
     (13, 'Junior DevOps Engineer', 'Assist in implementing and maintaining CI/CD pipelines', 'R', ARRAY['Linux', 'Git'], ARRAY['Docker', 'Jenkins'], 'Set up a basic CI/CD pipeline for: {}', TRUE, 'S'),
     (13, 'Cloud Infrastructure Specialist', 'Manage and optimize cloud-based infrastructure', 'R', ARRAY['AWS', 'Terraform'], ARRAY['Azure', 'GCP'], 'Design a cloud architecture for: {}', TRUE, 'S'),
     (13, 'Site Reliability Engineer (SRE)', 'Ensure reliability and performance of systems', 'R', ARRAY['Linux', 'Monitoring Tools'], ARRAY['Kubernetes', 'Prometheus'], 'Develop an SRE strategy for: {}', FALSE, 'S'),
     (13, 'Automation Engineer', 'Develop scripts and tools for process automation', 'R', ARRAY['Python', 'Bash'], ARRAY['Ansible', 'Puppet'], 'Automate the following process: {}', TRUE, 'S'),
 
-    -- Team Delta, S2 2023 (Archived)
+    -- MDN, S2 2023 (Archived)
     (14, 'Senior DevOps Engineer', 'Lead DevOps practices and culture adoption', 'R', ARRAY['Kubernetes', 'CI/CD'], ARRAY['Istio', 'Helm'], 'Implement a microservices architecture for: {}', TRUE, 'S'),
     (14, 'Security Operations (SecOps) Engineer', 'Integrate security into DevOps processes', 'R', ARRAY['Security', 'DevSecOps'], ARRAY['Penetration Testing', 'SAST/DAST'], 'Develop a SecOps strategy for: {}', TRUE, 'S'),
     (14, 'Platform Engineer', 'Build and maintain scalable platforms', 'R', ARRAY['Kubernetes', 'IaC'], ARRAY['Service Mesh', 'API Gateways'], 'Design a platform solution for: {}', FALSE, 'S'),
     (14, 'Database Reliability Engineer', 'Ensure reliability and performance of databases', 'R', ARRAY['SQL', 'NoSQL'], ARRAY['Database Optimization', 'Sharding'], 'Optimize the following database setup: {}', TRUE, 'S'),
 
-    -- Team Delta, S2 2024 (Active)
+    -- MDN, S2 2024 (Active)
     (15, 'Edge Computing DevOps Engineer', 'Implement DevOps practices for edge computing', 'A', ARRAY['Edge Computing', 'IoT'], ARRAY['Kubernetes Edge', '5G'], 'Develop an edge computing deployment strategy for: {}', TRUE, 'N'),
     (15, 'FinOps Specialist', 'Optimize cloud costs and financial operations', 'A', ARRAY['Cloud Cost Management', 'Financial Analysis'], ARRAY['AWS Cost Explorer', 'GCP Cost Management'], 'Create a FinOps strategy for: {}', TRUE, 'N'),
     (15, 'Chaos Engineer', 'Design and implement chaos engineering practices', 'A', ARRAY['Chaos Engineering', 'Resilience Testing'], ARRAY['Chaos Monkey', 'Gremlin'], 'Design a chaos experiment for: {}', FALSE, 'N'),
     (15, 'GitOps Specialist', 'Implement GitOps practices and tools', 'A', ARRAY['Git', 'CI/CD'], ARRAY['ArgoCD', 'Flux'], 'Develop a GitOps workflow for: {}', TRUE, 'N'),
 
-    -- Team Delta, S1 2025 (Inactive, Future)
+    -- MDN, S1 2025 (Inactive, Future)
     (16, 'Quantum Computing Operations Specialist', 'Manage and optimize quantum computing infrastructure', 'I', ARRAY['Quantum Computing', 'Cloud Platforms'], ARRAY['Qiskit', 'Cirq'], 'Develop an operational plan for quantum computing resources: {}', TRUE, 'N'),
     (16, 'Green DevOps Engineer', 'Implement environmentally sustainable DevOps practices', 'I', ARRAY['DevOps', 'Green Computing'], ARRAY['Energy Efficient Algorithms', 'Sustainable Cloud'], 'Create a green DevOps strategy for: {}', TRUE, 'N'),
     (16, 'DevOps Anthropologist', 'Analyze and optimize DevOps culture and practices', 'I', ARRAY['DevOps', 'Organizational Psychology'], ARRAY['Cultural Analysis', 'Change Management'], 'Conduct a DevOps culture assessment for: {}', FALSE, 'N'),

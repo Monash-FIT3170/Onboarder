@@ -53,9 +53,6 @@ const ManuallyScheduleInterviewPage: React.FC = () => {
   scrollToTime.setHours(9, 0, 0);
 
   useEffect(() => {
-    console.log("Selected Applicant:", selectedApplicant);
-    console.log("Application ID:", selectedApplicant?.application_id);
-    console.log("Interview date", selectedApplicant?.interview_date);
     if (selectedApplicant?.interview_date) {
       const start = selectedApplicant?.interview_date;
       const startDate = new Date(start);
@@ -65,7 +62,6 @@ const ManuallyScheduleInterviewPage: React.FC = () => {
         end: thirtyMinutesLater,
         title: "Interview",
       };
-      console.log("New Event:", newEvent);
       setEventsList([newEvent]);
     }
   }, [selectedApplicant]);
@@ -113,14 +109,10 @@ const ManuallyScheduleInterviewPage: React.FC = () => {
     const formattedDate = format(interviewDate, "yyyy-MM-dd'T'HH:mm:ssXXX");
 
     try {
-      const response = await axios.patch(
-        `${BASE_API_URL}/application/${applicationId}`,
-        {
-          interview_date: formattedDate,
-          profile_id,
-        },
-      );
-      console.log(response);
+      await axios.patch(`${BASE_API_URL}/application/${applicationId}`, {
+        interview_date: formattedDate,
+        profile_id,
+      });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         alert(

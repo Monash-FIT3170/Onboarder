@@ -367,7 +367,6 @@ function OpeningDetailsPage() {
           <Button
             variant="outlined"
             onClick={() => {
-              // console.log("Navigating to /task-email-format");
               respond2();
             }}
           >
@@ -377,7 +376,6 @@ function OpeningDetailsPage() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              // console.log("Navigating to /interview-scheduling");
               respond();
             }}
           >

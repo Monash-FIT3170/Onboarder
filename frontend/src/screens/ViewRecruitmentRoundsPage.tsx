@@ -29,8 +29,9 @@ import PermissionButton from "../components/PermissionButton";
 // Css style file
 const styles = {
   scrollableTableBody: {
-    height: "calc(100vh - 650px)",
-    minHeight: "300px",
+    // height: "calc(100vh - 650px)",
+    maxHeight: "calc(4 * 69.5px + 57px)",
+    minHeight: "69.5px",
     overflowY: "auto",
     display: "block",
   },
@@ -161,6 +162,8 @@ const ViewRecruitmentRoundsPage = () => {
     );
   };
 
+  console.log(studentTeamStore.studentTeams);
+
   return (
     <div>
       <main>
@@ -174,7 +177,9 @@ const ViewRecruitmentRoundsPage = () => {
             <IconButton onClick={handleBack} sx={{ mr: 2 }}>
               <BackIcon />
             </IconButton>
-            <Typography variant="h4">{authStore.team_name}</Typography>
+            <Typography variant="h4">
+              {authStore.team_name + " Recruitment Rounds"}
+            </Typography>
           </Box>
           <Grid>
             <Modal
@@ -287,27 +292,24 @@ const ViewRecruitmentRoundsPage = () => {
         </Box>
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            <p>
+            <Typography variant="body1" sx={{ mb: 2, ml: 8, mt: 1 }}>
               {"Team Description: " +
                 studentTeamStore.studentTeams.find(
                   (item) => item.student_team_id === authStore.team_id,
                 )?.student_team_description}
-            </p>
+            </Typography>
           </Grid>
         </Grid>
-        <Typography variant="h5">Recruitment Rounds</Typography>
+        {/* <Typography variant="h5">Recruitment Rounds</Typography> */}
         <section>
-          <h4>
-            Current Recruitment Rounds: Showing{" "}
-            {
-              data.filter(
-                (item: any) => item.status == "I" || item.status == "A",
-              ).length
-            }
-          </h4>
-          <Grid container alignItems="center" justifyContent="space-between">
+          <Grid
+            container
+            alignItems="baseline"
+            justifyContent="space-between"
+            sx={{ mb: 1 }}
+          >
             <Grid item xs={6}>
-              <TextField
+              {/* <TextField
                 style={{ marginBottom: "1rem", width: "25%" }}
                 variant="outlined"
                 placeholder="Round Name, ApplicationDeadline, etc..."
@@ -315,7 +317,24 @@ const ViewRecruitmentRoundsPage = () => {
                 label="Search"
                 fullWidth
                 onChange={(e) => setFilter(e.target.value)}
-              />
+              /> */}
+              <Grid container alignItems="baseline">
+                <Grid item>
+                  <Typography variant="h5" mr={2}>
+                    Active Recruitment Rounds
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="subtitle2">
+                    Showing{" "}
+                    {
+                      data.filter(
+                        (item: any) => item.status == "I" || item.status == "A",
+                      ).length
+                    }
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid item>
@@ -406,13 +425,23 @@ const ViewRecruitmentRoundsPage = () => {
           </TableContainer>
         </section>
         <section>
-          <h4>
-            Archived Recruitment Rounds: Showing{" "}
-            {data.filter((item: any) => item.status == "R").length < 3
-              ? data.filter((item: any) => item.status == "R").length
-              : SHOW_ARCHIVED_AMOUNT}{" "}
-            of {data.filter((item: any) => item.status == "R").length}
-          </h4>
+          <Grid container alignItems="baseline" sx={{ mb: 1, mt: 2 }}>
+            <Grid item>
+              <Typography variant="h5" mr={2}>
+                Archived Recruitment Rounds
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="subtitle2">
+                Showing{" "}
+                {data.filter((item: any) => item.status == "R").length < 3
+                  ? data.filter((item: any) => item.status == "R").length
+                  : SHOW_ARCHIVED_AMOUNT}{" "}
+                of {data.filter((item: any) => item.status == "R").length}
+              </Typography>
+            </Grid>
+          </Grid>
+
           <TableContainer component={Paper}>
             <Table stickyHeader>
               <TableHead>
