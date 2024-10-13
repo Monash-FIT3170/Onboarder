@@ -16,11 +16,16 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Collapse,
+  Tooltip,
   Snackbar,
   Alert,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
 import { useApplicantStore } from "../util/stores/applicantStore";
@@ -53,6 +58,9 @@ function OpeningDetailsPage() {
     [],
   );
   const [loading, setLoading] = useState(true);
+  const [expandedApplicants, setExpandedApplicants] = useState(false);
+  const [expandedCandidates, setExpandedCandidates] = useState(false);
+  const [expandedRecruits, setExpandedRecruits] = useState(false);
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -64,37 +72,37 @@ function OpeningDetailsPage() {
   // Store hooks
   const authStore = useAuthStore();
   const selectedOpening = useOpeningStore((state) => state.selectedOpening);
-  const clearSelectedOpening = useOpeningStore(
-    (state) => state.clearSelectedOpening,
-  );
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
 
-  // Derived state
-  const sortedApplications = React.useMemo(() => {
-    if (!sortColumn) return applications;
+  // // Derived state
+  // const sortedApplications = React.useMemo(() => {
+  //   if (!sortColumn) return applications;
 
-    return [...applications].sort((a, b) => {
-      const compareValues = (aVal: any, bVal: any) => {
-        if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
-        if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      };
+  //   return [...applications].sort((a, b) => {
+  //     const compareValues = (aVal: any, bVal: any) => {
+  //       if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
+  //       if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
+  //       return 0;
+  //     };
 
-      switch (sortColumn) {
-        case "email":
-          return compareValues(a.email, b.email);
-        case "status":
-          return compareValues(a.status, b.status);
-        case "date":
-          return compareValues(new Date(a.created_at), new Date(b.created_at));
-        default:
-          return 0;
-      }
-    });
-  }, [applications, sortColumn, sortDirection]);
+  //     switch (sortColumn) {
+  //       case "email":
+  //         return compareValues(a.email, b.email);
+  //       case "status":
+  //         return compareValues(a.status, b.status);
+  //       case "date":
+  //         return compareValues(new Date(a.created_at), new Date(b.created_at));
+  //       default:
+  //         return 0;
+  //     }
+  //   });
+  // }, [applications, sortColumn, sortDirection]);
 
+  const clearSelectedOpening = useOpeningStore(
+    (state) => state.clearSelectedOpening,
+  );
   // Effect hooks
   useEffect(() => {
     if (!selectedOpening) {
@@ -121,15 +129,15 @@ function OpeningDetailsPage() {
   }, [selectedOpening, navigate, BASE_API_URL]);
 
   // Handler functions
-  const handleSort = useCallback(
-    (column: string) => {
-      setSortDirection((prev) =>
-        sortColumn === column && prev === "asc" ? "desc" : "asc",
-      );
-      setSortColumn(column);
-    },
-    [sortColumn],
-  );
+  // const handleSort = useCallback(
+  //   (column: string) => {
+  //     setSortDirection((prev) =>
+  //       sortColumn === column && prev === "asc" ? "desc" : "asc",
+  //     );
+  //     setSortColumn(column);
+  //   },
+  //   [sortColumn],
+  // );
 
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
@@ -209,25 +217,36 @@ function OpeningDetailsPage() {
     handleClickOpen();
   };
 
-  // Row generation function
+  const filterApplications = (status: string) =>
+    applications.filter(
+      (app) => app.status.toLowerCase() === status.toLowerCase(),
+    );
+
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
+    if (applications.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={5} align="left" sx={{ width: "20%" }}>
+            None
+          </TableCell>
+        </TableRow>
+      );
+    }
+
     return applications.map((application) => (
       <TableRow key={application.id}>
-        <TableCell>{application.name}</TableCell>
-        <TableCell>{application.email}</TableCell>
-        <TableCell>{getAppStatusText(application.status)}</TableCell>
-        <TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.name}</TableCell>
+        <TableCell sx={{ width: "20%" }}>{application.email}</TableCell>
+        <TableCell sx={{ width: "10%" }}>
+          {getAppStatusText(application.status)}
+        </TableCell>
+        <TableCell sx={{ width: "15%" }}>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-        <TableCell>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {(application.status == "C" || application.status == "X") && (
+        <TableCell sx={{ width: "35%" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            {/* If the application is in the "C" (Candidate) or "R" (Recruit) status, show the INTERVIEW NOTES button */}
+            {(application.status === "C" || application.status === "R") && (
               <Button
                 variant="outlined"
                 onClick={() => handleViewInterviewNotes(application.id)}
@@ -235,8 +254,6 @@ function OpeningDetailsPage() {
                 INTERVIEW NOTES
               </Button>
             )}
-            <Box sx={{ flexGrow: 1 }} />{" "}
-            {/* Spacer to push the VIEW button to the right */}
             <Button
               variant="contained"
               onClick={() => handleViewApplication(application.id)}
@@ -249,8 +266,79 @@ function OpeningDetailsPage() {
     ));
   };
 
-  const handleInterviewSchedule = () => {
-    navigate("/interview-scheduling");
+  const renderCategorySection = (
+    title: string,
+    status: string,
+    expanded: boolean,
+    setExpanded: React.Dispatch<React.SetStateAction<boolean>>,
+    tooltipText: string,
+  ) => {
+    const filteredApplications = filterApplications(status);
+
+    return (
+      <Box sx={{ mt: 2 }}>
+        <Button
+          onClick={() => setExpanded(!expanded)}
+          fullWidth
+          sx={{
+            justifyContent: "flex-start",
+            // color: "primary.main",
+            // "&:hover": {
+            //   backgroundColor: "rgba(0, 0, 0, 0.04)",
+            // },
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Tooltip title={tooltipText}>
+              <IconButton size="small" sx={{ mr: 1 }}>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography
+              variant="h6"
+              component="div"
+              // sx={{ fontWeight: "bold" }}
+            >
+              {title + " (" + filteredApplications.length + ")"}
+            </Typography>
+          </Box>
+          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Button>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody>
+                {loading
+                  ? [...Array(3)].map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton variant="text" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            width={200}
+                            height={36}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : generateRowFunction(filteredApplications)}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Collapse>
+      </Box>
+    );
   };
 
   const handleCloseSnackbar = () => {
@@ -262,20 +350,23 @@ function OpeningDetailsPage() {
     <div>
       {/* Creates a button below allowing the user to add positions */}
       <div
-        style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "0px 0px 8px",
+        }}
       >
         <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {selectedOpening?.title}
+        <Typography variant="h4" style={{ marginLeft: "10px" }}>
+          {"Opening: " + selectedOpening?.title}
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
           <Button
             variant="outlined"
             onClick={() => {
-              // console.log("Navigating to /task-email-format");
               respond2();
             }}
           >
@@ -285,8 +376,7 @@ function OpeningDetailsPage() {
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              // console.log("Navigating to /interview-scheduling");
-              handleInterviewSchedule();
+              respond();
             }}
           >
             INTERVIEW SCHEDULE
@@ -294,9 +384,8 @@ function OpeningDetailsPage() {
         </div>
       </div>
 
-      {/* creates a table showing all the number of applications for each recruitment round */}
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+      <TableContainer component={Paper} sx={{ mb: 2 }}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
@@ -312,8 +401,6 @@ function OpeningDetailsPage() {
         </Table>
       </TableContainer>
 
-      <div style={{ marginTop: "50px" }}></div>
-
       <Box
         sx={{
           display: "flex",
@@ -322,108 +409,52 @@ function OpeningDetailsPage() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h6" component="div">
+        <Typography variant="h5" component="div">
           Opening Applications
         </Typography>
-        <PermissionButton
-          action="send"
-          subject="Interview"
-          variant="contained"
-          onClick={handleConfirmSendEmails}
-          disabled={
-            loading ||
+
+        <Tooltip
+          title={
             applications.find((item) => item.status === "C") == undefined
+              ? "There are no candidates to send interview scheduling emails to. Accept applications to send emails."
+              : ""
           }
-          style={{ marginLeft: "1rem" }}
-          tooltipText="You do not have permission to send interview scheduling emails"
+          arrow
         >
-          {loading ? (
-            <Skeleton width={100} />
-          ) : (
-            "Send Interview Scheduling Emails"
-          )}
-        </PermissionButton>
+          <span>
+            <PermissionButton
+              action="send"
+              subject="Interview"
+              variant="contained"
+              onClick={handleConfirmSendEmails}
+              disabled={
+                loading ||
+                applications.find((item) => item.status === "C") == undefined
+              }
+              style={{ marginLeft: "1rem" }}
+              tooltipText="You do not have permission to send interview scheduling emails"
+            >
+              {loading ? (
+                <Skeleton width={100} />
+              ) : (
+                "Send Interview Scheduling Emails"
+              )}
+            </PermissionButton>
+          </span>
+        </Tooltip>
       </Box>
 
       <TableContainer component={Paper}>
-        <Table aria-label="applications table">
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Student Name</TableCell>
-              <TableCell>
-                Student Email
-                <Button
-                  onClick={() => handleSort("email")}
-                  aria-label={`Sort by email ${sortColumn === "email" ? (sortDirection === "asc" ? "descending" : "ascending") : ""}`}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "email"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>
-                Status
-                <Button
-                  onClick={() => handleSort("status")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "status"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>
-                Date of Submission
-                <Button
-                  onClick={() => handleSort("date")}
-                  style={{
-                    minWidth: "30px",
-                    padding: "6px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  {sortColumn === "date"
-                    ? sortDirection === "asc"
-                      ? "↓"
-                      : "↑"
-                    : "↓"}
-                </Button>
-              </TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Name</TableCell>
+              <TableCell sx={{ width: "20%" }}>Student Email</TableCell>
+              <TableCell sx={{ width: "10%" }}>Status</TableCell>
+              <TableCell sx={{ width: "15%" }}>Date of Submission</TableCell>
+              <TableCell sx={{ width: "35%" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {loading ? (
-              [...Array(3)].map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell colSpan={5}>
-                    <Skeleton variant="rectangular" height={30} />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : sortedApplications.length > 0 ? (
-              generateRowFunction(sortedApplications)
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No applications found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
         </Table>
       </TableContainer>
       <Dialog
@@ -457,6 +488,28 @@ function OpeningDetailsPage() {
           </PermissionButton>
         </DialogActions>
       </Dialog>
+
+      {renderCategorySection(
+        "Applicants",
+        "A",
+        expandedApplicants,
+        setExpandedApplicants,
+        "Applicants are students who have submitted an application.",
+      )}
+      {renderCategorySection(
+        "Candidates",
+        "C",
+        expandedCandidates,
+        setExpandedCandidates,
+        "Candidates have had their application accepted, and have made it to the interview stage.",
+      )}
+      {renderCategorySection(
+        "Recruits",
+        "R",
+        expandedRecruits,
+        setExpandedRecruits,
+        "Recruits have completed their interview and were accepted to be a part of the team.",
+      )}
       <Snackbar
         open={!!error}
         autoHideDuration={6000}

@@ -85,7 +85,7 @@ def update_application(application_id, data):
 
 def get_application(application_id):
     response = supabase.table("APPLICATION").select(
-        "*").eq("id", application_id).execute()
+        "*, profile:PROFILE(email).email::text as interviewer_email").eq("id", application_id).execute()
     return response.data
 
 
@@ -214,6 +214,7 @@ def schedule_interviews(opening_id):
         import optimisation
         event = json.dumps({'Records': [{'body': {'opening_id': opening_id}}]})
         optimisation.lambda_handler(event, {})
+        
     else:
         print('Running on AWS')
         sqs.post(body)
@@ -699,7 +700,7 @@ def get_credentials():
         raise
 
 
-def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, meeting_link):
+def create_interview_event_with_attendees(applicant_emails, interviewer_emails, start_time, end_time, organizer_name, organizer_email, meeting_link, opening_id):
     creds = get_credentials()
     service = build('calendar', 'v3', credentials=creds)
 
@@ -757,6 +758,7 @@ def create_interview_event_with_attendees(applicant_emails, interviewer_emails, 
             body=event,
             sendUpdates='all'
         ).execute()
+        response = supabase.table("OPENING").update({"calendar_invites_sent": True}).eq("id", opening_id).execute()
         print(f'Interview event created: {created_event.get("htmlLink")}')
         return created_event
     except Exception as e:

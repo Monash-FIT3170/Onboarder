@@ -56,7 +56,6 @@ const ViewTeamMembersPage: React.FC = () => {
           `${BASE_API_URL}/student-team/${studentTeamId}/members`, // Working
         );
         const profileTeamInfo = profileTeamResponse.data;
-        // console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -64,15 +63,10 @@ const ViewTeamMembersPage: React.FC = () => {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            // console.log(memberInfo);
             const studentResponse = await axios.get(
               `${BASE_API_URL}/profile/${memberInfo.profile_id}`, // Working
             );
-            // const studentInfo = studentResponse.data.find(
-            //   (student: any) => student.student_team_id === team_id
-            // );
             const studentInfo = studentResponse.data[0];
-            // console.log(studentInfo);
 
             if (studentInfo) {
               return {

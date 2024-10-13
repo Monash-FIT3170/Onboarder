@@ -3,6 +3,7 @@ import {
   Button,
   Modal,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -10,14 +11,14 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Skeleton,
 } from "@mui/material";
 import axios from "axios";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../util/stores/authStore";
-import { getBaseAPIURL } from "../util/Util";
 import RoleIcon from "../util/RoleIcon";
+import { useAuthStore } from "../util/stores/authStore";
+import { useStudentTeamStore } from "../util/stores/studentTeamStore";
+import { getBaseAPIURL } from "../util/Util";
 
 export interface StudentTeamResultProps {
   id: number; // user id
@@ -29,7 +30,7 @@ export interface StudentTeamResultProps {
 }
 
 export interface DashboardTableProps {
-  results: StudentTeamResultProps[];
+  newTeam: StudentTeamResultProps[];
 }
 
 const modalStyle = {
@@ -109,10 +110,9 @@ const generateRowFunction = (
   );
 };
 
-export function DashboardTable() {
+export function DashboardTable({ newTeam }: DashboardTableProps) {
   // State hooks
 
-  const [results, setResults] = useState<StudentTeamResultProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalData, setModalData] = useState<StudentTeamResultProps | null>(
     null,
@@ -128,6 +128,7 @@ export function DashboardTable() {
   // Store hooks
 
   const authStore = useAuthStore();
+  const { studentTeams, setStudentTeams } = useStudentTeamStore();
 
   // Effect hooks
 
@@ -139,7 +140,6 @@ export function DashboardTable() {
       if (!profileId) {
         profileId = await authStore.fetchProfile();
       }
-      console.log("Profile ID: ", profileId);
 
       const response = await axios.get(
         `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
@@ -168,13 +168,13 @@ export function DashboardTable() {
           return roleRanking[a.user_team_role] - roleRanking[b.user_team_role];
         });
 
-      setResults(tableData);
+      setStudentTeams(tableData);
     } catch (error) {
       console.error("Error fetching teams:", error);
     } finally {
       setLoading(false);
     }
-  }, [BASE_API_URL]);
+  }, [BASE_API_URL, newTeam]);
 
   useEffect(() => {
     fetchTeams();
@@ -270,7 +270,7 @@ export function DashboardTable() {
     );
   }
 
-  if (results.length === 0) {
+  if (studentTeams.length === 0) {
     return (
       <Box sx={{ textAlign: "center", mt: 4 }}>
         <Typography variant="h6">
@@ -301,7 +301,7 @@ export function DashboardTable() {
           </TableHead>
           <TableBody>
             {generateRowFunction(
-              results,
+              studentTeams,
               setModalData,
               setDeleteModalOpen,
               setLeaveModalOpen,

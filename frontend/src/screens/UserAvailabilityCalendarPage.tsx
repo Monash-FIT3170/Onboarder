@@ -89,7 +89,6 @@ const UserAvailabilityCalendarPage: React.FC = () => {
         `${BASE_API_URL}/profile/${profileId}/application`,
       );
       const data = response.data;
-      console.log(data);
       const interviewDates = data.map((interview: any) => {
         return {
           start: new Date(interview.interview_date),
@@ -133,10 +132,6 @@ const UserAvailabilityCalendarPage: React.FC = () => {
         { start, end, title: "Available Slot" },
       ];
       setEventsList(updatedEvents);
-      console.log("Updated Events");
-      console.log(updatedEvents);
-      console.log("Interview Dates");
-      console.log(interviewDates);
     }
   };
 

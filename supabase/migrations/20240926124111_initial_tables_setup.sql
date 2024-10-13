@@ -121,3 +121,4 @@ CREATE TABLE public."APPLICATION" (
     CONSTRAINT APPLICATION_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES "PROFILE" (id)
 ) TABLESPACE pg_default;
 
+

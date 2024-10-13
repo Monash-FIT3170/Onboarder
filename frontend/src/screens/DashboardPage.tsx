@@ -24,6 +24,7 @@ const DashboardPage: React.FC = () => {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const BASE_API_URL = getBaseAPIURL();
   const { studentTeams, setStudentTeams } = useStudentTeamStore();
+  const [newTeam, setNewTeam] = useState<any>(null);
 
   const { user } = useAuthStore();
 
@@ -33,6 +34,13 @@ const DashboardPage: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsAddTeamModalOpen(false);
+  };
+
+  const handleUserGuideClick = () => {
+    window.open(
+      "https://github.com/Monash-FIT3170/Onboarder/blob/main/USERGUIDE.md",
+      "_blank",
+    );
   };
 
   const handleSubmitTeam = async (
@@ -62,6 +70,7 @@ const DashboardPage: React.FC = () => {
       };
 
       setStudentTeams([...studentTeams, newStudentTeam]);
+      setNewTeam(newStudentTeam);
     } catch (error) {
       console.error("Error submitting team:", error);
     }
@@ -69,18 +78,19 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Box display="flex" flexDirection="column">
-      <TitleWrap>
-        <Typography variant="h2" fontWeight="light" gutterBottom>
-          Dashboard
-        </Typography>
-      </TitleWrap>
       <ButtonStyle>
-        <Typography variant="h4">Your Student Teams</Typography>
+        <Typography variant="h4">Dashboard</Typography>
+        <Button variant="contained" onClick={handleUserGuideClick}>
+          User Guide
+        </Button>
+      </ButtonStyle>
+      <ButtonStyle>
+        <Typography variant="h5">Your Student Teams</Typography>
         <Button variant="contained" onClick={handleAddTeamClick}>
           Add Team
         </Button>
       </ButtonStyle>
-      <DashboardTable results={studentTeams} />
+      <DashboardTable newTeam={newTeam} />
       <AddTeamModal
         open={isAddTeamModalOpen}
         onClose={handleCloseModal}

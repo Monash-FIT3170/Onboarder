@@ -58,9 +58,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           currentState.role.toLowerCase() as UserRole,
         );
         set({ ability: newAbility });
-
-        console.log("Ability updated", newAbility);
-        console.log("Role updated", currentState.role);
       }
     }
 
@@ -94,9 +91,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       ? defineAbilityFor(role.toLowerCase() as UserRole)
       : null;
     set({ team_id, team_meeting_link, team_name, role, ability: newAbility });
-
-    console.log("Ability updated", newAbility);
-    console.log("Role updated", role);
   },
 
   fetchProfile: async (): Promise<string | null> => {

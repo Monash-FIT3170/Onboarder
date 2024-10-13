@@ -265,6 +265,8 @@ This is used for deployment. Having it blank means that the codebase will use a 
 
    `python pre-process-seed.py`
 
+   you might have to use `python3` instead of `python`
+
    then
 
    `supabase start` or `npx supabase start`
@@ -294,6 +296,8 @@ If you would like to try run the algorithm, you will need a python virtual envir
    ```bash
    python -m venv venv
    ```
+
+   You may need to use `python3` instead of `python`
 
 3. Then activate it:
 

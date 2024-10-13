@@ -75,7 +75,6 @@ function OnboarderOpeningsPage() {
       try {
         const openingsResponse = await axios.get(`${BASE_API_URL}/opening`);
         setOpening(openingsResponse.data);
-        console.log(openingsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -87,7 +86,6 @@ function OnboarderOpeningsPage() {
   }, []);
 
   const filteredOpenings = openings.filter((opening) => {
-    // console.log(opening);
     if (openings.length != 0) {
       // filter active
       const searchMatch =
@@ -129,15 +127,15 @@ function OnboarderOpeningsPage() {
         <IconButton onClick={handleBack} sx={{ mr: 2 }}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5">Student Team Openings</Typography>
+        <Typography variant="h4">Student Team Openings</Typography>
       </TitleWrapper>
 
       <Grid
         container
-        spacing={2}
+        spacing={1}
         alignItems="center"
         justifyContent="center"
-        marginTop="10px"
+        marginTop="8px"
       >
         <Grid item xs={3}>
           <TextField
@@ -154,8 +152,8 @@ function OnboarderOpeningsPage() {
         style={{
           display: "flex",
           flexDirection: "column",
-          rowGap: "20px",
-          marginTop: "30px",
+          rowGap: "8px",
+          marginTop: "16px",
         }}
       >
         {loading ? (

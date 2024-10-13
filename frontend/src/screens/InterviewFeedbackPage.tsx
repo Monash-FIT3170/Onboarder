@@ -133,9 +133,6 @@ function InterviewFeedbackPage() {
   };
 
   const handleUpdate = () => {
-    console.log("Updating feedback for applicant");
-    console.log("Score: ", score);
-    console.log("Feedback: ", feedback);
     if (!validateScore(score)) {
       return;
     }
@@ -194,7 +191,7 @@ function InterviewFeedbackPage() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        console.error("Invalid User Status: ", status);
       }
     }
   }, [applicantInformation, openAccept, openReject]);
@@ -210,7 +207,6 @@ function InterviewFeedbackPage() {
         const applicantResponse = await axios.get(
           `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
-        console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
         setFeedback(applicantResponse.data[0]?.interview_notes);
         setScore(applicantResponse.data[0]?.interview_score);
@@ -239,21 +235,20 @@ function InterviewFeedbackPage() {
             style={{
               display: "flex",
               alignItems: "center",
-              margin: "20px 10px",
             }}
           >
             <IconButton onClick={() => handleBack()}>
               <BackIcon />
             </IconButton>
-            <Typography variant="h5" style={{ marginLeft: "10px" }}>
-              Note from Interview
+            <Typography variant="h4" style={{ marginLeft: "10px" }}>
+              Interview Feedback
             </Typography>
           </div>
         </Grid>
       </Grid>
 
       {/* Applicant Info in Table Format */}
-      <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+      <TableContainer component={Paper} sx={{ mt: 1 }}>
         <Table>
           <TableBody>
             <TableRow>
@@ -271,7 +266,7 @@ function InterviewFeedbackPage() {
                 </Typography>
               </TableCell>
               <TableCell>
-                {applicantInformation[0]?.profile_email ||
+                {applicantInformation[0]?.profile.email ||
                   "Interviewer yet to be assigned"}
               </TableCell>
             </TableRow>
@@ -312,10 +307,17 @@ function InterviewFeedbackPage() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Typography variant="body2" fontSize={20} margin={1}>
+      <Grid container spacing={1} alignItems="baseline" sx={{ m: 1, ml: 0 }}>
+        <Grid item>
+          <Typography variant="h5">Interview Score</Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2">(Auto Saved)</Typography>
+        </Grid>
+      </Grid>
+      {/* <Typography variant="h5" sx={{ m: 1 }}>
         Score (Auto Saved)
-      </Typography>
+      </Typography> */}
       <Grid justifyContent="left">
         <Grid item xs={12} md={6}>
           <div
@@ -338,9 +340,14 @@ function InterviewFeedbackPage() {
         </Grid>
       </Grid>
 
-      <Typography variant="body2" fontSize={20}>
-        Interview Notes (Auto Saved)
-      </Typography>
+      <Grid container spacing={1} alignItems="baseline" sx={{ m: 1, ml: 0 }}>
+        <Grid item>
+          <Typography variant="h5">Interview Notes</Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2">(Auto Saved)</Typography>
+        </Grid>
+      </Grid>
       <Grid container spacing={0} justifyContent="left">
         <Grid item xs={12}>
           <div
@@ -371,7 +378,7 @@ function InterviewFeedbackPage() {
         xs={12}
         justifyContent="center"
         spacing={2}
-        margin="20px 10px"
+        sx={{ mt: 1 }}
       >
         <Grid item>
           <React.Fragment>

@@ -30,8 +30,6 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
   currentUserProfileId,
   userRole,
 }) => {
-  console.log(members);
-  console.log(currentUserProfileId);
   return (
     <TableContainer component={Paper}>
       <Table>

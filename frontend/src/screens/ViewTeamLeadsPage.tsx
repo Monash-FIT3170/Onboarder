@@ -56,7 +56,6 @@ function ViewTeamLeadsPage() {
           `${BASE_API_URL}/student-team/${team_id}/members`,
         );
         const profileTeamInfo = profileTeamResponse.data;
-        // console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -64,20 +63,14 @@ function ViewTeamLeadsPage() {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            // console.log(memberInfo);
             const studentResponse = await axios.get(
               `${BASE_API_URL}/profile/${memberInfo.profile_id}`,
             );
-            // const studentInfo = studentResponse.data.find(
-            //   (student: any) => student.student_team_id === team_id
-            // );
             const studentInfo = studentResponse.data[0];
-            // console.log(studentInfo);
 
             if (studentInfo) {
               return {
                 email: studentInfo.email,
-                // role: getRoleText(memberInfo.role),
                 profile_id: memberInfo.profile_id,
               };
             }
@@ -184,7 +177,7 @@ function ViewTeamLeadsPage() {
         alignItems="center"
         marginBottom="10px"
       >
-        <Typography variant="h6">List of Team Leads</Typography>
+        <Typography variant="h5">List of Team Leads</Typography>
       </Box>
       <TableContainer component={Paper}>
         <Table aria-label="openings table">

@@ -136,7 +136,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             <FormControl component="fieldset" margin="normal">
               <FormLabel component="legend">Role</FormLabel>
               <RadioGroup value={role} onChange={handleRoleChange}>
-                <FormControlLabel value="O" control={<Radio />} label="Owner" />
+                {/* <FormControlLabel value="O" control={<Radio />} label="Owner" /> */}
                 <FormControlLabel value="A" control={<Radio />} label="Admin" />
                 <FormControlLabel
                   value="T"

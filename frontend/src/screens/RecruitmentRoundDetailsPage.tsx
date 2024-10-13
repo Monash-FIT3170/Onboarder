@@ -185,6 +185,8 @@ function RecruitmentRoundDetailsPage() {
     student_team_name: string,
     title: string,
     application_count: number,
+    interview_allocation_status: string,
+    calendar_invites_sent: boolean,
   ) => {
     setSelectedOpening({
       id,
@@ -192,6 +194,8 @@ function RecruitmentRoundDetailsPage() {
       student_team_name,
       title,
       application_count,
+      interview_allocation_status,
+      calendar_invites_sent,
     });
     navigate("/opening-details");
   };
@@ -216,7 +220,7 @@ function RecruitmentRoundDetailsPage() {
               <BackIcon />
             )}
           </IconButton>
-          <Typography variant="h5">
+          <Typography variant="h4">
             {loading ? (
               <Skeleton width={200} />
             ) : (
@@ -316,7 +320,7 @@ function RecruitmentRoundDetailsPage() {
         }}
       >
         <OpeningsWrapper>
-          <Typography variant="h6">
+          <Typography variant="h5">
             {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
           </Typography>
           <PermissionButton
@@ -397,7 +401,7 @@ function RecruitmentRoundDetailsPage() {
           <Button
             variant="outlined"
             onClick={handleCloseModal}
-            sx={{ mt: 2, mr: 1 }}
+            sx={{ mt: 1, mr: 1 }}
           >
             Cancel
           </Button>
@@ -406,7 +410,7 @@ function RecruitmentRoundDetailsPage() {
             subject="Round"
             variant="contained"
             onClick={handleConfirm}
-            sx={{ mt: 2 }}
+            sx={{ mt: 1 }}
             tooltipText="You do not have permission to archive this round"
           >
             Confirm

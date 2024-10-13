@@ -129,7 +129,7 @@ function CreateOpeningPage() {
   return (
     <Grid container spacing={4} justifyContent="center">
       <Grid item xs={12}>
-        <Typography variant="h3" textAlign="center">
+        <Typography variant="h4" textAlign="center">
           Create Opening
         </Typography>
       </Grid>
