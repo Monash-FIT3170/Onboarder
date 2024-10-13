@@ -125,7 +125,7 @@ function AppBarOnBoarder() {
                 sx={{ display: "flex", alignItems: "center" }}
               >
                 {" "}
-                <RoleIcon role={role} />
+                <RoleIcon role={role} color="white" />
                 {role}
               </Typography>
             </Typography>

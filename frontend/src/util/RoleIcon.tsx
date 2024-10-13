@@ -6,9 +6,10 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 
 interface RoleIconProps {
   role: string;
+  color?: string;
 }
 
-const RoleIcon: React.FC<RoleIconProps> = ({ role }) => {
+const RoleIcon: React.FC<RoleIconProps> = ({ role, color = "inherit" }) => {
   let Icon;
   let tooltipTitle;
 
@@ -34,7 +35,7 @@ const RoleIcon: React.FC<RoleIconProps> = ({ role }) => {
   return (
     <Tooltip title={tooltipTitle}>
       <IconButton size="small">
-        <Icon fontSize="small" />
+        <Icon fontSize="small" sx={{ color: color }} />
       </IconButton>
     </Tooltip>
   );

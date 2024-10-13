@@ -110,7 +110,8 @@ const generateRowFunction = (
 };
 
 export function DashboardTable() {
-  const navigate = useNavigate();
+  // State hooks
+
   const [results, setResults] = useState<StudentTeamResultProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalData, setModalData] = useState<StudentTeamResultProps | null>(
@@ -118,14 +119,56 @@ export function DashboardTable() {
   );
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [leaveModalOpen, setLeaveModalOpen] = useState(false);
-  const authStore = useAuthStore();
+
+  //Constants
+
+  const navigate = useNavigate();
   const BASE_API_URL = getBaseAPIURL();
+
+  // Store hooks
+
+  const authStore = useAuthStore();
+
+  // Effect hooks
 
   const fetchTeams = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_API_URL}/student-teams`);
-      setResults(response.data);
+      let profileId = authStore.profile;
+
+      if (!profileId) {
+        profileId = await authStore.fetchProfile();
+      }
+      console.log("Profile ID: ", profileId);
+
+      const response = await axios.get(
+        `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
+      );
+      const tableData = response.data
+        .map((role: any) => ({
+          id: role.profile_id, // Assuming the API returns a user id
+          student_team_id: role.student_team_id,
+          student_team_name: role.student_team_name,
+          user_team_role:
+            role.your_role === "O"
+              ? "Owner"
+              : role.your_role === "A"
+                ? "Admin"
+                : "Team Lead",
+          student_team_owner: role.owner_email,
+          student_team_description: role.student_team_description,
+          student_team_meeting_link: role.student_team_meeting_link,
+        }))
+        .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
+          const roleRanking: { [key: string]: number } = {
+            Owner: 0,
+            Admin: 1,
+            "Team Lead": 2,
+          };
+          return roleRanking[a.user_team_role] - roleRanking[b.user_team_role];
+        });
+
+      setResults(tableData);
     } catch (error) {
       console.error("Error fetching teams:", error);
     } finally {
@@ -139,6 +182,8 @@ export function DashboardTable() {
   // Using fetchTeams in the dependency array won't cause an infinite loop
   // because it's wrapped in useCallback. The function reference only changes
   // if BASE_API_URL changes, preventing unnecessary re-renders.
+
+  // Handler functions
 
   const handleCloseModal = () => {
     setDeleteModalOpen(false);
