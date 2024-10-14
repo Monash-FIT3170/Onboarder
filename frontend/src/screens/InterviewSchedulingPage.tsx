@@ -17,8 +17,6 @@ import {
   Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import styled from "styled-components";
-
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";

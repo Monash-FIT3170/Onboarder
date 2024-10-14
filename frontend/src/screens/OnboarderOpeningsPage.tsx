@@ -13,7 +13,6 @@ import {
   Paper,
 } from "@mui/material";
 import styled from "styled-components";
-// import LoadingSpinner from "../components/LoadSpinner";
 import {
   OnboarderOpeningsTable,
   onboarderOpeningResultProps,

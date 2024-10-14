@@ -8,11 +8,6 @@ import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
-const TitleWrap = styled.div`
-  margin: auto;
-  text-align: center;
-`;
-
 const ButtonStyle = styled.div`
   display: flex;
   justify-content: space-between;

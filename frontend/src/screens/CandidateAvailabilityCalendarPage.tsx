@@ -16,8 +16,6 @@ import { startOfDay, endOfDay, addWeeks } from "date-fns";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
-// Prettier Test
-
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
 
