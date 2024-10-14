@@ -23,7 +23,6 @@ const ConfigureInterviewLinkModal: React.FC<
 > = ({ open, onClose, onEditLink, urlLinkIn }) => {
   const [urlLink, setUrlLink] = useState(urlLinkIn);
   //   setUrlLink(urlLinkIn);
-  console.log(urlLinkIn);
   const handleEditLink = () => {
     onEditLink(urlLink);
     onClose();

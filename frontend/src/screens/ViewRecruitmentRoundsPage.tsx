@@ -92,10 +92,6 @@ const ViewRecruitmentRoundsPage = () => {
         const response = await axios.get(API_URL);
 
         setData(response.data);
-        console.log("auth tid: ", authStore.team_id);
-        // console.log(response.data);
-        // setUrlLink(response.data[0].student_team_meeting_link);
-        console.log(studentTeamStore.studentTeams);
         setUrlLink(
           studentTeamStore.studentTeams.find(
             (item) => item.student_team_id == authStore.team_id,

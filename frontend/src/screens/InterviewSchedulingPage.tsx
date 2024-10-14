@@ -320,8 +320,6 @@ const InterviewSchedulingPage = () => {
     setLoading(false);
   };
 
-  console.log("selectedOpening", selectedOpening);
-
   // Row generation function
   const generateRowFunction = (applications: SingleApplicationProps[]) => {
     return applications.map((application) => (
