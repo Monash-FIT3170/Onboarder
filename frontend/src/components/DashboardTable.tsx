@@ -144,6 +144,7 @@ export function DashboardTable({ newTeam }: DashboardTableProps) {
       const response = await axios.get(
         `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
       );
+      console.log("Response data: ", response.data);
       const tableData = response.data
         .map((role: any) => ({
           id: role.profile_id, // Assuming the API returns a user id
@@ -167,7 +168,7 @@ export function DashboardTable({ newTeam }: DashboardTableProps) {
           };
           return roleRanking[a.user_team_role] - roleRanking[b.user_team_role];
         });
-
+      console.log("Table Data: ", tableData);
       setStudentTeams(tableData);
     } catch (error) {
       console.error("Error fetching teams:", error);

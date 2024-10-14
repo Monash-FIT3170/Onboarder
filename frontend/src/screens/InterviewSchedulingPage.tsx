@@ -263,6 +263,9 @@ const InterviewSchedulingPage = () => {
       alert("Oops! Something went wrong. Please try again later.");
       setLoading(false);
     } finally {
+      if (selectedOpening) {
+        selectedOpening.calendar_invites_sent = true;
+      }
       setLoading(false);
     }
   };
