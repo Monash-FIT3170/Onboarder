@@ -268,7 +268,7 @@ BEGIN
             ) VALUES (
                 opening_rec.id, app_rec.email, app_rec.name, app_rec.phone, app_rec.semesters_until_completion,
                 app_rec.course_name, app_rec.current_semester, app_rec.major_enrolled, app_rec.additional_info,
-                app_rec.skills, app_rec.candidate_availability, app_rec.interview_date, NULL, NULL, app_rec.status, app.profile_id
+                app_rec.skills, app_rec.candidate_availability, app_rec.interview_date, NULL, NULL, app_rec.status, app_rec.profile_id
             ) ON CONFLICT (opening_id, email) DO NOTHING;
 
             app_counter := app_counter + 1;
