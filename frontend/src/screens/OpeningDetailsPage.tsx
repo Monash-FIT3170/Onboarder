@@ -22,7 +22,8 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
+import EmailConfigModal from "../components/EmailConfigModal";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InfoIcon from "@mui/icons-material/Info";
@@ -52,8 +53,6 @@ export interface SingleApplicationProps {
 
 function OpeningDetailsPage() {
   // State hooks
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
@@ -64,7 +63,7 @@ function OpeningDetailsPage() {
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const [isEmailConfigModalOpen, setIsEmailConfigModalOpen] = useState(false);
   // Constants
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
@@ -75,30 +74,6 @@ function OpeningDetailsPage() {
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
-
-  // // Derived state
-  // const sortedApplications = React.useMemo(() => {
-  //   if (!sortColumn) return applications;
-
-  //   return [...applications].sort((a, b) => {
-  //     const compareValues = (aVal: any, bVal: any) => {
-  //       if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
-  //       if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
-  //       return 0;
-  //     };
-
-  //     switch (sortColumn) {
-  //       case "email":
-  //         return compareValues(a.email, b.email);
-  //       case "status":
-  //         return compareValues(a.status, b.status);
-  //       case "date":
-  //         return compareValues(new Date(a.created_at), new Date(b.created_at));
-  //       default:
-  //         return 0;
-  //     }
-  //   });
-  // }, [applications, sortColumn, sortDirection]);
 
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
@@ -127,17 +102,6 @@ function OpeningDetailsPage() {
 
     fetchData();
   }, [selectedOpening, navigate, BASE_API_URL]);
-
-  // Handler functions
-  // const handleSort = useCallback(
-  //   (column: string) => {
-  //     setSortDirection((prev) =>
-  //       sortColumn === column && prev === "asc" ? "desc" : "asc",
-  //     );
-  //     setSortColumn(column);
-  //   },
-  //   [sortColumn],
-  // );
 
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
@@ -179,9 +143,12 @@ function OpeningDetailsPage() {
     navigate("/interview-scheduling");
   };
 
-  const respond2 = () => {
-    // clearSelectedOpening();
-    navigate("/task-email-format");
+  const handleOpenEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(true);
+  };
+
+  const handleCloseEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(false);
   };
 
   const handleClickOpen = () => {
@@ -364,12 +331,7 @@ function OpeningDetailsPage() {
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              respond2();
-            }}
-          >
+          <Button variant="outlined" onClick={handleOpenEmailConfigModal}>
             CONFIGURE INTERVIEW SCHEDULING EMAIL
           </Button>
           <Button
@@ -510,6 +472,15 @@ function OpeningDetailsPage() {
         setExpandedRecruits,
         "Recruits have completed their interview and were accepted to be a part of the team.",
       )}
+
+      <EmailConfigModal
+        open={isEmailConfigModalOpen}
+        onClose={handleCloseEmailConfigModal}
+        setEmailBodyNew={null}
+        setTaskOnNew={null}
+        newOpening={false}
+      />
+
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
