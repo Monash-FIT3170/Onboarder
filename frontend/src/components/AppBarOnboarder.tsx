@@ -36,7 +36,6 @@ const pathToNameMap: { [key: string]: string } = {
   "/onboarder-openings": "Onboarder Openings",
   "/application-submission": "Application Submission",
   "/review-applicant": "Review Application",
-  "/task-email-format": "Task Email Format",
   "/candidate-availability-calendar": "Availability Calendar",
   "/view-team-members": "View Team Members",
   "/interview-scheduling": "View Interview Allocation",

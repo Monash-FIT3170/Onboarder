@@ -39,6 +39,8 @@ interface RecruitmentRoundOpeningsTableProps {
     student_team_name: string,
     title: string,
     applications_count: number,
+    interview_allocation_status: string,
+    calendar_invites_sent: boolean,
   ) => void;
 }
 

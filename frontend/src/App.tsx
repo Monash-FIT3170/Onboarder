@@ -19,7 +19,6 @@ import OnboarderOpeningsPage from "./screens/OnboarderOpeningsPage";
 import OpeningDetailsPage from "./screens/OpeningDetailsPage";
 import RecruitmentRoundDetailsPage from "./screens/RecruitmentRoundDetailsPage";
 import ReviewApplicantPage from "./screens/ReviewApplicantPage";
-import TaskEmailFormatPage from "./screens/TaskEmailFormatPage";
 import UserAvailabilityCalendarPage from "./screens/UserAvailabilityCalendarPage";
 import ViewRecruitmentRoundsPage from "./screens/ViewRecruitmentRoundsPage";
 import ViewTeamLeadsPage from "./screens/ViewTeamLeadsPage";
@@ -61,10 +60,7 @@ function App() {
             <Route path="/create-opening" element={<CreateOpeningPage />} />
             <Route path="/opening-details" element={<OpeningDetailsPage />} />
             <Route path="/review-applicant" element={<ReviewApplicantPage />} />
-            <Route
-              path="/task-email-format"
-              element={<TaskEmailFormatPage />}
-            />
+
             <Route
               path="/candidate-availability-calendar"
               element={<CandidateAvailabilityCalendarPage />}

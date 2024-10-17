@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import PermissionButton from "../components/PermissionButton";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import EmailConfigModal from "../components/EmailConfigModal";
 import { formatDeadline, getBaseAPIURL } from "../util/Util";
 
 function CreateOpeningPage() {
@@ -37,11 +38,21 @@ function CreateOpeningPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
-
+  const [isEmailConfigModalOpen, setIsEmailConfigModalOpen] = useState(false);
   const { team_name } = useAuthStore();
   const recruitmentDetails = useRecruitmentStore(
     (state) => state.recruitmentDetails,
   );
+  const [taskOn, setTaskOn] = useState(false);
+  const [emailBody, setEmailBody] = useState("");
+
+  const handleOpenEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(true);
+  };
+
+  const handleCloseEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(false);
+  };
 
   const validateForm = useCallback(() => {
     const newErrors: { [key: string]: string } = {};
@@ -87,8 +98,8 @@ function CreateOpeningPage() {
       status: `${recruitmentDetails.roundStatus}`,
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
-      task_email_format: "TEMPORARY FIX", // TODO
-      task_enabled: false, // TODO
+      task_email_format: emailBody, // TODO
+      task_enabled: taskOn, // TODO
     };
 
     try {
@@ -191,6 +202,13 @@ function CreateOpeningPage() {
           helperText={errors.openingName}
           required
         />
+        <Button
+          variant="outlined"
+          onClick={handleOpenEmailConfigModal}
+          sx={{ m: 2, ml: 0, mb: 0, mt: 3 }}
+        >
+          CONFIGURE INTERVIEW SCHEDULING EMAIL
+        </Button>
       </Grid>
 
       <Grid item xs={12} md={6}>
@@ -299,6 +317,13 @@ function CreateOpeningPage() {
           </Button>
         </Grid>
       </Grid>
+      <EmailConfigModal
+        open={isEmailConfigModalOpen}
+        onClose={handleCloseEmailConfigModal}
+        setEmailBodyNew={setEmailBody}
+        setTaskOnNew={setTaskOn}
+        newOpening={true}
+      />
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
