@@ -17,8 +17,6 @@ import {
   Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import styled from "styled-components";
-
 import BackIcon from "../assets/BackIcon";
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingStore";
@@ -263,6 +261,9 @@ const InterviewSchedulingPage = () => {
       alert("Oops! Something went wrong. Please try again later.");
       setLoading(false);
     } finally {
+      if (selectedOpening) {
+        selectedOpening.calendar_invites_sent = true;
+      }
       setLoading(false);
     }
   };
@@ -316,8 +317,6 @@ const InterviewSchedulingPage = () => {
     }
     setLoading(false);
   };
-
-  console.log("selectedOpening", selectedOpening);
 
   // Row generation function
   const generateRowFunction = (applications: SingleApplicationProps[]) => {

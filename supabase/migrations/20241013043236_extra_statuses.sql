@@ -4,6 +4,9 @@ ADD COLUMN calendar_invites_sent BOOLEAN DEFAULT FALSE;
 
 -- Function to get all openings with application count
 
+-- Added calendar_invites_sent to the view
+-- Added interview_allocation_status to the view
+
 DROP VIEW IF EXISTS openings_with_application_count;
 
 CREATE OR REPLACE VIEW openings_with_application_count AS

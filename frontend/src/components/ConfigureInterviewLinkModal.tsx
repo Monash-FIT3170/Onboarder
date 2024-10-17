@@ -23,7 +23,6 @@ const ConfigureInterviewLinkModal: React.FC<
 > = ({ open, onClose, onEditLink, urlLinkIn }) => {
   const [urlLink, setUrlLink] = useState(urlLinkIn);
   //   setUrlLink(urlLinkIn);
-
   const handleEditLink = () => {
     onEditLink(urlLink);
     onClose();
@@ -42,7 +41,8 @@ const ConfigureInterviewLinkModal: React.FC<
               label="Global Meeting URL"
               fullWidth
               variant="filled"
-              value={urlLink}
+              value={urlLinkIn}
+              //   defaultValue={urlLinkIn}
               onChange={(e) => setUrlLink(e.target.value)}
             />
           </Grid>

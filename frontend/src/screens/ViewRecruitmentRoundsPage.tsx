@@ -1,6 +1,5 @@
 import {
   Box,
-  TextField,
   Button,
   Table,
   TableBody,
@@ -15,7 +14,6 @@ import {
   IconButton,
 } from "@mui/material";
 import axios from "axios";
-import Modal from "@mui/material/Modal";
 import BackIcon from "../assets/BackIcon";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -94,7 +92,7 @@ const ViewRecruitmentRoundsPage = () => {
         setData(response.data);
         setUrlLink(
           studentTeamStore.studentTeams.find(
-            (item) => item.student_team_id === authStore.team_id,
+            (item) => item.student_team_id == authStore.team_id,
           )?.student_team_meeting_link || "",
         );
       } catch (error) {

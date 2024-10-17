@@ -190,6 +190,20 @@ INSERT INTO public."OPENING" (recruitment_round_id, title, description, status, 
     (16, 'Serverless Operations Architect', 'Design and implement serverless architectures', 'I', ARRAY['Serverless', 'FaaS'], ARRAY['AWS Lambda', 'Azure Functions'], 'Architect a serverless solution for: {}', TRUE, 'N');
 
 -- Assign random profiles to teams
+-- INSERT INTO public."TEAM_LEAD_ASSIGNMENT" (opening_id, profile_id)
+-- SELECT 
+--     o.id AS opening_id,
+--     p.id AS profile_id
+-- FROM 
+--     public."OPENING" o
+--     CROSS JOIN (
+--         SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS rn 
+--         FROM public."PROFILE"
+--     ) p
+-- WHERE 
+--     o.id % 4 = p.rn % 4;
+
+-- Assign profile 1 and 2 to openings 1-4 
 INSERT INTO public."TEAM_LEAD_ASSIGNMENT" (opening_id, profile_id)
 SELECT 
     o.id AS opening_id,
@@ -197,11 +211,13 @@ SELECT
 FROM 
     public."OPENING" o
     CROSS JOIN (
-        SELECT id, ROW_NUMBER() OVER (ORDER BY id) AS rn 
+        SELECT id 
         FROM public."PROFILE"
+        WHERE id IN (1, 2)
     ) p
 WHERE 
-    o.id % 4 = p.rn % 4;
+    o.id BETWEEN 1 AND 4;
+
 
 --- Create a function to generate a fixed set of 20 applications
 CREATE OR REPLACE FUNCTION generate_fixed_applications()
@@ -228,18 +244,22 @@ BEGIN
     ('applicant3@example.com'::VARCHAR, 'Michael Johnson'::VARCHAR, '+1-345-678-9010'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Business Administration'::VARCHAR, 'Interested in project management'::VARCHAR, ARRAY['Agile ', 'Scrum']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
     ('applicant4@example.com'::VARCHAR, 'Emily Brown'::VARCHAR, '+1-456-789-0120'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about AI and machine learning'::VARCHAR, ARRAY['Python', 'TensorFlow']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
     ('applicant5@example.com'::VARCHAR, 'David Wilson'::VARCHAR, '+1-567-890-1230'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Computer Science'::VARCHAR, 'Experienced in web development'::VARCHAR, ARRAY['JavaScript', 'React']::VARCHAR[], NULL, NULL, 'C'::VARCHAR(1), NULL),
+    
     -- Opening 2 (Unscheduled, avail)
     ('applicant6@example.com'::VARCHAR, 'Sarah Davis'::VARCHAR, '+1-678-901-2340'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Data Science'::VARCHAR, 'Skilled in data visualization'::VARCHAR, ARRAY['Python', 'Tableau']::VARCHAR[], NULL, NULL, 'A', NULL),
-    ('applicant7@example.com'::VARCHAR, 'Daniel Taylor'::VARCHAR, '+1-789-012-3450'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Computer Science'::VARCHAR, 'Passionate about cybersecurity'::VARCHAR, ARRAY['C++', 'Network Security']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
-    ('applicant8@example.com'::VARCHAR, 'Olivia Anderson'::VARCHAR, '+1-890-123-4560'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Business Administration'::VARCHAR, 'Interested in IT project management'::VARCHAR, ARRAY['JIRA', 'MS Project']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
-    ('applicant9@example.com'::VARCHAR, 'Matthew Thomas'::VARCHAR, '+1-901-234-5670'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about mobile app development'::VARCHAR, ARRAY['Swift', 'Kotlin']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
-    ('applicant10@example.com'::VARCHAR, 'Sophia Jackson'::VARCHAR, '+1-012-345-6780'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Data Science'::VARCHAR, 'Experienced in big data technologies'::VARCHAR, ARRAY['Hadoop', 'Spark']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant7@example.com'::VARCHAR, 'Daniel Taylor'::VARCHAR, '+1-789-012-3450'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Computer Science'::VARCHAR, 'Passionate about cybersecurity'::VARCHAR, ARRAY['C++', 'Network Security']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant8@example.com'::VARCHAR, 'Olivia Anderson'::VARCHAR, '+1-890-123-4560'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Business Administration'::VARCHAR, 'Interested in IT project management'::VARCHAR, ARRAY['JIRA', 'MS Project']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    ('applicant9@example.com'::VARCHAR, 'Matthew Thomas'::VARCHAR, '+1-901-234-5670'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Computer Science'::VARCHAR, 'Enthusiastic about mobile app development'::VARCHAR, ARRAY['Swift', 'Kotlin']::VARCHAR[], ARRAY['{"start":"2024-10-16T09:00:00.000Z","end":"2024-10-16T17:00:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    -- 15 min slot, cannot be scheduled
+    ('applicant10@example.com'::VARCHAR, 'Sophia Jackson'::VARCHAR, '+1-012-345-6780'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Data Science'::VARCHAR, 'Experienced in big data technologies'::VARCHAR, ARRAY['Hadoop', 'Spark']::VARCHAR[], ARRAY['{"start":"2024-10-19T09:00:00.000Z","end":"2024-10-19T09:15:00.000Z","title":"Available Slot"}']::VARCHAR[], NULL, 'C'::VARCHAR, NULL),
+    
     -- Opening 3 (Scheduled, avail)
     ('applicant11@example.com'::VARCHAR, 'William White'::VARCHAR, '+1-123-456-7890'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Computer Science'::VARCHAR, 'Interested in cloud computing'::VARCHAR, ARRAY['AWS', 'Azure']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-15 09:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
     ('applicant12@example.com'::VARCHAR, 'Ava Harris'::VARCHAR, '+1-234-567-8900'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Business Administration'::VARCHAR, 'Passionate about business analytics'::VARCHAR, ARRAY['Excel', 'Power BI']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-15 11:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 2),
     ('applicant13@example.com'::VARCHAR, 'James Martin'::VARCHAR, '+1-345-678-9010'::VARCHAR, 2, 'Computer Science'::VARCHAR, 5, 'Computer Science'::VARCHAR, 'Skilled in database management'::VARCHAR, ARRAY['SQL', 'MongoDB']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-16 10:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
     ('applicant14@example.com'::VARCHAR, 'Isabella Thompson'::VARCHAR, '+1-456-789-0120'::VARCHAR, 5, 'Computer Science'::VARCHAR, 2, 'Data Science'::VARCHAR, 'Enthusiastic about machine learning'::VARCHAR, ARRAY['Python', 'Scikit-learn']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-16 12:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 2),
     ('applicant15@example.com'::VARCHAR, 'Benjamin Garcia'::VARCHAR, '+1-567-890-1230'::VARCHAR, 1, 'Computer Science'::VARCHAR, 6, 'Computer Science'::VARCHAR, 'Experienced in DevOps'::VARCHAR, ARRAY['Docker', 'Jenkins']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'C'::VARCHAR, 1),
+    
     -- Opening 4 (Scheduled, avail, emails sent, accepted candidate)
     ('applicant16@example.com'::VARCHAR, 'Mia Robinson'::VARCHAR, '+1-678-901-2340'::VARCHAR, 3, 'Computer Science'::VARCHAR, 4, 'Business Administration'::VARCHAR, 'Interested in IT consulting'::VARCHAR, ARRAY['Business Analysis', 'ITIL']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'R'::VARCHAR, 3),
     ('applicant17@example.com'::VARCHAR, 'Ethan Clark'::VARCHAR, '+1-789-012-3450'::VARCHAR, 4, 'Computer Science'::VARCHAR, 3, 'Computer Science'::VARCHAR, 'Passionate about game development'::VARCHAR, ARRAY['Unity', 'C#']::VARCHAR[], ARRAY['{"start":"2024-10-15T09:00:00.000Z","end":"2024-10-15T17:00:00.000Z","title":"Available Slot"}', '{"start":"2024-10-16T10:00:00.000Z","end":"2024-10-16T18:00:00.000Z","title":"Available Slot"}']::VARCHAR[], '2024-10-17 14:00:00+00'::TIMESTAMP WITH TIME ZONE, 'R'::VARCHAR, 4),

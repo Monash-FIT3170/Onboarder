@@ -1,3 +1,5 @@
+-- These allow delete team to work correctly
+
 -- Modify OPENING table
 ALTER TABLE public."OPENING"
 DROP CONSTRAINT IF EXISTS OPENING_recruitment_round_id_fkey,
