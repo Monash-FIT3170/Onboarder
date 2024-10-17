@@ -167,7 +167,6 @@ export function DashboardTable({ newTeam }: DashboardTableProps) {
           };
           return roleRanking[a.user_team_role] - roleRanking[b.user_team_role];
         });
-
       setStudentTeams(tableData);
     } catch (error) {
       console.error("Error fetching teams:", error);

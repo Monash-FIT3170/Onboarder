@@ -7,6 +7,7 @@ SELECT
     st.id AS student_team_id,
     st.name AS student_team_name,
     st.description AS student_team_description,
+    st.meeting_link AS student_team_meeting_link,
     pti.role AS your_role,
     pti.profile_id,
     (SELECT p.email

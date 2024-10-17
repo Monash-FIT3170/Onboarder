@@ -1,32 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
 import {
-  Grid,
-  Button,
-  Typography,
-  TextField,
   Autocomplete,
+  Button,
   Chip,
+  CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  CircularProgress,
+  Grid,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { formatDeadline, getBaseAPIURL } from "../util/Util";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PermissionButton from "../components/PermissionButton";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
-import PermissionButton from "../components/PermissionButton";
 import EmailConfigModal from "../components/EmailConfigModal";
+import { formatDeadline, getBaseAPIURL } from "../util/Util";
 
 function CreateOpeningPage() {
   const [openingName, setOpeningName] = useState("");

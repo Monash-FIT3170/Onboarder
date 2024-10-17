@@ -8,7 +8,6 @@ import {
   DialogTitle,
   Grid,
 } from "@mui/material";
-// import PermissionButton from "./PermissionButton";
 
 interface AddTeamModalProps {
   open: boolean;
