@@ -79,7 +79,7 @@ Onboarder uses **Monash University's secure login system** to ensure that only v
 
 To get started with Onboarder, follow these steps:
 
-Access the Platform: Navigate to the Onboarder platform through the provided link or Monash University's student services portal.
+Access the Platform: Navigate to the Onboarder platform through the provided instructions in the README file.
 
 Log in with Monash SSO:
 
@@ -101,6 +101,7 @@ Team Leads: Post new openings, review applicants, and schedule interviews.
  - Review Recruitment Cycles: Regularly check your dashboard for updates, whether it’s new applications (for team leads and admins) or application status changes (for applicants).
 
 ## Contact
+
 
 
 ### How to Log In:
