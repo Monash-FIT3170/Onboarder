@@ -370,7 +370,13 @@ Source: [Supabase Docs: Local Development](https://supabase.com/docs/guides/cli/
    supabase db push
    ```
 
-- NOTE: We will add process/logic so that it has to be PRed first
+   If you want to add seed.sql data to db, run:
+
+   ```bash
+   supabase db push linked
+   ```
+
+  NOTE: This will overwrite your prod data.
 
 ### Google Sign-In Setup
 
