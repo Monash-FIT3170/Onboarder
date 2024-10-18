@@ -199,20 +199,6 @@ Here are end-to-end examples of how each role can use the application:
 - Use the interview feedback page to score and take notes during the interview.
 - After interviews are completed, accept or reject candidates based on their feedback and scores.
 
-To get started with Onboarder, access the website and follow these steps:
-
-Log in with Monash SSO:
-
-- Click the Login with Monash SSO button.
-
-- If you are an Owner or Admin, you can start by setting up your team profile and managing team settings.
-  As a Team Lead, create your team's specific recruitment openings.
-  As an Applicant, browse the available teams and apply for open positions.
-  Start Managing or Applying:
-
-- Owners/Admins: Manage your team settings, assign team leads, and monitor the recruitment process.
-  Team Leads: Post new openings, review applicants, and schedule interviews.
-
 ## Contact
 
 Please contact the owners of the repo for any questions.
