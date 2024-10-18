@@ -10,7 +10,7 @@ import getDay from "date-fns/getDay"; // Utility for getting the day of the week
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Import base styles for the calendar
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css"; // Import additional styles for drag-and-drop functionality
 import { enAU } from "date-fns/locale";
-import { Button, Grid, IconButton } from "@mui/material";
+import { Button, Grid, IconButton, Alert, Snackbar } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
@@ -38,14 +38,16 @@ interface Event {
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const AvailabilityCalendarUser: React.FC = () => {
+const UserAvailabilityCalendarPage: React.FC = () => {
   // State hooks
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const [interviewDates, setInterviewDates] = useState<Event[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Constants
   const navigate = useNavigate();
-  const scrollToTime = new Date();
+
   const BASE_API_URL = getBaseAPIURL();
 
   // Store hooks
@@ -53,49 +55,58 @@ const AvailabilityCalendarUser: React.FC = () => {
 
   // Effect hooks
   const fetchAvailability = async () => {
-    let profileID = profileId;
+    try {
+      let profileID = profileId;
 
-    if (!profileId) {
-      profileID = await fetchProfile();
+      if (!profileId) {
+        profileID = await fetchProfile();
+      }
+
+      const response = await axios.get(`${BASE_API_URL}/profile/${profileID}`);
+      const data = response.data;
+
+      const parsedData = data[0].interview_availability.map((event: Event) => {
+        const parsedEvent = JSON.parse(event as unknown as string);
+
+        return {
+          ...parsedEvent,
+          start: new Date(parsedEvent.start),
+          end: new Date(parsedEvent.end),
+        };
+      });
+
+      setEventsList(parsedData);
+    } catch (error) {
+      console.error("Error fetching availability:", error);
+      setError("Failed to fetch availability. Please try again later.");
     }
-
-    const response = await axios.get(`${BASE_API_URL}/profile/${profileID}`);
-    const data = response.data;
-
-    const parsedData = data[0].interview_availability.map((event: Event) => {
-      const parsedEvent = JSON.parse(event as unknown as string);
-
-      return {
-        ...parsedEvent,
-        start: new Date(parsedEvent.start),
-        end: new Date(parsedEvent.end),
-      };
-    });
-
-    setEventsList(parsedData);
   };
 
   // Get interview dates from applications where profile_id is authenticated user
   const fetchScheduledInterviews = async () => {
-    const response = await axios.get(
-      `${BASE_API_URL}/profile/${profileId}/application`,
-    );
-    const data = response.data;
-    console.log(data);
-    const interviewDates = data.map((interview: any) => {
-      return {
-        start: new Date(interview.interview_date),
-        end: new Date(
-          new Date(interview.interview_date).setMinutes(
-            new Date(interview.interview_date).getMinutes() + 30,
+    try {
+      const response = await axios.get(
+        `${BASE_API_URL}/profile/${profileId}/application`,
+      );
+      const data = response.data;
+      const interviewDates = data.map((interview: any) => {
+        return {
+          start: new Date(interview.interview_date),
+          end: new Date(
+            new Date(interview.interview_date).setMinutes(
+              new Date(interview.interview_date).getMinutes() + 30,
+            ),
           ),
-        ),
-        title: "Interview with " + interview.name,
-        editable: false,
-        outlined: true,
-      };
-    });
-    setInterviewDates(interviewDates);
+          title: "Interview with " + interview.name,
+          editable: false,
+          outlined: true,
+        };
+      });
+      setInterviewDates(interviewDates);
+    } catch (error) {
+      console.error("Error fetching scheduled interviews:", error);
+      setError("Failed to fetch scheduled interviews. Please try again later.");
+    }
   };
 
   useEffect(() => {
@@ -121,10 +132,6 @@ const AvailabilityCalendarUser: React.FC = () => {
         { start, end, title: "Available Slot" },
       ];
       setEventsList(updatedEvents);
-      console.log("Updated Events");
-      console.log(updatedEvents);
-      console.log("Interview Dates");
-      console.log(interviewDates);
     }
   };
 
@@ -169,21 +176,21 @@ const AvailabilityCalendarUser: React.FC = () => {
   };
 
   const handleSave = async () => {
-    // console.log(eventsList);
     try {
       await axios.patch(`${BASE_API_URL}/profile/${profileId}`, {
         interview_availability: eventsList.filter(
           (event) => event.title === "Available Slot",
         ),
       });
+      setSuccessMessage("Availability saved successfully!");
     } catch (error) {
       console.error(`Error saving availability data: ${error}`);
-    } finally {
-      alert("Availability saved successfully!");
+      setError("Failed to save availability. Please try again.");
     }
   };
 
   // Calendar configuration
+  const scrollToTime = new Date();
   scrollToTime.setHours(9, 0, 0);
 
   const eventStyleGetter = (event) => {
@@ -202,8 +209,14 @@ const AvailabilityCalendarUser: React.FC = () => {
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
-        <Grid container alignItems="center" spacing={2}>
+      <div
+        style={{
+          height: "70vh",
+          padding: "0px 20px 0px 20px",
+          paddingTop: "0",
+        }}
+      >
+        <Grid container alignItems="center" spacing={0}>
           <Grid item>
             <IconButton onClick={() => navigate("/dashboard")} sx={{ mr: 2 }}>
               <ArrowBackIcon />
@@ -253,9 +266,25 @@ const AvailabilityCalendarUser: React.FC = () => {
         >
           Save Availability
         </Button>
+
+        {error && (
+          <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Snackbar
+          open={!!successMessage}
+          autoHideDuration={6000}
+          onClose={() => setSuccessMessage(null)}
+        >
+          <Alert onClose={() => setSuccessMessage(null)} severity="success">
+            {successMessage}
+          </Alert>
+        </Snackbar>
       </div>
     </DndProvider>
   );
 };
 
-export default AvailabilityCalendarUser;
+export default UserAvailabilityCalendarPage;

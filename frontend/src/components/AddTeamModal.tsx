@@ -40,6 +40,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
               autoFocus
               margin="dense"
               label="Team name"
+              placeholder="E.g. MCAV"
               type="text"
               fullWidth
               variant="outlined"
@@ -54,6 +55,7 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
               type="text"
               fullWidth
               variant="outlined"
+              placeholder="E.g. Monash Connected Autonomous Vehicle"
               multiline
               rows={4}
               value={teamDescription}
@@ -63,11 +65,21 @@ const AddTeamModal: React.FC<AddTeamModalProps> = ({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="error" variant="contained">
-          Cancel
-        </Button>
+        {/* <PermissionButton
+          action="create"
+          subject="Team"
+          onClick={handleSubmit}
+          color="primary"
+          variant="contained"
+          tooltipText="You do not have permission to create a team"
+        >
+          Create
+        </PermissionButton> */}
         <Button onClick={handleSubmit} color="primary" variant="contained">
           Create
+        </Button>
+        <Button onClick={onClose} variant="outlined">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

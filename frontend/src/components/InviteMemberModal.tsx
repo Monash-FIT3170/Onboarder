@@ -1,23 +1,24 @@
-import React, { useState } from "react";
 import {
-  TextField,
+  Alert,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   Radio,
   RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-  Button,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
   Snackbar,
-  Alert,
+  TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
+import React, { useState } from "react";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "./PermissionButton";
 
 interface InviteMemberModalProps {
   open: boolean;
@@ -135,7 +136,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             <FormControl component="fieldset" margin="normal">
               <FormLabel component="legend">Role</FormLabel>
               <RadioGroup value={role} onChange={handleRoleChange}>
-                <FormControlLabel value="O" control={<Radio />} label="Owner" />
+                {/* <FormControlLabel value="O" control={<Radio />} label="Owner" /> */}
                 <FormControlLabel value="A" control={<Radio />} label="Admin" />
                 <FormControlLabel
                   value="T"
@@ -149,14 +150,18 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
             <Button onClick={onClose} color="primary">
               Cancel
             </Button>
-            <Button
+            <PermissionButton
+              action="invite"
+              subject="Team"
               type="submit"
               variant="contained"
               color="primary"
               disabled={isLoading}
+              onClick={() => {}}
+              tooltipText="You do not have permission to add a team member"
             >
               {isLoading ? <CircularProgress size={24} /> : "Add Member"}
-            </Button>
+            </PermissionButton>
           </DialogActions>
         </form>
       </Dialog>

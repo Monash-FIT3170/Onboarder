@@ -1,87 +1,117 @@
-import { useState } from "react";
 import {
-  Grid,
-  Button,
-  Typography,
-  TextField,
   Autocomplete,
+  Button,
   Chip,
+  CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  CircularProgress,
+  Grid,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { formatDeadline, getBaseAPIURL } from "../util/Util";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PermissionButton from "../components/PermissionButton";
 import { useAuthStore } from "../util/stores/authStore";
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
+import EmailConfigModal from "../components/EmailConfigModal";
+import { formatDeadline, getBaseAPIURL } from "../util/Util";
 
 function CreateOpeningPage() {
   const [openingName, setOpeningName] = useState("");
   const [description, setDescription] = useState("");
-  const [requiredSkills, setRequiredSkills] = useState([]);
-  const [desiredSkills, setDesiredSkills] = useState([]);
+  const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
+  const [desiredSkills, setDesiredSkills] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
-
+  const [isEmailConfigModalOpen, setIsEmailConfigModalOpen] = useState(false);
   const { team_name } = useAuthStore();
   const recruitmentDetails = useRecruitmentStore(
     (state) => state.recruitmentDetails,
   );
+  const [taskOn, setTaskOn] = useState(false);
+  const [emailBody, setEmailBody] = useState("");
+
+  const handleOpenEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(true);
+  };
+
+  const handleCloseEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(false);
+  };
+
+  const validateForm = useCallback(() => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (openingName.trim().length === 0) {
+      newErrors.openingName = "Opening name is required";
+    } else if (openingName.length > 100) {
+      newErrors.openingName = "Opening name must be 100 characters or less";
+    }
+
+    if (description.trim().length === 0) {
+      newErrors.description = "Description is required";
+    } else if (description.length > 500) {
+      newErrors.description = "Description must be 500 characters or less";
+    }
+
+    if (requiredSkills.length === 0) {
+      newErrors.requiredSkills = "At least one required skill is needed";
+    }
+
+    if (desiredSkills.length === 0) {
+      newErrors.desiredSkills = "At least one desired skill is needed";
+    }
+
+    setErrors(newErrors);
+  }, [openingName, description, requiredSkills, desiredSkills]);
+
+  useEffect(() => {
+    validateForm();
+  }, [validateForm]);
 
   const handleSubmit = async () => {
-    if (
-      !openingName ||
-      !description ||
-      !requiredSkills ||
-      !desiredSkills ||
-      openingName.length <= 0 ||
-      description.length <= 0 ||
-      requiredSkills.length <= 0 ||
-      desiredSkills.length <= 0
-    ) {
-      alert("Please fill in all fields");
+    validateForm();
+    if (Object.keys(errors).length > 0) {
       return;
     }
 
     setLoading(true);
 
     const openingData = {
-      title: openingName,
-      description: description,
+      title: openingName.trim(),
+      description: description.trim(),
       status: `${recruitmentDetails.roundStatus}`,
       required_skills: requiredSkills,
       desired_skills: desiredSkills,
-      task_email_format: "TEMPORARY FIX", // TODO
-      task_enabled: false, // TODO
+      task_email_format: emailBody, // TODO
+      task_enabled: taskOn, // TODO
     };
 
     try {
       const response = await axios.post(
-        `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
+        `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`,
         openingData,
       );
       if (response.status === 201) {
-        // console.log(response);
         setOpen(true);
         setIsSuccessful(true);
       } else {
-        // console.log(response);
-        setOpen(true);
-        setIsSuccessful(false);
+        throw new Error("Unexpected response status");
       }
     } catch (error) {
       console.error("There was an error!", error);
@@ -96,20 +126,29 @@ function CreateOpeningPage() {
     navigate("/recruitment-round-details");
   };
 
+  const handleSkillChange = (
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+    newValue: string[],
+  ) => {
+    const sanitizedSkills = newValue
+      .map((skill) => skill.trim())
+      .filter((skill) => skill.length > 0);
+    setter(sanitizedSkills);
+  };
+
   return (
     <Grid container spacing={4} justifyContent="center">
       <Grid item xs={12}>
-        <Typography variant="h3" textAlign="center">
+        <Typography variant="h4" textAlign="center">
           Create Opening
         </Typography>
       </Grid>
 
-      {/* Table for For Round and Deadline */}
+      {/* Table for Round and Deadline */}
       <Grid item xs={12}>
         <TableContainer
           component={Paper}
-          elevation={0}
-          style={{ border: "none" }}
+          // elevation={0}
         >
           <Table>
             <TableHead>
@@ -138,7 +177,11 @@ function CreateOpeningPage() {
                   {team_name} {recruitmentDetails.roundId}
                 </TableCell>
                 <TableCell style={{ borderBottom: "none" }}>
-                  {formatDeadline(recruitmentDetails.roundApplicationDeadline)}
+                  {recruitmentDetails.roundApplicationDeadline
+                    ? formatDeadline(
+                        recruitmentDetails.roundApplicationDeadline,
+                      )
+                    : "Not set"}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -155,7 +198,17 @@ function CreateOpeningPage() {
           size="small"
           value={openingName}
           onChange={(e) => setOpeningName(e.target.value)}
+          error={!!errors.openingName}
+          helperText={errors.openingName}
+          required
         />
+        <Button
+          variant="outlined"
+          onClick={handleOpenEmailConfigModal}
+          sx={{ m: 2, ml: 0, mb: 0, mt: 3 }}
+        >
+          CONFIGURE INTERVIEW SCHEDULING EMAIL
+        </Button>
       </Grid>
 
       <Grid item xs={12} md={6}>
@@ -168,6 +221,11 @@ function CreateOpeningPage() {
           size="small"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          error={!!errors.description}
+          helperText={errors.description}
+          required
+          multiline
+          rows={4}
         />
       </Grid>
 
@@ -181,15 +239,27 @@ function CreateOpeningPage() {
           freeSolo
           options={[]}
           value={requiredSkills}
-          onChange={(event, newValue) => {
-            setRequiredSkills(newValue);
-          }}
+          onChange={(_event, newValue) =>
+            handleSkillChange(setRequiredSkills, newValue)
+          }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
-              <Chip key={index} label={option} {...getTagProps({ index })} />
+              <Chip
+                label={option}
+                {...getTagProps({ index })}
+                key={`required-${index}`}
+              />
             ))
           }
-          renderInput={(params) => <TextField {...params} label="Add skills" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Add skills"
+              error={!!errors.requiredSkills}
+              helperText={errors.requiredSkills}
+              required
+            />
+          )}
         />
       </Grid>
 
@@ -203,54 +273,81 @@ function CreateOpeningPage() {
           freeSolo
           options={[]}
           value={desiredSkills}
-          onChange={(event, newValue) => {
-            setDesiredSkills(newValue);
-          }}
+          onChange={(_event, newValue) =>
+            handleSkillChange(setDesiredSkills, newValue)
+          }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
-              <Chip key={index} label={option} {...getTagProps({ index })} />
+              <Chip
+                label={option}
+                {...getTagProps({ index })}
+                key={`desired-${index}`}
+              />
             ))
           }
-          renderInput={(params) => <TextField {...params} label="Add skills" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Add skills"
+              error={!!errors.desiredSkills}
+              helperText={errors.desiredSkills}
+              required
+            />
+          )}
         />
       </Grid>
 
       <Grid item container xs={12} justifyContent="center" spacing={2}>
         <Grid item>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             variant="contained"
             color="primary"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || Object.keys(errors).length > 0}
+            tooltipText="You do not have permission to create an opening"
           >
             {loading ? <CircularProgress size={24} /> : "Submit"}
-          </Button>
+          </PermissionButton>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="warning" onClick={handleCancel}>
+          <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
         </Grid>
       </Grid>
-
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <EmailConfigModal
+        open={isEmailConfigModalOpen}
+        onClose={handleCloseEmailConfigModal}
+        setEmailBodyNew={setEmailBody}
+        setTaskOnNew={setTaskOn}
+        newOpening={true}
+      />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        style={{ margin: "20px" }}
+      >
         <DialogContent>
           <DialogContentText>
             {dialogParam
               ? "Opening successfully created!"
-              : "There was an error in creating the opening! Please try again later!"}
+              : "There was an error in creating the opening. Please try again later."}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/recruitment-round-details");
+              navigate("/recruitment-round-details", { replace: true });
             }}
           >
             Go to Openings Table
           </Button>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             onClick={() => {
               setOpen(false);
               setOpeningName("");
@@ -258,9 +355,10 @@ function CreateOpeningPage() {
               setDesiredSkills([]);
               setRequiredSkills([]);
             }}
+            tooltipText="You do not have permission to create more openings"
           >
             Create More Openings
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </Grid>

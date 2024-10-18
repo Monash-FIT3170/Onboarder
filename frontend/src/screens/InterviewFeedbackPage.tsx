@@ -17,6 +17,8 @@ import {
   TableContainer,
   TableRow,
   Paper,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -26,6 +28,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "../util/stores/authStore";
 import React from "react";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -56,7 +59,7 @@ interface ResultProps {
   interview_score: number;
 }
 
-function Feedbacknote() {
+function InterviewFeedbackPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [openAccept, setOpenAccept] = React.useState(false);
@@ -77,36 +80,50 @@ function Feedbacknote() {
 
   const APPLICATION_URL = `${BASE_API_URL}/application/${selectedApplicant?.application_id}`;
 
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [scoreError, setScoreError] = useState<string | null>(null);
+
   const handleAccept = async () => {
     try {
-      await axios.patch(APPLICATION_URL, {
-        status: "R",
-      });
+      setLoading(true);
+      await axios.patch(APPLICATION_URL, { status: "R" });
+      setSuccessMessage("Candidate accepted successfully");
+      setOpenAccept(true);
     } catch (error) {
       console.error("There was an error!", error);
+      setError("Failed to accept candidate. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setOpenAccept(true);
   };
+
   const handleReject = async () => {
     try {
-      await axios.patch(APPLICATION_URL, {
-        status: "X",
-      });
+      setLoading(true);
+      await axios.patch(APPLICATION_URL, { status: "X" });
+      setSuccessMessage("Candidate rejected successfully");
+      setOpenReject(true);
     } catch (error) {
       console.error("There was an error!", error);
+      setError("Failed to reject candidate. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setOpenReject(true);
   };
+
   const handleCloseAccept = () => {
     setOpenAccept(false);
     handleUpdate();
     navigate("/opening-details");
   };
+
   const handleCloseReject = () => {
     setOpenReject(false);
     handleUpdate();
     navigate("/opening-details");
   };
+
   const authStore = useAuthStore();
 
   const handleBack = () => {
@@ -116,29 +133,52 @@ function Feedbacknote() {
   };
 
   const handleUpdate = () => {
+    if (!validateScore(score)) {
+      return;
+    }
+
     const submissionData = {
-      interview_score: score,
+      interview_score: Number(score),
       interview_notes: feedback,
     };
 
+    setLoading(true);
     axios
       .patch(
         `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         submissionData,
       )
-      .then((response) => {
-        // console.log(response);
-        // setOpen(true);
-        // setIsSuccessful(true);
+      .then(() => {
+        setSuccessMessage("Feedback updated successfully");
       })
       .catch((error) => {
         console.error("There was an error!", error);
-        // setOpen(true);
-        // setIsSuccessful(false);
+        setError("Failed to update feedback. Please try again.");
       })
       .finally(() => {
-        // setIsSubmitting(false);
+        setLoading(false);
       });
+  };
+
+  const validateScore = (value: string) => {
+    const numValue = Number(value);
+    if (isNaN(numValue) || numValue < 0 || numValue > 10) {
+      setScoreError("Score must be a number between 0 and 10");
+      return false;
+    }
+    setScoreError(null);
+    return true;
+  };
+
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setScore(value);
+    validateScore(value);
+  };
+
+  const handleFeedbackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFeedback(value);
   };
 
   useEffect(() => {
@@ -151,7 +191,7 @@ function Feedbacknote() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        console.error("Invalid User Status: ", status);
       }
     }
   }, [applicantInformation, openAccept, openReject]);
@@ -167,8 +207,9 @@ function Feedbacknote() {
         const applicantResponse = await axios.get(
           `${BASE_API_URL}/application/${selectedApplicant?.application_id}`,
         );
-        console.log(applicantResponse.data);
         setApplicantInformation(applicantResponse.data);
+        setFeedback(applicantResponse.data[0]?.interview_notes);
+        setScore(applicantResponse.data[0]?.interview_score);
       } catch (error) {
         console.error("Error fetching applicant data:", error);
       } finally {
@@ -177,7 +218,7 @@ function Feedbacknote() {
     };
 
     fetchData();
-  }, [selectedApplicant]);
+  }, [selectedApplicant, BASE_API_URL, navigate]);
 
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState("");
@@ -194,21 +235,20 @@ function Feedbacknote() {
             style={{
               display: "flex",
               alignItems: "center",
-              margin: "20px 10px",
             }}
           >
             <IconButton onClick={() => handleBack()}>
               <BackIcon />
             </IconButton>
-            <Typography variant="h5" style={{ marginLeft: "10px" }}>
-              Note from Interview
+            <Typography variant="h4" style={{ marginLeft: "10px" }}>
+              Interview Feedback
             </Typography>
           </div>
         </Grid>
       </Grid>
 
       {/* Applicant Info in Table Format */}
-      <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+      <TableContainer component={Paper} sx={{ mt: 1 }}>
         <Table>
           <TableBody>
             <TableRow>
@@ -226,7 +266,7 @@ function Feedbacknote() {
                 </Typography>
               </TableCell>
               <TableCell>
-                {applicantInformation[0]?.profile_email ||
+                {applicantInformation[0]?.profile.email ||
                   "Interviewer yet to be assigned"}
               </TableCell>
             </TableRow>
@@ -267,10 +307,17 @@ function Feedbacknote() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Typography variant="body2" fontSize={20} margin={1}>
+      <Grid container spacing={1} alignItems="baseline" sx={{ m: 1, ml: 0 }}>
+        <Grid item>
+          <Typography variant="h5">Interview Score</Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2">(Auto Saved)</Typography>
+        </Grid>
+      </Grid>
+      {/* <Typography variant="h5" sx={{ m: 1 }}>
         Score (Auto Saved)
-      </Typography>
+      </Typography> */}
       <Grid justifyContent="left">
         <Grid item xs={12} md={6}>
           <div
@@ -285,15 +332,22 @@ function Feedbacknote() {
               label="Out of 10"
               variant="filled"
               defaultValue={applicantInformation[0]?.interview_score}
-              onChange={(e) => setScore(e.target.value)}
+              onChange={handleScoreChange}
+              error={!!scoreError}
+              helperText={scoreError}
             />
           </div>
         </Grid>
       </Grid>
 
-      <Typography variant="body2" fontSize={20}>
-        Interview Notes (Auto Saved)
-      </Typography>
+      <Grid container spacing={1} alignItems="baseline" sx={{ m: 1, ml: 0 }}>
+        <Grid item>
+          <Typography variant="h5">Interview Notes</Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2">(Auto Saved)</Typography>
+        </Grid>
+      </Grid>
       <Grid container spacing={0} justifyContent="left">
         <Grid item xs={12}>
           <div
@@ -307,10 +361,12 @@ function Feedbacknote() {
               fullWidth
               label="Feedback note"
               defaultValue={applicantInformation[0]?.interview_notes}
+              // value={feedback}
               variant="filled"
               multiline
               rows={5}
-              onChange={(e) => setFeedback(e.target.value)}
+              onChange={handleFeedbackChange}
+              // onChange={(e) => setFeedback(e.target.value)}
             />
           </div>
         </Grid>
@@ -322,18 +378,21 @@ function Feedbacknote() {
         xs={12}
         justifyContent="center"
         spacing={2}
-        margin="20px 10px"
+        sx={{ mt: 1 }}
       >
         <Grid item>
           <React.Fragment>
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Opening"
               variant="contained"
               color="primary"
               disabled={isDisabledAccept || loading}
               onClick={handleAccept}
+              tooltipText="You do not have permission to accept this candidate"
             >
               {loading ? <CircularProgress size={24} /> : "Accept Candidate"}
-            </Button>
+            </PermissionButton>
             <BootstrapDialog
               onClose={handleCloseAccept}
               aria-labelledby="customized-dialog-title"
@@ -358,14 +417,17 @@ function Feedbacknote() {
 
         <Grid item>
           <React.Fragment>
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Opening"
               variant="contained"
-              color="warning"
+              color="error"
               disabled={isDisabledReject || loading}
               onClick={handleReject}
+              tooltipText="You do not have permission to reject this candidate"
             >
               {loading ? <CircularProgress size={24} /> : "Reject Candidate"}
-            </Button>
+            </PermissionButton>
             <BootstrapDialog
               onClose={handleCloseReject}
               aria-labelledby="customized-dialog-title"
@@ -388,8 +450,27 @@ function Feedbacknote() {
           </React.Fragment>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={!!error || !!successMessage}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(null);
+          setSuccessMessage(null);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setError(null);
+            setSuccessMessage(null);
+          }}
+          severity={error ? "error" : "success"}
+        >
+          {error || successMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
 
-export default Feedbacknote;
+export default InterviewFeedbackPage;

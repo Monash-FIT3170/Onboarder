@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Skeleton,
   Box,
   IconButton,
@@ -19,8 +18,9 @@ import axios from "axios";
 import { useMemberStore } from "../util/stores/memberStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
-const AllocateTeamLeads = () => {
+const AllocateTeamLeadsPage = () => {
   const [openings, setOpenings] = useState<any[]>([]);
   const [counts, setCounts] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -46,7 +46,6 @@ const AllocateTeamLeads = () => {
       await axios.post(API_URL, {
         profile_id: teamLeadId,
       });
-      // console.log("Team lead allocated successfully");
       // Refresh the openings list after allocation
     } catch (error) {
       console.error("Error allocating team lead:", error);
@@ -66,7 +65,6 @@ const AllocateTeamLeads = () => {
     try {
       const API_URL = `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`;
       await axios.delete(API_URL);
-      // console.log("Team lead allocated successfully");
       // Refresh the openings list after allocation
     } catch (error) {
       console.error("Error allocating team lead:", error);
@@ -124,8 +122,6 @@ const AllocateTeamLeads = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign`,
     );
-    // console.log("Lead counts response (Allocated Member");
-    // console.log(response.data);
     return response.data;
   };
 
@@ -136,8 +132,6 @@ const AllocateTeamLeads = () => {
     const response = await axios.get(
       `${BASE_API_URL}/opening/${openingId}/team-lead-assign/${teamLeadId}`,
     );
-    // console.log("Assignments response");
-    // console.log(response.data);
     return response.data;
   };
 
@@ -272,19 +266,25 @@ const AllocateTeamLeads = () => {
                       <TableCell>{allocatedCount}</TableCell>
                       <TableCell>
                         {!userAssigned ? (
-                          <Button
+                          <PermissionButton
+                            action="assign"
+                            subject="Opening"
                             variant="contained"
                             onClick={() => handleAllocate(opening.id)}
+                            tooltipText="You do not have permission to allocate team leads"
                           >
                             Allocate
-                          </Button>
+                          </PermissionButton>
                         ) : (
-                          <Button
+                          <PermissionButton
+                            action="update"
+                            subject="Opening"
                             variant="outlined"
                             onClick={() => handleDeAllocate(opening.id)}
+                            tooltipText="You do not have permission to deallocate team leads"
                           >
                             Deallocate
-                          </Button>
+                          </PermissionButton>
                         )}
                       </TableCell>
                     </TableRow>
@@ -297,4 +297,4 @@ const AllocateTeamLeads = () => {
   );
 };
 
-export default AllocateTeamLeads;
+export default AllocateTeamLeadsPage;

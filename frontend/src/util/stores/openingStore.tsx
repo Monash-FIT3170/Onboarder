@@ -6,6 +6,14 @@ interface OpeningDetails {
   student_team_name: string | null;
   title: string | null;
   application_count: number | null;
+  description?: string | null;
+  status?: string | null;
+  required_skills?: string[] | null;
+  desired_skills?: string[] | null;
+  task_email_format?: string | null;
+  task_enabled?: boolean | null;
+  interview_allocation_status?: string | null;
+  calendar_invites_sent?: boolean | null;
 }
 
 interface OpeningStore {
@@ -21,6 +29,14 @@ export const useOpeningStore = create<OpeningStore>((set) => ({
     student_team_name: null,
     title: null,
     application_count: null,
+    description: null,
+    status: null,
+    required_skills: null,
+    desired_skills: null,
+    task_email_format: null,
+    task_enabled: null,
+    interview_allocation_status: null,
+    calendar_invites_sent: null,
   },
   setSelectedOpening: (opening) => set({ selectedOpening: opening }),
   clearSelectedOpening: () => set({ selectedOpening: null }),

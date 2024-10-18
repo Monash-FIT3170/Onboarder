@@ -1,16 +1,17 @@
-import React from "react";
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Button,
 } from "@mui/material";
+import React from "react";
+import PermissionButton from "./PermissionButton";
+import RoleIcon from "../util/RoleIcon";
 
-export interface TeamMember {
+interface TeamMember {
   email: string;
   role: string;
   profile_id: number;
@@ -19,8 +20,8 @@ export interface TeamMember {
 interface TeamMembersTableProps {
   members: TeamMember[];
   onRemove: (profileId: number) => void;
-  currentUserProfileId: number | null;
-  userRole: string | null;
+  currentUserProfileId: number;
+  userRole: string;
 }
 
 const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
@@ -43,20 +44,29 @@ const TeamMembersTable: React.FC<TeamMembersTableProps> = ({
           {members.map((member) => (
             <TableRow key={member.profile_id}>
               <TableCell>{member.email}</TableCell>
-              <TableCell>{member.role}</TableCell>
               <TableCell>
-                {member.profile_id === currentUserProfileId ? (
-                  "Current User"
-                ) : userRole === "O" && member.role !== "Owner" ? (
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => onRemove(member.profile_id)}
-                  >
-                    REMOVE
-                  </Button>
-                ) : null}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <RoleIcon role={member.role} />
+                  {member.role}
+                </div>
+              </TableCell>
+              <TableCell>
+                {member.profile_id === currentUserProfileId
+                  ? "Current User"
+                  : userRole === "Owner" &&
+                    member.profile_id !== currentUserProfileId && (
+                      <PermissionButton
+                        action="delete"
+                        subject="Team"
+                        onClick={() => onRemove(member.profile_id)}
+                        tooltipText="You do not have permission to remove team members"
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                      >
+                        Remove
+                      </PermissionButton>
+                    )}
               </TableCell>
             </TableRow>
           ))}

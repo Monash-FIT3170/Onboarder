@@ -1,29 +1,30 @@
-import { useState, useEffect } from "react";
 import {
-  Grid,
-  TextField,
   Button,
-  Typography,
-  Table,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
   Paper,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  DialogTitle,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  IconButton,
-  CircularProgress,
+  TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
-import LoadingSpinner from "../components/LoadSpinner";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackIcon from "../assets/BackIcon";
+import LoadingSpinner from "../components/LoadSpinner";
 
+import PermissionButton from "../components/PermissionButton";
 import { useApplicantStore } from "../util/stores/applicantStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
 
@@ -44,7 +45,7 @@ interface ResultProps {
   course_name: string;
 }
 
-export default function RecruitmentPlatform() {
+export default function ReviewApplicantPage() {
   const [applicantInformation, setApplicantInformation] = useState<
     ResultProps[]
   >([]);
@@ -91,6 +92,7 @@ export default function RecruitmentPlatform() {
   useEffect(() => {
     if (applicantInformation.length > 0) {
       const status = applicantInformation[0]?.status;
+      // Allow accept/reject if status is "A" (Applicant), otherwise disable
       if (status === "A") {
         setIsDisabledAccept(false);
         setIsDisabledReject(false);
@@ -98,7 +100,7 @@ export default function RecruitmentPlatform() {
         setIsDisabledAccept(true);
         setIsDisabledReject(true);
       } else {
-        console.log("Invalid User Status: ", status);
+        console.error("Invalid User Status: ", status);
       }
     }
   }, [applicantInformation]);
@@ -116,10 +118,8 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        // console.log(response);
         setDialogParam("Applicant Accepted!");
       } else {
-        // console.log(response);
         setDialogParam("There was an error accepting the applicant.");
       }
     } catch (error) {
@@ -146,10 +146,8 @@ export default function RecruitmentPlatform() {
         submissionData,
       );
       if (response.status === 200) {
-        // console.log(response);
         setDialogParam("Applicant Rejected!");
       } else {
-        // console.log(response);
         setDialogParam("There was an error rejecting the applicant.");
       }
     } catch (error) {
@@ -172,27 +170,29 @@ export default function RecruitmentPlatform() {
   return (
     <>
       <Typography
-        variant="h5"
+        variant="h4"
         component="div"
-        sx={{ width: "50%", marginTop: "30px" }}
+        sx={{ width: "50%", marginTop: "0px" }}
       >
         {" "}
-        <IconButton onClick={() => handleBack()}>
+        <IconButton onClick={() => handleBack()} sx={{ mr: 1 }}>
           <BackIcon />
         </IconButton>
-        {selectedApplicant?.opening_name}
+        Review Application
       </Typography>
-      <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+      <TableContainer component={Paper} sx={{ marginTop: "10px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Recruitment Round</TableCell>
+              <TableCell>Opening</TableCell>
               <TableCell>Application Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
               <TableCell>{selectedApplicant?.recruitment_round_name}</TableCell>
+              <TableCell>{selectedApplicant?.opening_name}</TableCell>
               <TableCell>
                 {getAppStatusText(applicantInformation[0]?.status)}
               </TableCell>
@@ -265,11 +265,29 @@ export default function RecruitmentPlatform() {
             }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <TextField
             id="Additional-information"
             label="Additional Information"
             defaultValue={`${applicantInformation[0]?.additional_info}`}
+            disabled
+            fullWidth
+            sx={{
+              "& .MuiInputBase-input.Mui-disabled": {
+                WebkitTextFillColor: "black",
+                color: "black",
+              },
+              "& .MuiInputLabel-root.Mui-disabled": {
+                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            id="Skills"
+            label="Skills"
+            defaultValue={`${applicantInformation[0]?.skills}`}
             disabled
             fullWidth
             sx={{
@@ -332,24 +350,6 @@ export default function RecruitmentPlatform() {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            id="Skills"
-            label="Skills"
-            defaultValue={`${applicantInformation[0]?.skills}`}
-            disabled
-            fullWidth
-            sx={{
-              "& .MuiInputBase-input.Mui-disabled": {
-                WebkitTextFillColor: "black",
-                color: "black",
-              },
-              "& .MuiInputLabel-root.Mui-disabled": {
-                color: "rgba(0, 0, 0, 0.6)", // Slightly dimmed label
-              },
-            }}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
             id="Semesters remaining"
             label="Semesters Remaining"
             defaultValue={`${applicantInformation[0]?.semesters_until_completion}`}
@@ -366,7 +366,7 @@ export default function RecruitmentPlatform() {
             }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <TextField
             fullWidth
             id="Current semester"
@@ -388,25 +388,32 @@ export default function RecruitmentPlatform() {
       <Grid
         item
         xs={12}
-        sx={{ display: "flex", justifyContent: "center", marginTop: "70px" }}
+        sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
-        <Button
+        <PermissionButton
+          action="update"
+          subject="Opening"
           variant="contained"
           sx={{ m: 1 }}
           onClick={handleAccept}
           disabled={isDisabledAccept || loadingAccept}
+          tooltipText="You do not have permission to accept this applicant"
         >
           {loadingAccept ? <CircularProgress size={24} /> : "ACCEPT APPLICANT"}
-        </Button>
-        <Button
+        </PermissionButton>
+        <PermissionButton
+          action="update"
+          subject="Opening"
           variant="contained"
           color="error"
           sx={{ m: 1 }}
           onClick={handleReject}
-          disabled={isDisabledReject || loadingReject}
+          disabled={isDisabledReject}
+          loading={loadingReject}
+          tooltipText="You do not have permission to reject this applicant"
         >
           {loadingReject ? <CircularProgress size={24} /> : "REJECT APPLICANT"}
-        </Button>
+        </PermissionButton>
         <Dialog open={open} onClose={() => setOpen(false)}>
           <DialogTitle>{dialogParam}</DialogTitle>
           <DialogContent>

@@ -63,12 +63,8 @@ const LoginPage: React.FC = () => {
 
       if (error) console.error("Error logging in with Monash SSO:", error);
     } catch (error) {
-      console.log("OAuth error");
+      console.error("OAuth error");
     }
-  };
-
-  const handleApplicantLogin = () => {
-    navigate("/onboarder-openings");
   };
 
   useEffect(() => {

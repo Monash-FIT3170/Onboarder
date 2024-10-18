@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Typography,
   Button,
@@ -15,24 +15,27 @@ import {
   Box,
   Divider,
   Modal,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import styled from "styled-components";
 import BackIcon from "../assets/BackIcon";
 import {
-  OpeningsTable,
+  RecruitmentRoundOpeningsTable,
   openingsResultProps,
-} from "../components/OpeningsTable";
-import axios from "axios";
+} from "../components/RecruitmentRoundOpeningsTable";
+import axios, { AxiosError } from "axios";
 import {
-  SingleRoundTable,
+  RoundDetailsTable,
   SingleRoundResultProps,
-} from "../components/SingleRoundTable";
+} from "../components/RoundDetailsTable";
 import { useNavigate } from "react-router-dom";
 
 import { useRecruitmentStore } from "../util/stores/recruitmentStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 const HeadWrapper = styled.div`
   display: flex;
@@ -74,6 +77,7 @@ function RecruitmentRoundDetailsPage() {
   const [isArchiving, setIsArchiving] = useState(false);
   const [status, setStatus] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const BASE_API_URL = getBaseAPIURL();
 
@@ -93,57 +97,63 @@ function RecruitmentRoundDetailsPage() {
     (state) => state.clearRecruitmentDetails,
   );
   const authStore = useAuthStore();
+
+  const handleBack = useCallback(() => {
+    clearRecruitmentDetails();
+    navigate("/view-recruitment-rounds");
+  }, [clearRecruitmentDetails, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (recruitmentDetails.roundId === null) {
-        console.error("No recruitment round ID selected");
-        // Redirect if no ID is selected
+        setError("No recruitment round ID selected");
         handleBack();
         return;
       }
 
       try {
-        const roundsResponse = await axios.get(
-          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}`, // Working
-        );
-        const openingsResponse = await axios.get(
-          `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`, // Working
-        );
+        const [roundsResponse, openingsResponse] = await Promise.all([
+          axios.get(
+            `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}`,
+          ),
+          axios.get(
+            `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/opening`,
+          ),
+        ]);
+
         setRounds(roundsResponse.data);
         setOpening(openingsResponse.data);
-        setStatus(roundsResponse.data[0].status);
-        console.log(roundsResponse.data);
+        setStatus(roundsResponse.data[0]?.status || "");
       } catch (error) {
-        console.error("Error fetching data:", error);
+        const axiosError = error as AxiosError;
+        setError(`Error fetching data: ${axiosError.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [recruitmentDetails, status]);
+  }, [recruitmentDetails, status, BASE_API_URL, handleBack]);
 
   const updateStatus = async (statusChange: string) => {
-    // Don't show loading for both buttons at once
-    if (statusChange === "R") {
-      setIsArchiving(true);
-    } else {
-      setIsUpdating(true);
+    if (statusChange !== "R" && statusChange !== "A" && statusChange !== "I") {
+      setError("Invalid status change requested");
+      return;
     }
-    const data = {
-      status: statusChange,
-    };
+
+    setIsUpdating(statusChange !== "R");
+    setIsArchiving(statusChange === "R");
+
     try {
       await axios.patch(
-        `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/`, // Working
-        data,
+        `${BASE_API_URL}/recruitment-round/${recruitmentDetails.roundId}/`,
+        { status: statusChange },
       );
       setStatus(statusChange);
-
-      alert("Status updated successfully!");
+      setError(null);
     } catch (error) {
-      console.error("Error archiving round:", error);
-      alert("Failed to update status");
+      const axiosError = error as AxiosError;
+      setError(`Failed to update status: ${axiosError.message}`);
     } finally {
       setIsUpdating(false);
       setIsArchiving(false);
@@ -151,12 +161,19 @@ function RecruitmentRoundDetailsPage() {
   };
 
   const handleAddOpening = () => {
+    if (rounds.length === 0) {
+      setError("No round data available");
+      return;
+    }
+
     setRecruitmentDetails({
       roundId: recruitmentDetails.roundId,
       roundApplicationDeadline: rounds[0].application_deadline,
       roundInterviewPreferenceDeadline: rounds[0].interview_preference_deadline,
-      roundInterviewPeriod: rounds[0].interview_period,
-      roundName: rounds[0]?.student_team_name + " " + rounds[0]?.id,
+      roundInterviewPeriod: Array.isArray(rounds[0].interview_period)
+        ? rounds[0].interview_period.join(", ")
+        : rounds[0].interview_period || "",
+      roundName: `${rounds[0]?.student_team_name} ${rounds[0]?.id}`,
       roundStatus: rounds[0]?.status,
     });
     navigate("/create-opening");
@@ -168,6 +185,8 @@ function RecruitmentRoundDetailsPage() {
     student_team_name: string,
     title: string,
     application_count: number,
+    interview_allocation_status: string,
+    calendar_invites_sent: boolean,
   ) => {
     setSelectedOpening({
       id,
@@ -175,40 +194,37 @@ function RecruitmentRoundDetailsPage() {
       student_team_name,
       title,
       application_count,
+      interview_allocation_status,
+      calendar_invites_sent,
     });
     navigate("/opening-details");
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
+  const handleCloseModal = () => setModalOpen(false);
 
   const handleConfirm = () => {
     updateStatus("R");
     handleCloseModal();
   };
 
-  const handleBack = () => {
-    clearRecruitmentDetails();
-    navigate("/view-recruitment-rounds");
-  };
+  const handleErrorClose = () => setError(null);
 
   return (
     <>
       <HeadWrapper>
         <TitleWrapper>
-          <IconButton onClick={() => handleBack()}>
+          <IconButton onClick={handleBack} disabled={loading}>
             {loading ? (
               <Skeleton variant="circular" width={40} height={40} />
             ) : (
               <BackIcon />
             )}
           </IconButton>
-          <Typography variant="h5">
+          <Typography variant="h4">
             {loading ? (
               <Skeleton width={200} />
             ) : (
-              `Recruitment Round: ${authStore.team_name} ${rounds[0]?.id}`
+              `Recruitment Round: ${authStore.team_name} ${rounds[0]?.id || ""}`
             )}
           </Typography>
         </TitleWrapper>
@@ -216,31 +232,26 @@ function RecruitmentRoundDetailsPage() {
           <Skeleton variant="rectangular" width={150} height={40} />
         ) : status === "A" ? (
           /* Close Round button */
-          <Button
+          <PermissionButton
+            action="close"
+            subject="Round"
             variant="contained"
-            style={{
-              color: "black",
-              backgroundColor: "white",
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
             disabled={isUpdating}
             onClick={() => {
               updateStatus("I");
             }}
+            tooltipText="You do not have permission to close this round"
           >
             {isUpdating ? <CircularProgress size={24} /> : "Close Round"}
-          </Button>
+          </PermissionButton>
         ) : (
           <div>
             {/* Archive Round Button */}
-            <Button
+            <PermissionButton
+              action="archive"
+              subject="Round"
               variant="outlined"
               style={{
-                // color: "black",
-                // backgroundColor: "white",
-                // borderColor: "black",
-                // borderWidth: "1px",
                 marginRight: "10px",
               }}
               disabled={status === "R"}
@@ -249,79 +260,54 @@ function RecruitmentRoundDetailsPage() {
               }}
             >
               {isArchiving ? <CircularProgress size={24} /> : "Archive Round"}
-            </Button>
+            </PermissionButton>
             {/* Activate Round Button */}
-            <Button
+            <PermissionButton
+              action="update"
+              subject="Round"
               disabled={status === "R"}
               variant="contained"
               onClick={() => {
                 updateStatus("A");
               }}
+              tooltipText="You do not have permission to activate this round"
             >
               {isUpdating ? (
                 <CircularProgress size={24} style={{ color: "white" }} />
               ) : (
                 "Activate Round"
               )}
-            </Button>
+            </PermissionButton>
           </div>
         )}
       </HeadWrapper>
 
-      <div style={{ marginTop: "40px" }}>
+      <div style={{ marginTop: "16px" }}>
         {loading ? (
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
+                  {[...Array(6)].map((_, index) => (
+                    <TableCell key={index}>
+                      <Skeleton variant="text" width={100} />
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {[...Array(1)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
+                <TableRow>
+                  {[...Array(6)].map((_, index) => (
+                    <TableCell key={index}>
                       <Skeleton variant="text" />
                     </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                  ))}
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
         ) : (
-          <SingleRoundTable results={rounds} />
+          <RoundDetailsTable results={rounds} />
         )}
       </div>
 
@@ -330,55 +316,55 @@ function RecruitmentRoundDetailsPage() {
           display: "flex",
           flexDirection: "column",
           rowGap: "20px",
-          marginTop: "100px",
+          marginTop: "16px",
         }}
       >
         <OpeningsWrapper>
-          <Typography variant="h6">
+          <Typography variant="h5">
             {loading ? <Skeleton width={200} /> : "Recruitment Round Openings"}
           </Typography>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Opening"
             variant="contained"
             onClick={handleAddOpening}
-            disabled={loading}
+            disabled={loading || status !== "A"}
+            tooltipText="You do not have permission to add an opening"
           >
             {loading ? <Skeleton width={100} /> : "Add Opening"}
-          </Button>
+          </PermissionButton>
         </OpeningsWrapper>
         {loading ? (
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={100} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={200} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="rectangular" width={80} height={30} />
-                  </TableCell>
+                  {[...Array(4)].map((_, index) => (
+                    <TableCell key={index}>
+                      <Skeleton
+                        variant="text"
+                        width={index === 2 ? 200 : 100}
+                      />
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {[...Array(4)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={80} height={30} />
-                    </TableCell>
+                {[...Array(4)].map((_, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {[...Array(4)].map((_, cellIndex) => (
+                      <TableCell key={cellIndex}>
+                        {cellIndex === 3 ? (
+                          <Skeleton
+                            variant="rectangular"
+                            width={80}
+                            height={30}
+                          />
+                        ) : (
+                          <Skeleton variant="text" />
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))}
               </TableBody>
@@ -386,18 +372,21 @@ function RecruitmentRoundDetailsPage() {
           </TableContainer>
         ) : (
           /* Openings Table Component */
-          <OpeningsTable results={openings} viewHandler={handleView} />
+          <RecruitmentRoundOpeningsTable
+            results={openings}
+            viewHandler={handleView}
+          />
         )}
       </div>
+
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
-        // aria-labelledby="archive-round-modal"
-        // aria-describedby="team-description"
+        aria-labelledby="archive-round-modal"
       >
         <Box sx={modalStyle}>
           <Typography
-            id="team-info-modal"
+            id="archive-round-modal"
             variant="h5"
             component="h2"
             gutterBottom
@@ -405,29 +394,43 @@ function RecruitmentRoundDetailsPage() {
             Warning
           </Typography>
           <Divider sx={{ mb: 2 }} />
-          {/* <Typography variant="h6" gutterBottom>
-                        {selectedTeam?.student_team_name}
-                    </Typography> */}
           <Typography variant="body1" paragraph>
-            Are you sure you want to archive this round? <br></br>You will not
-            be able to undo this action.
+            Are you sure you want to archive this round? <br />
+            You will not be able to undo this action.
           </Typography>
-          {/* <Typography variant="body1" paragraph>
-                        Team Owner: <br></br>
-                        {selectedTeam?.owner_email}
-                    </Typography> */}
           <Button
             variant="outlined"
             onClick={handleCloseModal}
-            sx={{ mt: 2, mr: 1 }}
+            sx={{ mt: 1, mr: 1 }}
           >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleConfirm} sx={{ mt: 2 }}>
+          <PermissionButton
+            action="archive"
+            subject="Round"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={{ mt: 1 }}
+            tooltipText="You do not have permission to archive this round"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </Box>
       </Modal>
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleErrorClose}
+      >
+        <Alert
+          onClose={handleErrorClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

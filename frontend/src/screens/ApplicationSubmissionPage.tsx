@@ -19,6 +19,7 @@ import {
   DialogActions,
   DialogTitle,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import BackIcon from "../assets/BackIcon";
 import axios from "axios";
@@ -28,14 +29,36 @@ import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingApplicantStore";
 import { getBaseAPIURL } from "../util/Util";
 
+interface Opening {
+  opening_title: string;
+  opening_description: string;
+}
+
+interface Round {
+  application_deadline: string;
+  student_team_id: string;
+  semester: string;
+}
+
 const SectionTitle = styled.div`
   margin-top: 30px;
 `;
 
 function ApplicationSubmissionPage() {
-  const [opening, setOpening] = useState([]);
-  const [round, setRound] = useState([]);
-  const [formData, setFormData] = useState({
+  const [opening, setOpening] = useState<Opening | null>(null);
+  const [round, setRound] = useState<Round | null>(null);
+  const [formData, setFormData] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    additionalInfo: string;
+    courseName: string;
+    major: string;
+    skills: string[];
+    currentSemester: string;
+    semesterRemaining: string;
+  }>({
     firstName: "",
     lastName: "",
     email: "",
@@ -47,6 +70,14 @@ function ApplicationSubmissionPage() {
     currentSemester: "",
     semesterRemaining: "",
   });
+  const [errors, setErrors] = useState<
+    Partial<
+      Record<
+        keyof typeof formData | "fetchOpening" | "fetchRound" | "submission",
+        string
+      >
+    >
+  >({});
   const BASE_API_URL = getBaseAPIURL();
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
@@ -55,91 +86,139 @@ function ApplicationSubmissionPage() {
   const { round_id: roundId, opening_id: openingId } = useOpeningStore();
 
   useEffect(() => {
-    if (roundId !== null && openingId !== null) {
-      axios
-        .get(
-          `${BASE_API_URL}/opening/${openingId}/`, // Working
-        )
-        .then((res) => {
-          // console.log(res.data);
-          setOpening(res.data);
-        })
-        .catch((error) => {
-          console.error("There was an error!", error);
-        });
-      axios
-        .get(
-          `${BASE_API_URL}/recruitment-round/${roundId}/`, // Working
-        )
-        .then((res) => {
-          // console.log(res.data);
-          setRound(res.data);
-        })
-        .catch((error) => {
-          console.error("There was an error!", error);
-        });
-    }
-  }, [roundId, openingId]);
+    const fetchData = async () => {
+      if (roundId !== null && openingId !== null) {
+        try {
+          const openingRes = await axios.get(
+            `${BASE_API_URL}/opening/${openingId}/`,
+          );
+          setOpening(openingRes.data);
+        } catch (error) {
+          console.error("Error fetching opening data:", error);
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            fetchOpening: "Failed to fetch opening data",
+          }));
+        }
+
+        try {
+          const roundRes = await axios.get(
+            `${BASE_API_URL}/recruitment-round/${roundId}/`,
+          );
+          setRound(roundRes.data);
+        } catch (error) {
+          console.error("Error fetching round data:", error);
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            fetchRound: "Failed to fetch round data",
+          }));
+        }
+      }
+    };
+
+    fetchData();
+  }, [roundId, openingId, BASE_API_URL]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
-    setFormData({ ...formData, [id]: value });
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
+    validateField(id as keyof typeof formData, value);
   };
 
-  const handleSubmit = () => {
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      "courseName",
-      "skills",
-      "currentSemester",
-      "semesterRemaining",
-      "additionalInfo",
-    ];
-    const isAnyFieldEmpty = requiredFields.some((field) => {
-      if (Array.isArray(formData[field])) {
-        return formData[field].length === 0;
+  const validateField = (field: keyof typeof formData, value: string) => {
+    let error = "";
+    switch (field) {
+      case "firstName":
+      case "lastName":
+        if (!value.trim()) error = "This field is required";
+        break;
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(value)) {
+          error = "Invalid email format";
+        }
+        break;
+      case "phoneNumber":
+        if (!value.trim()) {
+          error = "Phone number is required";
+        } else if (!/^\+?[1-9]\d{1,14}$/.test(value)) {
+          error = "Invalid phone number format";
+        }
+        break;
+      case "courseName":
+        if (!value.trim()) error = "Course name is required";
+        break;
+      case "currentSemester":
+      case "semesterRemaining":
+        if (!value.trim()) {
+          error = "This field is required";
+        } else if (isNaN(Number(value)) || Number(value) < 1) {
+          error = "Must be a positive number";
+        }
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+  };
+
+  const validateForm = () => {
+    const newErrors: Partial<Record<keyof typeof formData, string>> = {};
+    (Object.keys(formData) as Array<keyof typeof formData>).forEach((key) => {
+      if (key !== "skills") {
+        validateField(key, formData[key] as string);
       }
-      return !formData[field];
+      if (errors[key as keyof typeof errors]) {
+        newErrors[key] = errors[key as keyof typeof errors];
+      }
     });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (isAnyFieldEmpty) {
-      alert("Please fill in all required fields.");
-    } else {
-      const submissionData = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        phone: formData.phoneNumber,
-        email: formData.email,
-        semesters_until_completion: formData.semesterRemaining,
-        current_semester: formData.currentSemester,
-        course_name: formData.courseName,
-        major_enrolled: formData.major,
-        additional_info: formData.additionalInfo,
-        skills: formData.skills,
-      };
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
 
-      setIsSubmitting(true);
+    const submissionData = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      phone: formData.phoneNumber,
+      email: formData.email,
+      semesters_until_completion: formData.semesterRemaining,
+      current_semester: formData.currentSemester,
+      course_name: formData.courseName,
+      major_enrolled: formData.major,
+      additional_info: formData.additionalInfo,
+      skills: formData.skills,
+    };
 
-      axios
-        .post(
-          `${BASE_API_URL}/opening/${openingId}/application`, // Working
-          submissionData,
-        )
-        .then((response) => {
-          // console.log(response);
-          setOpen(true);
-          setIsSuccessful(true);
-        })
-        .catch((error) => {
-          console.error("There was an error!", error);
-          setOpen(true);
-          setIsSuccessful(false);
-        })
-        .finally(() => {
-          setIsSubmitting(false);
-        });
+    setIsSubmitting(true);
+
+    try {
+      await axios.post(
+        `${BASE_API_URL}/opening/${openingId}/application`,
+        submissionData,
+      );
+      setOpen(true);
+      setIsSuccessful(true);
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      setOpen(true);
+      setIsSuccessful(false);
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          submission: "You have already applied for this position.",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          submission:
+            "There was an error in lodging your application. Please try again later.",
+        }));
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,12 +227,17 @@ function ApplicationSubmissionPage() {
       <IconButton onClick={() => navigate("/onboarder-openings")}>
         <BackIcon />
       </IconButton>
-      <Typography variant="h5" component="div">
-        {opening[0]?.opening_title}
+      <Typography variant="h4" component="div">
+        {"Opening: " + opening?.opening_title}
       </Typography>
       <Typography variant="body1" component="div">
-        Description: {opening[0]?.opening_description}
+        Description: {opening?.opening_description}
       </Typography>
+
+      {errors.fetchOpening && (
+        <Alert severity="error">{errors.fetchOpening}</Alert>
+      )}
+      {errors.fetchRound && <Alert severity="error">{errors.fetchRound}</Alert>}
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -167,19 +251,23 @@ function ApplicationSubmissionPage() {
           <TableBody>
             <TableRow>
               <TableCell>
-                {new Date(round[0]?.application_deadline).toLocaleString(
-                  "en-GB",
-                  {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  },
-                )}
+                {round?.application_deadline
+                  ? new Date(round.application_deadline).toLocaleString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )
+                  : "N/A"}
               </TableCell>
-              <TableCell align="center">{round[0]?.student_team_id}</TableCell>
-              <TableCell align="center">{round[0]?.semester}</TableCell>
+              <TableCell align="center">
+                {round?.student_team_id || "N/A"}
+              </TableCell>
+              <TableCell align="center">{round?.semester || "N/A"}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -197,7 +285,10 @@ function ApplicationSubmissionPage() {
             id="firstName"
             label="First Name*"
             variant="outlined"
+            value={formData.firstName}
             onChange={handleInputChange}
+            error={!!errors.firstName}
+            helperText={errors.firstName}
             placeholder="e.g. Sarah"
           />
         </Grid>
@@ -207,7 +298,10 @@ function ApplicationSubmissionPage() {
             id="lastName"
             label="Last Name*"
             variant="outlined"
+            value={formData.lastName}
             onChange={handleInputChange}
+            error={!!errors.lastName}
+            helperText={errors.lastName}
             placeholder="e.g. Jones"
           />
         </Grid>
@@ -217,7 +311,10 @@ function ApplicationSubmissionPage() {
             id="email"
             label="Email*"
             variant="outlined"
+            value={formData.email}
             onChange={handleInputChange}
+            error={!!errors.email}
+            helperText={errors.email}
             placeholder="e.g. applicant628406@example.com"
           />
         </Grid>
@@ -227,7 +324,10 @@ function ApplicationSubmissionPage() {
             id="phoneNumber"
             label="Phone Number*"
             variant="outlined"
+            value={formData.phoneNumber}
             onChange={handleInputChange}
+            error={!!errors.phoneNumber}
+            helperText={errors.phoneNumber}
             placeholder="e.g. +1-294-300-6690"
           />
         </Grid>
@@ -239,6 +339,7 @@ function ApplicationSubmissionPage() {
             variant="outlined"
             multiline
             rows={4}
+            value={formData.additionalInfo}
             onChange={handleInputChange}
             placeholder="Write your cover letter here..."
           />
@@ -255,7 +356,10 @@ function ApplicationSubmissionPage() {
             id="courseName"
             label="Course Name*"
             variant="outlined"
+            value={formData.courseName}
             onChange={handleInputChange}
+            error={!!errors.courseName}
+            helperText={errors.courseName}
             placeholder="e.g. Computer Science"
           />
         </Grid>
@@ -265,6 +369,7 @@ function ApplicationSubmissionPage() {
             id="major"
             label="Major"
             variant="outlined"
+            value={formData.major}
             onChange={handleInputChange}
             placeholder="e.g. Data Science"
           />
@@ -276,12 +381,12 @@ function ApplicationSubmissionPage() {
             freeSolo
             options={[]}
             value={formData.skills}
-            onChange={(event, newValue) => {
-              setFormData({ ...formData, skills: newValue });
+            onChange={(_, newValue: string[]) => {
+              setFormData((prevData) => ({ ...prevData, skills: newValue }));
             }}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => (
-                <Chip key={index} label={option} {...getTagProps({ index })} />
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip {...getTagProps({ index })} key={option} label={option} />
               ))
             }
             renderInput={(params) => (
@@ -300,7 +405,10 @@ function ApplicationSubmissionPage() {
             id="currentSemester"
             label="Current Semester"
             variant="outlined"
+            value={formData.currentSemester}
             onChange={handleInputChange}
+            error={!!errors.currentSemester}
+            helperText={errors.currentSemester}
             placeholder="e.g. 5"
           />
         </Grid>
@@ -310,7 +418,10 @@ function ApplicationSubmissionPage() {
             id="semesterRemaining"
             label="Semesters Remaining"
             variant="outlined"
+            value={formData.semesterRemaining}
             onChange={handleInputChange}
+            error={!!errors.semesterRemaining}
+            helperText={errors.semesterRemaining}
             placeholder="e.g. 3"
           />
         </Grid>
@@ -328,20 +439,23 @@ function ApplicationSubmissionPage() {
         <DialogTitle>
           {dialogParam
             ? "Application Successful!"
-            : "Error in Application Submission!"}
+            : "Application Submission Error"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {dialogParam
               ? "Your application has been successfully lodged. We will get back to you soon."
-              : "There was an error in lodging your application. Please try again later!"}
+              : errors.submission ||
+                "There was an error in lodging your application. Please try again later!"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
               setOpen(false);
-              navigate("/onboarder-openings");
+              if (dialogParam) {
+                navigate("/onboarder-openings");
+              }
             }}
           >
             CLOSE

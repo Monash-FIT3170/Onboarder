@@ -1,5 +1,5 @@
+import { FormControlLabel, Switch } from "@mui/material";
 import React from "react";
-import { Switch, FormControlLabel } from "@mui/material";
 import { useTheme } from "../util/ThemeContext";
 
 const ThemeToggle: React.FC = () => {

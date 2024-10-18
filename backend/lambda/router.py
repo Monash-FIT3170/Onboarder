@@ -1013,6 +1013,18 @@ def create_application(path_params={}, _={}, body={}):
             'headers': HEADERS
         }
 
+    # Check for existing application
+    existing_application = controller.get_application_by_email_and_opening(email, opening_id)
+    if existing_application:
+        return {
+            'statusCode': 409,
+            'body': json.dumps({
+                'error': 'Duplicate application',
+                'message': 'You have already applied for this position.'
+            }),
+            'headers': HEADERS
+        }
+
     response = controller.create_application(
         email, name, phone, semesters_until_completion,
         current_semester, major_enrolled, additional_info,
@@ -1184,6 +1196,7 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
             interviewer_emails = interview['interviewers']
             organizer_name = interview['organizer_name']
             meeting_link = interview['meeting_link']
+            opening_id = interview['opening_id']
 
             if not isinstance(interviewer_emails, list):
                 raise ValueError(
@@ -1206,7 +1219,8 @@ def schedule_interviews(path_params={}, querystring_params={}, body={}):
                 end_time,
                 organizer_name,
                 organizer_email,
-                meeting_link
+                meeting_link,
+                opening_id
             )
 
             if event:

@@ -16,8 +16,6 @@ import { startOfDay, endOfDay, addWeeks } from "date-fns";
 import axios from "axios";
 import { getBaseAPIURL } from "../util/Util";
 
-// Prettier Test
-
 // Locale configuration for the calendar using date-fns
 const locales = { "en-AU": enAU };
 
@@ -39,7 +37,7 @@ interface Event {
 // Enhance the Calendar component with drag-and-drop functionality
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
-const AvailabilityCalendar: React.FC = () => {
+const CandidateAvailabilityCalendarPage: React.FC = () => {
   // State to manage the list of events
   const [eventsList, setEventsList] = useState<Event[]>([]);
   const { id } = useParams();
@@ -50,6 +48,9 @@ const AvailabilityCalendar: React.FC = () => {
   // Get the current date and calculate two weeks from the current date
   const today = new Date();
   const twoWeeksLater = addWeeks(today, 2);
+
+  const scrollToTime = new Date();
+  scrollToTime.setHours(9, 0, 0);
 
   // First Ill set an arbitrary cutoff day, for example today
   const cutoffDate = new Date(interviewPreferenceDeadline);
@@ -128,13 +129,11 @@ const AvailabilityCalendar: React.FC = () => {
     const decryptId = async () => {
       try {
         const response = await axios.get(`${API_URL}/decrypt/${id}`);
-        // console.log(response.data.data);
         const {
           candidate_availability,
           decrypted_id,
           interview_preference_deadline,
         } = response.data.data;
-        // console.log(interviewPreferenceDeadline);
         setInterviewPreferenceDeadline(interview_preference_deadline);
         setApplicationId(decrypted_id);
 
@@ -162,7 +161,7 @@ const AvailabilityCalendar: React.FC = () => {
   // Check if today is past the deadline
   if (today > cutoffDate) {
     return (
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
         <h2>Preference submission has closed</h2>
         <p>
           The deadline for submitting was {format(cutoffDate, "dd/MM/yyyy")}.
@@ -174,7 +173,7 @@ const AvailabilityCalendar: React.FC = () => {
   return (
     // DndProvider wraps the calendar component to provide drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div style={{ height: "80vh", padding: "20px", paddingTop: "0" }}>
+      <div style={{ height: "75vh", padding: "20px", paddingTop: "0" }}>
         <div
           style={{
             width: "100%",
@@ -217,6 +216,7 @@ const AvailabilityCalendar: React.FC = () => {
           max={endOfDay(twoWeeksLater)} // Latest selectable date (2 weeks from now)
           step={30}
           timeslots={2}
+          scrollToTime={scrollToTime}
         />
         {/* Save Button */}
         <Button
@@ -232,4 +232,4 @@ const AvailabilityCalendar: React.FC = () => {
   );
 };
 
-export default AvailabilityCalendar;
+export default CandidateAvailabilityCalendarPage;

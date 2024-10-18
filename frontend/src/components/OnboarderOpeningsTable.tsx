@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   TableContainer,
   TableHead,
@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useOpeningStore } from "../util/stores/openingApplicantStore";
 
-export interface applicantOpeningResultProps {
+export interface onboarderOpeningResultProps {
   id: number;
   recruitment_round_id: number;
   recruitment_round_year: number;
@@ -37,12 +37,12 @@ export interface applicantOpeningResultProps {
   opening_status: string;
 }
 
-interface applicantOpeningTableProps {
-  results: applicantOpeningResultProps[];
+interface onboarderOpeningTableProps {
+  results: onboarderOpeningResultProps[];
 }
 
 const modalStyle = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -53,19 +53,19 @@ const modalStyle = {
   p: 4,
 };
 
-export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
+export function OnboarderOpeningsTable(props: onboarderOpeningTableProps) {
   const navigate = useNavigate();
   const setOpeningDetails = useOpeningStore((state) => state.setOpeningDetails);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] =
-    useState<applicantOpeningResultProps | null>(null);
+    useState<onboarderOpeningResultProps | null>(null);
   const handleApply = (id: number, r_id: number) => {
     setOpeningDetails(r_id, id);
     navigate("/application-submission");
   };
 
-  const handleTeamInfoClick = (team: applicantOpeningResultProps) => {
+  const handleTeamInfoClick = (team: onboarderOpeningResultProps) => {
     setSelectedTeam(team);
     setModalOpen(true);
   };
@@ -75,11 +75,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
     setSelectedTeam(null);
   };
 
-  const generateRowFunction = (
-    results: applicantOpeningResultProps[],
-    navigate: ReturnType<typeof useNavigate>,
-    setOpeningDetails: (round_id: number, opening_id: number) => void,
-  ) => {
+  const generateRowFunction = (results: onboarderOpeningResultProps[]) => {
     return results.map((result) => {
       const formattedDeadline = (() => {
         const date = new Date(result.recruitment_round_deadline);
@@ -101,12 +97,12 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
           </TableCell>
           <TableCell>{`${formattedDeadline}`}</TableCell>
           <TableCell>{`${result.student_team_name}`}</TableCell>
-          <TableCell>{`Semester ${result.recruitment_round_semester}`}</TableCell>
+          <TableCell>{`${result.recruitment_round_semester}`}</TableCell>
           <TableCell>{`${result.recruitment_round_year}`}</TableCell>
           <TableCell>
             <Button
               variant="contained"
-              style={{ marginRight: "10px", padding: 2 }}
+              style={{ marginRight: "10px" }}
               onClick={() => {
                 handleApply(result.id, result.recruitment_round_id);
               }}
@@ -115,7 +111,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
             </Button>
             <Button
               variant="outlined"
-              style={{ padding: 2 }}
+              // style={{ padding: 2 }}
               onClick={() => handleTeamInfoClick(result)}
             >
               View Team Info
@@ -140,9 +136,7 @@ export function ApplicantOpeningsTable(props: applicantOpeningTableProps) {
               <TableCell> Actions </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {generateRowFunction(props.results, navigate, setOpeningDetails)}
-          </TableBody>
+          <TableBody>{generateRowFunction(props.results)}</TableBody>
         </Table>
       </TableContainer>
 

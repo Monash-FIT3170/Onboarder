@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Select,
   MenuItem,
@@ -18,6 +18,7 @@ import {
   TableRow,
   Paper,
   Typography,
+  FormHelperText,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
@@ -27,24 +28,113 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../util/stores/authStore";
 import { getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
+
+interface FormErrors {
+  year: string;
+  semester: string;
+  application_deadline: string;
+  interview_preference_deadline: string;
+  interview_period_start: string;
+  interview_period_end: string;
+}
+
+const validateForm = (
+  year: string,
+  semester: string,
+  application_deadline: DateTime | null,
+  interview_preference_deadline: DateTime | null,
+  interview_period_start: DateTime | null,
+  interview_period_end: DateTime | null,
+): FormErrors => {
+  const errors: FormErrors = {
+    year: "",
+    semester: "",
+    application_deadline: "",
+    interview_preference_deadline: "",
+    interview_period_start: "",
+    interview_period_end: "",
+  };
+
+  if (!year) {
+    errors.year = "Year is required";
+  } else if (!/^\d{4}$/.test(year)) {
+    errors.year = "Year must be a 4-digit number";
+  }
+
+  if (!semester) {
+    errors.semester = "Semester is required";
+  }
+
+  if (!application_deadline) {
+    errors.application_deadline = "Application deadline is required";
+  }
+
+  if (!interview_preference_deadline) {
+    errors.interview_preference_deadline =
+      "Interview preference deadline is required";
+  }
+
+  if (!interview_period_start) {
+    errors.interview_period_start = "Interview period start is required";
+  }
+
+  if (!interview_period_end) {
+    errors.interview_period_end = "Interview period end is required";
+  }
+
+  if (
+    application_deadline &&
+    interview_preference_deadline &&
+    application_deadline > interview_preference_deadline
+  ) {
+    errors.application_deadline =
+      "Application deadline cannot be after the interview preference deadline";
+  }
+
+  if (
+    interview_preference_deadline &&
+    interview_period_start &&
+    interview_preference_deadline > interview_period_start
+  ) {
+    errors.interview_preference_deadline =
+      "Interview preference deadline cannot be after the interview period start date";
+  }
+
+  if (
+    interview_period_start &&
+    interview_period_end &&
+    interview_period_start > interview_period_end
+  ) {
+    errors.interview_period_start =
+      "Interview period start date cannot be after the end date";
+  }
+
+  return errors;
+};
 
 const AddRecruitmentRoundPage = () => {
-  const [application_deadline, setApplicationDeadline] = useState(
-    DateTime.now().plus({ days: 1 }),
-  );
+  const [application_deadline, setApplicationDeadline] =
+    useState<DateTime | null>(DateTime.now().plus({ days: 1 }));
   const [interview_preference_deadline, setInterviewPreferenceDeadline] =
-    useState(DateTime.now().plus({ days: 2 }));
-  const [interview_period_start, setInterviewPeriodStart] = useState(
-    DateTime.now().plus({ days: 3 }).startOf("day"),
-  );
-  const [interview_period_end, setInterviewPeriodEnd] = useState(
-    DateTime.now().plus({ days: 4 }).startOf("day"),
-  );
+    useState<DateTime | null>(DateTime.now().plus({ days: 2 }));
+  const [interview_period_start, setInterviewPeriodStart] =
+    useState<DateTime | null>(DateTime.now().plus({ days: 3 }).startOf("day"));
+  const [interview_period_end, setInterviewPeriodEnd] =
+    useState<DateTime | null>(DateTime.now().plus({ days: 4 }).startOf("day"));
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
   const [open, setOpen] = useState(false);
   const [dialogParam, setIsSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({
+    year: "",
+    semester: "",
+    application_deadline: "",
+    interview_preference_deadline: "",
+    interview_period_start: "",
+    interview_period_end: "",
+  });
 
   const navigate = useNavigate();
   const authStore = useAuthStore();
@@ -53,59 +143,55 @@ const AddRecruitmentRoundPage = () => {
   const BASE_API_URL = getBaseAPIURL();
   const API_URL = `${BASE_API_URL}/student-team/${studentTeamId}/recruitment-round/`;
 
-  const handleSubmit = async (event: any) => {
+  const memoizedValidateForm = useCallback(() => {
+    const newErrors = validateForm(
+      year,
+      semester,
+      application_deadline,
+      interview_preference_deadline,
+      interview_period_start,
+      interview_period_end,
+    );
+    setErrors(newErrors);
+  }, [
+    year,
+    semester,
+    application_deadline,
+    interview_preference_deadline,
+    interview_period_start,
+    interview_period_end,
+  ]);
+
+  useEffect(() => {
+    memoizedValidateForm();
+  }, [memoizedValidateForm]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (
-      !application_deadline ||
-      !semester ||
-      !year ||
-      year.length <= 0 ||
-      !interview_preference_deadline ||
-      !interview_period_start ||
-      !interview_period_end
-    ) {
-      alert("Please fill in all fields");
-      return;
-    }
+    memoizedValidateForm();
 
-    if (interview_period_start > interview_period_end) {
-      alert("Interview period start date cannot be after the end date");
-      return;
-    }
-
-    if (interview_preference_deadline > interview_period_start) {
-      alert(
-        "Interview preference deadline cannot be after the interview period start date",
-      );
-      return;
-    }
-
-    if (application_deadline > interview_preference_deadline) {
-      alert(
-        "Application deadline cannot be after the interview preference deadline",
-      );
+    if (Object.values(errors).some((error) => error !== "")) {
       return;
     }
 
     setLoading(true);
     try {
       const response = await axios.post(API_URL, {
-        application_deadline: application_deadline.toString(),
-        interview_preference_deadline: interview_preference_deadline.toString(),
+        application_deadline: application_deadline?.toString(),
+        interview_preference_deadline:
+          interview_preference_deadline?.toString(),
         interview_period: [
-          interview_period_start.toString(),
-          interview_period_end.toString(),
+          interview_period_start?.toString(),
+          interview_period_end?.toString(),
         ],
         semester: semester,
         year: year,
         status: "I",
       });
       if (response.status === 201) {
-        // console.log(response);
         setOpen(true);
         setIsSuccessful(true);
       } else {
-        // console.log(response);
         setOpen(true);
         setIsSuccessful(false);
       }
@@ -156,6 +242,8 @@ const AddRecruitmentRoundPage = () => {
               fullWidth
               value={year}
               onChange={(e) => setYear(e.target.value)}
+              error={!!errors.year}
+              helperText={errors.year}
             />
           </Grid>
 
@@ -175,7 +263,13 @@ const AddRecruitmentRoundPage = () => {
                     setApplicationDeadline(newValue.endOf("minute"));
                 }}
                 defaultValue={DateTime.now().startOf("minute")}
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!errors.application_deadline,
+                    helperText: errors.application_deadline,
+                  },
+                }}
               />
             </LocalizationProvider>
           </Grid>
@@ -188,6 +282,7 @@ const AddRecruitmentRoundPage = () => {
               value={semester}
               fullWidth
               onChange={(e) => setSemester(e.target.value)}
+              error={!!errors.semester}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -195,6 +290,9 @@ const AddRecruitmentRoundPage = () => {
               <MenuItem value="1">1</MenuItem>
               <MenuItem value="2">2</MenuItem>
             </Select>
+            {errors.semester && (
+              <FormHelperText error>{errors.semester}</FormHelperText>
+            )}
           </Grid>
 
           <Grid item xs={12} sm={6}>
@@ -213,7 +311,13 @@ const AddRecruitmentRoundPage = () => {
                     setInterviewPreferenceDeadline(newValue.endOf("minute"));
                 }}
                 defaultValue={DateTime.now()}
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!errors.interview_preference_deadline,
+                    helperText: errors.interview_preference_deadline,
+                  },
+                }}
               />
             </LocalizationProvider>
           </Grid>
@@ -234,7 +338,13 @@ const AddRecruitmentRoundPage = () => {
                     setInterviewPeriodStart(newValue.startOf("day"));
                 }}
                 defaultValue={DateTime.now().startOf("day")}
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!errors.interview_period_start,
+                    helperText: errors.interview_period_start,
+                  },
+                }}
                 views={["year", "month", "day"]}
               />
             </LocalizationProvider>
@@ -255,7 +365,13 @@ const AddRecruitmentRoundPage = () => {
                   if (newValue) setInterviewPeriodEnd(newValue.endOf("day"));
                 }}
                 defaultValue={DateTime.now()}
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!errors.interview_period_end,
+                    helperText: errors.interview_period_end,
+                  },
+                }}
                 views={["year", "month", "day"]}
               />
             </LocalizationProvider>
@@ -263,22 +379,25 @@ const AddRecruitmentRoundPage = () => {
 
           <Grid item container xs={12} justifyContent="center" spacing={2}>
             <Grid item>
-              <Button
+              <PermissionButton
+                action="create"
+                subject="Round"
                 variant="contained"
                 color="primary"
                 size="large"
                 type="submit"
                 disabled={loading}
+                onClick={() => {}}
               >
                 {loading ? <CircularProgress size={24} /> : "Submit"}
-              </Button>
+              </PermissionButton>
             </Grid>
             <Grid item>
               <Link
                 to="/view-recruitment-rounds"
                 style={{ textDecoration: "none" }}
               >
-                <Button variant="contained" color="error" size="large">
+                <Button variant="outlined" size="large">
                   Cancel
                 </Button>
               </Link>
@@ -303,7 +422,9 @@ const AddRecruitmentRoundPage = () => {
           >
             GO TO ROUNDS TABLE
           </Button>
-          <Button
+          <PermissionButton
+            action="create"
+            subject="Round"
             onClick={() => {
               setOpen(false);
               setApplicationDeadline(DateTime.now()),
@@ -313,9 +434,10 @@ const AddRecruitmentRoundPage = () => {
                 setSemester(""),
                 setYear("");
             }}
+            tooltipText="You don't have permission to create new rounds"
           >
             CREATE MORE ROUNDS
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
     </div>

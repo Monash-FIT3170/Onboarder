@@ -1,5 +1,22 @@
+"""
+This script contains utility functions for pre-processing seed data for the Onboarder project.
+
+Functions:
+    load_env(file_path='.env'):
+        Load environment variables from a specified file.
+
+        Parameters:
+        file_path (str): The path to the environment file. Defaults to '.env'.
+
+        Returns:
+        dict: A dictionary containing the environment variables as key-value pairs.
+
+        Raises:
+        FileNotFoundError: If the specified file is not found, a warning is printed and an empty dictionary is returned.
+"""
 import os
 import shutil
+
 
 def load_env(file_path='.env'):
     """Load environment variables from a file."""
@@ -12,8 +29,10 @@ def load_env(file_path='.env'):
                     key, value = line.split('=', 1)
                     env_vars[key.strip()] = value.strip().strip("'").strip('"')
     except FileNotFoundError:
-        print(f"Warning: {file_path} not found. Proceeding with system environment variables.")
+        print(f"Warning: {
+              file_path} not found. Proceeding with system environment variables.")
     return env_vars
+
 
 # Load environment variables
 env_vars = load_env()
@@ -23,7 +42,7 @@ template_path = 'supabase/seed.sql.template'
 output_path = 'supabase/seed.sql'
 
 # Get the email from environment variables
-email = env_vars.get("DEV_EMAIL") 
+email = env_vars.get("DEV_EMAIL")
 
 # Check if the email is set
 if email is None:
@@ -44,5 +63,6 @@ content = content.replace('DEV_EMAIL', email)
 with open(output_path, 'w') as file:
     file.write(content)
 
-print(f"Generated {output_path} from {template_path} with environment variables")
+print(f"Generated {output_path} from {
+      template_path} with environment variables")
 print(f"Using email: {email}")

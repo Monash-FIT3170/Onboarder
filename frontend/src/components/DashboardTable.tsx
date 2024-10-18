@@ -1,20 +1,23 @@
 import {
-  TableContainer,
-  TableHead,
+  Box,
+  Button,
+  Modal,
+  Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
-  Button,
-  Paper,
-  Box,
-  Modal,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../util/stores/authStore";
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import RoleIcon from "../util/RoleIcon";
+import { useAuthStore } from "../util/stores/authStore";
+import { useStudentTeamStore } from "../util/stores/studentTeamStore";
 import { getBaseAPIURL } from "../util/Util";
 
 export interface StudentTeamResultProps {
@@ -27,7 +30,7 @@ export interface StudentTeamResultProps {
 }
 
 export interface DashboardTableProps {
-  results: StudentTeamResultProps[];
+  newTeam: StudentTeamResultProps[];
 }
 
 const modalStyle = {
@@ -44,60 +47,16 @@ const modalStyle = {
 
 const generateRowFunction = (
   results: StudentTeamResultProps[],
-  navigate: ReturnType<typeof useNavigate>,
-) => {
-  const authStore = useAuthStore();
-  const [modalData, setModalData] = useState(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
-  const BASE_API_URL = getBaseAPIURL();
-
-  const handleView = (
-    t_id: number,
-    t_link: string,
-    t_name: string,
-    user_role: string,
-  ) => {
-    authStore.updateTeamAndRole(t_id, t_link, t_name, user_role);
-    navigate("/view-recruitment-rounds");
-  };
-
-  const handleCloseModal = () => {
-    setDeleteModalOpen(false);
-    setLeaveModalOpen(false);
-    setModalData(null);
-  };
-
-  const handleDeleteOrLeave = async (
-    u_role: string,
-    user_id: number,
+  setModalData: (data: StudentTeamResultProps) => void,
+  setDeleteModalOpen: (open: boolean) => void,
+  setLeaveModalOpen: (open: boolean) => void,
+  handleView: (
     team_id: number,
-  ) => {
-    if (u_role === "Owner") {
-      // Delete Team
-      try {
-        const API_URL = `${BASE_API_URL}/student-team/${team_id}`;
-        await axios.delete(API_URL);
-      } catch (error) {
-        console.error("Error deleting team:", error);
-      } finally {
-        // setLoading(false);
-      }
-    } else {
-      // Leave Team
-      try {
-        // console.log(user_id, team_id);
-        const API_URL = `${BASE_API_URL}/student-team/${team_id}/members/${user_id}`;
-        await axios.delete(API_URL);
-      } catch (error) {
-        console.error("Error removing user from team:", error);
-      } finally {
-        // setLoading(false);
-        navigate("/dashboard");
-      }
-    }
-  };
-
+    team_meeting_link: string,
+    team_name: string,
+    user_role: string,
+  ) => void,
+) => {
   return (
     <>
       {results.map((result) => (
@@ -108,7 +67,12 @@ const generateRowFunction = (
           <TableCell component="th" scope="row">
             {result.student_team_name}
           </TableCell>
-          <TableCell>{result.user_team_role}</TableCell>
+          <TableCell>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <RoleIcon role={result.user_team_role} />
+              {result.user_team_role}
+            </div>
+          </TableCell>
           <TableCell>{result.student_team_owner}</TableCell>
           <TableCell>
             <Button
@@ -142,6 +106,209 @@ const generateRowFunction = (
           </TableCell>
         </TableRow>
       ))}
+    </>
+  );
+};
+
+export function DashboardTable({ newTeam }: DashboardTableProps) {
+  // State hooks
+
+  const [loading, setLoading] = useState(true);
+  const [modalData, setModalData] = useState<StudentTeamResultProps | null>(
+    null,
+  );
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
+
+  //Constants
+
+  const navigate = useNavigate();
+  const BASE_API_URL = getBaseAPIURL();
+
+  // Store hooks
+
+  const authStore = useAuthStore();
+  const { studentTeams, setStudentTeams } = useStudentTeamStore();
+
+  // Effect hooks
+
+  const fetchTeams = useCallback(async () => {
+    setLoading(true);
+    try {
+      let profileId = authStore.profile;
+
+      if (!profileId) {
+        profileId = await authStore.fetchProfile();
+      }
+
+      const response = await axios.get(
+        `${BASE_API_URL}/profile/${profileId}/student-teams`, // Working
+      );
+      const tableData = response.data
+        .map((role: any) => ({
+          id: role.profile_id, // Assuming the API returns a user id
+          student_team_id: role.student_team_id,
+          student_team_name: role.student_team_name,
+          user_team_role:
+            role.your_role === "O"
+              ? "Owner"
+              : role.your_role === "A"
+                ? "Admin"
+                : "Team Lead",
+          student_team_owner: role.owner_email,
+          student_team_description: role.student_team_description,
+          student_team_meeting_link: role.student_team_meeting_link,
+        }))
+        .sort((a: StudentTeamResultProps, b: StudentTeamResultProps) => {
+          const roleRanking: { [key: string]: number } = {
+            Owner: 0,
+            Admin: 1,
+            "Team Lead": 2,
+          };
+          return roleRanking[a.user_team_role] - roleRanking[b.user_team_role];
+        });
+      setStudentTeams(tableData);
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [BASE_API_URL, newTeam]);
+
+  useEffect(() => {
+    fetchTeams();
+  }, [fetchTeams]);
+  // Using fetchTeams in the dependency array won't cause an infinite loop
+  // because it's wrapped in useCallback. The function reference only changes
+  // if BASE_API_URL changes, preventing unnecessary re-renders.
+
+  // Handler functions
+
+  const handleCloseModal = () => {
+    setDeleteModalOpen(false);
+    setLeaveModalOpen(false);
+    setModalData(null);
+  };
+
+  const handleDeleteOrLeave = async (
+    u_role: string,
+    user_id: number,
+    team_id: number,
+  ) => {
+    try {
+      if (u_role === "Owner") {
+        await axios.delete(`${BASE_API_URL}/student-team/${team_id}`);
+      } else {
+        await axios.delete(
+          `${BASE_API_URL}/student-team/${team_id}/members/${user_id}`,
+        );
+      }
+      fetchTeams();
+    } catch (error) {
+      console.error("Error deleting/leaving team:", error);
+    } finally {
+      handleCloseModal();
+    }
+  };
+
+  const handleView = (
+    team_id: number,
+    team_meeting_link: string,
+    team_name: string,
+    user_role: string,
+  ) => {
+    authStore.updateTeamAndRole(
+      team_id,
+      team_meeting_link,
+      team_name,
+      user_role,
+    );
+    navigate("/view-recruitment-rounds");
+  };
+
+  if (loading) {
+    return (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Skeleton />
+              </TableCell>
+              <TableCell>
+                <Skeleton />
+              </TableCell>
+              <TableCell>
+                <Skeleton />
+              </TableCell>
+              <TableCell>
+                <Skeleton />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[...Array(3)].map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton />
+                </TableCell>
+                <TableCell>
+                  <Skeleton />
+                </TableCell>
+                <TableCell>
+                  <Skeleton />
+                </TableCell>
+                <TableCell>
+                  <Skeleton />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+
+  if (studentTeams.length === 0) {
+    return (
+      <Box sx={{ textAlign: "center", mt: 4 }}>
+        <Typography variant="h6">
+          You are not a member of any teams yet.
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/create-team")}
+          sx={{ mt: 2 }}
+        >
+          Create a Team
+        </Button>
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      <TableContainer component={Paper}>
+        <Table aria-label="openings_table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Team Name</TableCell>
+              <TableCell>Your Role</TableCell>
+              <TableCell>Owner</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {generateRowFunction(
+              studentTeams,
+              setModalData,
+              setDeleteModalOpen,
+              setLeaveModalOpen,
+              handleView,
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal open={deleteModalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
@@ -166,14 +333,11 @@ const generateRowFunction = (
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  // Add your delete logic here
-                  // console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.user,
                     modalData.student_team_id,
                   );
-                  handleCloseModal();
                 }}
                 sx={{ mt: 2, ml: 2 }}
               >
@@ -206,14 +370,11 @@ const generateRowFunction = (
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  // Add your leave logic here
-                  // console.log(modalData);
                   handleDeleteOrLeave(
                     modalData.user_team_role,
                     authStore.profile,
                     modalData.student_team_id,
                   );
-                  handleCloseModal();
                 }}
                 sx={{ mt: 2, ml: 2 }}
               >
@@ -223,28 +384,6 @@ const generateRowFunction = (
           )}
         </Box>
       </Modal>
-    </>
-  );
-};
-
-export function DashboardTable(props: DashboardTableProps) {
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <TableContainer component={Paper}>
-        <Table aria-label="openings_table">
-          <TableHead>
-            <TableRow>
-              <TableCell> Team Name</TableCell>
-              <TableCell> Your Role</TableCell>
-              <TableCell> Owner </TableCell>
-              <TableCell> Actions </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{generateRowFunction(props.results, navigate)}</TableBody>
-        </Table>
-      </TableContainer>
     </>
   );
 }

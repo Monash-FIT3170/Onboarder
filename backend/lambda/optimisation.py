@@ -52,7 +52,7 @@ def lambda_handler(event: str, context: dict) -> dict:
         set_opening_status(opening_id, 'S')
 
         print("Data Written")
-
+        supabase.table('OPENING').update({'interview_allocation_status': 'S'}).eq('id', opening_id).execute()
         return {
             "statusCode": 200,
             "body": json.dumps({"message": "Scheduling completed successfully"})
@@ -77,7 +77,7 @@ def get_interview_length(opening_id: int) -> int:
 def get_interviewee_availabilities(opening_id: int) -> tuple[list, list]:
     response = supabase.table('APPLICATION').select(
         'id, candidate_availability').eq('opening_id', opening_id).execute()
-    return [item['id'] for item in response.data], [item['candidate_availability'] for item in response.data]
+    return [item['id'] for item in response.data if item['candidate_availability'] is not None], [item['candidate_availability'] for item in response.data if item['candidate_availability'] is not None]
 
 
 # def get_interviewer_availabilities(opening_id):
@@ -95,9 +95,10 @@ def get_interviewer_availabilities(opening_id: int) -> tuple[list, list]:
         .select('PROFILE(id, interview_availability)') \
         .eq('opening_id', opening_id) \
         .execute()
-    interviewers = [item['PROFILE']['id'] for item in response.data]
+    interviewers = [item['PROFILE']['id']
+                    for item in response.data if item['PROFILE']['interview_availability'] is not None]
     availabilities = [item['PROFILE']['interview_availability']
-                      for item in response.data]
+                      for item in response.data if item['PROFILE']['interview_availability'] is not None]
     return interviewers, availabilities
 
 
@@ -124,7 +125,7 @@ def process_schedule_for_db(schedule: list, interviewers: list, interviewees: li
 
 def write_schedule_to_db(opening_id: int, records: list) -> None:
     for item in records:
-        # supabase.table('APPLICATION').insert({ 
+        # supabase.table('APPLICATION').insert({
         #     'opening_id': opening_id,
         #     'interview_date': item['interview_date'],
         #     'profile_id': item['profile_id']
@@ -140,6 +141,7 @@ def write_schedule_to_db(opening_id: int, records: list) -> None:
 def solve_scheduling_problem(interviewer_availabilities: list, interviewee_availabilities: list, interview_duration_minutes: int) -> list:
     # Process availabilities
     all_availabilities = interviewer_availabilities + interviewee_availabilities
+    print("All Availabilities: ", all_availabilities)
     time_slots, availability_matrix = process_availabilities(
         all_availabilities, interview_duration_minutes)
 
@@ -200,7 +202,7 @@ def solve_scheduling_problem(interviewer_availabilities: list, interviewee_avail
 
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD())
-    
+
     # Process results
     schedule = []
     for j in range(n_interviewees):
@@ -225,10 +227,10 @@ def solve_scheduling_problem(interviewer_availabilities: list, interviewee_avail
 
 def solve_scheduling_problem_scipy(interviewer_availabilities, interviewee_availabilities, interview_duration_minutes):
     time_slots, availability_matrix = process_availabilities(
-        interviewer_availabilities + interviewee_availabilities, 
+        interviewer_availabilities + interviewee_availabilities,
         interview_duration_minutes
     )
-    
+
     n_interviewers = len(interviewer_availabilities)
     n_interviewees = len(interviewee_availabilities)
     n_timeslots = len(time_slots)
@@ -246,7 +248,8 @@ def solve_scheduling_problem_scipy(interviewer_availabilities, interviewee_avail
     # Each interviewee is interviewed at most once
     for j in range(n_interviewees):
         constraint = np.zeros(n_vars)
-        constraint[j*n_interviewers*n_timeslots:(j+1)*n_interviewers*n_timeslots] = 1
+        constraint[j*n_interviewers *
+                   n_timeslots:(j+1)*n_interviewers*n_timeslots] = 1
         A_ub.append(constraint)
         b_ub.append(1)
 
@@ -301,11 +304,15 @@ def solve_scheduling_problem_scipy(interviewer_availabilities, interviewee_avail
 
 
 def process_availabilities(availabilities: list, interview_duration_minutes: str) -> tuple[list, list[list[int]]]:
+    print("Availabilities: ", availabilities)
     all_times = set()
     for availability in availabilities:
-        if isinstance(availability, str):
-            availability = json.loads(availability)
+        print("Availability: ", availability)
+        # if isinstance(availability, str):
+        #     availability = json.loads(availability)
+        #     print("Availability JSON: ", availability)
         for slot in availability:
+            print("Slot: ", slot)
             if isinstance(slot, str):
                 slot = json.loads(slot)
             start = datetime.fromisoformat(
@@ -324,8 +331,8 @@ def process_availabilities(availabilities: list, interview_duration_minutes: str
         [0 for _ in range(n_slots)] for _ in range(n_people)]
 
     for person, availability in enumerate(availabilities):
-        if isinstance(availability, str):
-            availability = json.loads(availability)
+        # if isinstance(availability, str):
+        #     availability = json.loads(availability)
         for slot in availability:
             if isinstance(slot, str):
                 slot = json.loads(slot)

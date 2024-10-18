@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { supabase } from "../supabaseClient";
 import { UserRole } from "../Util";
+import { AppAbility, defineAbilityFor } from "../abilities";
 
 interface AuthState {
   user: any | null;
@@ -9,6 +10,7 @@ interface AuthState {
   team_id: any | null;
   team_name: string | null;
   role: UserRole | null;
+  ability: AppAbility | null;
   initializeAuth: () => Promise<void>;
   signOut: () => Promise<void>;
   checkSession: () => Promise<void>;
@@ -28,6 +30,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   team_id: null,
   team_name: null,
   role: null,
+  ability: null,
 
   initializeAuth: async () => {
     const {
@@ -47,6 +50,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } else {
       const profileId = profileData?.[0]?.id ?? null;
       set({ profile: profileId, loading: false });
+
+      // Update ability based on the user's role
+      const currentState = get();
+      if (currentState.role) {
+        const newAbility = defineAbilityFor(
+          currentState.role.toLowerCase() as UserRole,
+        );
+        set({ ability: newAbility });
+      }
     }
 
     supabase.auth.onAuthStateChange(async (_, session) => {
@@ -74,7 +86,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     team_name: string | null,
     role: UserRole | null,
   ) => {
-    set({ team_id, team_meeting_link, team_name, role });
+    // Update the ability based on the new role within the updated team
+    const newAbility = role
+      ? defineAbilityFor(role.toLowerCase() as UserRole)
+      : null;
+    set({ team_id, team_meeting_link, team_name, role, ability: newAbility });
   },
 
   fetchProfile: async (): Promise<string | null> => {

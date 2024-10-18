@@ -18,9 +18,12 @@ import {
   Typography,
   Collapse,
   Tooltip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import EmailConfigModal from "../components/EmailConfigModal";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InfoIcon from "@mui/icons-material/Info";
@@ -30,6 +33,7 @@ import { useApplicantStore } from "../util/stores/applicantStore";
 import { useAuthStore } from "../util/stores/authStore";
 import { useOpeningStore } from "../util/stores/openingStore";
 import { getAppStatusText, getBaseAPIURL } from "../util/Util";
+import PermissionButton from "../components/PermissionButton";
 
 export interface SingleApplicationProps {
   id: number;
@@ -47,10 +51,8 @@ export interface SingleApplicationProps {
   created_at: string;
 }
 
-function ViewOpenPage() {
+function OpeningDetailsPage() {
   // State hooks
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [sortColumn, setSortColumn] = useState(null);
   const [applications, setApplications] = useState<SingleApplicationProps[]>(
     [],
   );
@@ -59,7 +61,9 @@ function ViewOpenPage() {
   const [expandedCandidates, setExpandedCandidates] = useState(false);
   const [expandedRecruits, setExpandedRecruits] = useState(false);
   const [confirmEmailModalOpen, setConfirmEmailModalOpen] = useState(false);
-
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isEmailConfigModalOpen, setIsEmailConfigModalOpen] = useState(false);
   // Constants
   const BASE_API_URL = getBaseAPIURL();
   const navigate = useNavigate();
@@ -70,6 +74,7 @@ function ViewOpenPage() {
   const setSelectedApplicant = useApplicantStore(
     (state) => state.setSelectedApplicant,
   );
+
   const clearSelectedOpening = useOpeningStore(
     (state) => state.clearSelectedOpening,
   );
@@ -82,21 +87,22 @@ function ViewOpenPage() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const applicationsResponse = await axios.get(
-          `${BASE_API_URL}/opening/${selectedOpening.id}/application`, // Working
+          `${BASE_API_URL}/opening/${selectedOpening.id}/application`,
         );
         setApplications(applicationsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch applications. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedOpening, navigate]);
+  }, [selectedOpening, navigate, BASE_API_URL]);
 
-  // Handler functions
   const handleViewApplication = (applicationId: number) => {
     setSelectedApplicant({
       opening_name: selectedOpening?.title ?? null,
@@ -137,9 +143,12 @@ function ViewOpenPage() {
     navigate("/interview-scheduling");
   };
 
-  const respond2 = () => {
-    // clearSelectedOpening();
-    navigate("/task-email-format");
+  const handleOpenEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(true);
+  };
+
+  const handleCloseEmailConfigModal = () => {
+    setIsEmailConfigModalOpen(false);
   };
 
   const handleClickOpen = () => {
@@ -151,17 +160,24 @@ function ViewOpenPage() {
   };
 
   const handleSendEmails = async () => {
+    if (!selectedOpening) {
+      setError("No opening selected. Please try again.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_API_URL}/send-interview-emails/${selectedOpening.id}`,
       );
-      // console.log(response);
+      setSuccessMessage("Interview scheduling emails sent successfully.");
     } catch (error) {
       console.error("Error sending emails:", error);
+      setError("Failed to send interview scheduling emails. Please try again.");
+    } finally {
+      setLoading(false);
+      handleClose();
     }
-    setLoading(false);
-    handleClose();
   };
 
   const handleConfirmSendEmails = () => {
@@ -177,7 +193,7 @@ function ViewOpenPage() {
     if (applications.length === 0) {
       return (
         <TableRow>
-          <TableCell colSpan={5} align="center" sx={{ width: "20%" }}>
+          <TableCell colSpan={5} align="left" sx={{ width: "20%" }}>
             None
           </TableCell>
         </TableRow>
@@ -188,13 +204,13 @@ function ViewOpenPage() {
       <TableRow key={application.id}>
         <TableCell sx={{ width: "20%" }}>{application.name}</TableCell>
         <TableCell sx={{ width: "20%" }}>{application.email}</TableCell>
-        <TableCell sx={{ width: "20%" }}>
+        <TableCell sx={{ width: "10%" }}>
           {getAppStatusText(application.status)}
         </TableCell>
         <TableCell sx={{ width: "15%" }}>
           {new Date(application.created_at).toLocaleDateString()}
         </TableCell>
-        <TableCell sx={{ width: "25%" }}>
+        <TableCell sx={{ width: "35%" }}>
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
             {/* If the application is in the "C" (Candidate) or "R" (Recruit) status, show the INTERVIEW NOTES button */}
             {(application.status === "C" || application.status === "R") && (
@@ -227,16 +243,16 @@ function ViewOpenPage() {
     const filteredApplications = filterApplications(status);
 
     return (
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mt: 2 }}>
         <Button
           onClick={() => setExpanded(!expanded)}
           fullWidth
           sx={{
             justifyContent: "flex-start",
-            color: "primary.main",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
-            },
+            // color: "primary.main",
+            // "&:hover": {
+            //   backgroundColor: "rgba(0, 0, 0, 0.04)",
+            // },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -248,9 +264,9 @@ function ViewOpenPage() {
             <Typography
               variant="h6"
               component="div"
-              sx={{ fontWeight: "bold" }}
+              // sx={{ fontWeight: "bold" }}
             >
-              {title}
+              {title + " (" + filteredApplications.length + ")"}
             </Typography>
           </Box>
           {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -292,34 +308,36 @@ function ViewOpenPage() {
     );
   };
 
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccessMessage(null);
+  };
+
   return (
     <div>
       {/* Creates a button below allowing the user to add positions */}
       <div
-        style={{ display: "flex", alignItems: "center", margin: "20px 10px" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "0px 0px 8px",
+        }}
       >
         <IconButton onClick={() => handleBack()}>
           <BackIcon />
         </IconButton>
-        <Typography variant="h5" style={{ marginLeft: "10px" }}>
-          {selectedOpening?.title}
+        <Typography variant="h4" style={{ marginLeft: "10px" }}>
+          {"Opening: " + selectedOpening?.title}
         </Typography>
 
         <div style={{ marginLeft: "auto" }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              // console.log("Navigating to /task-email-format");
-              respond2();
-            }}
-          >
+          <Button variant="outlined" onClick={handleOpenEmailConfigModal}>
             CONFIGURE INTERVIEW SCHEDULING EMAIL
           </Button>
           <Button
             variant="contained"
             sx={{ ml: 2 }}
             onClick={() => {
-              // console.log("Navigating to /interview-scheduling");
               respond();
             }}
           >
@@ -328,7 +346,7 @@ function ViewOpenPage() {
         </div>
       </div>
 
-      <TableContainer component={Paper} sx={{ mb: 4 }}>
+      <TableContainer component={Paper} sx={{ mb: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -353,24 +371,39 @@ function ViewOpenPage() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h6" component="div">
+        <Typography variant="h5" component="div">
           Opening Applications
         </Typography>
-        <Button
-          variant="contained"
-          onClick={handleConfirmSendEmails}
-          disabled={
-            loading ||
+
+        <Tooltip
+          title={
             applications.find((item) => item.status === "C") == undefined
+              ? "There are no candidates to send interview scheduling emails to. Accept applications to send emails."
+              : ""
           }
-          style={{ marginLeft: "1rem" }}
+          arrow
         >
-          {loading ? (
-            <Skeleton width={100} />
-          ) : (
-            "Send Interview Scheduling Emails"
-          )}
-        </Button>
+          <span>
+            <PermissionButton
+              action="send"
+              subject="Interview"
+              variant="contained"
+              onClick={handleConfirmSendEmails}
+              disabled={
+                loading ||
+                applications.find((item) => item.status === "C") == undefined
+              }
+              style={{ marginLeft: "1rem" }}
+              tooltipText="You do not have permission to send interview scheduling emails"
+            >
+              {loading ? (
+                <Skeleton width={100} />
+              ) : (
+                "Send Interview Scheduling Emails"
+              )}
+            </PermissionButton>
+          </span>
+        </Tooltip>
       </Box>
 
       <TableContainer component={Paper}>
@@ -379,9 +412,9 @@ function ViewOpenPage() {
             <TableRow>
               <TableCell sx={{ width: "20%" }}>Student Name</TableCell>
               <TableCell sx={{ width: "20%" }}>Student Email</TableCell>
-              <TableCell sx={{ width: "20%" }}>Status</TableCell>
+              <TableCell sx={{ width: "10%" }}>Status</TableCell>
               <TableCell sx={{ width: "15%" }}>Date of Submission</TableCell>
-              <TableCell sx={{ width: "25%" }}>Actions</TableCell>
+              <TableCell sx={{ width: "35%" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
         </Table>
@@ -405,9 +438,16 @@ function ViewOpenPage() {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSendEmails} color="primary" autoFocus>
+          <PermissionButton
+            action="send"
+            subject="Interview"
+            onClick={handleSendEmails}
+            color="primary"
+            autoFocus
+            tooltipText="You do not have permission to send interview scheduling emails"
+          >
             Confirm
-          </Button>
+          </PermissionButton>
         </DialogActions>
       </Dialog>
 
@@ -432,8 +472,43 @@ function ViewOpenPage() {
         setExpandedRecruits,
         "Recruits have completed their interview and were accepted to be a part of the team.",
       )}
+
+      <EmailConfigModal
+        open={isEmailConfigModalOpen}
+        onClose={handleCloseEmailConfigModal}
+        setEmailBodyNew={null}
+        setTaskOnNew={null}
+        newOpening={false}
+      />
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
 
-export default ViewOpenPage;
+export default OpeningDetailsPage;

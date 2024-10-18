@@ -13,20 +13,22 @@ import {
   Skeleton,
   Button,
   IconButton,
+  Alert,
 } from "@mui/material";
 import { useAuthStore } from "../util/stores/authStore";
-import TeamMembersTable, { TeamMember } from "../components/TeamMembersTable";
+import { TeamMember } from "../components/TeamMembersTable";
 import { useNavigate } from "react-router-dom";
 import { useMemberStore } from "../util/stores/memberStore";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getBaseAPIURL } from "../util/Util";
+import RoleIcon from "../util/RoleIcon";
 // Define the structure of a Team Lead
 export interface TeamLeadProps {
   profile_id: number;
   email: string;
 }
 
-function ViewTeamLeads() {
+function ViewTeamLeadsPage() {
   const navigate = useNavigate();
   // State to store the list of team leads
   const [teamLeads, setTeamLeads] = useState<TeamLeadProps[]>([]);
@@ -36,14 +38,15 @@ function ViewTeamLeads() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const setSelectedMember = useMemberStore((state) => state.setSelectedMember);
   // const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch the team leads data from the API
   useEffect(() => {
     const fetchTeamMembers = async () => {
       const BASE_API_URL = getBaseAPIURL();
       if (!team_id) {
-        // setError("No team selected");
-        // setIsLoading(false);
+        setError("No team selected");
+        setLoading(false);
         return;
       }
 
@@ -53,7 +56,6 @@ function ViewTeamLeads() {
           `${BASE_API_URL}/student-team/${team_id}/members`,
         );
         const profileTeamInfo = profileTeamResponse.data;
-        // console.log(profileTeamInfo);
         if (profileTeamInfo.length === 0) {
           throw new Error("Profile team information not found");
         }
@@ -61,20 +63,14 @@ function ViewTeamLeads() {
         // Fetch student information for each member
         const membersPromises = profileTeamInfo.map(async (memberInfo: any) => {
           try {
-            // console.log(memberInfo);
             const studentResponse = await axios.get(
               `${BASE_API_URL}/profile/${memberInfo.profile_id}`,
             );
-            // const studentInfo = studentResponse.data.find(
-            //   (student: any) => student.student_team_id === team_id
-            // );
             const studentInfo = studentResponse.data[0];
-            // console.log(studentInfo);
 
             if (studentInfo) {
               return {
                 email: studentInfo.email,
-                // role: getRoleText(memberInfo.role),
                 profile_id: memberInfo.profile_id,
               };
             }
@@ -96,7 +92,7 @@ function ViewTeamLeads() {
         );
       } catch (error) {
         console.error("Error fetching team members:", error);
-        // setError("Failed to fetch team members");
+        setError("Failed to fetch team members. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -112,6 +108,59 @@ function ViewTeamLeads() {
     });
     navigate("/allocate-team-leads");
   };
+
+  const renderTableContent = () => {
+    if (loading) {
+      return (
+        <>
+          {[...Array(5)].map((_, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Skeleton animation="wave" height={40} />
+              </TableCell>
+              <TableCell>
+                <Skeleton animation="wave" height={40} width={100} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </>
+      );
+    }
+
+    if (members.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={2}>
+            <Typography align="center">No team leads found.</Typography>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return members.map((teamLead) => (
+      <TableRow key={teamLead.profile_id}>
+        <TableCell>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <RoleIcon role="Team Lead" />
+            {teamLead.email}
+          </div>
+        </TableCell>
+        <TableCell>
+          <Button
+            variant="contained"
+            onClick={() => handleView(teamLead.profile_id, teamLead.email)}
+          >
+            View
+          </Button>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
   return (
     <div style={{ padding: "20px" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -128,7 +177,7 @@ function ViewTeamLeads() {
         alignItems="center"
         marginBottom="10px"
       >
-        <Typography variant="h6">List of Team Leads</Typography>
+        <Typography variant="h5">List of Team Leads</Typography>
       </Box>
       <TableContainer component={Paper}>
         <Table aria-label="openings table">
@@ -138,44 +187,11 @@ function ViewTeamLeads() {
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {loading
-              ? [...Array(5)].map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={100} height={30} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : members.map((teamLead) => (
-                  <TableRow key={teamLead.profile_id}>
-                    <TableCell>{teamLead.email}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        onClick={() =>
-                          handleView(teamLead.profile_id, teamLead.email)
-                        }
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
+          <TableBody>{renderTableContent()}</TableBody>
         </Table>
       </TableContainer>
     </div>
   );
 }
 
-export default ViewTeamLeads;
+export default ViewTeamLeadsPage;
