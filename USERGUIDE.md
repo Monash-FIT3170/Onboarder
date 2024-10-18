@@ -3,16 +3,27 @@
 Welcome to **Onboarder**, a recruitment platform designed exclusively for Monash University student teams. This application facilitates the recruitment process, enabling team owners, admins, team leads, and applicants to efficiently manage and participate in team recruitment.
 
 ## Table of Contents
-1. [Overview](#overview)
-2. [Roles and Permissions](#roles-and-permissions)
-   - [Owner](#owner)
-   - [Admin](#admin)
-   - [Team Lead](#team-lead)
-   - [Applicant](#applicant)
-3. [Monash Authentication](#monash-authentication)
-4. [Features](#features)
-5. [Getting Started](#getting-started)
-6. [Contact](#contact)
+
+- [Onboarder: Student Team Recruitment Platform](#onboarder-student-team-recruitment-platform)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Student Application Stages](#student-application-stages)
+  - [Roles and Permissions](#roles-and-permissions)
+    - [Team Lead](#team-lead)
+    - [Admin](#admin)
+    - [Owner](#owner)
+    - [Applicant](#applicant)
+  - [Monash Authentication](#monash-authentication)
+    - [How to Log In](#how-to-log-in)
+  - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [Landing Page](#landing-page)
+    - [As a student/applicant](#as-a-studentapplicant)
+    - [As a member of a student team](#as-a-member-of-a-student-team)
+      - [Owner Example](#owner-example)
+      - [Admin Example](#admin-example)
+      - [Team Lead Example](#team-lead-example)
+  - [Contact](#contact)
 
 ---
 
@@ -21,16 +32,24 @@ Welcome to **Onboarder**, a recruitment platform designed exclusively for Monash
 Onboarder is tailored to streamline the recruitment process for Monash University student teams. The platform ensures secure sign on via Monash login and provides different levels of functionality based on user roles such as **Owner**, **Admin**, **Team Lead**, and **Applicant**.
 
 ## Student Application Stages
+
 When a student goes through the application, they have 3 stages.
 
 1. Applicant
-- An applicant is a student who has submitted an application.
+
+   - An applicant is a student who has submitted an application.
+
 2. Candidate
-- A candidate is a student whose application has been accepted. This means that they will be interviewed.
+
+   - A candidate is a student whose application has been accepted. This means that they will be interviewed.
+
 3. Recruit
-- A recruit is a student who has completed the interview, and was accepted. The team will sort out further onboarding outside of the application.
+
+   - A recruit is a student who has completed the interview, and was accepted. The team will sort out further onboarding outside of the application.
+
 4. Rejected
-- If an applicant or candidate is rejected, they are out of the recruitment process.
+
+   - If an applicant or candidate is rejected, they are out of the recruitment process.
 
 ## Roles and Permissions
 
@@ -38,6 +57,7 @@ Each role in the Onboarder platform has specific access and permissions to inter
 For each team you are a part of, you will have one of the three roles.
 
 ### Team Lead
+
 - **Primary responsibility**: Manages recruitment for specific team openings. They review applications, and conduct interviews.
 - **Key actions**:
   - Is invited to team by owner.
@@ -51,17 +71,19 @@ For each team you are a part of, you will have one of the three roles.
   - Can manually schedule interviews missed by algorithm, or edit the date of interviews scheduled by the algorithm
 
 ### Admin
+
 - **Primary responsibility**: Supports the owner in managing the team.
 - **Key actions**:
-  - Is invited to team by owner 
+  - Is invited to team by owner
   - Has all permissions of team lead, as well as:
   - Can edit the email configuration for candidates to submit their interview availability
   - Can create recruitment rounds
   - Can open/close/archive recruitment rounds
   - Can create openings for a recruitment round.
   - Can assign team leads (can assign any user to be a team lead for an opening in the team. )
- 
+
 ### Owner
+
 - **Primary responsibility**: Manages Team
 - **Key actions**:
   - Is the person who created the team.
@@ -71,19 +93,21 @@ For each team you are a part of, you will have one of the three roles.
   - Can configure global meeting link for google calendar interview invites.
 
 ### Applicant
+
 - **Primary responsibility**: Apply for team openings.
 - **Key actions**:
-  - Non logged-in user. 
+  - Non logged-in user.
   - Browse openings for student teams.
   - Submit applications for desired openings.
   - Can submit interview availability via email link if their application is accepted.
-  - Gets sent a google calendar invite if an interview is successfully allocated (and team lead sends the email). 
+  - Gets sent a google calendar invite if an interview is successfully allocated (and team lead sends the email).
 
 ## Monash Authentication
 
 Onboarder uses **Monash University's secure login system** to ensure that only verified Monash students can access the platform. You must use your **Monash student email and password** to log in. This system guarantees that only Monash-affiliated users can participate.
 
-### How to Log In:
+### How to Log In
+
 1. Open the Onboarder platform.
 2. Click the **Login with Monash SSO** button.
 3. Enter your Monash student credentials when prompted. (If you have not used Onboarder before, it will automatically create an account for you)
@@ -113,6 +137,7 @@ Onboarder uses **Monash University's secure login system** to ensure that only v
 ![Landing Page Screenshot](frontend/src/assets/landing_page.png)
 
 ### As a student/applicant
+
 End-to-end example of using the application as a student applying for a role.
 
 - Access the website
@@ -129,16 +154,19 @@ End-to-end example of using the application as a student applying for a role.
 - The team will reach out to you via email with further steps.
 
 ### As a member of a student team
+
 Here are end-to-end examples of how each role can use the application:
 
-#### Owner
+#### Owner Example
+
 - Log into application
 - Create a team and add a description.
 - Invite some admins.
 - (Optional) Add global meeting link for google calendar interview invites.
 - Have admins (or yourself) set up rounds and openings. (See below)
 
-#### Admin
+#### Admin Example
+
 - Be invited to a team as an admin
 - Log into application
 - Access the team.
@@ -147,9 +175,10 @@ Here are end-to-end examples of how each role can use the application:
 - Assign one or more team leads to each opening.
 - Open a recruitment round (this means its openings will show on the main page for people to apply to)
 - After enough applications are submitted, and interviews are being scheduled, close round.
-- After interviews are complete, and some recruits have been hired, archive round. 
+- After interviews are complete, and some recruits have been hired, archive round.
 
-#### Team Lead
+#### Team Lead Example
+
 - Be invited to a team as a team lead
 - Be assigned to one or more openings
 - Log into application
@@ -174,18 +203,15 @@ To get started with Onboarder, access the website and follow these steps:
 
 Log in with Monash SSO:
 
- - Click the Login with Monash SSO button.
+- Click the Login with Monash SSO button.
 
+- If you are an Owner or Admin, you can start by setting up your team profile and managing team settings.
+  As a Team Lead, create your team's specific recruitment openings.
+  As an Applicant, browse the available teams and apply for open positions.
+  Start Managing or Applying:
 
-
- - If you are an Owner or Admin, you can start by setting up your team profile and managing team settings.
-As a Team Lead, create your team's specific recruitment openings.
-As an Applicant, browse the available teams and apply for open positions.
-Start Managing or Applying:
-
- - Owners/Admins: Manage your team settings, assign team leads, and monitor the recruitment process.
-Team Leads: Post new openings, review applicants, and schedule interviews.
-
+- Owners/Admins: Manage your team settings, assign team leads, and monitor the recruitment process.
+  Team Leads: Post new openings, review applicants, and schedule interviews.
 
 ## Contact
 
