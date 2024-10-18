@@ -16,3 +16,37 @@ Welcome to **Onboarder**, a recruitment platform designed exclusively for Monash
 
 ---
 
+## Overview
+
+Onboarder is tailored to streamline the recruitment process for Monash University student teams. The platform ensures secure access via Monash login and provides distinct features based on user roles such as **Owners**, **Admins**, **Team Leads**, and **Applicants**.
+
+## Roles and Permissions
+
+Each role in the Onboarder platform has specific access and permissions to interact with the platform.
+
+### Owner
+- **Primary responsibility**: Manages overall team settings and recruitment process.
+- **Key actions**:
+  - Create and manage teams.
+  - Assign admins and team leads.
+  - Oversee the recruitment process.
+
+### Admin
+- **Primary responsibility**: Supports the owner in managing the team.
+- **Key actions**:
+  - Manage team settings.
+  - Review and manage applicant submissions.
+  - Assist in assigning team leads.
+
+### Team Lead
+- **Primary responsibility**: Manages recruitment for specific team openings.
+- **Key actions**:
+  - Create and manage specific team openings.
+  - Interview and review applicants for their team.
+
+### Applicant
+- **Primary responsibility**: Apply for team openings.
+- **Key actions**:
+  - Browse available teams and openings.
+  - Submit applications for desired positions.
+  - Track the status of applications.
