@@ -102,7 +102,7 @@ Team Leads: Post new openings, review applicants, and schedule interviews.
 
 ## Contact
 
-
+Please contact the owners of the repo for any questions.
 
 ### How to Log In:
 1. Open the Onboarder platform.
