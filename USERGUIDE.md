@@ -1,7 +1,11 @@
 # Onboarder: Student Team Recruitment Platform
 
 Welcome to **Onboarder**, a recruitment platform designed exclusively for Monash University student teams. This application facilitates the recruitment process, enabling team owners, admins, team leads, and applicants to efficiently manage and participate in team recruitment.
+## Landing Page
+Here’s a preview of our landing page:
 
+![Landing Page Screenshot](frontend/src/assets/landing_page.png)
+Visit the live site: [Onboarder Landing Page](http://127.0.0.1:5173/)
 ## Table of Contents
 1. [Overview](#overview)
 2. [Roles and Permissions](#roles-and-permissions)
