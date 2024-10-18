@@ -50,3 +50,13 @@ Each role in the Onboarder platform has specific access and permissions to inter
   - Browse available teams and openings.
   - Submit applications for desired positions.
   - Track the status of applications.
+
+## Monash Authentication
+
+Onboarder uses **Monash University's secure login system** to ensure that only verified Monash students can access the platform. You must use your **Monash student email and password** to log in. This system guarantees that only Monash-affiliated users can participate.
+
+### How to Log In:
+1. Open the Onboarder platform.
+2. Click the **Login with Monash SSO** button.
+3. Enter your Monash student credentials when prompted.
+4. You will be redirected to the Onboarder dashboard based on your role.
