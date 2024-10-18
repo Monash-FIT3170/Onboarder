@@ -68,6 +68,7 @@ For each team you are a part of, you will have one of the three roles.
   - Has all permissions of admin/team lead, as well as:
   - Can edit/delete team
   - Can invite members to the team as admins or team leads
+  - Can configure global meeting link for google calendar interview invites.
 
 ### Applicant
 - **Primary responsibility**: Apply for team openings.
@@ -85,27 +86,25 @@ Onboarder uses **Monash University's secure login system** to ensure that only v
 ### How to Log In:
 1. Open the Onboarder platform.
 2. Click the **Login with Monash SSO** button.
-3. Enter your Monash student credentials when prompted.
-4. You will be redirected to the Onboarder dashboard based on your role.
+3. Enter your Monash student credentials when prompted. (If you have not used Onboarder before, it will automatically create an account for you)
+4. You will be redirected to the Onboarder dashboard.
+5. You can create a student team and become its owner, and see ones you have been invited to as team lead or admin. (More details further down in document)
+
 ## Features
 
 - **Monash Authentication**: Secure login via Monash University's authentication system ensures only verified Monash students can access the platform.
 
-- **Role-based Permissions**: The platform offers distinct functionalities based on user roles, ensuring appropriate access and controls for **Owners**, **Admins**, **Team Leads**, and **Applicants**.
-  - **Owners** can create and manage teams, assign roles, and oversee the entire recruitment process.
-  - **Admins** support Owners in managing team settings and applicant submissions.
-  - **Team Leads** manage recruitment for specific team openings, including interviewing and reviewing applicants.
-  - **Applicants** can browse team openings, apply for positions, and track their application status.
+- **Role-based Permissions**: The platform offers varying access to features based on user roles, ensuring appropriate access and controls for **Owners**, **Admins**, **Team Leads**, and **Applicants**.
 
-- **Team Creation & Management**: Owners and Admins can create and manage student teams, set up recruitment cycles, and assign roles to team leads and admins.
+- **Team Creation & Management**: Anyone can go to Onboarder and create a student team
 
-- **Openings & Applications**: Team Leads can create and manage openings within their team. Applicants can explore these openings and submit applications directly through the platform.
+- **Recruitment Rounds**: Owners and Admins of a team can create recruitment rounds for each semester.
 
-- **Application Review Process**: Admins and Team Leads can review applications, interview candidates, and update the status of applicants throughout the recruitment process.
+- **Openings**: Owners and Admins can create openings within rounds. These represent positions that people can apply for.
 
-- **Application Tracking**: Applicants can monitor the progress of their applications, from submission to interviews and final decisions.
+- **Applications**: Applicants can explore these openings and submit applications directly through the platform.
 
-- **Secure, Role-based Dashboard**: Each user role is provided with a personalized dashboard, displaying relevant team openings, applications, and tasks.
+- **Application Review Process**: Team leads assigned to an opening, as well as Owners and Admins can review applications, interview candidates, and update the status of applicants throughout the recruitment process.
 
 ## Getting Started
 
@@ -114,22 +113,70 @@ Onboarder uses **Monash University's secure login system** to ensure that only v
 ![Landing Page Screenshot](frontend/src/assets/landing_page.png)
 
 ### As a student/applicant
+End-to-end example of using the application as a student applying for a role.
 
-Once on the website, click on `Apply for a position`
-
-You will be able to see what openings are available for various student teams, and apply for them.
+- Access the website
+- Once on the website, click on `Apply for a position`
+- You will be able to see what openings are available for various student teams
+- You can view additional info, or click the apply button for an opening.
+- Enter your details and click submit button.
+- At some point, your application will be reviewed. You will be sent an email if you are rejected.
+- If you are accepted, you will be sent an email where you can submit availability preferences for an interview. The team also might send you details for a task to complete before the interview.
+- If scheduling is successful, you will be sent a google calendar invite for an interview.
+- Attend the interview in person or via meeting link if included.
+- After the interview, the team will review all candidates.
+- You will be notified if you are successfully accepted as a recruit or not.
+- The team will reach out to you via email with further steps.
 
 ### As a member of a student team
+Here are end-to-end examples of how each role can use the application:
+
+#### Owner
+- Log into application
+- Create a team and add a description.
+- Invite some admins.
+- (Optional) Add global meeting link for google calendar interview invites.
+- Have admins (or yourself) set up rounds and openings. (See below)
+
+#### Admin
+- Be invited to a team as an admin
+- Log into application
+- Access the team.
+- Create recruitment rounds (E.g. 2025 Semester 1, 2025 Semester 2)
+- Create openings for the recruitment rounds. (E.g. add Software Engineer Opening, Engineer Opening, and Marketing Manager Openign to 2025 Semester 1)
+- Assign one or more team leads to each opening.
+- Open a recruitment round (this means its openings will show on the main page for people to apply to)
+- After enough applications are submitted, and interviews are being scheduled, close round.
+- After interviews are complete, and some recruits have been hired, archive round. 
+
+#### Team Lead
+- Be invited to a team as a team lead
+- Be assigned to one or more openings
+- Log into application
+- Edit your availability to conduct interviews
+- Access team
+- Access a round where you have been assigned an opening
+- Access an opening
+- View applications in the opening.
+- Accept some applicants based on their application. (Meaning they become candidates)
+- Click button to send interview scheduling email (this will send emails to candidates so that they can put in their availability for interviews)
+- Once enough candidates have submitted their preferences, click button to run interview scheduling algorithm.
+- Based on the availabilities of the assigned team leads, and the submitted availabilities by candidates, the interview scheduling algorithm will try its best to assign the candidates evenly across the team leads assigned to the opening.
+- Each candidate will be assigned an interview date/time, and an interviewer (team lead)
+- If the algorithm couldn't allocate all interviews, reach out to the candidates to arrange a time, and manually add it. If you add it, you will be the assigned team lead for that interview.
+- Once you are happy with scheduled interviews, click button to send invites.
+- This will send out Google Calendar events/invites to each candidate who had an allocated interview time (with the assigned team lead for the interview)
+- Conduct interviews in person, or using the link in the google calendar invite (if the owner configured one)
+- Use the interview feedback page to score and take notes during the interview.
+- After interviews are completed, accept or reject candidates based on their feedback and scores.
 
 To get started with Onboarder, access the website and follow these steps:
 
 Log in with Monash SSO:
 
  - Click the Login with Monash SSO button.
-Enter your Monash student email and password to access the platform. (If you have not used it before, it will automatically create an account for you)
-Upon successful authentication, you will be redirected to the dashboard. You can create a student team, where you will be the owner, and any teams that an owner has invited you to will show up here.
 
-Set Up Your Profile:
+
 
  - If you are an Owner or Admin, you can start by setting up your team profile and managing team settings.
 As a Team Lead, create your team's specific recruitment openings.
@@ -139,9 +186,6 @@ Start Managing or Applying:
  - Owners/Admins: Manage your team settings, assign team leads, and monitor the recruitment process.
 Team Leads: Post new openings, review applicants, and schedule interviews.
 
- - Applicants: Apply to openings, track application statuses, and engage with team leads for potential interviews.
-
- - Review Recruitment Cycles: Regularly check your dashboard for updates, whether it’s new applications (for team leads and admins) or application status changes (for applicants).
 
 ## Contact
 
